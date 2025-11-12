@@ -7,7 +7,8 @@ MaiBot 文件夹结构：
 MaiBot/
 ├── data/
 ├── config/
-│   └── bot_config.toml
+│   ├── bot_config.toml
+│   └── model_config.toml
 ├── .env
 └── ...
 ```
@@ -16,9 +17,11 @@ MaiBot/
 ### 1. `data` 文件夹
 - 用于存储表情包，知识库，聊天数据等。
 ### 2. `bot_config.toml`文件
-- 用于存储人设、调用的大模型信息等机器人设置。
-### 3. `.env` 文件
-- 存储AI云服务提供商的KEY API、数据库用户名密码等。
+- 用于存储人设、lpmm等机器人设置。
+### 3. `model_config.toml`文件
+- 用于存储调用的大模型信息，AI云服务提供商的KEY API
+### 4. `.env` 文件
+- 存储`maim_message`端口和地址。
 
 ::: details 如果你使用的是低于0.7.0版本的MaiBot，那么点开这里
 ### MongoDB 数据库备份与恢复
