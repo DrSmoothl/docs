@@ -47,6 +47,17 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12
 sudo update-alternatives --config python3
 ```
 
+
+### 安装python3-dev
+
+```bash
+# 此处以 Python 3.12 为例
+# Ubuntu/Debian
+sudo apt update
+sudo apt install python3-dev
+```
+
+
 ### 安装 uv (推荐)
 
 安装 uv 包管理器：
