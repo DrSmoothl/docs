@@ -26,8 +26,10 @@
 :::
 
 
-## 安装
+## 安装quick-algo
 对于 Windows_x86_64 平台的用户，**请使用pip进行直接安装**。（已经包含在MaiBot的requirements.txt中，无需手动）  
+
+对于windows_x86_64 平台的一键包用户，lpmm知识库的所需依赖已经全部由 **![更新所有模块.bat**完成了，无需自行安装依赖。
 
 对于 Linux 平台用户，需要下载gcc/g++编译器，跳转链接: [Linux环境使用方法](#linux)  
 
@@ -84,12 +86,38 @@ source ./venv/bin/activate #激活MaiBot虚拟环境
 pip install quick-algo
 ```
 
+:::tip
+如果你通过以上步骤仍然无法安装`quick-algo`,请前往[LPMM手动编译说明](/manual/usage/compile_and_install)进行手动编译`quick-algo`
+:::
 
 ## 配置LPMM
 
-把`template/lpmm_config_template.toml`复制到`config/lpmm_config.toml`，按照样例配置`provider`和使用的模型。
+目前lpmm模型配置已合并到`config/model_config.toml`中
 
-其对应的说明均存在于配置文件注释中，此处略。
+```toml
+#嵌入模型
+[model_task_config.embedding]
+model_list = ["bge-m3"]
+
+#------------LPMM知识库模型------------
+
+[model_task_config.lpmm_entity_extract] # 实体提取模型
+model_list = ["siliconflow-deepseek-v3"]
+temperature = 0.2
+max_tokens = 800
+
+[model_task_config.lpmm_rdf_build] # RDF构建模型
+model_list = ["siliconflow-deepseek-v3"]
+temperature = 0.2
+max_tokens = 800
+
+[model_task_config.lpmm_qa] # 问答模型
+model_list = ["qwen3-30b"]
+temperature = 0.7
+max_tokens = 800
+```
+
+默认模型通常来说已经足够，如果api哈气请自行更改模型，配置方法请前往[模型配置设置教程](/manual/configuration/configuration_model_standard)
 
 ## 麦麦学习知识
 
@@ -193,14 +221,32 @@ $ conda install -c pytorch -c nvidia -c rapidsai -c conda-forge libnvjitlink fai
 
 ## Docker的LPMM食用方式
 
-首先从GitHub上拉取配置：
+目前lpmm模型配置已合并到`config/model_config.toml`中
 
-```bash
-# github如不可用请使用镜像加速
-wget https://github.com/MaiM-with-u/MaiBot/raw/refs/heads/main/template/lpmm_config_template.toml -O docker-config/mmc/lpmm_config.toml
+```toml
+#嵌入模型
+[model_task_config.embedding]
+model_list = ["bge-m3"]
+
+#------------LPMM知识库模型------------
+
+[model_task_config.lpmm_entity_extract] # 实体提取模型
+model_list = ["siliconflow-deepseek-v3"]
+temperature = 0.2
+max_tokens = 800
+
+[model_task_config.lpmm_rdf_build] # RDF构建模型
+model_list = ["siliconflow-deepseek-v3"]
+temperature = 0.2
+max_tokens = 800
+
+[model_task_config.lpmm_qa] # 问答模型
+model_list = ["qwen3-30b"]
+temperature = 0.7
+max_tokens = 800
 ```
 
-然后按照样例配置`provider`
+默认模型通常来说已经足够，如果api哈气请自行更改模型，配置方法请前往[模型配置设置教程](/manual/configuration/configuration_model_standard)
 
 :::tip
 实体提取、RDF提取的模型不建议使用32B以下的小模型，否则提取效果非常差而且极其可能失败

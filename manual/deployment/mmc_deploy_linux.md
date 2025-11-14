@@ -47,6 +47,17 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12
 sudo update-alternatives --config python3
 ```
 
+
+### 安装python3-dev
+
+```bash
+# 此处以 Python 3.12 为例
+# Ubuntu/Debian
+sudo apt update
+sudo apt install python3-dev
+```
+
+
 ### 安装 uv (推荐)
 
 安装 uv 包管理器：
@@ -92,7 +103,7 @@ uv venv
 uv pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 ```
 ::: tip
-`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/usage/features/lpmm)中手动编译的部分
+`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/usage/features/lpmm)中安装quick-algo的部分
 :::
 
 2. 回到上一级文件夹，再进入MaiBot-Napcat-Adapter文件夹，安装依赖
@@ -275,6 +286,8 @@ source ../MaiBot/venv/bin/activate
 # 运行adapter
 python3 main.py
 ```
+
+
 
 ## 命令速查表
 
