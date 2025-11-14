@@ -14,12 +14,9 @@
 
 - [Windows](mmc_deploy_windows)
 
-
 - [Linux](mmc_deploy_linux)
 
-
 - [macOS](mmc_deploy_macos)
-
 
 - [Docker部署](mmc_deploy_docker)
 
@@ -27,17 +24,12 @@
 
 - [Android部署](mmc_deploy_android)
 
-
 - [Kubernetes部署](mmc_deploy_kubernetes)
-
-
-- [使用旧版adapter的windows部署](./old/mmc_deploy_windows_old)
-
 
 ## 故障排除
 
 如果您在部署过程中遇到问题，可以：
 
-1. 参考 [常见问题](/faq/) 中的常见问题
+1. 参考 [常见问题](/manual/faq/) 中的常见问题
 2. 查看项目的 GitHub Issues
 3. 加入用户交流群获取帮助

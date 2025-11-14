@@ -8,4 +8,4 @@
 - [五群](https://qm.qq.com/q/JxvHZnxyec)
 
 **插件开发测试版群：**
-- [插件开发群](https://qm.qq.com/q/1036092828)
+- [插件开发群](https://qm.qq.com/q/1ibfetCXoY)

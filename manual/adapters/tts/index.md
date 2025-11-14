@@ -122,5 +122,5 @@ use_tts = true
 - `logging_level`：日志级别，默认为 `INFO` 。
 
 ::: tip 百灵疑难解答小贴士
-如果你在使用过程中遇到了问题，你可以看一看[疑难解答](/faq/maibot-tts-adapter/index)
+如果你在使用过程中遇到了问题，你可以看一看 疑难解答
 :::

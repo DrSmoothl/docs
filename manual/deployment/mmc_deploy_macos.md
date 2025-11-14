@@ -424,4 +424,4 @@ rm -rf MaiM-with-u
 - [配置指南](/manual/configuration/index)
 - [LPMM 知识库](/manual/usage/features/lpmm)
 - [插件开发](/develop/plugin_develop/index)
-- [常见问题](/faq/index)
+- [常见问题](/manual/faq/index)

@@ -158,7 +158,7 @@
 </div>
 
 <div class="doc-cards">
-  <a href="/faq/" class="doc-card">
+  <a href="/manual/faq/" class="doc-card">
     <div class="doc-card-content">
       <h3>❓ 常见问题</h3>
       <p>API相关问题、部署故障排除、功能使用疑问等</p>
@@ -174,13 +174,8 @@
 
 [如何避免提出0/1问题](/manual/other/questions-with-yes-or-no-answers)
 
-::: details 旧版相关内容
-
-- [Docker部署](/manual/deployment/old/docker_deploy)
-- [Linux手动部署](/manual/deployment/old/manual_deploy_linux)
-- [Windows手动部署](/manual/deployment/old/manual_deploy_windows)
-- [群晖NAS部署](/manual/deployment/old/synology_deploy)
-- [新手Linux服务器部署](/manual/deployment/old/linux_deploy_guide_for_beginners)
+:::info 提示
+  如果想查看过时的文档可以前往[这里](/archives/)
 :::
 
 ![MaiBot](/avatars/MaiM.png)
