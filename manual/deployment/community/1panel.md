@@ -31,29 +31,33 @@ sudo zypper install -y curl
 
 ## 安装
 
+目的：将maibot APP文件夹放在/opt/1panel/resource/apps/local/下
+你可以使用我们提供的自动脚本，也可以选择手动安装
+
 ```bash
-curl -fsSL -o install_MaiBot_1Panel.bash https://raw.githubusercontent.com/Puiching-Memory/appstore/MaiBot/apps/maibot/install.bash
+curl -fsSL -o install_MaiBot_1Panel.bash https://raw.githubusercontent.com/Puiching-Memory/MaiBot-1Panel/MaiBot/apps/maibot/install.bash
 bash install_MaiBot_1Panel.bash
 ```
 
-1panel提供的Docker镜像在拉取napcat镜像时会出现问题，建议添加更多镜像源，参考：https://status.anye.xyz/
-
 ## 在1Panel面板中完成后续部署
 
+1panel提供的Docker镜像在拉取napcat镜像时会出现问题，建议添加更多镜像源，参考：https://status.anye.xyz/
+
 > [!WARNING]  
-> 该应用中**已经包含**NapCat镜像,你不需要另外安装NapCat
+> 本应用不内置 NapCat，请单独部署 NapCat，并在 `./docker-config/adapters/config.toml` 中配置对应的连接地址。
+> 你可以使用我们的NapCat APP集成，位于https://github.com/Puiching-Memory/MaiBot-1Panel/tree/napcat
+
+> [!WARNING]
+> 本应用不内置数据库可视化工具（如 Chat2DB / SQLite-Web），如需使用请在 1Panel 中单独安装对应应用，或自行以 Docker 方式部署，并连接到 `./data/MaiBot/MaiBot.db`。
 
 > [!NOTE]
 > 相关项目： https://github.com/Fahaxikiii/napcat-1panel
->
-> 该第三方项目允许将 NapCat 部署为独立 1Panel 应用。它默认连接到`Host network`，而本项目的 MaiBot 镜像默认连接到 `1panel-network` 的自定义Docker网络(符合规范)。
->
-> 因此，两者在默认配置下网络隔离：使用宿主机网络的容器无法通过 Docker 自定义网络名称解析（service name）直接与 `1panel-network` 内的容器互通。
+> 该第三方项目允许将 NapCat 部署为独立 1Panel 应用。它默认连接到`Host network`。
 
-#### 安装后，NapCat需要调整配置：
+#### NapCat 配置说明：
 1. 打开`应用日志`，找到NapCat WebUI 临时token
 2. 打开web UI，使用临时token登录
-3. 在`网络配置`中，添加新的webSocket客户端
+3. 在`网络配置`中，添加新的webSocket客户端，地址填写 `ws://maibot_adapters:8095`（或你在 `config.toml` 中配置的地址）
 4. (可选)，添加新的http服务器，地址填写 0.0.0.0:<端口号>
 
 #### 安装后，MaiBot需要调整配置：
@@ -64,7 +68,7 @@ bash install_MaiBot_1Panel.bash
 5. 点击`重启应用`以生效
 
 #### 示例配置文件
-- [model_config_qwen.toml](https://github.com/Puiching-Memory/MaiBot-1Panel/blob/MaiBot/model_config_qwen.toml) - 全部使用阿里云百炼 Qwen 模型的配置文件
+- [model_config_qwen.toml](https://github.com/Puiching-Memory/MaiBot-1Panel/blob/MaiBot/apps/maibot/model_config_qwen.toml) - 全部使用阿里云百炼 Qwen 模型的配置文件
 - Qwen 模型价格查询：[价格表](https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=2840914)
 - Qwen VL 系列模型回复较慢，请延长超时时间，至少30~60秒
 
@@ -78,9 +82,8 @@ bash install_MaiBot_1Panel.bash
 ## Docker DNS 解析
 
 所有容器均加入 `1panel-network`，因此可以通过服务名直接解析并互通：
-- `napcat` → NapCat 服务容器
-- `adapters` → MaiBot 适配器容器
-- `core` → MaiBot 核心容器
+- `maibot_adapters` → MaiBot 适配器容器
+- `maibot` → MaiBot 核心容器
 
 ## 代办事项
 
@@ -90,9 +93,12 @@ bash install_MaiBot_1Panel.bash
 - 安装默认同意MaiBot EULA（不确定该策略是否合理，请在issue中反馈）
 
 ## 兼容性矩阵
-|        MaiBot版本        |          Adapters版本          | NapCat版本 |     SQLite版本     | ChatDB版本 |
-| :----------------------: | :----------------------------: | :--------: | :----------------: | :--------: |
-| 0.11.0<br/>(dev-6d70cf7) | 0.5.5<br/>(dev-20251005093201) |   4.9.14   | 0.6.5<br/>(latest) |   0.3.7    |
+|        MaiBot版本        |          Adapters版本          | NapCat版本 |
+| :----------------------: | :----------------------------: | :--------: |
+| 0.11.0<br/>(dev-6d70cf7) | 0.5.5<br/>(dev-20251005093201) |   4.9.14   |
+| 0.11.1<br/>(dev-69a6116) | 0.5.5<br/>(dev-20251005093201) |   4.9.25   |
+| 0.11.2<br/>(0.11.2-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.70   |
+| 0.11.3<br/>(0.11.3-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.72   |
 
 ## 参考
 
