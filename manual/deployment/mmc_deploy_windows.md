@@ -5,11 +5,7 @@
 :::
 
 ::: tip
-知识库使用说明在[这里](/manual/usage/features/lpmm)
-:::
-
-::: info
-本教程推荐使用 [uv](https://docs.astral.sh/uv/) 作为 Python 包管理器，它提供了更快的包安装速度和更好的依赖管理体验。当然，传统的 pip 和 conda 方式依然可用。
+你可以在[麦麦QQ交流群](/manual/other/qq_group)群文件获取到最新版本的一键安装包。
 :::
 
 ## 系统要求
@@ -17,7 +13,7 @@ python >= 3.10
 
 OS: Windows10 或 Windows11
 
-uv >= 0.1.0 (推荐使用最新版本)
+uv >= 0.1.0 (推荐使用)
 
 ## 部署步骤
 
@@ -35,9 +31,9 @@ git clone https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter.git
 ```
 
 ### 二、环境配置
+本教程推荐使用 [uv](https://docs.astral.sh/uv/) 作为 Python 包管理器，它提供了更快的包安装速度和更好的依赖管理体验。当然，传统的 pip 和 conda 方式依然可用。以下 Python 管理器选择其一即可。
 
-#### 安装 uv (推荐)
-
+#### 1.安装 uv (推荐)
 首先安装 uv 包管理器，可以通过以下命令快速安装：
 ```shell
 # 使用 pip 安装 uv
@@ -49,21 +45,21 @@ pip install uv
 使用 uv 时需要先运行 `uv venv` 创建虚拟环境，然后使用 `uv pip install` 安装依赖，或者直接使用 `uv run` 命令来自动管理虚拟环境。
 :::
 
-#### Conda 版 (传统方式)
-
-假定你已经安装好了Conda，只需要创建一个python**版本大于等于3.10**的虚拟环境即可。
-```shell
-conda create -n MaiBotEnv python=3.12
-conda activate MaiBotEnv
-```
-
-#### 虚拟环境版 (传统方式)
+#### 2.虚拟环境版 (传统方式)
 
 1. 首先，在[官网](https://www.python.org/)下载python，并安装**大于等于3.10的版本**并添加系统变量。  
 2. 随后在 `MaiM-with-u` 文件夹创建Python虚拟环境并激活
 ```shell
 python -m venv MaiBot\venv
 .\MaiBot\venv\Scripts\activate
+```
+
+#### 3.Conda 版 (传统方式)
+
+假定你已经安装好了Conda，只需要创建一个python**版本大于等于3.10**的虚拟环境即可。
+```shell
+conda create -n MaiBotEnv python=3.12
+conda activate MaiBotEnv
 ```
 
 ### 三、依赖安装
@@ -77,7 +73,7 @@ uv venv
 uv pip install -r .\requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 ```
 ::: tip
-`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/usage/features/lpmm)中安装`quick-algo`的部分
+`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/configuration/lpmm)中安装`quick-algo`的部分
 :::
 
 2. 随后回到上一级文件夹（此处为MaiM-with-u），再进入MaiBot-NapCat-Adapter文件夹，安装依赖
@@ -97,7 +93,7 @@ cd MaiBot
 pip install -i https://mirrors.aliyun.com/pypi/simple -r .\requirements.txt --upgrade
 ```
 ::: tip
-如果你在这里发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/usage/features/lpmm)中手动编译的部分
+如果你在这里发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/configuration/lpmm)中手动编译的部分
 :::
 3. 随后回到上一级文件夹（此处为MaiM-with-u），再进入MaiBot-NapCat-Adapter文件夹，安装依赖
 ```shell

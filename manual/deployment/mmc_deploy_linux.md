@@ -103,7 +103,7 @@ uv venv
 uv pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 ```
 ::: tip
-`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/usage/features/lpmm)中安装quick-algo的部分
+`uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/configuration/lpmm)中安装quick-algo的部分
 :::
 
 2. 回到上一级文件夹，再进入MaiBot-Napcat-Adapter文件夹，安装依赖
@@ -122,7 +122,7 @@ pip install uv -i https://mirrors.aliyun.com/pypi/simple
 uv pip install -i https://mirrors.aliyun.com/pypi/simple -r requirements.txt --upgrade
 ```
 ::: tip
-如果你在这里发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/usage/features/lpmm)中手动编译的部分
+如果你在这里发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/configuration/lpmm)中手动编译的部分
 :::
 回到上一级文件夹，再进入MaiBot-Napcat-Adapter文件夹，安装依赖
 ```bash

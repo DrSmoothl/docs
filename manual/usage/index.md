@@ -105,7 +105,7 @@
 </div>
 
 <div class="feature-cards">
-  <a href="/manual/usage/features/lpmm" class="feature-card lpmm-card">
+  <a href="/manual/configuration/lpmm" class="feature-card lpmm-card">
     <div class="feature-card-content">
       <h3>📚 LPMM知识库</h3>
       <p>麦麦使用了LPMM作为知识库系统，可以进行知识的学习，并在合适的场景下调用并理解。LPMM性能卓越，但是知识的学习需要花费一些API额度。</p>

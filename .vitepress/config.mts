@@ -18,14 +18,7 @@ export default defineConfig({
       { text: '用户手册', link: '/manual/' },
       { text: '开发文档', link: '/develop/' },
       {
-        text: '官方Q群', items: [
-          { text: '一群', link: 'https://qm.qq.com/q/VQ3XZrWgMs' },
-          { text: '二群', link: 'https://qm.qq.com/q/RzmCiRtHEW' },
-          { text: '三群', link: 'https://qm.qq.com/q/wlH5eT8OmQ' },
-          { text: '四群', link: 'https://qm.qq.com/q/fRdCbMXkGY' },
-          { text: '五群', link: 'https://qm.qq.com/q/JxvHZnxyec' },
-        ]
-      },
+        text: '官方Q群', link:'/manual/other/qq_group'},
       {
         text: 'GitHub', 
         items: [
@@ -39,7 +32,7 @@ export default defineConfig({
       '/manual/': [
         {
           text: '安装方法',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: '部署概览', link: '/manual/deployment/' },
             { text: 'Windows部署', link: '/manual/deployment/mmc_deploy_windows' },
@@ -61,8 +54,8 @@ export default defineConfig({
             { text: '表达学习', link: '/manual/usage/features/expression' },
             { text: '个性系统', link: '/manual/usage/features/personality' },
             { text: '插件系统', link: '/manual/usage/plugins' },
-            { text: 'LPMM知识库', link: '/manual/usage/features/lpmm' },
-            { text: 'LPMM手动编译说明', link: '/manual/usage/compile_and_install'},
+            { text: '设置说明', link: '/manual/usage/settings' },
+            { text: '表情包系统', link: '/manual/usage/features/emoji' },
             { text: '备份你的麦麦', link: '/manual/usage/backup' },
           ]
         },
@@ -73,6 +66,8 @@ export default defineConfig({
             { text: '配置概览', link: '/manual/configuration/' },
             { text: '麦麦设置配置教程', link: '/manual/configuration/configuration_standard' },
             { text: '模型设置配置教程', link: '/manual/configuration/configuration_model_standard' },
+            { text: 'LPMM知识库', link: '/manual/configuration/lpmm' },
+            { text: 'LPMM手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
             { text: 'LPMM导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
           ]
         },
@@ -99,7 +94,10 @@ export default defineConfig({
           text: '常见问题',
           collapsed: true,
           items: [
-            { text: '待补全', link: '/manual/faq' },
+            { text: 'FAQ 概览', link: '/manual/faq/' },
+            { text: '一键部署 FAQ', link: '/manual/faq/onekey_faq' },
+            { text: 'TTS FAQ', link: '/manual/faq/tts-faq' },
+            { text: '更新到 0.7 版本', link: '/manual/faq/update_to_07' },
           ]
         },
         {
@@ -107,6 +105,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: '最终用户许可协议', link: '/manual/other/EULA' },
+            { text: 'QQ 群', link: '/manual/other/qq_group' },
             { text: '如何高效提问', link: '/manual/other/how-to-ask-questions' },
             {
               text: '文章集', 
