@@ -1,4 +1,4 @@
-# 用户指南
+# MaiBot 手册
 
 <style>
 .doc-cards {
@@ -104,17 +104,6 @@
     <div class="doc-card-content">
       <h3>📦 如何安装麦麦</h3>
       <p>安装MaiBot的详细教程</p>
-    </div>
-  </a>
-</div>
-
-
-
-<div class="doc-cards">
-  <a href="/manual/usage/" class="doc-card">
-    <div class="doc-card-content">
-      <h3>✨ 功能介绍</h3>
-      <p>探索MaiBot的所有功能特性，聊天、表情、记忆、个性化......</p>
     </div>
   </a>
 </div>

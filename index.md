@@ -12,6 +12,9 @@ hero:
     - theme: brand
       text: 用户指南
       link: /manual/
+    - theme: brand
+      text: 功能介绍
+      link: /manual/usage/
     - theme: alt
       text: 开发文档
       link: /develop/
