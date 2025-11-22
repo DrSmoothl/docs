@@ -49,13 +49,12 @@ export default defineConfig({
           text: '功能介绍',
           collapsed: true,
           items: [
-            { text: '麦麦使用说明', link: '/manual/usage/' },
-            { text: '聊天控制系统', link: '/manual/usage/features/chat' },
-            { text: '表达学习', link: '/manual/usage/features/expression' },
-            { text: '个性系统', link: '/manual/usage/features/personality' },
+            { text: '聊天控制系统', link: '/features/chat' },
+            { text: '表达学习', link: '/features/expression' },
+            { text: '个性系统', link: '/features/personality' },
             { text: '插件系统', link: '/manual/usage/plugins' },
             { text: '设置说明', link: '/manual/usage/settings' },
-            { text: '表情包系统', link: '/manual/usage/features/emoji' },
+            { text: '表情包系统', link: '/features/emoji' },
             { text: '备份你的麦麦', link: '/manual/usage/backup' },
           ]
         },
@@ -95,9 +94,6 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'FAQ 概览', link: '/manual/faq/' },
-            { text: '一键部署 FAQ', link: '/manual/faq/onekey_faq' },
-            { text: 'TTS FAQ', link: '/manual/faq/tts-faq' },
-            { text: '更新到 0.7 版本', link: '/manual/faq/update_to_07' },
           ]
         },
         {

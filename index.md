@@ -14,7 +14,7 @@ hero:
       link: /manual/
     - theme: brand
       text: 功能介绍
-      link: /manual/usage/
+      link: /features
     - theme: alt
       text: 开发文档
       link: /develop/
@@ -43,3 +43,60 @@ features:
 
 - 访问[GitHub仓库](https://github.com/MaiM-with-u/MaiBot)提交问题或贡献代码
 - 加入用户交流群获取帮助
+
+<script setup>
+import { onMounted, nextTick } from 'vue'
+
+// 可用的封面图片列表
+const titleImages = [
+  '/title_img/mai.png',
+  '/title_img/mai2.png',
+  '/title_img/dis.png',
+  '/title_img/snow.png',
+  '/title_img/mmsnow.jpg',
+  '/title_img/mmsnow2-2.jpg',
+  '/title_img/emoji1.png',
+  '/title_img/emoji2.png',
+  '/title_img/emoji3.png',
+  '/title_img/emoji4.png',
+]
+
+onMounted(async () => {
+  await nextTick()
+  
+  // 随机选择一张图片
+  const randomImage = titleImages[Math.floor(Math.random() * titleImages.length)]
+  
+  // 尝试多种选择器来查找 hero 图片
+  const selectors = [
+    '.VPHomeHero .VPImage img',
+    '.VPHomeHero img',
+    'main .VPImage img',
+    '[alt="MaiBot"]'
+  ]
+  
+  let heroImage = null
+  for (const selector of selectors) {
+    heroImage = document.querySelector(selector)
+    if (heroImage) break
+  }
+  
+  // 如果找到了图片元素，替换它
+  if (heroImage) {
+    heroImage.src = randomImage
+    heroImage.alt = 'MaiBot'
+  } else {
+    // 如果没找到，延迟再试一次（等待 VitePress 渲染完成）
+    setTimeout(() => {
+      for (const selector of selectors) {
+        heroImage = document.querySelector(selector)
+        if (heroImage) {
+          heroImage.src = randomImage
+          heroImage.alt = 'MaiBot'
+          break
+        }
+      }
+    }, 100)
+  }
+})
+</script>
