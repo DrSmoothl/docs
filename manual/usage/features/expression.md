@@ -1,15 +1,16 @@
 ## 表达学习（Expression Learning）
 
 ### 这有什么用？
+
 - 通过自动学习群体/私聊中的常见说法与语气，沉淀为可复用的表达
-- 回复阶段会基于已学习的表达进行加权抽样与筛选，从而生成更贴合当前聊天语境的回复，提高拟人化与融群感。
 - 学到的表达会按活跃度进行权重累积与自然衰减，长期保持“常用更常用，冷门会被淘汰”的效果。
 
 ### 配置位置
+
 - 文件：`config/bot_config.toml`
 - 区块：`[expression]`
 
-该区块包含两个与“表达学习”相关的选项：`learning_list` 与 `expression_groups`。
+该区块包含两个核心选项：`learning_list` 与 `expression_groups`。
 
 ---
 
@@ -20,27 +21,27 @@
 
 ```toml
 [expression]
-expression_learning = [
-  ["", "enable", "enable", "1.0"],                # 全局：使用表达=开，学习=开，强度=1.0
-  ["qq:1919810:group", "enable", "enable", "1.5"], # 指定群聊：使用表达=开，学习=开，强度=1.5
-  ["qq:114514:private", "enable", "disable", "0.5"] # 指定私聊：使用表达=开，学习=关，强度=0.5
+learning_list = [
+  ["", "enable", "enable", 1.0],                   # 全局：使用表达=开，学习=开，强度=1.0
+  ["qq:1919810:group", "enable", "enable", 1.5],   # 指定群聊：使用表达=开，学习=开，强度=1.5
+  ["qq:114514:private", "enable", "disable", 0.5], # 指定私聊：使用表达=开，学习=关，强度=0.5
 ]
 ```
 
 - 字段说明（按顺序）：
-  - chat_stream_id：字符串，形如 `platform:id:type`。
-    - 群聊：`qq:123456:group`
-    - 私聊：`qq:123456:private`
-    - 为空串 `""` 表示“全局默认配置”。
-  - use_expression：是否在该聊天“使用已学表达”，`enable`/`disable`。
-  - enable_learning：是否在该聊天“继续学习表达”，`enable`/`disable`。
-  - learning_intensity：学习强度（浮点数），影响最短学习间隔：最短学习间隔秒数 = 300 / learning_intensity。
 
+  - chat_stream_id：`platform:id:type`，例如群聊 `qq:123456:group`、私聊 `qq:123456:private`，空串 `""` 表示“全局默认配置”。
+  - use_expression：是否在该聊天“使用已学表达”，`enable` / `disable`。
+  - enable_learning：是否在该聊天“继续学习表达”，`enable` / `disable`。
+  - learning_intensity：学习强度（浮点数，>0）。内部会等比调整两个阈值：
+    - 最少消息数 = `15 / learning_intensity`
+    - 最短学习间隔（秒）= `120 / learning_intensity`
 - 行为要点：
-  - 未配置时的默认值为：使用表达=开，学习=开，最短间隔=300 秒。
-  - 学习触发还要求最近消息数达到阈值（当前实现为 25 条）。
-  - learning_intensity 请使用正数；过小会导致学习很久才触发，过大则触发更频繁。
-  - use_expression 仅影响“使用阶段”（选择表达并融入回复），enable_learning 仅影响“学习阶段”。
+
+  - 未配置时的默认值：使用表达=开，学习=开，强度=1.0（即 15 条消息、120 秒触发）。
+  - 先匹配具体聊天流，再回退到全局配置；若都没有则用默认值。
+  - 提高 learning_intensity 会在热闹场景中更快收集表达；降低则可减少学习频率。
+  - use_expression 只影响“使用阶段”，enable_learning 只影响“学习阶段”，可单独开关。
 
 ---
 
@@ -66,25 +67,19 @@ expression_groups = [
 
 ---
 
-### 快速对照（来自模板与示例）
+### 快速对照（来自模板与示例，保持与模板一致）
 
 ```toml
 [expression]
 # 表达学习配置
-learning_list = [ # 表达学习配置列表，支持按聊天流配置
-    ["", "enable", "enable", "1.0"],  # 全局配置：使用表达，启用学习，学习强度1.0
-    ["qq:1919810:group", "enable", "enable", "1.5"],  # 特定群聊配置：使用表达，启用学习，学习强度1.5
-    ["qq:114514:private", "enable", "disable", "0.5"],  # 特定私聊配置：使用表达，禁用学习，学习强度0.5
-    # 格式说明：
-    # 第一位: chat_stream_id，空字符串表示全局配置
-    # 第二位: 是否使用学到的表达 ("enable"/"disable")
-    # 第三位: 是否学习表达 ("enable"/"disable") 
-    # 第四位: 学习强度（浮点数），影响学习频率，最短学习时间间隔 = 300/学习强度（秒）
-    # 学习强度越高，学习越频繁；学习强度越低，学习越少
+learning_list = [
+    ["", "enable", "enable", 1.0],
+    ["qq:1919810:group", "enable", "enable", 1.5],
+    ["qq:114514:private", "enable", "disable", 0.5],
 ]
 
 expression_groups = [
-  ["qq:1919810:private", "qq:114514:private", "qq:1111111:group"]
+  ["qq:1919810:private", "qq:114514:private", "qq:1111111:group"],
 ]
 ```
 
@@ -101,5 +96,3 @@ learning_list = [["", "enable", "disable", 1.0]]
 [expression]
 learning_list = [["", "disable", "disable", 1.0]]
 ```
-
-

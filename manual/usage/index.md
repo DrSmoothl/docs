@@ -68,6 +68,10 @@
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
+.jargon-card {
+  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+}
+
 .lpmm-card {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
@@ -100,6 +104,24 @@
     <div class="feature-card-content">
       <h3>🗣️ 表达方式</h3>
       <p>表达方式是麦麦特有的拟人功能，可以让麦麦学习特定群的说话风格，学习群聊中的言语方式和流行的梗。如果你想要配置在哪些群可以学习或使用，可以参见详细说明。</p>
+    </div>
+  </a>
+</div>
+
+<div class="feature-cards">
+  <a href="/manual/usage/features/memory_retrieval" class="feature-card memory-card">
+    <div class="feature-card-content">
+      <h3>🧠 记忆检索</h3>
+      <p>记忆检索系统会在回复前主动搜索聊天历史、黑话和知识库，确保发言与过去经历保持一致。了解如何配置检索迭代、工具与缓存策略。</p>
+    </div>
+  </a>
+</div>
+
+<div class="feature-cards">
+  <a href="/manual/usage/features/jargon" class="feature-card jargon-card">
+    <div class="feature-card-content">
+      <h3>🌀 黑话系统</h3>
+      <p>黑话系统可以自动提取群里的俚语、自创梗并推断含义，供记忆检索和回复器随时引用。支持全局共享或按群隔离。</p>
     </div>
   </a>
 </div>
