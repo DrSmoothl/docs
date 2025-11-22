@@ -63,10 +63,10 @@ const hiddenImage = '/title_img/dis.png'
 onMounted(async () => {
   await nextTick()
   
-  // 加权随机选择：dis.png 概率为 1/10，其他图片各为 10/10
-  // 创建一个加权数组：其他图片各出现10次，隐藏款出现1次
+  // 加权随机选择：dis.png 概率为其他图片的 1/5
+  // 创建一个加权数组：其他图片各出现5次，隐藏款出现1次
   const weightedImages = [
-    ...normalImages.map(img => Array(10).fill(img)).flat(), // 每张普通图片出现10次
+    ...normalImages.map(img => Array(5).fill(img)).flat(), // 每张普通图片出现5次
     hiddenImage // 隐藏款出现1次
   ]
   
@@ -87,18 +87,31 @@ onMounted(async () => {
     if (heroImage) break
   }
   
+  // 设置图片的函数
+  const setImage = (imgElement, imageSrc) => {
+    imgElement.src = imageSrc
+    imgElement.alt = 'MaiBot'
+    // 如果是 emoji4.png，缩放到 1.5 倍
+    if (imageSrc.includes('emoji4.png')) {
+      imgElement.style.transform = 'scale(1.5)'
+      imgElement.style.transformOrigin = 'center'
+    } else {
+      // 重置其他图片的缩放
+      imgElement.style.transform = ''
+      imgElement.style.transformOrigin = ''
+    }
+  }
+  
   // 如果找到了图片元素，替换它
   if (heroImage) {
-    heroImage.src = randomImage
-    heroImage.alt = 'MaiBot'
+    setImage(heroImage, randomImage)
   } else {
     // 如果没找到，延迟再试一次（等待 VitePress 渲染完成）
     setTimeout(() => {
       for (const selector of selectors) {
         heroImage = document.querySelector(selector)
         if (heroImage) {
-          heroImage.src = randomImage
-          heroImage.alt = 'MaiBot'
+          setImage(heroImage, randomImage)
           break
         }
       }
