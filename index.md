@@ -47,25 +47,31 @@ features:
 <script setup>
 import { onMounted, nextTick } from 'vue'
 
-// 可用的封面图片列表
-const titleImages = [
+// 普通封面图片列表
+const normalImages = [
   '/title_img/mai.png',
   '/title_img/mai2.png',
-  '/title_img/dis.png',
-  '/title_img/snow.png',
-  '/title_img/mmsnow.jpg',
-  '/title_img/mmsnow2-2.jpg',
   '/title_img/emoji1.png',
   '/title_img/emoji2.png',
   '/title_img/emoji3.png',
   '/title_img/emoji4.png',
 ]
 
+// 隐藏款图片（出现概率是其他图片的1/10）
+const hiddenImage = '/title_img/dis.png'
+
 onMounted(async () => {
   await nextTick()
   
+  // 加权随机选择：dis.png 概率为 1/10，其他图片各为 10/10
+  // 创建一个加权数组：其他图片各出现10次，隐藏款出现1次
+  const weightedImages = [
+    ...normalImages.map(img => Array(10).fill(img)).flat(), // 每张普通图片出现10次
+    hiddenImage // 隐藏款出现1次
+  ]
+  
   // 随机选择一张图片
-  const randomImage = titleImages[Math.floor(Math.random() * titleImages.length)]
+  const randomImage = weightedImages[Math.floor(Math.random() * weightedImages.length)]
   
   // 尝试多种选择器来查找 hero 图片
   const selectors = [
