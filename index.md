@@ -6,7 +6,7 @@ hero:
   text: 多模型、拟人化、可扩展的智能体
   tagline: 多种模型协作，仿生的思考规划架构，模块化设计和内部扩展性带来拟人化的交互体验
   image:
-    src: /images/maimai.png
+    src: /images/mai.png
     alt: MaiBot
   actions:
     - theme: brand
@@ -54,7 +54,6 @@ const normalImages = [
   '/title_img/emoji1.png',
   '/title_img/emoji2.png',
   '/title_img/emoji3.png',
-  '/title_img/emoji4.png',
 ]
 
 // 隐藏款图片（出现概率是其他图片的1/10）
