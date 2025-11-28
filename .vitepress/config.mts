@@ -141,6 +141,7 @@ export default defineConfig({
             { text: '工具系统', link: '/develop/plugin_develop/tool-components' },
             { text: '配置管理指南', link: '/develop/plugin_develop/configuration-guide' },
             { text: '依赖管理', link: '/develop/plugin_develop/dependency-management' },
+            { text: 'WebUI集成', link: '/develop/plugin_develop/plugin-config-schema' },
             { text: 'API参考',
               collapsed: true,
               items: [
