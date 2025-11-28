@@ -6,7 +6,7 @@ export default defineConfig({
   title: "MaiBot 文档中心",
   description: "MaiBot 开发与使用的全方位指南",
   head: [
-    ['link', { rel: 'icon', href: '/avatars/MaiM.png' }]
+    ['link', { rel: 'icon', href: '/title_img/mai2.png' }]
   ],
   themeConfig: {
     search: {
@@ -15,10 +15,20 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
+      { text: '功能介绍',
+        items: [
+          { text: '聊天系统', link: '/features/chat' },
+          { text: '表达学习', link: '/features/expression' },
+          { text: '个性系统', link: '/features/personality' },
+          { text: '记忆检索', link: '/features/memory_retrieval' },
+          { text: '插件系统', link: '/features/plugins' },
+          { text: '黑话系统', link: '/features/jargon' },
+          { text: '表情包', link: '/features/emoji' },
+        ]
+      },
       { text: '用户手册', link: '/manual/' },
       { text: '开发文档', link: '/develop/' },
-      {
-        text: '官方Q群', link:'/manual/other/qq_group'},
+      {text: '官方Q群', link:'/manual/other/qq_group'},
       {
         text: 'GitHub', 
         items: [
@@ -46,19 +56,6 @@ export default defineConfig({
           ]
         },
         {
-          text: '功能介绍',
-          collapsed: true,
-          items: [
-            { text: '聊天控制系统', link: '/features/chat' },
-            { text: '表达学习', link: '/features/expression' },
-            { text: '个性系统', link: '/features/personality' },
-            { text: '插件系统', link: '/manual/usage/plugins' },
-            { text: '设置说明', link: '/manual/usage/settings' },
-            { text: '表情包系统', link: '/features/emoji' },
-            { text: '备份你的麦麦', link: '/manual/usage/backup' },
-          ]
-        },
-        {
           text: '配置详解',
           collapsed: true,
           items: [
@@ -68,6 +65,7 @@ export default defineConfig({
             { text: 'LPMM知识库', link: '/manual/configuration/lpmm' },
             { text: 'LPMM手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
             { text: 'LPMM导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
+            { text: '备份你的麦麦', link: '/manual/configuration/backup' },
           ]
         },
         {
@@ -100,17 +98,17 @@ export default defineConfig({
           text: '参考资源',
           collapsed: true,
           items: [
-            { text: '最终用户许可协议', link: '/manual/other/EULA' },
-            { text: 'QQ 群', link: '/manual/other/qq_group' },
-            { text: '如何高效提问', link: '/manual/other/how-to-ask-questions' },
             {
               text: '文章集', 
-              collapsed: true, 
+              collapsed: false, 
               items: [
                 { text: '一篇小文', link: '/manual/other/ask_art'},
+                { text: '如何高效提问', link: '/manual/other/how-to-ask-questions' },
                 { text: '如何避免0/1问题', link: '/manual/other/questions-with-yes-or-no-answers' },
               ]
             },
+            { text: 'QQ 群', link: '/manual/other/qq_group' },
+            { text: '最终用户许可协议', link: '/manual/other/EULA' },
           ]
         }
       ],

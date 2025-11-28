@@ -10,14 +10,11 @@ hero:
     alt: MaiBot
   actions:
     - theme: brand
-      text: 用户指南
-      link: /manual/
-    - theme: brand
       text: 功能介绍
       link: /features
     - theme: alt
-      text: 开发文档
-      link: /develop/
+      text: 用户指南
+      link: /manual/
 features:
   - icon: 🧠
     title: 好多LLM

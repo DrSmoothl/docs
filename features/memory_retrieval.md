@@ -1,15 +1,11 @@
 # 记忆检索系统（Memory Retrieval）
 
----
-
 ## 功能概述
 
 - 让麦麦在回复前主动回忆历史记录、黑话、知识库条目，保持上下文一致性。
 - 采用“两段式”决策：先判断是否需要检索，再通过 ReAct Agent 调用多种工具搜集信息。
 - 内建缓存（`ThinkingBack` 表），可复用近期问题答案，并避免重复查询。
 - 可扩展工具仓（chat history / jargon / person info / LPMM），配置灵活。
-
----
 
 ## 触发流程
 
@@ -24,8 +20,6 @@
 4. **缓存与分类**：
    - 查询结果写入 `ThinkingBack`，found_answer=1 的条目可在下次 50% 概率复用。
    - 异步调用 `_analyze_question_answer`，将问答归类为“黑话/人物/其他”，并回写黑话库或（未来）人物记忆。
-
----
 
 ## 配置入口
 
@@ -47,7 +41,6 @@ show_memory_prompt = false  # 打开后，日志输出全部提示词/思考过�
 - `max_agent_iterations` 过大将显著增加 token 消耗；建议结合延迟与回答质量酌情调整。
 - 部署了 LPMM 知识库时，`enable=true` 且 `lpmm_mode="agent"` 才会将知识库纳入 ReAct 工具集。
 
----
 
 ## 可用检索工具
 
@@ -60,7 +53,6 @@ show_memory_prompt = false  # 打开后，日志输出全部提示词/思考过�
 
 > 所有工具均通过 `MemoryRetrievalToolRegistry` 注册，符合 `async` 接口；新增工具时只需按 README 指南注册即可被 ReAct 自动识别。
 
----
 
 ## 结果注入方式
 
@@ -75,7 +67,6 @@ show_memory_prompt = false  # 打开后，日志输出全部提示词/思考过�
 - 如仅命中缓存或概念解释，也会返回对应段落，提醒模型选择性参考。
 - 如果完全未找到信息，则返回空字符串，避免干扰正常对话。
 
----
 
 ## 使用建议
 
