@@ -304,7 +304,7 @@ python3 main.py
 #安装unbuffer和wget
 sudo apt install expect wget
 #下载管理脚本
-wget https://github.com/kanfandelong/maimai_install/blob/main/maibot.sh
+wget https://github.com/kanfandelong/maimai_install/raw/main/maibot.sh
 #运行管理脚本
 bash maibot.sh
 ```
