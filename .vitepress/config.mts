@@ -88,16 +88,8 @@ export default defineConfig({
           text: '参考资源',
           collapsed: true,
           items: [
-            {
-              text: '文章集', 
-              collapsed: false, 
-              items: [
-                { text: '一篇小文', link: '/manual/other/ask_art'},
-                { text: '如何高效提问', link: '/manual/other/how-to-ask-questions' },
-                { text: '如何避免0/1问题', link: '/manual/other/questions-with-yes-or-no-answers' },
-              ]
-            },
-            { text: '官方社群', link: '/manual/other/qq_group' },
+            { text: '如何高效提问', link: '/manual/other/smart-question-guide' },
+            { text: '官方Q群', link: '/manual/other/qq_group' },
             { text: '最终用户许可协议', link: '/manual/other/EULA' },
           ]
         },
