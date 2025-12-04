@@ -68,7 +68,7 @@ bash install_MaiBot_1Panel.bash
 5. 点击`重启应用`以生效
 
 #### 示例配置文件
-- [model_config_qwen.toml](https://github.com/Puiching-Memory/MaiBot-1Panel/blob/MaiBot/apps/maibot/model_config_qwen.toml) - 全部使用阿里云百炼 Qwen 模型的配置文件
+- [model_config_qwen.toml]([apps/maibot/model_config_qwen.toml](https://github.com/Puiching-Memory/MaiBot-1Panel/blob/MaiBot/apps/maibot/model_config_qwen.toml)) - 全部使用阿里云百炼 Qwen 模型的配置文件
 - Qwen 模型价格查询：[价格表](https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=2840914)
 - Qwen VL 系列模型回复较慢，请延长超时时间，至少30~60秒
 
@@ -99,6 +99,9 @@ bash install_MaiBot_1Panel.bash
 | 0.11.1<br/>(dev-69a6116) | 0.5.5<br/>(dev-20251005093201) |   4.9.25   |
 | 0.11.2<br/>(0.11.2-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.70   |
 | 0.11.3<br/>(0.11.3-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.72   |
+| 0.11.4<br/>(0.11.4-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.72   |
+| 0.11.5<br/>(0.11.5-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.74   |
+| 0.11.6<br/>(0.11.6-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.80   |
 
 ## 参考
 
