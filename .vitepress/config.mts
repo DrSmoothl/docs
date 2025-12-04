@@ -107,8 +107,9 @@ export default defineConfig({
                 { text: '如何避免0/1问题', link: '/manual/other/questions-with-yes-or-no-answers' },
               ]
             },
-            { text: 'QQ 群', link: '/manual/other/qq_group' },
+            { text: '官方社群', link: '/manual/other/qq_group' },
             { text: '最终用户许可协议', link: '/manual/other/EULA' },
+            { text: '更新日志', link: '/manual/other/changelog' },
           ]
         }
       ],

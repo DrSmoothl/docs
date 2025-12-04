@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       pnpm:
-        specifier: ^10.15.0
-        version: 10.15.0
+        specifier: ^10.24.0
+        version: 10.24.0
       vitepress-plugin-announcement:
         specifier: ^0.1.5
         version: 0.1.5(vitepress@1.6.4(@algolia/client-search@5.21.0)(postcss@8.5.3)(react@18.3.1)(search-insights@2.17.3))
@@ -1112,8 +1112,8 @@ packages:
   pkg-types@2.1.0:
     resolution: {integrity: sha512-wmJwA+8ihJixSoHKxZJRBQG1oY8Yr9pGLzRmSsNms0iNWyHHAlZCa7mmKiFR10YPZuz/2k169JiS/inOjBCZ2A==}
 
-  pnpm@10.15.0:
-    resolution: {integrity: sha512-SG68JZ0+mZpOhpHOA7XKxKccvso5Nyqbdiy1AM/fCHPiyxar49lRse4s8BJQPwJ7mLZYTk3yJSTgx0UNnseqew==}
+  pnpm@10.24.0:
+    resolution: {integrity: sha512-Af+K5xtEGZA7ZcYPstydNM+LtuBtA73hEu8496NNaQTEJLpmvqXNzxKJAjC/OflYBHMUDtnJRv7zKLblI4o0Wg==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -2497,7 +2497,7 @@ snapshots:
       exsolve: 1.0.5
       pathe: 2.0.3
 
-  pnpm@10.15.0: {}
+  pnpm@10.24.0: {}
 
   points-on-curve@0.2.0: {}
 
