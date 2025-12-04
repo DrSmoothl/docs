@@ -109,9 +109,9 @@ export default defineConfig({
             },
             { text: '官方社群', link: '/manual/other/qq_group' },
             { text: '最终用户许可协议', link: '/manual/other/EULA' },
-            { text: '更新日志', link: '/manual/other/changelog' },
           ]
-        }
+        },
+        { text: '更新日志', link: '/manual/other/changelog' },
       ],
  
       '/develop/': [
