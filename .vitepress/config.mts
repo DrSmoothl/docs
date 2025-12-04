@@ -15,17 +15,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
-      { text: '功能介绍',
-        items: [
-          { text: '聊天系统', link: '/features/chat' },
-          { text: '表达学习', link: '/features/expression' },
-          { text: '个性系统', link: '/features/personality' },
-          { text: '记忆检索', link: '/features/memory_retrieval' },
-          { text: '插件系统', link: '/features/plugins' },
-          { text: '黑话系统', link: '/features/jargon' },
-          { text: '表情包', link: '/features/emoji' },
-        ]
-      },
+      { text: '功能介绍',link: '/features/index'},
       { text: '用户手册', link: '/manual/' },
       { text: '开发文档', link: '/develop/' },
       {text: '官方Q群', link:'/manual/other/qq_group'},

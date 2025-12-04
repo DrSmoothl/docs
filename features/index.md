@@ -1,154 +1,56 @@
-# 📄 MaiBot 使用指南
+# MaiBot：拟人化AI聊天机器人
 
-我将向你注意介绍麦麦的所有主要功能和次要功能，以及特性
+MaiBot 是一款开源的智能聊天机器人，专注于为群组聊天（如QQ群）提供**拟人化的交互体验**。她基于多模型协作架构，结合自然语言处理与仿生思考规划，旨在让对话更自然、更有温度。
 
-<style>
-.feature-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin: 30px 0;
-}
+## 我们的设计理念
 
-.feature-card {
-  border-radius: 15px;
-  padding: 25px;
-  color: white !important;
-  text-decoration: none !important;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
+MaiBot 的核心目标是**拟人化**——我们相信，一个能够理解情感、记忆对话并拥有个性的AI，比单纯的功能性机器人更能融入社群。因此，MaiBot 被设计为一个**会犯错、会学习、会成长**的虚拟伙伴，而非完美的工具。
 
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
+## 🧠 拟人化功能
 
-.feature-card-content {
-  position: relative;
-  z-index: 2;
-}
+MaiBot 通过以下功能实现高度拟人化：
 
-.feature-card h3 {
-  margin: 0 0 15px 0;
-  font-size: 1.4em;
-  font-weight: 600;
-  color: white;
-}
+- **自然对话风格**：基于上下文理解的回复机制，避免机械式应答，贴近人类日常交流习惯。
+- **情绪感知与表达**：内置情绪系统，能够识别用户情绪并调整语气，让互动更具同理心。
+- **持久记忆系统**：主动记录对话细节（如兴趣、习惯），并在后续聊天中自然引用，保持对话连贯性。
+- **动态个性演化**：每次交互后，MaiBot 会微调自身人格，逐渐适应用户的交流风格。
+- **表情包与表情符号**：支持在QQ群中理解、使用表情包，增强表达的生动性。
+- **学习群聊黑话**：自动学习群内特有的梗、俚语，并融入自己的表达，快速融入社区文化。
 
-.feature-card p {
-  margin: 0;
-  opacity: 0.9;
-  line-height: 1.5;
-  color: white;
-}
+## 🤖 技术实现
 
-.feature-card a {
-  text-decoration: none !important;
-  color: inherit !important;
-}
+为了实现真实感交互，MaiBot 采用了以下技术方案：
 
-/* 不同功能的颜色 */
-.chat-card {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-}
+- **多模型协作**：多个大型语言模型（LLM）分工负责理解、规划与生成，提升对话的自然度与智能度。
+- **仿生思考规划**：参考认知科学理论，设计模块化思考流程，模拟人类在聊天时的决策过程。
+- **情感与记忆引擎**：情感模块实时分析用户情绪，记忆模块持久化存储对话历史，确保每次交互都有上下文支持。
+- **行为规划模块**：根据时间、上下文、群活跃度等因素动态决定发言时机，避免刷屏或沉默，更像真实群成员。
 
-.personality-card {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-}
+## 🏗️ 架构概览
 
-.expression-card {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
+MaiBot 基于 **Python** 开发，采用模块化设计，核心组件包括：
 
-.memory-card {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-}
+- **聊天控制器**：协调整个对话流程。
+- **记忆管理器**：负责短期与长期记忆的存储与检索。
+- **情感表达器**：处理情绪识别与表达。
+- **个性配置器**：管理机器人的人格设定。
+- **插件系统**：提供丰富的 API 和事件接口，方便开发者扩展功能。
 
-.jargon-card {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
-}
+MaiBot 支持多种部署方式（Docker、Windows、Linux、macOS），并提供了友好的 WebUI 配置界面，让非技术用户也能轻松上手。
 
-.lpmm-card {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-}
+## 🌍 开源与社区
 
-.emoji-card {
-  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-}
-</style>
+MaiBot 是一个完全开源的社区项目，采用 **GPL-3.0** 许可证。我们欢迎每一位用户和开发者参与进来：
 
-<div class="feature-cards">
-  <a href="/features/chat" class="feature-card chat-card">
-    <div class="feature-card-content">
-      <h3>💬 聊天系统</h3>
-      <p>聊天系统是麦麦的核心，这个系统能够在群聊中把握合适的发言时机，模仿人类的发言规律。由于不同群聊环境不同，你可能需要针对自己的需要，进行自己的配置。</p>
-    </div>
-  </a>
-</div>
+- **提交问题与建议**：在 [GitHub 仓库](https://github.com/MaiM-with-u/MaiBot) 报告 bug 或提出功能需求。
+- **贡献代码**：通过 Pull Request 改进核心功能或添加新特性。
+- **开发插件**：利用插件系统为 MaiBot 增加自定义技能，丰富她的能力。
+- **定制个性**：通过配置文件调整 MaiBot 的性格、语气，打造属于你的独一无二的伙伴。
 
-<div class="feature-cards">
-  <a href="/features/personality" class="feature-card personality-card">
-    <div class="feature-card-content">
-      <h3>🎭 个性</h3>
-      <p>麦麦提供了多个配置项来为每个你自己的麦麦定义不同的人格，性格，身份和说话风格。这些配置会在不同的地方发挥作用，不过我们不推荐太长的个性设置。</p>
-    </div>
-  </a>
-</div>
+## 开始使用
 
-<div class="feature-cards">
-  <a href="/features/expression" class="feature-card expression-card">
-    <div class="feature-card-content">
-      <h3>🗣️ 表达方式</h3>
-      <p>表达方式是麦麦特有的拟人功能，可以让麦麦学习特定群的说话风格，学习群聊中的言语方式和流行的梗。如果你想要配置在哪些群可以学习或使用，可以参见详细说明。</p>
-    </div>
-  </a>
-</div>
+准备好体验拟人化 AI 的魅力了吗？请参阅 [用户指南](/manual/) 获取详细的安装与配置步骤。如果有任何疑问，欢迎加入我们的用户交流群，与其他 MaiBot 爱好者一起讨论。
 
-<div class="feature-cards">
-  <a href="/features/memory_retrieval" class="feature-card memory-card">
-    <div class="feature-card-content">
-      <h3>🧠 记忆检索</h3>
-      <p>记忆检索系统会在回复前主动搜索聊天历史、黑话和知识库，确保发言与过去经历保持一致。了解如何配置检索迭代、工具与缓存策略。</p>
-    </div>
-  </a>
-</div>
+---
 
-<div class="feature-cards">
-  <a href="/features/jargon" class="feature-card jargon-card">
-    <div class="feature-card-content">
-      <h3>🌀 黑话系统</h3>
-      <p>黑话系统可以自动提取群里的俚语、自创梗并推断含义，供记忆检索和回复器随时引用。支持全局共享或按群隔离。</p>
-    </div>
-  </a>
-</div>
-
-<div class="feature-cards">
-  <a href="/manual/configuration/lpmm" class="feature-card lpmm-card">
-    <div class="feature-card-content">
-      <h3>📚 LPMM知识库</h3>
-      <p>麦麦使用了LPMM作为知识库系统，可以进行知识的学习，并在合适的场景下调用并理解。LPMM性能卓越，但是知识的学习需要花费一些API额度。</p>
-    </div>
-  </a>
-</div>
-
-<div class="feature-cards">
-  <a href="/features/emoji" class="feature-card emoji-card">
-    <div class="feature-card-content">
-      <h3>😄 表情包系统</h3>
-      <p>麦麦可以在QQ群聊中自由的偷取和使用表情包，对表情包进行理解。如果你想要配置表情包偷取频率，或者想要手动修改表情包，请阅读详细说明。</p>
-    </div>
-  </a>
-</div>
-
-## 常见问题解答
-
-有关常见问题的详细解答，请参考[常见问题](/manual/faq/)页面，其中包含：
-
-- API 相关问题
-- 部署故障排除
-- 功能使用疑问
-
+*MaiBot —— 不止是机器人，更是你的虚拟朋友。*
