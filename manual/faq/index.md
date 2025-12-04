@@ -12,7 +12,6 @@
 2. `talk_value_rules` 是否命中了当前时段导致降为 0。
 3. `plan_style` 是否要求“少说话”，可适度放宽。
 4. 是否启用了"仅 @ 必回"：`mentioned_bot_reply = true` 时，只要有人 @ 才会强制回复。
-   详见[聊天系统](../../features/chat.md)章节。
 
 **Q：提及必回没有生效？**
 确保群的 `@麦麦` 格式正确，并确认 `mentioned_bot_reply = true`、`at_bot_inevitable_reply` 大于 0。如果仍未生效，可在日志中搜索 `planner` 输出确认是否检测到提及事件。

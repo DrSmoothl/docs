@@ -159,9 +159,8 @@
 
 [最终用户许可协议](/manual/other/EULA)
 
-[提问的艺术(麦麦版本)](/manual/other/ask_art)
+[提问的艺术(麦麦版本)](/manual/other/smart-question-guide)
 
-[如何避免提出0/1问题](/manual/other/questions-with-yes-or-no-answers)
 
 :::info 提示
   如果想查看过时的文档可以前往[这里](/archives/)
