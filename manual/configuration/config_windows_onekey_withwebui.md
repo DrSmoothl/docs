@@ -401,7 +401,7 @@ https://template.com/v1（这里仅做展示，无任何实际作用）
 
 ![source_management_emoji](/images/lazy_deployment_images/configuration/source_management_emoji.png)
 
-![source_management_expression](C:/Users/25840/Documents/webknowledge/Maibotdocs/MaiBotOfficalDoc/public//images/lazy_deployment_images/configuration/source_management_expression.png)
+![source_management_expression](/images/lazy_deployment_images/configuration/source_management_expression.png)
 
 ![source_management_information](/images/lazy_deployment_images/configuration/source_management_information.png)
 

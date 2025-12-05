@@ -19,6 +19,5 @@
   - [表达学习](features/expression)
   - [记忆检索](features/memory_retrieval)
   - [黑话系统](features/jargon)
-  - [插件系统](features/plugins)
   - [表情包系统](features/emoji)
 - [LPMM 说明文档](lpmm)
