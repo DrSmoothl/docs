@@ -24,7 +24,7 @@
     ]
   },
   "dependencies": {
-    "pnpm": "^10.15.0",
+    "pnpm": "^10.24.0",
     "vitepress-plugin-announcement": "^0.1.5",
     "vitepress-plugin-group-icons": "^1.6.3",
     "vitepress-plugin-mermaid": "^2.0.17"

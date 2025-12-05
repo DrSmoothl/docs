@@ -1,6 +1,6 @@
 # 📄 MaiBot备份与恢复
 
-MaiBot数据均存储在`data`文件夹中
+> 别让你的麦麦变成"失忆症患者"——及时备份，让它永远记得你！
 
 MaiBot 文件夹结构：
 ```
@@ -9,19 +9,22 @@ MaiBot/
 ├── config/
 │   ├── bot_config.toml
 │   └── model_config.toml
+├── plugins/
+│   └── ...
 ├── .env
 └── ...
 ```
 因此，你想要备份麦麦，需要备份以下内容：
 
-### 1. `data` 文件夹
-- 用于存储表情包，知识库，聊天数据等。
-### 2. `bot_config.toml`文件
-- 用于存储人设、lpmm等机器人设置。
-### 3. `model_config.toml`文件
-- 用于存储调用的大模型信息，AI云服务提供商的KEY API
-### 4. `.env` 文件
-- 存储`maim_message`端口和地址。
+### `data` 文件夹
+- 用于存储表情包、知识库、记忆等。
+### `config` 文件夹
+- 用于存储配置文件。
+- 用于存储调用的大模型信息，AI云服务提供商等设置。
+### `plugins`文件
+- 用于存储调用的大模型信息，AI云服务提供商等设置。
+### `.env` 文件
+- 存储`maim_message`和 `webui` 的端口和地址。
 
 ::: details 如果你使用的是低于0.7.0版本的MaiBot，那么点开这里
 ### MongoDB 数据库备份与恢复

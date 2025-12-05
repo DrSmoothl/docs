@@ -120,7 +120,7 @@
 
 
 <div class="doc-cards">
-  <a href="/manual/usage/plugins" class="doc-card">
+  <a href="/manual/features/plugins" class="doc-card">
     <div class="doc-card-content">
       <h3>🔌 插件</h3>
       <p>获取插件，安装、配置和管理各种插件</p>
@@ -138,7 +138,7 @@
     </div>
   </a>
   
-  <a href="/manual/usage/backup" class="doc-card">
+  <a href="/manual/configuration/backup" class="doc-card">
     <div class="doc-card-content">
       <h3>💾 备份你的麦麦</h3>
       <p>安全地备份和恢复你的MaiBot数据</p>
@@ -159,9 +159,8 @@
 
 [最终用户许可协议](/manual/other/EULA)
 
-[提问的艺术(麦麦版本)](/manual/other/ask_art)
+[提问的艺术(麦麦版本)](/manual/other/smart-question-guide)
 
-[如何避免提出0/1问题](/manual/other/questions-with-yes-or-no-answers)
 
 :::info 提示
   如果想查看过时的文档可以前往[这里](/archives/)

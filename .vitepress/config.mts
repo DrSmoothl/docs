@@ -15,17 +15,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
-      { text: '功能介绍',
-        items: [
-          { text: '聊天系统', link: '/features/chat' },
-          { text: '表达学习', link: '/features/expression' },
-          { text: '个性系统', link: '/features/personality' },
-          { text: '记忆检索', link: '/features/memory_retrieval' },
-          { text: '插件系统', link: '/features/plugins' },
-          { text: '黑话系统', link: '/features/jargon' },
-          { text: '表情包', link: '/features/emoji' },
-        ]
-      },
+      { text: '功能介绍',link: '/features/index'},
       { text: '用户手册', link: '/manual/' },
       { text: '开发文档', link: '/develop/' },
       {text: '官方Q群', link:'/manual/other/qq_group'},
@@ -49,10 +39,15 @@ export default defineConfig({
             { text: 'Linux部署', link: '/manual/deployment/mmc_deploy_linux' },
             { text: 'macOS部署', link: '/manual/deployment/mmc_deploy_macos' },
             { text: 'Docker部署', link: '/manual/deployment/mmc_deploy_docker' },
-            { text: 'Android部署', link: '/manual/deployment/mmc_deploy_android' },
-            { text: 'Kubernetes部署', link: '/manual/deployment/mmc_deploy_kubernetes' },
-            { text: '1Panel 部署(社区)', link: '/manual/deployment/community/1panel' },
-            { text: 'Linux一键脚本部署(社区)', link: '/manual/deployment/community/linux_one_key' },
+            { text: '其他部署方式', 
+              collapsed: true, 
+              items: [
+                { text: 'Android部署', link: '/manual/deployment/mmc_deploy_android' },
+                { text: 'Kubernetes部署', link: '/manual/deployment/mmc_deploy_kubernetes' },
+                { text: '1Panel 部署(社区)', link: '/manual/deployment/community/1panel' },
+                { text: 'Linux一键部署(社区)', link: '/manual/deployment/community/linux_one_key' },
+              ],
+            },
           ]
         },
         {
@@ -60,13 +55,18 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: '配置概览', link: '/manual/configuration/' },
-            { text: '麦麦设置配置教程', link: '/manual/configuration/configuration_standard' },
-            { text: '模型设置配置教程', link: '/manual/configuration/configuration_model_standard' },
+            { text: '关于配置指南', link: '/manual/configuration/configuration_standard' },
+            { text: '关于模型配置', link: '/manual/configuration/configuration_model_standard' },
             { text: 'WebUI通用配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},
-            { text: 'LPMM知识库', link: '/manual/configuration/lpmm' },
-            { text: 'LPMM手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
-            { text: 'LPMM导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
-            { text: '备份你的麦麦', link: '/manual/configuration/backup' },
+            { text: 'LPMM', 
+              collapsed: true, 
+              items: [
+                { text: '使用说明', link: '/manual/configuration/lpmm' },
+                { text: '手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
+                { text: '导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
+              ]
+            },
+            { text: '关于备份', link: '/manual/configuration/backup' },
           ]
         },
         {
@@ -99,19 +99,12 @@ export default defineConfig({
           text: '参考资源',
           collapsed: true,
           items: [
-            {
-              text: '文章集', 
-              collapsed: false, 
-              items: [
-                { text: '一篇小文', link: '/manual/other/ask_art'},
-                { text: '如何高效提问', link: '/manual/other/how-to-ask-questions' },
-                { text: '如何避免0/1问题', link: '/manual/other/questions-with-yes-or-no-answers' },
-              ]
-            },
-            { text: 'QQ 群', link: '/manual/other/qq_group' },
+            { text: '如何高效提问', link: '/manual/other/smart-question-guide' },
+            { text: '官方Q群', link: '/manual/other/qq_group' },
             { text: '最终用户许可协议', link: '/manual/other/EULA' },
           ]
-        }
+        },
+        { text: '更新日志', link: '/manual/other/changelog' },
       ],
  
       '/develop/': [
