@@ -62,6 +62,7 @@ export default defineConfig({
             { text: '配置概览', link: '/manual/configuration/' },
             { text: '麦麦设置配置教程', link: '/manual/configuration/configuration_standard' },
             { text: '模型设置配置教程', link: '/manual/configuration/configuration_model_standard' },
+            { text: 'WebUI通用配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},
             { text: 'LPMM知识库', link: '/manual/configuration/lpmm' },
             { text: 'LPMM手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
             { text: 'LPMM导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
