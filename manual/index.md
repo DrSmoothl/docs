@@ -120,7 +120,7 @@
 
 
 <div class="doc-cards">
-  <a href="/manual/usage/plugins" class="doc-card">
+  <a href="/manual/features/plugins" class="doc-card">
     <div class="doc-card-content">
       <h3>🔌 插件</h3>
       <p>获取插件，安装、配置和管理各种插件</p>
@@ -138,7 +138,7 @@
     </div>
   </a>
   
-  <a href="/manual/usage/backup" class="doc-card">
+  <a href="/manual/configuration/backup" class="doc-card">
     <div class="doc-card-content">
       <h3>💾 备份你的麦麦</h3>
       <p>安全地备份和恢复你的MaiBot数据</p>

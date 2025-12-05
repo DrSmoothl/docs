@@ -39,10 +39,15 @@ export default defineConfig({
             { text: 'Linux部署', link: '/manual/deployment/mmc_deploy_linux' },
             { text: 'macOS部署', link: '/manual/deployment/mmc_deploy_macos' },
             { text: 'Docker部署', link: '/manual/deployment/mmc_deploy_docker' },
-            { text: 'Android部署', link: '/manual/deployment/mmc_deploy_android' },
-            { text: 'Kubernetes部署', link: '/manual/deployment/mmc_deploy_kubernetes' },
-            { text: '1Panel 部署(社区)', link: '/manual/deployment/community/1panel' },
-            { text: 'Linux一键脚本部署(社区)', link: '/manual/deployment/community/linux_one_key' },
+            { text: '其他部署方式', 
+              collapsed: true, 
+              items: [
+                { text: 'Android部署', link: '/manual/deployment/mmc_deploy_android' },
+                { text: 'Kubernetes部署', link: '/manual/deployment/mmc_deploy_kubernetes' },
+                { text: '1Panel 部署(社区)', link: '/manual/deployment/community/1panel' },
+                { text: 'Linux一键部署(社区)', link: '/manual/deployment/community/linux_one_key' },
+              ],
+            },
           ]
         },
         {
@@ -50,12 +55,17 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: '配置概览', link: '/manual/configuration/' },
-            { text: '麦麦设置配置教程', link: '/manual/configuration/configuration_standard' },
-            { text: '模型设置配置教程', link: '/manual/configuration/configuration_model_standard' },
-            { text: 'LPMM知识库', link: '/manual/configuration/lpmm' },
-            { text: 'LPMM手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
-            { text: 'LPMM导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
-            { text: '备份你的麦麦', link: '/manual/configuration/backup' },
+            { text: '关于配置指南', link: '/manual/configuration/configuration_standard' },
+            { text: '关于模型配置', link: '/manual/configuration/configuration_model_standard' },
+            { text: 'LPMM', 
+              collapsed: true, 
+              items: [
+                { text: '使用说明', link: '/manual/configuration/lpmm' },
+                { text: '手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
+                { text: '导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
+              ]
+            },
+            { text: '关于备份', link: '/manual/configuration/backup' },
           ]
         },
         {
