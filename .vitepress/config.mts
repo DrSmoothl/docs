@@ -57,6 +57,7 @@ export default defineConfig({
             { text: '配置概览', link: '/manual/configuration/' },
             { text: '关于配置指南', link: '/manual/configuration/configuration_standard' },
             { text: '关于模型配置', link: '/manual/configuration/configuration_model_standard' },
+            { text: 'WebUI通用配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},
             { text: 'LPMM', 
               collapsed: true, 
               items: [
