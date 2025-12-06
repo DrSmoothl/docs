@@ -120,7 +120,7 @@
 
 
 <div class="doc-cards">
-  <a href="/manual/features/plugins" class="doc-card">
+  <a href="/features/plugins" class="doc-card">
     <div class="doc-card-content">
       <h3>🔌 插件</h3>
       <p>获取插件，安装、配置和管理各种插件</p>
