@@ -122,8 +122,12 @@ class MyPlugin(BasePlugin):
 | `password` | 密码输入框（带显示/隐藏切换） |
 | `textarea` | 多行文本域 |
 | `number` | 数字输入框 |
-| `color` | 颜色选择器 |
-| `code` | 代码编辑器 |
+| `switch` | 开关切换（布尔值） |
+| `slider` | 滑块（需配合 min/max） |
+| `select` | 下拉选择（需配合 choices） |
+| `list` | 动态列表编辑器（支持拖拽排序） |
+| `color` | 颜色选择器（计划中） |
+| `code` | 代码编辑器（计划中） |
 | `file` | 文件上传（计划中） |
 | `json` | JSON 编辑器（计划中） |
 
@@ -134,6 +138,55 @@ class MyPlugin(BasePlugin):
 | `group` | `str` | 字段分组，在 section 内再细分 |
 | `depends_on` | `str` | 依赖的字段路径，如 `"section.field"` |
 | `depends_value` | `Any` | 依赖字段需要的值 |
+
+#### 列表类型专用
+
+| 参数 | 类型 | 说明 |
+|------|------|------|
+| `item_type` | `str` | 数组元素类型：`"string"`, `"number"`, `"object"` |
+| `item_fields` | `Dict[str, Any]` | 当 `item_type="object"` 时，定义对象的字段结构 |
+| `min_items` | `int` | 数组最小元素数量 |
+| `max_items` | `int` | 数组最大元素数量 |
+
+**列表类型示例：**
+
+```python
+# 简单字符串列表
+"keywords": ConfigField(
+    type=list,
+    default=["关键词1", "关键词2"],
+    description="触发关键词",
+    item_type="string",
+    placeholder="输入关键词",
+    max_items=20,
+    hint="最多支持 20 个关键词"
+),
+
+# 数字列表
+"retry_delays": ConfigField(
+    type=list,
+    default=[1, 2, 5, 10],
+    description="重试延迟（秒）",
+    item_type="number",
+    min_items=1,
+    max_items=5,
+),
+
+# 对象列表（复杂结构）
+"api_endpoints": ConfigField(
+    type=list,
+    default=[{"name": "主服务器", "url": "https://api.example.com"}],
+    description="API 端点列表",
+    item_type="object",
+    item_fields={
+        "name": {"type": "string", "label": "名称", "placeholder": "端点名称"},
+        "url": {"type": "string", "label": "URL", "placeholder": "https://..."},
+        "priority": {"type": "number", "label": "优先级", "default": 0},
+    },
+    min_items=1,
+    max_items=5,
+),
+```
 
 ### 控件自动推断规则
 
