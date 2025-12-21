@@ -68,7 +68,7 @@ bash install_MaiBot_1Panel.bash
 4. 在1Panel的"应用商店"页面重启"maibot"，更新适配器设置
 
 > [!WARNING]
-> 适配器配置保存之后使用 WebUI 的重启功能适配器并不会重启，必须在1Panel重启整个应用。
+> 使用 WebUI 保存适配器配置之后，WebUI 的重启功能并不会重启适配器，必须在 1Panel 重启整个应用。
 
 ## 安装插件
 
