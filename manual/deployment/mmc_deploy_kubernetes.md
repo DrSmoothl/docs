@@ -4,6 +4,8 @@
 
 本文档默认你熟悉 Kubernetes 和 Helm，因此不会详细说明每一部分的作用。
 
+此 Helm Chart 使用 [MaiBot-Napcat-Adapter](https://github.com/Mai-with-u/MaiBot-Napcat-Adapter) 作为唯一适配器。
+
 ## 📋 环境要求
 
 - ✅ 已部署 Kubernetes（可以是单节点集群）
@@ -21,23 +23,18 @@
 
 你可以在 MaiBot 代码仓库的 [helm-chart 分支](https://github.com/Mai-with-u/MaiBot/tree/helm-chart/helm-chart) 中查看所有可用的 Helm Chart 版本以及对应的麦麦版本。
 
-本文档后续以`<MAIBOT_VERSION>`等字样作为 Helm Chart 版本的占位符，请将其替换为你需要安装的实际版本。
+本文档后续以`<CHART_VERSION>`等字样作为 Helm Chart 版本的占位符，请将其替换为你需要安装的实际版本。若省略`--version`标志，则默认安装最新的正式版本。
 
 如果你想查看 Chart 的信息：
 ```shell
-helm show chart oci://reg.mikumikumi.xyz/maibot/maibot --version <MAIBOT_VERSION>
-```
-
-如果你想拉取完整的 Chart 到本地：
-```shell
-helm pull oci://reg.mikumikumi.xyz/maibot/maibot --version <MAIBOT_VERSION>
+helm show chart oci://reg.mikumikumi.xyz/maibot/maibot --version <CHART_VERSION>
 ```
 
 ### 📝 二、获取并修改 Chart 的 values 文件
 
 将 Chart 的 values 文件输出到 `maibot.yaml` 中：
 ```shell
-helm show values oci://reg.mikumikumi.xyz/maibot/maibot --version <MAIBOT_VERSION> > maibot.yaml
+helm show values oci://reg.mikumikumi.xyz/maibot/maibot --version <CHART_VERSION> > maibot.yaml
 ```
 
 编辑 `maibot.yaml` 文件，按需配置选项。
@@ -48,35 +45,39 @@ helm show values oci://reg.mikumikumi.xyz/maibot/maibot --version <MAIBOT_VERSIO
 
 1. `EULA` & `PRIVACY`: 用户必须同意这里的协议才能成功部署麦麦。
 
-2. `adapter`: 麦麦的Adapter的部署配置。
+2. `pre_processor`: 部署之前的预处理Job的配置。
 
-3. `core`: 麦麦本体的部署配置。
+3. `adapter`: 麦麦的Adapter的部署配置。
 
-4. `statistics_dashboard`: 麦麦的运行统计看板部署配置。
+4. `core`: 麦麦本体的部署配置。
+
+5. `statistics_dashboard`: 麦麦的运行统计看板部署配置。
 
    麦麦每隔一段时间会自动输出html格式的运行统计报告，此统计报告可以部署为看板。
 
    出于隐私考虑，默认禁用。
 
-5. `napcat`: Napcat的部署配置。
+6. `napcat`: Napcat的部署配置。
 
    考虑到复用外部Napcat实例的情况，Napcat部署已被解耦。用户可选是否要部署Napcat。
 
    默认会捆绑部署Napcat。
 
-6. `sqlite_web`: sqlite-web的部署配置。
+7. `sqlite_web`: sqlite-web的部署配置。
 
    通过sqlite-web可以在网页上操作麦麦的数据库，方便调试。不部署对麦麦的运行无影响。
 
    此服务如果暴露在公网会十分危险，默认不会部署。
 
-7. `config`: 这里填写麦麦各部分组件的运行配置文件。
+8. `config`: 这里填写麦麦各部分组件的运行配置。
 
-   这里填写的配置文件需要严格遵守yaml文件的缩进格式。
+   这里填写的配置仅会在初次部署时或用户指定时覆盖实际配置文件，且需要严格遵守yaml文件的缩进格式。
+
+   **如果你觉得填写这里的配置过于麻烦，可以不用填写这一部分，在部署成功后通过WebUI在图形界面中配置。**
+
+   - `override_*_config`: 指定本次部署/升级是否用以下配置覆盖实际配置文件。默认不覆盖。
 
    - `adapter_config`: 对应adapter的`config.toml`。详见 [Adapter 文档](https://docs.mai-mai.org/manual/adapters/napcat.html)。
-
-     此配置文件中对于`host`和`port`的配置会被上面`adapter.service`中的配置覆盖，因此不需要改动。
 
    - `core_model_config`: 对应core的`model_config.toml`。详见[模型配置指南](https://docs.mai-mai.org/manual/configuration/configuration_model_standard)。
 
@@ -98,15 +99,13 @@ kubectl create ns bot
 根据刚才编辑好的 `maibot.yaml`，将麦麦部署到 `bot` 命名空间中。为此安装实例取一个名字，例如 `maimai`。
 
 ```shell
-helm install maimai oci://reg.mikumikumi.xyz/maibot/maibot --namespace bot --version <MAIBOT_VERSION> --values maibot.yaml
+helm install maimai oci://reg.mikumikumi.xyz/maibot/maibot --namespace bot --version <CHART_VERSION> --values maibot.yaml
 ```
 
-adapter 的配置文件会通过 job 在部署时动态生成，因此部署会花费一分钟左右，耐心等待即可。
-
-如果是首次部署，在 adapter 的配置文件生成完毕之前，adapter Pod 可能会启动失败。这是正常现象，等待一分钟左右即可自行启动。
+首次部署时，为了适配 k8s 架构，预处理任务会覆写一些关键配置。这需要一些时间，因此部署进程可能比较慢，且部分Pod可能会无法启动，等待一分钟左右即可。
 
 ::: tip
-adapter 的配置文件生成任务是通过 Helm Chart 的 post-install hook 实现的，仅会在每次 helm install/upgrade/rollback 时触发。
+预处理任务是通过 Helm Chart 的 Post-Install Hook 实现的，仅会在每次 `helm install/upgrade/rollback` 时触发。
 :::
 
 ::: tip
@@ -166,53 +165,84 @@ adapter 的配置文件生成任务是通过 Helm Chart 的 post-install hook �
 
 Helm Chart 的开发通常会滞后主版本一段时间。当麦麦有了新的 Release，对应的 Helm Chart 可能晚几天才会发布，在这期间请耐心等待。
 
-当新版本的 Helm Chart 可用后，请按此步骤更新麦麦的安装实例：
+当新版本的 Helm Chart 可用后，请按此步骤更新麦麦的安装实例。
 
-1. 重命名旧版的 values 文件：
+1. 如果你不通过 Helm Chart 管理配置，则首先需要备份你的实际配置文件。
+   ```shell
+   kubectl cp -n bot maimai-maibot-adapter-0:/adapters/config.toml adapter_config.toml
+   kubectl cp -n bot maimai-maibot-core-0:/MaiMBot/config/bot_config.toml core_bot_config.toml
+   kubectl cp -n bot maimai-maibot-core-0:/MaiMBot/config/model_config.toml core_model_config.toml
+   ```
+
+2. 备份麦麦的各个组件的存储卷。
+
+   这不是必须的，但是是推荐做法，用于在升级出现问题时回滚。根据你的存储底层的不同实现，会有不同的备份方法。
+
+   在备份之前，需要首先关闭`core`和`adapter`组件：
+   ```shell
+   kubectl scale -n bot statefulset maimai-maibot-adapter --replicas 0
+   kubectl scale -n bot statefulset maimai-maibot-core --replicas 0
+   # 等待Pod完全终止再进行备份
+   ```
+
+3. 重命名旧版的 values 文件：
    ```shell
    mv maibot.yaml maibot-old.yaml
    ```
 
-2. 获取新版的 values 文件：
+4. 获取新版的 values 文件：
    ```shell
    helm show values oci://reg.mikumikumi.xyz/maibot/maibot --version <NEW_VERSION> > maibot.yaml
    ```
 
-3. 参照旧版本的 values 文件，按需填写新版本的 values 文件。
+5. 需要特别说明的是，配置文件无法自动升级到新版本，因此必须手动处理配置文件升级。
+
+   参照旧版本的 values 文件（如果你不通过 Helm Chart 管理配置，那么还需要参照刚才备份出来的的实际配置文件），按需填写新版本的 values 文件。
 
    通常 values 文件主体不会有大变动，而 config 部分会有较多变动，需要特别关注。
 
-4. 备份麦麦的各个组件的存储卷。这不是必须的，但是是推荐做法，用于在升级出现问题时回滚。
+   **如果你觉得填写`config`部分太麻烦，也可以不填写，而是在升级完毕后通过 WebUI 在图形界面上从零开始配置。但是这样的工作量可能会比较大。**
 
-5. 升级麦麦实例：
+6. 升级麦麦实例：
    ```shell
-   helm upgrade maimai oci://reg.mikumikumi.xyz/maibot/maibot --namespace bot --version <NEW_VERSION> --values maibot.yaml
+   helm upgrade maimai oci://reg.mikumikumi.xyz/maibot/maibot \
+       --namespace bot \
+       --version <NEW_VERSION> \
+       --values maibot.yaml \
+       --set config.override_adapter_config=true \
+       --set config.override_core_bot_config=true \
+       --set config.override_core_model_config=true
    ```
+   
+   注意需要使用`--set config.override_*_config=true`选项，指定使用新版配置文件强制覆盖原来的旧版配置文件，否则新版组件无法识别旧版配置。
 
 ## ✏️ 修改麦麦配置
 
-麦麦的配置文件会通过 ConfigMap 资源注入各个组件内。
+麦麦的配置文件存储于存储卷内。具体来说：
 
-对于通过 Helm Chart 部署的麦麦，如果需要修改配置，不应该直接修改这些 ConfigMap，否则下次 Helm 更新可能会覆盖掉所有配置。
+- `adapter`的配置文件存储于`<RELEASE_NAME>-maibot-adapter-config`PVC 绑定的存储卷内，对应容器内的`/adapters/`路径。
+- `core`的配置文件存储于`<RELEASE_NAME>-maibot-core-config`PVC 绑定的存储卷内，对应容器内的`/MaiMBot/config/`路径。
 
-最佳实践是重新配置 Helm Chart 的 values，然后通过`helm upgrade`更新麦麦的实例。
+通常来说，修改麦麦的配置文件有三种方式：
 
-```shell
-helm upgrade maimai oci://reg.mikumikumi.xyz/maibot/maibot --namespace bot --version <CURRENT_VERSION> --values maibot.yaml
-```
+1. 通过 WebUI 配置（推荐）。
+2. 进入容器或存储卷，直接修改配置文件。
+3. 完全不使用上述两种方案，只通过 Helm Chart 的`config`项来管理配置文件（这需要配置`config.override_*_config`恒为`true`）。
+   然后通过`helm upgrade`命令来更新实例，同时更新配置文件：
+   ```shell
+   helm upgrade maimai oci://reg.mikumikumi.xyz/maibot/maibot --namespace bot --version <CURRENT_VERSION> --values maibot.yaml
+   ```
 
 ## ↩ 回滚麦麦
 
-如果不慎改错了配置，可以使用`helm rollback`命令回滚部署配置：
+如果希望回退到以前部署过的版本，可以使用`helm rollback`命令回滚部署配置：
 ```shell
 helm history maimai --namespace bot  # 查看麦麦的所有部署版本历史
 helm rollback maimai --namespace bot  # 回到麦麦的上一个版本
 helm rollback maimai <HISTORY_INDEX> --namespace bot  # 回到麦麦的指定版本
 ```
 
-注意，这种方法回滚的只是麦麦的部署配置（如镜像版本）和各个组件的配置文件，麦麦保存的实际数据无法直接回滚，请谨慎操作。
-
-此方法也支持跨版本回滚，但存在风险。如果将麦麦由新版本回滚到旧版本，发现麦麦长时间无法启动，这可能是由于麦麦的新版数据无法被旧版本识别。这个时候需要将之前备份的旧版本的存储卷数据还原回去，才有可能恢复。
+**注意，这种方法回滚的只是麦麦的 k8s 部署配置（如镜像版本），各个组件的配置文件和实际数据无法直接回滚（需要手动恢复之前的备份），请谨慎操作。**
 
 ## 🗑 卸载麦麦
 
@@ -235,52 +265,38 @@ helm uninstall maimai -n bot
 
 在进行这些操作之前，推荐提前备份麦麦的存储卷数据。
 
-### 🔄 动态生成的 ConfigMap
+### ⚡ 旧版配置迁移
 
-adapter 的 ConfigMap 是每次部署/更新麦麦的安装实例时动态生成的。
+`0.11.6-beta`之前的版本将配置存储于 k8s 的 ConfigMap 资源中。随着版本迭代，麦麦对配置文件的操作复杂性增加，k8s 的适配复杂度也同步增加，且 WebUI 可以直接修改配置文件，因此自`0.11.6-beta`版本开始，各组件的配置不再存储于 k8s 的 ConfigMap 中，而是直接存储于存储卷的实际文件中。
 
-动态生成的原因：
+从旧版本升级的用户，旧的 ConfigMap 的配置会由预处理任务自动迁移到新的存储卷的配置文件中。
 
-- core 服务的 DNS 名称是动态的，无法在 adapter 服务的配置文件中提前确定。
-- 一些与 k8s 现有资源冲突的配置需要被重置。
+### 🔄 部署时自动重置的配置
 
-因此，首次部署时，ConfigMap 的生成会需要一些时间，adapter Pod会无法启动，等待一分钟左右即可。
+adapter 的配置中的`napcat_server`和`maibot_server`的`host`和`port`字段，会在每次部署/更新 Helm 安装实例时被自动重置。
+core 的配置中的`webui`和`maim_message`的部分字段也会在每次部署/更新 Helm 安装实例时被自动重置。
 
-### 🗙 挂载冲突
+自动重置的原因：
 
-如果启用了运行统计看板，那么 statistics_dashboard 会与 core 共同挂载 statistics_dashboard 存储卷，用于同步 html 文件。
+- core 的 Service 的 DNS 名称是动态的（由安装实例名拼接），无法在 adapter 的配置文件中提前确定。
+- 为了使 adapter 监听所有地址以及保持 Helm Chart 中配置的端口号，需要在 adapter 的配置文件中覆盖这些配置。
+- core 的 WebUI 启停需要由 Helm Chart 控制，以便正常创建 Service 和 Ingress 资源。
+- core 的 maim_message 的 api server 现在可以作为 k8s 服务暴露出来。监听的 IP 和端口需要由 Helm Chart 控制，以便 Service 正确映射。
 
-如果 k8s 集群有多个节点，且 statistics_dashboard 与 core 未调度到同一节点，那么就需要 statistics_dashboard 的 PVC 具备`ReadWriteMany`访问模式。
+首次部署时，预处理任务会负责重置这些配置。这会需要一些时间，因此部署进程可能比较慢，且部分Pod可能会无法启动，等待一分钟左右即可。
 
-不是所有存储卷的底层存储都支持`ReadWriteMany`访问模式。
+### 🗙 跨节点PVC挂载问题
 
-如果你的存储底层无法支持`ReadWriteMany`访问模式，你可以通过`nodeSelector`配置将 statistics_dashboard 与 core 调度到同一节点来避免问题。
+麦麦的一些组件会挂载同一 PVC，这主要是为了同步数据或修改配置。
 
-*如果启用了 sqlite-web ，那么上述问题也同样适用于 sqlite-web 与 core，需要注意。*
+如果 k8s 集群有多个节点，且共享相同 PVC 的 Pod 未调度到同一节点，那么就需要此 PVC 访问模式具备`ReadWriteMany`访问模式。
 
-### 🔌 麦麦的默认插件
+不是所有存储控制器都支持`ReadWriteMany`访问模式。
 
-麦麦的`core`容器提供了一些默认插件，以提升使用体验。但是插件目录存储在存储卷中，容器启动时挂载的存储卷会完全覆盖掉容器的默认插件目录，导致默认插件无法加载，也难以被用户感知。
+如果你的存储控制器无法支持`ReadWriteMany`访问模式，你可以通过`nodeSelector`配置将彼此之间共享相同 PVC 的 Pod 调度到同一节点来避免问题。
 
-为了解决这一问题，此 Helm Chart 中为`core`容器引入了初始化容器。此初始化容器用于为用户自动安装默认插件到存储卷中。可以选择启用（默认启用）。
-
-*初始化容器使用与`core`主容器相同的镜像，且用后即销毁，因此不会消耗额外的带宽和存储成本。*
-
-#### 触发插件安装的条件
-
-- 首次部署时（此时没有任何插件处于安装状态）
-- 默认插件更新（即默认插件内容发生变化）
-
-#### 安装状态识别能力
-
-初始化容器会记录安装过的默认插件，不会重复安装。为了实现这一点，初始化容器会将安装状态写入`/MaiMBot/data/plugins/.installed-setup-plugins`文件中。
-
-基于上述状态识别能力，如果用户不需要某个插件，可以将其删除。由于此插件已自动安装过（记录在状态文件中），即使插件本体不存在也不会再次安装（除非插件更新）。
-
-#### 插件更新
-
-一旦在镜像中检测到新版本插件（即插件内容不同），初始化容器即会用新插件覆盖旧插件。
-
-考虑到旧插件中可能存在用户自定义配置，因此旧插件在被覆盖前会备份到`/MaiMBot/data/plugins-backup`目录中，并以时间归档。
-
-因此在升级麦麦后，请注意观察初始容器的日志并重新配置插件。
+会共享 PVC 的组件列表：
+- `core`和`adapter`：共享`adapter-config`，用于为`core`的 WebUI 提供修改 adapter 的配置文件的能力。
+- `core`和`statistics-dashboard`：共享`statistics-dashboard`，用于同步统计数据的 html 文件。
+- `core`和`sqlite-web`：共享`maibot-core`，用于为`sqlite-web`提供操作 MaiBot 数据库的能力。
+- 部署时的预处理任务`preprocessor`和`adapter`、`core`：共享`adapter-config`和`core-config`，用于初始化`core`和`adapter`的配置文件。
