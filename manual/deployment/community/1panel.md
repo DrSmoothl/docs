@@ -45,7 +45,8 @@ bash install_MaiBot_1Panel.bash
 
 > [!WARNING]  
 > 本应用不内置 NapCat，请单独部署 NapCat，并在 `./docker-config/adapters/config.toml` 中配置对应的连接地址。
-> 你可以使用我们的NapCat APP集成，位于https://github.com/Puiching-Memory/MaiBot-1Panel/tree/napcat
+> 你也可以使用我们的NapCat APP集成，位于https://github.com/Puiching-Memory/MaiBot-1Panel/tree/napcat
+> 目前尚未提供napcat的自动安装脚本，但是安装逻辑是相同的
 
 > [!WARNING]
 > 本应用不内置数据库可视化工具（如 Chat2DB / SQLite-Web），如需使用请在 1Panel 中单独安装对应应用，或自行以 Docker 方式部署，并连接到 `./data/MaiBot/MaiBot.db`。
@@ -60,17 +61,14 @@ bash install_MaiBot_1Panel.bash
 3. 在`网络配置`中，添加新的webSocket客户端，地址填写 `ws://maibot_adapters:8095`（或你在 `config.toml` 中配置的地址）
 4. (可选)，添加新的http服务器，地址填写 0.0.0.0:<端口号>
 
-#### 安装后，MaiBot需要调整配置：
-1. 进入`应用安装目录`
-2. ./docker-config/adapters/config.toml 调整群聊白名单
-3. ./docker-config/mmc/model_config.toml 调整模型和API Key等配置
-4. ./docker-config/mmc/bot_config.toml 调整机器人设置
-5. 点击`重启应用`以生效
+#### MaiBot 配置说明：
+1. MaiBot WebUI 默认端口 18001，访问地址：http://您的服务器IP:18001
+2. 在"麦麦适配器设置"页面，修改工作模式为"预设模式"，然后选择"部署方式"为Docker
+3. 在相同页面点击"聊天控制"选项，添加群聊黑白名单
+4. 在1Panel的"应用商店"页面重启"maibot"，更新适配器设置
 
-#### 示例配置文件
-- [model_config_qwen.toml](https://github.com/Puiching-Memory/MaiBot-1Panel/blob/MaiBot/apps/maibot/model_config_qwen.toml) - 全部使用阿里云百炼 Qwen 模型的配置文件
-- Qwen 模型价格查询：[价格表](https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=2840914)
-- Qwen VL 系列模型回复较慢，请延长超时时间，至少30~60秒
+> [!WARNING]
+> 使用 WebUI 保存适配器配置之后，WebUI 的重启功能并不会重启适配器，必须在 1Panel 重启整个应用。
 
 ## 安装插件
 
@@ -93,15 +91,9 @@ bash install_MaiBot_1Panel.bash
 - 安装默认同意MaiBot EULA（不确定该策略是否合理，请在issue中反馈）
 
 ## 兼容性矩阵
-|        MaiBot版本        |          Adapters版本          | NapCat版本 |
-| :----------------------: | :----------------------------: | :--------: |
-| 0.11.0<br/>(dev-6d70cf7) | 0.5.5<br/>(dev-20251005093201) |   4.9.14   |
-| 0.11.1<br/>(dev-69a6116) | 0.5.5<br/>(dev-20251005093201) |   4.9.25   |
-| 0.11.2<br/>(0.11.2-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.70   |
-| 0.11.3<br/>(0.11.3-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.72   |
-| 0.11.4<br/>(0.11.4-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.72   |
-| 0.11.5<br/>(0.11.5-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.74   |
-| 0.11.6<br/>(0.11.6-beta) | 0.5.5<br/>(dev-20251005093201) |   4.9.80   |
+| MaiBot版本 |    Adapters版本    | NapCat版本 |
+| :--------: | :----------------: | :--------: |
+|   0.12.0   | dev-20251220054512 |   4.9.83   |
 
 ## 参考
 
