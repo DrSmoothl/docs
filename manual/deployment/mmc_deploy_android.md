@@ -245,7 +245,6 @@ port = 8095        # Napcat设定的端口
 heartbeat = 30     # 与Napcat设置的心跳相同（按秒计）
 
 [MaiBot_Server] # 连接麦麦的ws服务设置
-platform_name = "qq" # 标识adapter的名称（必填）
 host = "localhost"   # 麦麦在.env文件中设置的主机地址，即HOST字段
 port = 8000          # 麦麦在.env文件中设置的端口，即PORT字段
 ```
