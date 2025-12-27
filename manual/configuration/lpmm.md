@@ -285,15 +285,10 @@ cb43a6a60ed3   none              null      local
 
 ## 关于“麦麦笔记本”
 
-*麦麦笔记本*是一款由**非麦麦官方**搭建的麦麦相关内容分享站。目前支持了知识库（lpmm）和人设卡（配置文件）。**入站请阅读 公告中心 的“入站须知”**
+*麦麦笔记本*是一款由**非麦麦官方**搭建的麦麦相关内容分享站。计划支持分享知识库（lpmm）和人设卡（配置文件）。
 
-目前麦麦笔记本处于重构状态。如果您是[旧站](https://maimainp.stmfanserver.xyz)的老用户，我们可能会**删除您的账户**。未来的新站会搭建在 maimnp.tech 上。目前没有搭建完成，不推荐进行访问。欢迎[加入我们的群聊](https://qun.qq.com/universal-share/share?ac=1&authKey=ZiuDZbPUb%2BQ1YDZ4PmQ8t9bSMmUdG3iaYiVEaxDEYGBY9vgDv7wNtoIHjcAShksW&busi_data=eyJncm91cENvZGUiOiIxMDQ5NzQ2NDQ0IiwidG9rZW4iOiJBSERleHpPbVpyVERSb0NiSjgwcVA2aHJhVTl3Mk1YZzhzRXhPUHVGRUcyeFJWckozQ2E2Uko5RW5WaGVBNjh0IiwidWluIjoiMzYyNjU5OTM4OCJ9&data=zRGh-l6uzRKTHxE2KiozVjxkfTTth6k_PgPdWoOSbQduVIhk7pBKj4GQ8mkjuTGLSvZZI1rdmuwfwRVUlrAccQ&svctype=4&tempid=h5_group_info)以~~视奸~~开发进度喵~
-
-如果您有一定的Vite前端网页开发/面向AI编程基础，或者您有意向帮助站主审核知识库。欢迎联系*STMfan(QQ:3626599388)*。站主诚挚欢迎每一位加入“麦麦笔记本”的贡献者！
+由于原站主STMfan的个人原因，麦麦笔记本项目计划转手。有意愿者欢迎加入群聊1049746444详谈。
 
 ::: warning 警告
 **由于“麦麦笔记本”的非官方属性，请不要将任何“麦麦笔记本”的Bug与问题反馈到官方渠道！**
-
-**“麦麦笔记本”的站主STMfan会对每一个知识库进行审核。请不要试图上传违法违规内容！违者作封号处理！**
-:::
 
