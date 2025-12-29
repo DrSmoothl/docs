@@ -1,4 +1,4 @@
-# 🔧 配置指南
+#  配置指南
 
 ## 简介
 
@@ -6,22 +6,20 @@
 
 （如果你要配置哪些群可以聊天，需要到适配器设置中配置）
 
-如果你要了解模型配置的内容，包括该选用哪些模型，请参考[bot_config模型配置教程](./configuration_model_standard)
+如果你要了解模型配置的内容，包括该选用哪些模型，请参考[模型配置教程](./configuration_model_standard)
 
 ## 配置文件结构
 
  MaiBot 现在使用独立的 `bot_config.toml` 文件来配置机器人行为。配置文件包含以下主要部分：
 
-- `[inner]` - 版本信息
 - `[bot]` - 机器人基本信息
-- `[personality]` - 人设、兴趣、表达风格
-- `[expression]` - 表达学习配置
+- `[personality]` - 人设、表达风格
+- `[expression]` - 表达学习配置（包含黑话配置）
 - `[chat]` - 聊天节奏与上下文
 - `[memory]` - 记忆模块配置
-- `[jargon]` - 全局黑话模式
+- `[dream]` - 做梦功能配置
 - `[message_receive]` - 消息过滤规则
 - `[tool]` - 工具开关
-- `[mood]` - 情绪系统
 - `[emoji]` - 表情包功能
 - `[voice]` - 语音识别
 - `[lpmm_knowledge]` - LPMM知识库
@@ -30,27 +28,11 @@
 - `[log]` - 日志配置
 - `[debug]` - 调试开关
 - `[maim_message]` - maim_message 服务
+- `[webui]` - WebUI 配置
 - `[telemetry]` - 统计信息
 - `[experimental]` - 实验性功能
-- `[relationship]` - 关系系统（暂保留占位）
 
 ## 配置文件详解
-
-```toml
-[inner]
-version = "6.21.8"
-
-#----以下是给开发人员阅读的，如果你只是部署了麦麦，不需要阅读----
-#如果你想要修改配置文件，请递增version的值
-#如果新增项目，请阅读src/config/official_configs.py中的说明
-#
-# 版本格式：主版本号.次版本号.修订号，版本号递增规则如下：
-#     主版本号：MMC版本更新
-#     次版本号：配置文件内容大更新
-#     修订号：配置文件内容小更新
-#----以上是给开发人员阅读的，如果你只是部署了麦麦，不需要阅读----
-```
-
 <hr class="custom_hr"/>
 
 ```toml
@@ -71,24 +53,32 @@ alias_names = ["麦叠", "牢麦"] # 麦麦的别名
 
 ```toml
 [personality]
-# 建议120字以内，描述人格特质 和 身份特征
-personality = "是一个女大学生，现在在读大二，会刷贴吧。"
+# 建议100字以内，描述人格特质 和 身份特征
+personality = "是一个大二在读女大学生，现在正在上网和群友聊天，有时有点攻击性，有时比较温柔"  
 #アイデンティティがない 生まれないらららら
-# 描述麦麦说话的表达风格，表达习惯，如要修改，可以酌情新增内容
-reply_style = "请回复的平淡一些，简短一些，说中文，不要刻意突出自身学科背景。可以参考贴吧，知乎和微博的回复风格。"
-# 麦麦的兴趣，会影响麦麦对什么话题进行回复
-interest = "对技术相关话题，游戏和动漫相关话题感兴趣，也对日常话题感兴趣，不喜欢太过沉重严肃的话题"
+# 描述麦麦说话的表达风格，表达习惯，如要修改，可以酌情新增内容，建议1-2行
+reply_style = "请不要刻意突出自身学科背景。可以参考贴吧，知乎和微博的回复风格。"
 
-# 麦麦的说话规则，行为风格:
+# 多种回复风格，根据概率随机选择表达风格
+multiple_reply_style = [
+    # "你的风格平淡但不失讽刺，很简短,很白话。可以参考贴吧，微博的回复风格。",
+    # "用1-2个字进行回复",
+    # "用1-2个符号进行回复",
+    # "言辭凝練古雅，穿插《論語》經句卻不晦澀，以文言短句為基，輔以淺白語意，持長者溫和風範，全用繁體字表達，具先秦儒者談吐韻致。",
+    # "带点翻译腔，但不要太长",
+]
+
+# 使用多种回复风风格的概率
+multiple_probability = 0.3
+
+# 麦麦的说话规则和行为规则:
 plan_style = """
 1.思考**所有**的可用的action中的**每个动作**是否符合当下条件，如果动作使用条件符合聊天内容就使用
 2.如果相同的内容已经被执行，请不要重复执行
-3.请控制你的发言频率，不要太过频繁的发言
-4.如果有人对你感到厌烦，请减少回复
-5.如果有人对你进行攻击，或者情绪激动，请你以合适的方法应对"""
-
-# 麦麦识图规则，不建议修改
-visual_style = "请用中文描述这张图片的内容。如果有文字，请把文字描述概括出来，请留意其主题，直观感受，输出为一段平文本，最多30字，请注意不要分点，就输出一段文本"
+3.你对技术相关话题，游戏和动漫相关话题感兴趣，也对日常话题感兴趣，不喜欢太过沉重严肃的话题
+4.请控制你的发言频率，不要太过频繁的发言
+5.如果有人对你感到厌烦，请减少回复
+6.如果有人在追问你，或者话题没有说完，请你继续回复"""
 
 # 麦麦私聊的说话规则，行为风格:
 private_plan_style = """
@@ -96,22 +86,27 @@ private_plan_style = """
 2.如果相同的内容已经被执行，请不要重复执行
 3.某句话如果已经被回复过，不要重复回复"""
 
+# 多重人格，根据概率随机选择人格
 states = [
     "是一个女大学生，喜欢上网聊天，会刷小红书。" ,
     "是一个大二心理学生，会刷贴吧和中国知网。" ,
     "是一个赛博网友，最近很想吐槽人。" 
 ]
 
+# 使用多重人格的概率
 state_probability = 0.3
+
+# 麦麦识图规则，不建议修改
+visual_style = "请用中文描述这张图片的内容。如果有文字，请把文字描述概括出来，请留意其主题，直观感受，输出为一段平文本，最多30字，请注意不要分点，就输出一段文本"
 ```
 
 这部分是麦麦的核心人设部分。负责描述麦麦的核心人格特点和身份特点。
 
-- `personality`: 人格特质和身份特征描述，建议120字以内
-- `reply_style`: 说话的表达风格和习惯
-- `emotion_style`: 情感特征，影响情绪的变化情况
-- `interest`: 兴趣偏好，影响麦麦对话题的回复倾向
-- `plan_style`: 说话规则和行为风格
+- `personality`: 人格特质和身份特征描述，建议100字以内
+- `reply_style`: 说话的表达风格和习惯，建议1-2行
+- `multiple_reply_style`: 多种回复风格列表，根据概率随机选择
+- `multiple_probability`: 使用多种回复风格的概率（0-1之间）
+- `plan_style`: 说话规则和行为风格，包含兴趣偏好和发言控制
 - `visual_style`: 识图规则
 - `private_plan_style`: 私聊专用的说话规则
 - `states` 与 `state_probability`: 配置人格多样性，按照概率替换基础 `personality`
@@ -122,15 +117,14 @@ state_probability = 0.3
 [expression]
 # 表达学习配置
 learning_list = [ # 表达学习配置列表，支持按聊天流配置
-    ["", "enable", "enable", "1.0"],  # 全局配置：使用表达，启用学习，学习强度1.0
-    ["qq:1919810:group", "enable", "enable", "1.5"],  # 特定群聊配置：使用表达，启用学习，学习强度1.5
-    ["qq:114514:private", "enable", "disable", "0.5"],  # 特定私聊配置：使用表达，禁用学习，学习强度0.5
+    ["", "enable", "enable", "enable"],  # 全局配置：使用表达，启用学习，启用jargon学习
+    ["qq:1919810:group", "enable", "enable", "enable"],  # 特定群聊配置：使用表达，启用学习，启用jargon学习
+    ["qq:114514:private", "enable", "disable", "disable"],  # 特定私聊配置：使用表达，禁用学习，禁用jargon学习
     # 格式说明：
     # 第一位: chat_stream_id，空字符串表示全局配置
     # 第二位: 是否使用学到的表达 ("enable"/"disable")
-    # 第三位: 是否学习表达 ("enable"/"disable")
-    # 第四位: 学习强度（浮点数），影响学习频率，最短学习时间间隔 = 300/学习强度（秒）
-    # 学习强度越高，学习越频繁；学习强度越低，学习越少
+    # 第三位: 是否学习表达 ("enable"/"disable") 
+    # 第四位: 是否启用jargon学习 ("enable"/"disable")
 ]
 
 expression_groups = [
@@ -141,65 +135,120 @@ expression_groups = [
     # ["qq:123456:private","qq:654321:group"] - 特定互通组，组内chat_id共享表达方式
     # 注意：如果为群聊，则需要设置为group，如果设置为私聊，则需要设置为private
 ]
+
+expression_checked_only = true # 麦麦只会使用检查过的表达方式
+
+expression_self_reflect = true # 是否启用自动表达优化
+expression_auto_check_interval = 600 # 表达方式自动检查的间隔时间（单位：秒），默认值：600秒（10分钟）
+expression_auto_check_count = 20 # 每次自动检查时随机选取的表达方式数量，默认值：20条
+expression_auto_check_custom_criteria = [] # 表达方式自动检查的额外自定义评估标准，格式：["标准1", "标准2", "标准3", ...]，这些标准会被添加到评估提示词中，作为额外的评估要求
+
+expression_manual_reflect = false # 是否启用手动表达优化
+manual_reflect_operator_id = "" # 手动表达优化操作员ID，格式：platform:id:type (例如 "qq:123456:private" 或 "qq:654321:group")
+allow_reflect = [] # 允许进行表达反思的聊天流ID列表，格式：["qq:123456:private", "qq:654321:group", ...]，只有在此列表中的聊天流才会提出问题并跟踪。如果列表为空，则所有聊天流都可以进行表达反思（前提是 reflect = true）
+
+all_global_jargon = true # 是否开启全局黑话模式，注意，此功能关闭后，已经记录的全局黑话不会改变，需要手动删除
+enable_jargon_explanation = true # 是否在回复前尝试对上下文中的黑话进行解释（关闭可减少一次LLM调用，仅影响回复前的黑话匹配与解释，不影响黑话学习）
+jargon_mode = "planner" # 黑话解释来源模式，可选： "context"（使用上下文自动匹配黑话） 或 "planner"（仅使用Planner在reply动作中给出的unknown_words列表）
 ```
 
-- `learning_list` 支持按聊天流配置表达学习，可以针对不同的群聊或私聊设置不同的学习策略
+- `learning_list` 支持按聊天流配置表达学习，可以针对不同的群聊或私聊设置不同的学习策略，第四位字段改为jargon学习开关
 - `expression_groups` 可以设置互通组，让麦麦在不同的聊天中共享学习到的表达方式
+- `expression_checked_only`: 控制是否只使用检查过的表达方式
+- `expression_self_reflect`: 启用自动表达优化功能
+- `expression_auto_check_interval`: 自动检查表达方式的间隔时间
+- `expression_auto_check_count`: 每次自动检查时选取的表达方式数量
+- `expression_auto_check_custom_criteria`: 自定义评估标准列表
+- `expression_manual_reflect`: 启用手动表达优化功能
+- `manual_reflect_operator_id`: 手动表达优化的操作员ID
+- `allow_reflect`: 允许进行表达反思的聊天流ID列表
+- `all_global_jargon`: 是否开启全局黑话模式（原jargon配置已移至此）
+- `enable_jargon_explanation`: 是否在回复前解释黑话
+- `jargon_mode`: 黑话解释来源模式，可选 "context" 或 "planner"
 
 <hr class="custom_hr"/>
 
 ```toml
-[relationship]
-enable_relationship = true # 是否启用关系系统
-```
-- `enable_relationship` 开启后，麦麦会开始构建并记忆与其他人的关系。
-
-<hr class="custom_hr"/>
-
-```toml
-[chat] #麦麦的聊天设置
-talk_value = 1 #聊天频率，越小越沉默，范围0-1
+[chat] # 麦麦的聊天设置
+talk_value = 1 # 聊天频率，越小越沉默，范围0-1
 mentioned_bot_reply = true # 是否启用提及必回复
 max_context_size = 30 # 上下文长度
-planner_smooth = 2 # 规划器平滑系数，0为关闭
+planner_smooth = 3 # 规划器平滑，增大数值会减小planner负荷，略微降低反应速度，推荐1-5，0为关闭，必须大于等于0
+think_mode = "dynamic" # 思考模式，可选：classic（默认浅度思考和回复）、deep（会进行比较长的，深度回复）、dynamic（动态选择两种模式）
 
 enable_talk_value_rules = true # 是否启用动态发言频率规则
 
+# 动态发言频率规则：按时段/按chat_id调整 talk_value（优先匹配具体chat，再匹配全局）
+# 推荐格式（对象数组）：{ target="platform:id:type" 或 "", time="HH:MM-HH:MM", value=0.5 }
+# 说明:
+# - target 为空字符串表示全局；type 为 group/private，例如："qq:1919810:group" 或 "qq:114514:private"；
+# - 支持跨夜区间，例如 "23:00-02:00"；数值范围建议 0-1，如果 value 设置为0会自动转换为0.0001以避免除以零错误。
 talk_value_rules = [
     { target = "", time = "00:00-08:59", value = 0.8 },
     { target = "", time = "09:00-22:59", value = 1.0 },
     { target = "qq:1919810:group", time = "20:00-23:59", value = 0.6 },
     { target = "qq:114514:private", time = "00:00-23:59", value = 0.3 },
 ]
-
-include_planner_reasoning = false # 是否把planner推理传给回复器
 ```
 
 这部分是麦麦的聊天节奏与上下文控制：
 - `talk_value`: 全局聊天活跃度
 - `mentioned_bot_reply`: 是否启用提及必回复
 - `max_context_size`: 上下文窗口长度
-- `planner_smooth`: 平滑 planner 调度，数值越高越保守
-- `enable_talk_value_rules` + `talk_value_rules`: 根据时间段或 chat_id 调整 `talk_value`
-- `include_planner_reasoning`: 如需调试，可让回复器看到 planner 推理
+- `planner_smooth`: 规划器平滑，增大数值会减小planner负荷，略微降低反应速度，推荐1-5，0为关闭，必须大于等于0
+- `think_mode`: 思考模式，可选 "classic"（默认浅度思考和回复）、"deep"（会进行比较长的，深度回复）、"dynamic"（动态选择两种模式）
+- `enable_talk_value_rules` + `talk_value_rules`: 根据时间段或 chat_id 调整 `talk_value`，支持跨夜区间
 
 <hr class="custom_hr"/>
 
 ```toml
 [memory]
-max_agent_iterations = 3 # 记忆思考深度（最低为1）
+max_agent_iterations = 5 # 记忆思考深度（最低为1）
+agent_timeout_seconds = 180.0 # 最长回忆时间（秒），默认180秒
+global_memory = false # 是否允许记忆检索进行全局查询
+global_memory_blacklist = [
+    
+] # 全局记忆黑名单，当启用全局记忆时，不将特定聊天流纳入检索。格式: ["platform:id:type", ...]，例如: ["qq:1919810:private", "qq:114514:group"]
+planner_question = true # 是否使用 Planner 提供的 question 作为记忆检索问题。开启后，当 Planner 在 reply 动作中提供了 question 时，直接使用该问题进行记忆检索，跳过 LLM 生成问题的步骤；关闭后沿用旧模式，使用 LLM 生成问题
 ```
 
-- `max_agent_iterations`: 控制记忆检索与总结时，代理最多迭代的次数，值越大越耗时。
+- `max_agent_iterations`: 控制记忆检索与总结时，代理最多迭代的次数，值越大越耗时，默认5次
+- `agent_timeout_seconds`: 最长回忆时间（秒），超过此时间会停止回忆过程，默认180秒
+- `global_memory`: 是否允许记忆检索进行全局查询，开启后可以跨聊天流检索记忆
+- `global_memory_blacklist`: 全局记忆黑名单，当启用全局记忆时，不将特定聊天流纳入检索
+- `planner_question`: 是否使用 Planner 提供的 question 作为记忆检索问题，开启后可跳过 LLM 生成问题的步骤
 
 <hr class="custom_hr"/>
 
 ```toml
-[jargon]
-all_global = true # 是否开启全局黑话模式
+[dream]
+interval_minutes = 60 # 做梦时间间隔（分钟），默认60分钟
+max_iterations = 20 # 做梦最大轮次，默认20轮
+first_delay_seconds = 1800 # 程序启动后首次做梦前的延迟时间（秒），默认1800秒（30分钟）
+
+# 做梦结果推送目标，格式为 "platform:user_id"
+# 例如: "qq:123456" 表示在做梦结束后，将梦境文本额外发送给该QQ私聊用户。
+# 为空字符串时不推送。
+dream_send = ""
+
+# 做梦时间段配置，格式：["HH:MM-HH:MM", ...]
+# 如果列表为空，则表示全天允许做梦。
+# 如果配置了时间段，则只有在这些时间段内才会实际执行做梦流程。
+# 时间段外，调度器仍会按间隔检查，但不会进入做梦流程。
+# 支持跨夜区间，例如 "23:00-02:00" 表示从23:00到次日02:00。
+# 示例：
+dream_time_ranges = [
+    # "09:00-22:00",      # 白天允许做梦
+    "23:00-10:00",      # 跨夜时间段（23:00到次日10:00）
+]
+# dream_time_ranges = []
 ```
 
-- `all_global`: 开启后，所有聊天都会共享黑话词表；关闭时需手动管理已有记录。
+- `interval_minutes`: 做梦时间间隔（分钟），默认60分钟
+- `max_iterations`: 做梦最大轮次，默认20轮
+- `first_delay_seconds`: 程序启动后首次做梦前的延迟时间（秒），默认1800秒（30分钟）
+- `dream_send`: 做梦结果推送目标，格式为 "platform:user_id"，为空字符串时不推送
+- `dream_time_ranges`: 做梦时间段配置，支持跨夜区间，列表为空表示全天允许做梦
 
 <hr class="custom_hr"/>
 
@@ -223,7 +272,7 @@ ban_msgs_regex = [
 
 ```toml
 [tool]
-enable_tool = true # 是否启用回复工具
+enable_tool = true # 是否启用工具
 ```
 
 - `enable_tool` 控制是否在普通聊天中启用工具功能
@@ -231,23 +280,8 @@ enable_tool = true # 是否启用回复工具
 <hr class="custom_hr"/>
 
 ```toml
-[mood]
-enable_mood = false # 是否启用情绪系统
-mood_update_threshold = 1 # 情绪更新阈值,越高，更新越慢
-# 情感特征，影响情绪的变化情况
-emotion_style = "情绪较为稳定，但遭遇特定事件的时候起伏较大"
-```
-
-- `enable_mood`: 控制是否启用情绪系统
-- `mood_update_threshold`: 情绪更新频率
-- `emotion_style`: 情绪波动描述，用于 mood 模块建模
-
-<hr class="custom_hr"/>
-
-```toml
 [emoji]
-emoji_chance = 0.6 # 麦麦激活表情包动作的概率
-
+emoji_chance = 0.4 # 麦麦激活表情包动作的概率
 max_reg_num = 100 # 表情包最大注册数量
 do_replace = true # 开启则在达到最大数量时删除（替换）表情包，关闭则达到最大数量时不会继续收集表情包
 check_interval = 10 # 检查表情包（注册，破损，删除）的时间间隔(分钟)
@@ -267,7 +301,7 @@ filtration_prompt = "符合公序良俗" # 表情包过滤要求，只有符合�
 
 ```toml
 [voice]
-enable_asr = false # 是否启用语音识别，启用后麦麦可以识别语音消息，启用该功能需要配置语音识别模型[model.voice]s
+enable_asr = false # 是否启用语音识别，启用后麦麦可以识别语音消息，启用该功能需要配置语音识别模型[model_task_config.voice]
 ```
 
 - `enable_asr` 控制是否启用语音识别功能
@@ -278,22 +312,43 @@ enable_asr = false # 是否启用语音识别，启用后麦麦可以识别语�
 [lpmm_knowledge] # lpmm知识库配置
 enable = false # 是否启用lpmm知识库
 lpmm_mode = "agent"
-rag_synonym_search_top_k = 10 # 同义词搜索TopK
-rag_synonym_threshold = 0.8 # 同义词阈值（相似度高于此阈值的词语会被认为是同义词）
-info_extraction_workers = 3 # 实体提取同时执行线程数，非Pro模型不要设置超过5
-qa_relation_search_top_k = 10 # 关系搜索TopK
-qa_relation_threshold = 0.5 # 关系阈值（相似度高于此阈值的关系会被认为是相关的关系）
-qa_paragraph_search_top_k = 1000 # 段落搜索TopK（不能过小，可能影响搜索结果）
+# 可选择classic传统模式/agent 模式，结合新的记忆一同使用
+rag_synonym_search_top_k = 10 # 同义检索TopK
+rag_synonym_threshold = 0.8 # 同义阈值，相似度高于该值的关系会被当作同义词
+info_extraction_workers = 3 # 实体抽取同时执行线程数，非Pro模型不要设置超过5
+qa_relation_search_top_k = 10 # 关系检索TopK
+qa_relation_threshold = 0.5 # 关系阈值，相似度高于该值的关系会被认为是相关关系
+qa_paragraph_search_top_k = 1000 # 段落检索TopK（不能过小，可能影响搜索结果）
 qa_paragraph_node_weight = 0.05 # 段落节点权重（在图搜索&PPR计算中的权重，当搜索仅使用DPR时，此参数不起作用）
 qa_ent_filter_top_k = 10 # 实体过滤TopK
 qa_ppr_damping = 0.8 # PPR阻尼系数
-qa_res_top_k = 3 # 最终提供的文段TopK
-embedding_dimension = 1024 # 嵌入向量维度,应该与模型的输出维度一致
+qa_res_top_k = 3 # 最终提供段落TopK
+embedding_dimension = 1024 # 嵌入向量维度,输出维度一致
+# 性能与降级参数（低配机器可下调）
+# 低配机器参考：单/双核或内存≤4GB（如轻量云主机/云函数/开发板），建议先关闭PPR并降低并发
+max_embedding_workers = 3 # 嵌入/抽取并发线程数
+embedding_chunk_size = 4 # 每批嵌入的条数
+max_synonym_entities = 2000 # 同义边参与的实体数上限，超限则跳过
+enable_ppr = true # 是否启用PPR，低配机器可关闭
 ```
 
 此部分用于配置 LPMM 知识库：
-- `lpmm_mode`: 目前支持 `classic` 与 `agent`，后者会结合最新记忆
-- 其它参数决定检索/抽取和问答的精度、性能
+- `lpmm_mode`: 目前支持 `classic`（传统模式）与 `agent`（模式，结合新的记忆一同使用）
+- `rag_synonym_search_top_k`: 同义检索TopK
+- `rag_synonym_threshold`: 同义阈值，相似度高于该值的关系会被当作同义词
+- `info_extraction_workers`: 实体抽取同时执行线程数，非Pro模型不要设置超过5
+- `qa_relation_search_top_k`: 关系检索TopK
+- `qa_relation_threshold`: 关系阈值，相似度高于该值的关系会被认为是相关关系
+- `qa_paragraph_search_top_k`: 段落检索TopK（不能过小，可能影响搜索结果）
+- `qa_paragraph_node_weight`: 段落节点权重（在图搜索&PPR计算中的权重，当搜索仅使用DPR时，此参数不起作用）
+- `qa_ent_filter_top_k`: 实体过滤TopK
+- `qa_ppr_damping`: PPR阻尼系数
+- `qa_res_top_k`: 最终提供段落TopK
+- `embedding_dimension`: 嵌入向量维度，输出维度一致
+- `max_embedding_workers`: 嵌入/抽取并发线程数（性能与降级参数，低配机器可下调）
+- `embedding_chunk_size`: 每批嵌入的条数（性能与降级参数）
+- `max_synonym_entities`: 同义边参与的实体数上限，超限则跳过（性能与降级参数）
+- `enable_ppr`: 是否启用PPR，低配机器可关闭（性能与降级参数）
 
 <hr class="custom_hr"/>
 
@@ -333,7 +388,7 @@ enable = true # 是否启用回复分割器
 max_length = 512 # 回复允许的最大长度
 max_sentence_num = 8 # 回复允许的最大句子数
 enable_kaomoji_protection = false # 是否启用颜文字保护
-enable_overflow_return_all = false # 句子数超限时是否一次性返回全部
+enable_overflow_return_all = false # 是否在句子数量超出回复允许的最大句子数时一次性返回全部内容
 ```
 
 此部分可以对模型的回复进行二次处理。
@@ -375,18 +430,49 @@ show_lpmm_paragraph = false # 是否显示lpmm找到的相关文段日志
 
 ```toml
 [maim_message]
-auth_token = [] # 认证令牌，用于API验证，为空则不启用验证
-# 以下项目若要使用需要打开use_custom，并单独配置maim_message的服务器
-use_custom = false # 是否启用自定义的maim_message服务器，注意这需要设置新的端口，不能与.env重复
-host="127.0.0.1"
-port=8090
-mode="ws" # 支持ws和tcp两种模式
-use_wss = false # 是否使用WSS安全连接，只支持ws模式
-cert_file = "" # SSL证书文件路径，仅在use_wss=true时有效
-key_file = "" # SSL密钥文件路径，仅在use_wss=true时有效
+auth_token = [] # 认证令牌，用于旧版API验证，为空则不启用验证
+
+# 新版API Server配置（额外监听端口）
+enable_api_server = false # 是否启用额外的新版API Server
+api_server_host = "0.0.0.0" # 新版API Server主机地址
+api_server_port = 8090 # 新版API Server端口号
+api_server_use_wss = false # 新版API Server是否启用WSS
+api_server_cert_file = "" # 新版API Server SSL证书文件路径
+api_server_key_file = "" # 新版API Server SSL密钥文件路径
+api_server_allowed_api_keys = [] # 新版API Server允许的API Key列表，为空则允许所有连接
 ```
 
 高级设置，通常无需修改。
+
+<hr class="custom_hr"/>
+
+```toml
+[webui] # WebUI 独立服务器配置
+# 注意: WebUI 的监听地址(host)和端口(port)已移至 .env 文件中的 WEBUI_HOST 和 WEBUI_PORT
+enabled = true # 是否启用WebUI
+mode = "production" # 模式: development(开发) 或 production(生产)
+
+# 防爬虫配置
+anti_crawler_mode = "loose" # 防爬虫模式: false(禁用) / strict(严格) / loose(宽松) / basic(基础-只记录不阻止)
+allowed_ips = "127.0.0.1" # IP白名单（逗号分隔，支持精确IP、CIDR格式和通配符）
+                          # 示例: 127.0.0.1,192.168.1.0/24,172.17.0.0/16
+trusted_proxies = "" # 信任的代理IP列表（逗号分隔），只有来自这些IP的X-Forwarded-For才被信任
+                     # 示例: 127.0.0.1,192.168.1.1,172.17.0.1
+trust_xff = false # 是否启用X-Forwarded-For代理解析（默认false）
+                  # 启用后，仍要求直连IP在trusted_proxies中才会信任XFF头
+secure_cookie = false # 是否启用安全Cookie（仅通过HTTPS传输，默认false）
+```
+
+此部分用于配置 WebUI 独立服务器：
+- `enabled`: 是否启用WebUI
+- `mode`: 模式，可选 "development"（开发）或 "production"（生产）
+- `anti_crawler_mode`: 防爬虫模式，可选 false（禁用）、"strict"（严格）、"loose"（宽松）、"basic"（基础-只记录不阻止）
+- `allowed_ips`: IP白名单（逗号分隔，支持精确IP、CIDR格式和通配符）
+- `trusted_proxies`: 信任的代理IP列表（逗号分隔）
+- `trust_xff`: 是否启用X-Forwarded-For代理解析
+- `secure_cookie`: 是否启用安全Cookie（仅通过HTTPS传输）
+
+**注意**: WebUI 的监听地址(host)和端口(port)已移至 .env 文件中的 WEBUI_HOST 和 WEBUI_PORT
 
 <hr class="custom_hr"/>
 
@@ -395,20 +481,21 @@ key_file = "" # SSL密钥文件路径，仅在use_wss=true时有效
 enable = true
 
 [experimental] #实验性功能
+# 为指定聊天添加额外的prompt配置
+# 格式: ["platform:id:type:prompt内容", ...]
+# 示例:
+# chat_prompts = [
+#     "qq:114514:group:这是一个摄影群，你精通摄影知识",
+#     "qq:19198:group:这是一个二次元交流群",
+#     "qq:114514:private:这是你与好朋友的私聊"
+# ]
 chat_prompts = []
 ```
 
 - `telemetry` 控制是否发送统计信息
-- `experimental.chat_prompts` 可为特定 `platform:id:type` 新增额外提示词
+- `experimental.chat_prompts` 可为特定 `platform:id:type` 新增额外提示词，格式为 `["platform:id:type:prompt内容", ...]`
 
 <hr class="custom_hr"/>
-
-```toml
-[relationship]
-enable_relationship = true # 是否启用关系系统
-```
-
-- 关系系统目前暂不可用，但保留配置位，保持默认即可。
 
 ## 注意事项
 

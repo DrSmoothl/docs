@@ -4,24 +4,6 @@
 
 这个配置文件主要告诉你，麦麦使用的各个模型都是什么功能，用什么大模型比较合适。
 
-## 配置文件结构
-
-MaiBot 现在使用独立的 `model_config.toml` 文件来配置模型和API服务商。配置文件包含以下主要部分：
-
-- `[inner]` - 版本信息
-- `[[api_providers]]` - API服务提供商配置
-- `[[models]]` - 模型定义配置
-- `[model_task_config.*]` - 麦麦模块使用模型配置
-
-## 配置文件详解
-
-```toml
-[inner]
-version = "1.7.8"
-
-# 配置文件版本号迭代规则同bot_config.toml
-```
-
 ## API服务商配置
 
 ```toml
@@ -159,41 +141,47 @@ price_out = 0
 [model_task_config.utils] # 在麦麦的一些组件中使用的模型，例如表情包模块，取名模块，关系模块，麦麦的情绪变化等，是麦麦必须的模型
 model_list = ["siliconflow-deepseek-v3.2"] # 使用的模型列表，每个子项对应上面的模型名称(name)
 temperature = 0.2                        # 模型温度，新V3建议0.1-0.3
-max_tokens = 2048                         # 最大输出token数
-
-[model_task_config.utils_small] # 在麦麦的一些组件中使用的小模型，消耗量较大，建议使用速度较快的小模型
-model_list = ["qwen3-30b","qwen3-next-80b"]
-temperature = 0.7
-max_tokens = 2048
+max_tokens = 4096                         # 最大输出token数
+slow_threshold = 15.0                     # 慢请求阈值（秒），模型等待回复时间超过此值会输出警告日志
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 ```
 
 - `utils`: 推荐使用性能较强的 V3.2（非思考版），多数系统组件依赖它。
-- `utils_small`: 推荐使用 Qwen 系列中速度快的版本（如 30B 或 next-80B）处理高频小任务。
+- `slow_threshold`: 慢请求阈值（秒），模型等待回复时间超过此值会输出警告日志
+- `selection_strategy`: 模型选择策略，可选 "random"（随机选择）或 "load_balance"（负载均衡）
 
 ### **回复与决策模型**
 
 这些模型负责生成回复，并进行决策。
 
 ```toml
-[model_task_config.tool_use] #工具调用模型，需要使用支持工具调用的模型
+[model_task_config.tool_use] #功能模型，需要使用支持工具调用的模型，请使用较快的小模型（调用量较大）
 model_list = ["qwen3-30b","qwen3-next-80b"]
 temperature = 0.7
-max_tokens = 800
+max_tokens = 1024
+slow_threshold = 10.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 
-[model_task_config.replyer] # 首要回复模型，还用于表达器和表达方式学习
-model_list = ["siliconflow-deepseek-v3.2-think","siliconflow-glm-4.6-think","siliconflow-glm-4.6"]
+[model_task_config.replyer] # 首要回复模型，还用于表达方式学习
+model_list = ["siliconflow-deepseek-v3.2","siliconflow-deepseek-v3.2-think","siliconflow-glm-4.6","siliconflow-glm-4.6-think"]
 temperature = 0.3                        # 模型温度，新V3建议0.1-0.3
 max_tokens = 2048
+slow_threshold = 25.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 
 [model_task_config.planner] #决策：负责决定麦麦该什么时候回复的模型
 model_list = ["siliconflow-deepseek-v3.2"]
 temperature = 0.3
 max_tokens = 800
+slow_threshold = 12.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 ```
 
-- `tool_use`: **工具调用模型**，需使用具备函数调用能力的模型
-- `replyer`: **首要回复模型**，可混合推理版与普通版以兼顾效果与成本
+- `tool_use`: **工具调用模型**，需使用具备函数调用能力的模型，请使用较快的小模型（调用量较大）
+- `replyer`: **首要回复模型**，还用于表达方式学习，可混合推理版与普通版以兼顾效果与成本
 - `planner`: **决策模型**，负责决定麦麦什么时候回复
+- `slow_threshold`: 慢请求阈值（秒），模型等待回复时间超过此值会输出警告日志
+- `selection_strategy`: 模型选择策略，可选 "random"（随机选择）或 "load_balance"（负载均衡）
 
 ### **图像和语音模型**
 
@@ -201,23 +189,33 @@ max_tokens = 800
 [model_task_config.vlm] # 图像识别模型
 model_list = ["qwen3-vl-30"]
 max_tokens = 256
+slow_threshold = 15.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 
 [model_task_config.voice] # 语音识别模型
 model_list = ["sensevoice-small"]
+slow_threshold = 12.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 ```
 
 - `vlm`: **识图**用的，需要用一个支持图像理解的模型
 - `voice`: **语音识别**用的，需要支持语音转文字的模型
+- `slow_threshold`: 慢请求阈值（秒），模型等待回复时间超过此值会输出警告日志
+- `selection_strategy`: 模型选择策略，可选 "random"（随机选择）或 "load_balance"（负载均衡）
 
 ### **嵌入模型**
 
 ```toml
-#嵌入模型
+# 嵌入模型
 [model_task_config.embedding]
 model_list = ["bge-m3"]
+slow_threshold = 5.0
+selection_strategy = "random"           # 模型选择策略：random（负载均衡）或 random（随机选择）
 ```
 
 - `embedding`: **知识库**会用到，可以使用其他嵌入模型
+- `slow_threshold`: 慢请求阈值（秒），模型等待回复时间超过此值会输出警告日志
+- `selection_strategy`: 模型选择策略，可选 "random"（随机选择）或 "load_balance"（负载均衡）
 
 ### **LPMM知识库模型**
 

@@ -12,9 +12,12 @@ hero:
     - theme: brand
       text: 功能介绍
       link: /features
-    - theme: alt
+    - theme: brand
       text: 用户指南
       link: /manual/
+    - theme: alt
+      text: 开发文档
+      link: /develop/
 features:
   - icon: 🧠
     title: 好多LLM
@@ -36,7 +39,7 @@ features:
     details: 定期更新和改进，不断增强功能与性能
 ---
 
-## 获取支持
+## 获取更多支持
 
 - 访问[GitHub仓库](https://github.com/MaiM-with-u/MaiBot)提交问题或贡献代码
 - 加入用户交流群获取帮助
