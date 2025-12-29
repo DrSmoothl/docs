@@ -23,7 +23,7 @@ from src.plugin_system import message_api
 ```python
 def get_messages_by_time(
     start_time: float, end_time: float, limit: int = 0, limit_mode: str = "latest", filter_mai: bool = False
-) -> List[Dict[str, Any]]:
+) -> List[DatabaseMessages]:
 ```
 获取指定时间范围内的消息。
 
@@ -35,9 +35,17 @@ def get_messages_by_time(
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
-消息列表中包含的键与`Messages`类的属性一致。（位于`src.common.database.database_model`）
+**注意：** `DatabaseMessages` 对象包含以下主要属性：
+- `message_id`: 消息ID
+- `time`: 时间戳
+- `processed_plain_text`: 处理后的纯文本内容
+- `user_info`: 用户信息对象
+- `chat_info`: 聊天信息对象
+- `additional_config`: 额外配置字典
+
+更多信息请参考 `src.common.data_models.database_data_model.DatabaseMessages` 类。
 
 ### 2. 获取指定聊天中指定时间范围内的信息
 ```python
@@ -48,7 +56,9 @@ def get_messages_by_time_in_chat(
     limit: int = 0,
     limit_mode: str = "latest",
     filter_mai: bool = False,
-) -> List[Dict[str, Any]]:
+    filter_command: bool = False,
+    filter_intercept_message_level: Optional[int] = None,
+) -> List[DatabaseMessages]:
 ```
 获取指定聊天中指定时间范围内的消息。
 
@@ -59,9 +69,11 @@ def get_messages_by_time_in_chat(
 - `limit` (int): 限制返回消息数量，0为不限制
 - `limit_mode` (str): 限制模式，`"earliest"`获取最早记录，`"latest"`获取最新记录
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
+- `filter_command` (bool): 是否过滤命令消息，默认False
+- `filter_intercept_message_level` (Optional[int]): 过滤拦截消息级别，None为不过滤
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表，不是字典）
 
 
 ### 3. 获取指定聊天中指定时间范围内的信息（包含边界）
@@ -74,7 +86,8 @@ def get_messages_by_time_in_chat_inclusive(
     limit_mode: str = "latest",
     filter_mai: bool = False,
     filter_command: bool = False,
-) -> List[Dict[str, Any]]:
+    filter_intercept_message_level: Optional[int] = None,
+) -> List[DatabaseMessages]:
 ```
 获取指定聊天中指定时间范围内的消息（包含边界）。
 
@@ -86,9 +99,10 @@ def get_messages_by_time_in_chat_inclusive(
 - `limit_mode` (str): 限制模式，`"earliest"`获取最早记录，`"latest"`获取最新记录
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
 - `filter_command` (bool): 是否过滤命令消息，默认False
+- `filter_intercept_message_level` (Optional[int]): 过滤拦截消息级别，None为不过滤
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 4. 获取指定聊天中指定用户在指定时间范围内的消息
@@ -113,7 +127,7 @@ def get_messages_by_time_in_chat_for_users(
 - `limit_mode` (str): 限制模式，`"earliest"`获取最早记录，`"latest"`获取最新记录
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 5. 随机选择一个聊天，返回该聊天在指定时间范围内的消息
@@ -136,7 +150,7 @@ def get_random_chat_messages(
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 6. 获取指定用户在所有聊天中指定时间范围内的消息
@@ -159,7 +173,7 @@ def get_messages_by_time_for_users(
 - `limit_mode` (str): 限制模式，`"earliest"`获取最早记录，`"latest"`获取最新记录
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 7. 获取指定时间戳之前的消息
@@ -188,7 +202,8 @@ def get_messages_before_time_in_chat(
     timestamp: float,
     limit: int = 0,
     filter_mai: bool = False,
-) -> List[Dict[str, Any]]:
+    filter_intercept_message_level: Optional[int] = None,
+) -> List[DatabaseMessages]:
 ```
 获取指定聊天中指定时间戳之前的消息。
 
@@ -197,9 +212,10 @@ def get_messages_before_time_in_chat(
 - `timestamp` (float): 时间戳
 - `limit` (int): 限制返回消息数量，0为不限制
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
+- `filter_intercept_message_level` (Optional[int]): 过滤拦截消息级别，None为不过滤
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 9. 获取指定用户在指定时间戳之前的消息
@@ -218,7 +234,7 @@ def get_messages_before_time_for_users(
 - `limit` (int): 限制返回消息数量，0为不限制
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 10. 获取指定聊天中最近一段时间的消息
@@ -241,7 +257,7 @@ def get_recent_messages(
 - `filter_mai` (bool): 是否过滤掉机器人的消息，默认False
 
 **Returns:**
-- `List[Dict[str, Any]]` - 消息列表
+- `List[DatabaseMessages]` - 消息列表（返回的是 `DatabaseMessages` 对象列表）
 
 
 ### 11. 计算指定聊天中从开始时间到结束时间的新消息数量
@@ -287,9 +303,8 @@ def count_new_messages_for_users(
 ### 13. 将消息列表构建成可读的字符串
 ```python
 def build_readable_messages_to_str(
-    messages: List[Dict[str, Any]],
+    messages: List[DatabaseMessages],
     replace_bot_name: bool = True,
-    merge_messages: bool = False,
     timestamp_mode: str = "relative",
     read_mark: float = 0.0,
     truncate: bool = False,
@@ -299,9 +314,8 @@ def build_readable_messages_to_str(
 将消息列表构建成可读的字符串。
 
 **Args:**
-- `messages` (List[Dict[str, Any]]): 消息列表
+- `messages` (List[DatabaseMessages]): 消息列表（`DatabaseMessages` 对象列表）
 - `replace_bot_name` (bool): 是否将机器人的名称替换为"你"
-- `merge_messages` (bool): 是否合并连续消息
 - `timestamp_mode` (str): 时间戳显示模式，`"relative"`或`"absolute"`
 - `read_mark` (float): 已读标记时间戳，用于分割已读和未读消息
 - `truncate` (bool): 是否截断长消息
@@ -314,9 +328,8 @@ def build_readable_messages_to_str(
 ### 14. 将消息列表构建成可读的字符串，并返回详细信息
 ```python
 async def build_readable_messages_with_details(
-    messages: List[Dict[str, Any]],
+    messages: List[DatabaseMessages],
     replace_bot_name: bool = True,
-    merge_messages: bool = False,
     timestamp_mode: str = "relative",
     truncate: bool = False,
 ) -> Tuple[str, List[Tuple[float, str, str]]]:
@@ -324,9 +337,8 @@ async def build_readable_messages_with_details(
 将消息列表构建成可读的字符串，并返回详细信息。
 
 **Args:**
-- `messages` (List[Dict[str, Any]]): 消息列表
+- `messages` (List[DatabaseMessages]): 消息列表（`DatabaseMessages` 对象列表）
 - `replace_bot_name` (bool): 是否将机器人的名称替换为"你"
-- `merge_messages` (bool): 是否合并连续消息
 - `timestamp_mode` (str): 时间戳显示模式，`"relative"`或`"absolute"`
 - `truncate` (bool): 是否截断长消息
 
@@ -352,16 +364,16 @@ async def get_person_ids_from_messages(
 ### 16. 从消息列表中移除机器人的消息
 ```python
 def filter_mai_messages(
-    messages: List[Dict[str, Any]],
-) -> List[Dict[str, Any]]:
+    messages: List[DatabaseMessages],
+) -> List[DatabaseMessages]:
 ```
 从消息列表中移除机器人的消息。
 
 **Args:**
-- `messages` (List[Dict[str, Any]]): 消息列表，每个元素是消息字典
+- `messages` (List[DatabaseMessages]): 消息列表，每个元素是 `DatabaseMessages` 对象
 
 **Returns:**
-- `List[Dict[str, Any]]` - 过滤后的消息列表
+- `List[DatabaseMessages]` - 过滤后的消息列表
 
 ## 注意事项
 

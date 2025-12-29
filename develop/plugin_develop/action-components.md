@@ -20,8 +20,8 @@ Action是给麦麦在回复之外提供额外功能的智能组件，**由麦麦
 ```python
 class ExampleAction(BaseAction):
     action_name = "example_action" # 动作的唯一标识符
-    action_description = "这是一个示例动作" # 动作描述
-    activation_type = ActionActivationType.ALWAYS # 这里以 ALWAYS 为例
+    action_description = "这是一个示例动作，用于测试和展示" # 动作描述
+    activation_type = ActionActivationType.ALWAYS # 默认使用 ALWAYS，这个Action一直可用 
     associated_types = ["text", "emoji", ...] # 关联类型,该插件会用到什么类型的数据
     parallel_action = False # 更大概率不与其他动作一起使用
     action_parameters = {"param1": "参数1的说明", "param2": "参数2的说明", ...}
@@ -69,7 +69,7 @@ Action采用**两层决策机制**来优化性能和决策质量：
 
 **第一层：激活控制（Activation Control）**
 
-激活决定麦麦是否 **“知道”** 这个Action的存在，即这个Action是否进入决策候选池。不被激活的Action麦麦永远不会选择。
+激活决定这个Action是否进入决策候选池。不被激活的Action麦麦永远不会选择。
 
 **第二层：使用决策（Usage Decision）**
 
@@ -86,67 +86,36 @@ Action采用**两层决策机制**来优化性能和决策质量：
 | `RANDOM`    | 基于随机概率决定是否激活                   | 增加行为随机性的功能     |
 | `KEYWORD`   | 当检测到特定关键词时激活                   | 明确触发条件的功能       |
 
-#### `NEVER` 激活
+#### 激活类型简述
 
-`ActionActivationType.NEVER` 会使得 Action 永远不会被激活
+- `NEVER`: 永不激活（动作始终禁用）
+    ```python
+    class DisabledAction(BaseAction):
+        activation_type = ActionActivationType.NEVER
+    ```
 
-```python
-class DisabledAction(BaseAction):
-    activation_type = ActionActivationType.NEVER  # 永远不激活
-    
-    async def execute(self) -> Tuple[bool, str]:
-        # 这个Action永远不会被执行
-        return False, "这个Action被禁用"
-```
+- `ALWAYS`: 永远激活（始终可用）
+    ```python
+    class AlwaysActivatedAction(BaseAction):
+        activation_type = ActionActivationType.ALWAYS
+    ```
 
-#### `ALWAYS` 激活
+- `RANDOM`: 随机概率激活，需指定概率
+    ```python
+    class SurpriseAction(BaseAction):
+        activation_type = ActionActivationType.RANDOM
+        random_activation_probability = 0.1  # 10%概率
+    ```
 
-`ActionActivationType.ALWAYS` 会使得 Action 永远会被激活，即一直在 Action 候选池中
+- `KEYWORD`: 匹配关键词时激活，需设定关键词列表和是否区分大小写
+    ```python
+    class GreetingAction(BaseAction):
+        activation_type = ActionActivationType.KEYWORD
+        activation_keywords = ["你好", "hello", "hi", "嗨"]
+        keyword_case_sensitive = False
+    ```
 
-```python
-class AlwaysActivatedAction(BaseAction):
-    activation_type = ActionActivationType.ALWAYS  # 永远激活
-    
-    async def execute(self) -> Tuple[bool, str]:
-        # 执行核心功能
-        return True, "执行了核心功能"
-```
-
-#### `RANDOM` 激活
-
-`ActionActivationType.RANDOM`会使得这个 Action 根据随机概率决定是否加入候选池。
-
-使用这个方法需要实现`random_activation_probability`属性。
-
-```python
-class SurpriseAction(BaseAction):
-    activation_type = ActionActivationType.RANDOM  # 基于随机概率激活
-    # 随机激活概率
-    random_activation_probability = 0.1  # 10%概率激活
-  
-    async def execute(self) -> Tuple[bool, str]:
-        # 执行惊喜动作
-        return True, "发送了惊喜内容"
-```
-
-#### `KEYWORD` 激活
-
-`ActionActivationType.KEYWORD`会使得这个 Action 在检测到特定关键词时激活。
-
-关键词由代码中的`activation_keywords`定义，而`keyword_case_sensitive`则控制关键词匹配时是否区分大小写。使用此种方法需要实现`activation_keywords`和`keyword_case_sensitive`属性。
-
-```python
-class GreetingAction(BaseAction):
-    activation_type = ActionActivationType.KEYWORD  # 关键词激活
-    activation_keywords = ["你好", "hello", "hi", "嗨"] # 关键词配置
-    keyword_case_sensitive = False  # 不区分大小写
-  
-    async def execute(self) -> Tuple[bool, str]:
-        # 执行问候逻辑
-        return True, "发送了问候"
-```
-
-一个完整的使用`ActionActivationType.KEYWORD`的例子请参考`plugins/hello_world_plugin`中的`ByeAction`。
+更多KEYWORD类型实例可参考 `plugins/hello_world_plugin` 下的 `ByeAction`。
 
 #### 第二层：使用决策
 

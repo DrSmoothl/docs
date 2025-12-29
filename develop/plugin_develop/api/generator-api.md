@@ -51,54 +51,70 @@ async def generate_reply(
     chat_stream: Optional[ChatStream] = None,
     chat_id: Optional[str] = None,
     action_data: Optional[Dict[str, Any]] = None,
-    reply_to: str = "",
+    reply_message: Optional["DatabaseMessages"] = None,
+    think_level: int = 1,
     extra_info: str = "",
+    reply_reason: str = "",
     available_actions: Optional[Dict[str, ActionInfo]] = None,
+    chosen_actions: Optional[List["ActionPlannerInfo"]] = None,
+    unknown_words: Optional[List[str]] = None,
     enable_tool: bool = False,
     enable_splitter: bool = True,
     enable_chinese_typo: bool = True,
-    return_prompt: bool = False,
-    model_set_with_weight: Optional[List[Tuple[TaskConfig, float]]] = None,
     request_type: str = "generator_api",
-) -> Tuple[bool, List[Tuple[str, Any]], Optional[str]]:
+    from_plugin: bool = True,
+    reply_time_point: Optional[float] = None,
+) -> Tuple[bool, Optional["LLMGenerationDataModel"]]:
 ```
 生成回复
 
 优先使用chat_stream，如果没有则使用chat_id直接查找。
 
 **Args:**
-- `chat_stream`: 聊天流对象
-- `chat_id`: 聊天ID（实际上就是`stream_id`）
+- `chat_stream`: 聊天流对象（优先）
+- `chat_id`: 聊天ID（备用）
 - `action_data`: 动作数据（向下兼容，包含`reply_to`和`extra_info`）
-- `reply_to`: 回复目标，格式为 `{发送者的person_name:消息内容}`
-- `extra_info`: 附加信息
+- `reply_message`: 回复的消息对象
+- `think_level`: 思考级别，0为轻量回复，1为中等回复
+- `extra_info`: 额外信息，用于补充上下文
+- `reply_reason`: 回复原因
 - `available_actions`: 可用动作字典，格式为 `{"action_name": ActionInfo}`
-- `enable_tool`: 是否启用工具
-- `enable_splitter`: 是否启用分割器
-- `enable_chinese_typo`: 是否启用中文错别字
-- `return_prompt`: 是否返回提示词
-- `model_set_with_weight`: 模型配置列表，每个元素为 `(TaskConfig, weight)` 元组
+- `chosen_actions`: 已选动作列表
+- `unknown_words`: Planner 在 reply 动作中给出的未知词语列表，用于黑话检索
+- `enable_tool`: 是否启用工具调用
+- `enable_splitter`: 是否启用消息分割器
+- `enable_chinese_typo`: 是否启用错字生成器
 - `request_type`: 请求类型（可选，记录LLM使用）
-- `request_type`: 请求类型，用于记录LLM使用情况
+- `from_plugin`: 是否来自插件
+- `reply_time_point`: 回复时间点
 
 **Returns:**
-- `Tuple[bool, List[Tuple[str, Any]], Optional[str]]`: (是否成功, 回复集合, 提示词)
+- `Tuple[bool, Optional["LLMGenerationDataModel"]]`: (是否成功, LLM生成数据模型)
+  - 成功时返回 `LLMGenerationDataModel` 对象，包含 `reply_set`、`content`、`prompt`、`model` 等属性
+  - 失败时返回 `None`
 
 #### 示例
 ```python
-success, reply_set, prompt = await generator_api.generate_reply(
+success, llm_response = await generator_api.generate_reply(
     chat_stream=chat_stream,
-    action_data=action_data,
-    reply_to="麦麦:你好",
+    reply_message=message,
+    extra_info="这是额外的上下文信息",
+    reply_reason="用户询问了问题",
     available_actions=action_info,
     enable_tool=True,
-    return_prompt=True
+    think_level=1
 )
-if success:
-    for reply_type, reply_content in reply_set:
-        print(f"回复类型: {reply_type}, 内容: {reply_content}")
-    if prompt:
-        print(f"使用的提示词: {prompt}")
+if success and llm_response:
+    # 访问回复集合
+    if llm_response.reply_set:
+        for reply_content in llm_response.reply_set.reply_data:
+            print(f"回复类型: {reply_content.content_type}, 内容: {reply_content.content}")
+    # 访问原始内容
+    print(f"原始回复: {llm_response.content}")
+    # 访问提示词
+    print(f"使用的提示词: {llm_response.prompt}")
+    # 访问模型信息
+    print(f"使用的模型: {llm_response.model}")
 ```
 
 ### 3. 回复重写
@@ -109,65 +125,79 @@ async def rewrite_reply(
     chat_id: Optional[str] = None,
     enable_splitter: bool = True,
     enable_chinese_typo: bool = True,
-    model_set_with_weight: Optional[List[Tuple[TaskConfig, float]]] = None,
     raw_reply: str = "",
     reason: str = "",
     reply_to: str = "",
-    return_prompt: bool = False,
-) -> Tuple[bool, List[Tuple[str, Any]], Optional[str]]:
+    request_type: str = "generator_api",
+) -> Tuple[bool, Optional["LLMGenerationDataModel"]]:
 ```
 重写回复，使用新的内容替换旧的回复内容。
 
 优先使用chat_stream，如果没有则使用chat_id直接查找。
 
 **Args:**
-- `chat_stream`: 聊天流对象
-- `reply_data`: 回复数据，包含`raw_reply`, `reason`和`reply_to`，**（向下兼容备用，当其他参数缺失时从此获取）**
-- `chat_id`: 聊天ID（实际上就是`stream_id`）
-- `enable_splitter`: 是否启用分割器
-- `enable_chinese_typo`: 是否启用中文错别字
-- `model_set_with_weight`: 模型配置列表，每个元素为 (TaskConfig, weight) 元组
+- `chat_stream`: 聊天流对象（优先）
+- `reply_data`: 回复数据字典（向下兼容备用，当其他参数缺失时从此获取）
+- `chat_id`: 聊天ID（备用）
+- `enable_splitter`: 是否启用消息分割器
+- `enable_chinese_typo`: 是否启用错字生成器
 - `raw_reply`: 原始回复内容
 - `reason`: 重写原因
-- `reply_to`: 回复目标，格式为 `{发送者的person_name:消息内容}`
+- `reply_to`: 回复对象
+- `request_type`: 请求类型（可选，记录LLM使用）
 
 **Returns:**
-- `Tuple[bool, List[Tuple[str, Any]], Optional[str]]`: (是否成功, 回复集合, 提示词)
+- `Tuple[bool, Optional["LLMGenerationDataModel"]]`: (是否成功, LLM生成数据模型)
+  - 成功时返回 `LLMGenerationDataModel` 对象，包含 `reply_set`、`content`、`prompt` 等属性
+  - 失败时返回 `None`
 
 #### 示例
 ```python
-success, reply_set, prompt = await generator_api.rewrite_reply(
+success, llm_response = await generator_api.rewrite_reply(
     chat_stream=chat_stream,
     raw_reply="原始回复内容",
     reason="重写原因",
-    reply_to="麦麦:你好",
-    return_prompt=True
+    reply_to="麦麦:你好"
 )
-if success:
-    for reply_type, reply_content in reply_set:
-        print(f"回复类型: {reply_type}, 内容: {reply_content}")
-    if prompt:
-        print(f"使用的提示词: {prompt}")
+if success and llm_response:
+    # 访问回复集合
+    if llm_response.reply_set:
+        for reply_content in llm_response.reply_set.reply_data:
+            print(f"回复类型: {reply_content.content_type}, 内容: {reply_content.content}")
+    # 访问原始内容
+    print(f"重写后的回复: {llm_response.content}")
+    # 访问提示词
+    print(f"使用的提示词: {llm_response.prompt}")
 ```
 
-## 回复集合`reply_set`格式
+## LLMGenerationDataModel 对象说明
 
-### 回复类型
-生成的回复集合包含多种类型的回复：
+`generate_reply` 和 `rewrite_reply` 函数返回的 `LLMGenerationDataModel` 对象包含以下主要属性：
 
-- `"text"`：纯文本回复
-- `"emoji"`：表情包回复
-- `"image"`：图片回复
-- `"mixed"`：混合类型回复
+- `reply_set`: `ReplySetModel` 对象，包含处理后的回复内容列表
+- `content`: 原始LLM生成的文本内容
+- `processed_output`: 处理后的输出列表（分割后的文本）
+- `prompt`: 使用的提示词
+- `model`: 使用的模型名称
+- `timing`: 生成耗时信息
+- `reasoning`: 推理过程（如果有）
 
-### 回复集合结构
+### ReplySetModel 结构
+`reply_set` 是一个 `ReplySetModel` 对象，包含 `reply_data` 属性，这是一个 `ReplyContent` 对象列表。
+
+每个 `ReplyContent` 对象包含：
+- `content_type`: 内容类型（`ReplyContentType.TEXT`、`ReplyContentType.EMOJI`、`ReplyContentType.IMAGE` 等）
+- `content`: 内容数据（文本字符串、base64编码的图片等）
+
+### 使用示例
 ```python
-# 示例回复集合
-reply_set = [
-    ("text", "很高兴见到你！"),
-    ("emoji", "emoji_base64_data"),
-    ("text", "有什么可以帮助你的吗？")
-]
+success, llm_response = await generator_api.generate_reply(...)
+if success and llm_response and llm_response.reply_set:
+    for reply_content in llm_response.reply_set.reply_data:
+        if reply_content.content_type == ReplyContentType.TEXT:
+            print(f"文本: {reply_content.content}")
+        elif reply_content.content_type == ReplyContentType.EMOJI:
+            print(f"表情包: {reply_content.content[:50]}...")  # base64数据很长
 ```
 
 ### 4. 自定义提示词回复
@@ -175,7 +205,7 @@ reply_set = [
 async def generate_response_custom(
     chat_stream: Optional[ChatStream] = None,
     chat_id: Optional[str] = None,
-    model_set_with_weight: Optional[List[Tuple[TaskConfig, float]]] = None,
+    request_type: str = "generator_api",
     prompt: str = "",
 ) -> Optional[str]:
 ```
@@ -186,7 +216,7 @@ async def generate_response_custom(
 **Args:**
 - `chat_stream`: 聊天流对象
 - `chat_id`: 聊天ID（备用）
-- `model_set_with_weight`: 模型集合配置列表
+- `request_type`: 请求类型（可选，记录LLM使用）
 - `prompt`: 自定义提示词
 
 **Returns:**

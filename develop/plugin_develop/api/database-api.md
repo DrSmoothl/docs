@@ -184,6 +184,7 @@ async def store_action_info(
     thinking_id: str = "",
     action_data: Optional[dict] = None,
     action_name: str = "",
+    action_reasoning: str = "",
 ) -> Optional[Dict[str, Any]]:
 ```
 存储动作信息到数据库，是一种针对 Action 的 `db_save()` 的封装函数。
@@ -198,6 +199,7 @@ async def store_action_info(
 - `thinking_id`: 思考过程的ID。
 - `action_data`: 动作的数据字典。
 - `action_name`: 动作的名称。
+- `action_reasoning`: 动作执行理由。
 
 **Returns:**
 - `Optional[Dict[str, Any]]`: 存储后的记录数据，失败时返回None。
@@ -211,6 +213,7 @@ record = await database_api.store_action_info(
     action_done=True,
     thinking_id="thinking_123",
     action_data={"content": "Hello"},
-    action_name="reply_action"
+    action_name="reply_action",
+    action_reasoning="用户询问了问题，需要回复"
 )
 ```
