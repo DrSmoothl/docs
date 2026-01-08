@@ -26,14 +26,14 @@ mkdir -p maim-bot/docker-config/{mmc,adapters} && cd maim-bot
 ### 1.2 📥 获取 Docker 编排文件
 
 ```bash
-wget https://raw.githubusercontent.com/SengokuCola/MaiMBot/main/docker-compose.yml
+wget https://raw.githubusercontent.com/Mai-with-u/MaiMBot/main/docker-compose.yml
 ```
 
 > 🔄 **备用下载方式**  
 > 若 GitHub 直连不稳定，可使用镜像源：
 >
 > ```bash
-> wget https://github.moeyy.xyz/https://raw.githubusercontent.com/SengokuCola/MaiMBot/main/docker-compose.yml
+> wget https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/docker-compose.yml
 > ```
 
 > 使用本地构建镜像请跳转这里[本地构建流程](#本地构建流程)
@@ -48,7 +48,7 @@ wget https://raw.githubusercontent.com/SengokuCola/MaiMBot/main/docker-compose.y
 # 获取核心组件配置模板
 wget https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template.env \
      -O docker-config/mmc/.env
-# 若 GitHub 直连不稳定，可使用镜像源：https://github.moeyy.xyz/https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template.env
+# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot@main/template/template.env
 ```
 
 获取`adapter`的`config.toml`
@@ -56,7 +56,7 @@ wget https://raw.githubusercontent.com/MaiM-with-u/MaiBot/main/template/template
 ```bash
 wget https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter/raw/refs/heads/main/template/template_config.toml \
      -O docker-config/adapters/config.toml
-# 若 GitHub 直连不稳定，可使用镜像源：https://github.moeyy.xyz/https://github.com/MaiM-with-u/MaiBot-Napcat-Adapter/raw/refs/heads/main/template/template_config.toml
+# 若 GitHub 直连不稳定，可使用镜像源：https://fastly.jsdelivr.net/gh/Mai-with-u/MaiBot-Napcat-Adapter@main/template/template_config.toml
 ```
 
 > 配置文件里的服务名如不可用可替换为容器名
