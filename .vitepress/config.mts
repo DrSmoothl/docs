@@ -12,6 +12,10 @@ export default defineConfig({
     search: {
       provider: 'local',
     },
+    editLink: {
+      pattern: "https://github.com/Mai-with-u/docs/edit/main/:path",
+      text: "文档有误？在 GitHub 上编辑此页"
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: '首页', link: '/' },
