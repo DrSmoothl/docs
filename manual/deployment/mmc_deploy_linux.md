@@ -165,7 +165,7 @@ conda activate MaiBotEnv
 
 - `uv venv` 创建虚拟环境，`uv pip install` 在该环境中安装依赖。
 
-- 如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/configuration/lpmm)中安装quick-algo的部分。
+- 如果你在安装过程中发现`quick_algo`安装失败，请参考[LPMM知识库](/manual/configuration/lpmm/lpmm)中安装quick-algo的部分。
 
 :::
 
@@ -211,7 +211,7 @@ uv pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --u
 ::: tip
 
 - 使用传统的虚拟环境，每次都需要**手动激活**，否则将使用系统全局环境，导致出现问题。
-- 如果你发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/configuration/lpmm)中手动编译的部分
+- 如果你发现`quick_algo`安装失败，请参考[LPMM 使用说明](/manual/configuration/lpmm/lpmm.html)中手动编译的部分
 
 :::
 

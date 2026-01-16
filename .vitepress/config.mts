@@ -56,18 +56,18 @@ export default defineConfig({
         },
         {
           text: '配置详解',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: '配置概览', link: '/manual/configuration/' },
             { text: '关于配置指南', link: '/manual/configuration/configuration_standard' },
             { text: '关于模型配置', link: '/manual/configuration/configuration_model_standard' },
-            { text: 'WebUI通用配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},
-            { text: 'LPMM', 
+            { text: 'WebUI配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},
+            { text: '关于LPMM', 
               collapsed: true, 
               items: [
-                { text: '使用说明', link: '/manual/configuration/lpmm' },
-                { text: '手动编译说明', link: '/manual/configuration/lpmm_compile_and_install'},
-                { text: '导入文件格式', link: '/manual/configuration/lpmm_knowledge_template' },
+                { text: '使用说明', link: '/manual/configuration/lpmm/lpmm' },
+                { text: '手动编译说明', link: '/manual/configuration/lpmm/lpmm_compile_and_install'},
+                { text: '导入文件格式', link: '/manual/configuration/lpmm/lpmm_knowledge_template' },
               ]
             },
             { text: '关于备份', link: '/manual/configuration/backup' },
@@ -75,7 +75,7 @@ export default defineConfig({
         },
         {
           text: '适配器列表',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'Adapters 文档中心', link: '/manual/adapters' },
             { text: 'MaiBot Napcat Adapter', link: '/manual/adapters/napcat' },
@@ -94,14 +94,14 @@ export default defineConfig({
         },
         {
           text: '常见问题',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'FAQ 概览', link: '/manual/faq/' },
           ]
         },
         {
           text: '参考资源',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: '如何高效提问', link: '/manual/other/smart-question-guide' },
             { text: '官方Q群', link: '/manual/other/qq_group' },

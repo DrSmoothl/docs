@@ -7,7 +7,7 @@
 :::
 
 ::: tip
-知识库使用说明在[这里](/manual/configuration/lpmm)
+知识库使用说明在[这里](/manual/configuration/lpmm/lpmm)
 :::
 
 ::: info
@@ -421,6 +421,6 @@ rm -rf MaiM-with-u
 ## 参考链接
 
 - [配置指南](/manual/configuration/index)
-- [LPMM 知识库](/manual/configuration/lpmm)
+- [LPMM 知识库](/manual/configuration/lpmm/lpmm)
 - [插件开发](/develop/plugin_develop/index)
 - [常见问题](/manual/faq/index)

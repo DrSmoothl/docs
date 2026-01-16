@@ -33,11 +33,11 @@
 
 对于 Linux 平台用户，需要下载gcc/g++编译器，跳转链接: [Linux环境使用方法](#linux)  
 
-对于 MacOS 平台用户请直接参考[这个链接](/manual/configuration/lpmm_knowledge_template)的 MacOS 手动编译部分
+对于 MacOS 平台用户请直接参考[这个链接](/manual/configuration/lpmm/lpmm_knowledge_template)的 MacOS 手动编译部分
 
 对于Docker用户配置完成后可以直接运行脚本（LPMM已预编译于镜像中），跳转链接: [Docker的LPMM食用方式](#docker的lpmm食用方式)
 ::: tip
-如果你多次尝试安装后，**发现确实没有对应你平台的版本**，请参考[这个链接](/manual/configuration/lpmm_knowledge_template)的内容进行手动编译。
+如果你多次尝试安装后，**发现确实没有对应你平台的版本**，请参考[这个链接](/manual/configuration/lpmm/lpmm_knowledge_template)的内容进行手动编译。
 :::
 
 ### Windows
@@ -87,7 +87,7 @@ pip install quick-algo
 ```
 
 :::tip
-如果你通过以上步骤仍然无法安装`quick-algo`,请前往[LPMM手动编译说明](/manual/configuration/lpmm_knowledge_template)进行手动编译`quick-algo`
+如果你通过以上步骤仍然无法安装`quick-algo`,请前往[LPMM手动编译说明](/manual/configuration/lpmm/lpmm_knowledge_template)进行手动编译`quick-algo`
 :::
 
 ## 配置LPMM

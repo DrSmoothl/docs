@@ -17,7 +17,7 @@ MaiBot 现在使用以下两个主要配置文件：
 
 ## 知识库导入要求
 
-MaiBot 支持通过 OpenIE 技术导入知识库。文件命名需以 `-openie.json` 结尾，具体要求请参考 [LPMM 知识库导入要求](./lpmm_knowledge_template)。
+MaiBot 支持通过 OpenIE 技术导入知识库。文件命名需以 `-openie.json` 结尾，具体要求请参考 [LPMM 知识库导入要求](./lpmm/lpmm_knowledge_template)。
 
 ## .env文件
 

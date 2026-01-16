@@ -168,9 +168,9 @@ outline:
 
 <span style="color:red">请注意！此部分较为复杂！请先阅读官方文档关于LPMM知识库的所有介绍，再自行尝试打开/调试/添加！</span>
 
-[📄 麦麦知识库（新版LPMM）使用说明 | MaiBot 文档中心](lpmm.html)
+[📄 麦麦知识库（新版LPMM）使用说明 | MaiBot 文档中心](lpmm/lpmm.html)
 
-[🔧 LPMM知识库导入文件要求 | MaiBot 文档中心](lpmm_knowledge_template.html)
+[🔧 LPMM知识库导入文件要求 | MaiBot 文档中心](lpmm/lpmm_knowledge_template.html)
 
 <span style="color:blue">关于学习功能：你可以通过控制台CMD中“麦麦一键学习”选项来进行LPMM的学习，运行脚本后，在进行确认导入之前，你可以发现modules/MaiBot/data下新增lpmm_raw_data文件夹，将你的txt文件放进文件夹下，然后按流程按y即可</span>
 <span style="color:blue">如需删除知识库，直接删除rag和embedding文件夹即可</span>
