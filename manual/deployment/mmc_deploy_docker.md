@@ -26,7 +26,7 @@ mkdir -p maim-bot/docker-config/{mmc,adapters} && cd maim-bot
 ### 1.2 📥 获取 Docker 编排文件
 
 ```bash
-wget https://raw.githubusercontent.com/Mai-with-u/MaiMBot/main/docker-compose.yml
+wget https://raw.githubusercontent.com/Mai-with-u/MaiBot/main/docker-compose.yml
 ```
 
 > 🔄 **备用下载方式**  
