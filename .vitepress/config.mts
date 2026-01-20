@@ -4,7 +4,7 @@ import { MermaidPlugin, MermaidMarkdown } from "vitepress-plugin-mermaid";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "MaiBot 文档中心",
-  description: "MaiBot 开发与使用的全方位指南",
+  description: "MaiBot 开发与使用指南",
   head: [
     ['link', { rel: 'icon', href: '/title_img/mai2.png' }]
   ],
@@ -14,7 +14,7 @@ export default defineConfig({
     },
     editLink: {
       pattern: "https://github.com/Mai-with-u/docs/edit/main/:path",
-      text: "文档有误？在 GitHub 上编辑此页"
+      text: "在 GitHub 上编辑此页"
     },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -38,7 +38,7 @@ export default defineConfig({
           text: '安装方法',
           collapsed: false,
           items: [
-            { text: '部署概览', link: '/manual/deployment/' },
+            { text: '快速入门', link: '/manual/deployment/' },
             { text: 'Windows部署', link: '/manual/deployment/mmc_deploy_windows' },
             { text: 'Linux部署', link: '/manual/deployment/mmc_deploy_linux' },
             { text: 'macOS部署', link: '/manual/deployment/mmc_deploy_macos' },
@@ -58,7 +58,7 @@ export default defineConfig({
           text: '配置详解',
           collapsed: false,
           items: [
-            { text: '配置概览', link: '/manual/configuration/' },
+            { text: '快速入门', link: '/manual/configuration/' },
             { text: '关于配置指南', link: '/manual/configuration/configuration_standard' },
             { text: '关于模型配置', link: '/manual/configuration/configuration_model_standard' },
             { text: 'WebUI配置指南', link: '/manual/configuration/config_windows_onekey_withwebui'},

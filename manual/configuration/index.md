@@ -1,11 +1,12 @@
-# MaiBot 配置与安装简介
+# MaiBot 配置快速入门
 
 ## 配置文件
 
-MaiBot 现在使用以下两个主要配置文件：
+MaiBot 现在使用以下三个主要配置文件：
 
-1. **`bot_config.toml`** - MaiBot行为配置文件，包含机器人的名称、性格设定及功能开关。
-2. **`model_config.toml`** - 模型和API配置文件，包含AI模型配置、API服务商设置等。
+1. **`bot_config.toml`** - 位于 `config` 文件夹，MaiBot行为配置文件，包含机器人的名称、性格设定及功能开关。
+2. **`model_config.toml`** - 位于 `config` 文件夹，模型和API配置文件，包含AI模型配置、API服务商设置等。
+3. **`.env`** - 位于根目录，负责配置MaiBot监听的地址和端口;以及webui的启用、监听的地址和端口、模式。  
 
 为了让MaiBot连接上qq等其他平台，你还需要编辑对应的适配器的配置文件
 
@@ -18,20 +19,6 @@ MaiBot 现在使用以下两个主要配置文件：
 ## 知识库导入要求
 
 MaiBot 支持通过 OpenIE 技术导入知识库。文件命名需以 `-openie.json` 结尾，具体要求请参考 [LPMM 知识库导入要求](./lpmm/lpmm_knowledge_template)。
-
-## .env文件
-
-```ini
-HOST=127.0.0.1
-PORT=8000
-
-# WebUI 配置
-WEBUI_ENABLED=true
-WEBUI_HOST=0.0.0.0
-WEBUI_PORT=8001
-WEBUI_MODE=production   # 生产模式
-```
-.env文件中的这部分负责配置MaiBot监听的地址和端口;以及webui的启用、监听的地址和端口、模式。
 
 ## 常见问题
 

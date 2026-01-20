@@ -124,7 +124,7 @@ Maim-with-u
 
 ### 五、Napcat 部署
 
-- 请参考NapCatQQ文档：[Shell版](https://www.napcat.wiki/guide/boot/Shell)、[Framework版](https://www.napcat.wiki/guide/boot/Framework),任选一种即可
+- 请参考NapCatQQ文档：[Shell版](https://napneko.github.io/guide/boot/Shell)、[Framework版](https://napneko.github.io/guide/boot/Framework),任选一种即可
 
 ### 六、配置 MaiBot 和 Adapter
 

@@ -157,9 +157,21 @@
 
 ### 其他
 
-[最终用户许可协议](/manual/other/EULA)
-
-[提问的艺术(麦麦版本)](/manual/other/smart-question-guide)
+<div class="doc-cards">
+  <a href="/manual/other/EULA" class="doc-card">
+    <div class="doc-card-content">
+      <h3>📜 最终用户许可协议</h3>
+      <p>了解MaiBot的使用条款和条件</p>
+    </div>
+  </a>
+  
+  <a href="/manual/other/smart-question-guide" class="doc-card">
+    <div class="doc-card-content">
+      <h3>📚 提问的艺术(麦麦版本)</h3>
+      <p>学习如何有效地提问以获得更好的帮助</p>
+    </div>
+  </a>
+</div>
 
 
 :::info 提示
