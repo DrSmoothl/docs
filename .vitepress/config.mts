@@ -23,6 +23,7 @@ export default defineConfig({
       { text: '用户手册', link: '/manual/' },
       { text: '开发文档', link: '/develop/' },
       {text: '官方Q群', link:'/manual/other/qq_group'},
+      {text: '意见反馈', link:'https://docs.qq.com/form/page/DWGxycXdKWG9PS1NH'},
       {
         text: 'GitHub', 
         items: [
