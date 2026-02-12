@@ -31,12 +31,16 @@ sudo zypper install -y curl
 
 ## 安装
 
-目的：将maibot APP文件夹放在/opt/1panel/resource/apps/local/下
-你可以使用我们提供的自动脚本，也可以选择手动安装
+目的：将 MaiBot APP 文件夹放在 `/opt/1panel/resource/apps/local/` 下  
+你可以使用我们提供的自动脚本，也可以选择手动安装  
+执行脚本后，你可能需要手动点击1panel `应用商店` -> `全部` -> `同步本地应用`  
 
 ```bash
 curl -fsSL -o install_MaiBot_1Panel.bash https://raw.githubusercontent.com/Puiching-Memory/MaiBot-1Panel/MaiBot/apps/maibot/install.bash
-bash install_MaiBot_1Panel.bash
+bash install_MaiBot_1Panel.bash install      # 全新安装
+bash install_MaiBot_1Panel.bash update       # 更新到最新版本
+bash install_MaiBot_1Panel.bash version      # 查看当前安装版本和脚本版本
+bash install_MaiBot_1Panel.bash help         # 显示帮助信息
 ```
 
 ## 在1Panel面板中完成后续部署
@@ -94,6 +98,8 @@ bash install_MaiBot_1Panel.bash
 | MaiBot版本 |    Adapters版本    | NapCat版本 |
 | :--------: | :----------------: | :--------: |
 |   0.12.0   | dev-20251220054512 |   4.9.83   |
+|   0.12.1   | dev-20251227133620 |   4.9.98   |
+|   0.12.2   | dev-20260116153739 |  4.10.41   |
 
 ## 参考
 
