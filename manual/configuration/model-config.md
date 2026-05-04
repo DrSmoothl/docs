@@ -59,7 +59,7 @@ API 提供商代表提供LLM服务的对象
 [[api_providers]]
 name = "deepseek"
 base_url = "https://api.deepseek.com/v1"
-api_key = "sk-你的密钥"
+api_key = "your-api-key"
 client_type = "openai"
 auth_type = "bearer"
 ```
@@ -203,7 +203,7 @@ selection_strategy = "balance"
 [[api_providers]]
 name = "deepseek"
 base_url = "https://api.deepseek.com/v1"
-api_key = "sk-你的密钥"
+api_key = "your-api-key"
 auth_type = "bearer"
 
 [[models]]
