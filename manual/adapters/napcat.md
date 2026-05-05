@@ -1,41 +1,17 @@
 ---
-title: 💬 QQ 机器人连接指南
+title: 使用NapCat和适配器连接麦麦
 ---
-# 💬 QQ 机器人连接指南
+# 使用NapCat和适配器连接麦麦
 
-想让 MaiBot 在 QQ 群里陪你聊天？用 NapCat 就能轻松搞定！
+你可以通过 **NapCat** 来获取QQ的消息和信息
 
-## 什么是 NapCat？
-
-NapCat 就像一个"翻译官"，帮 MaiBot 和 QQ 聊天：
-
-简单来说：NapCat 让 MaiBot 能够"听懂"QQ 消息，也能"说话"给 QQ 听！
+然后通过 **适配器**将这些消息翻译并发送给MaiBot
 
 ## 适配器仓库
 
 NapCat 适配器的源码：[Mai-with-u/MaiBot-Napcat-Adapter](https://github.com/Mai-with-u/MaiBot-Napcat-Adapter)
 
-## 两种运行方式
-
-NapCat 适配器支持两种运行方式，目前推荐直接使用插件模式
-
-### 插件模式（推荐）
-
-适配器直接作为插件运行在 MaiBot ：
-
-消息流转：**NapCat → 适配器插件（MaiBot 内部）→ MaiBot**
-
-### 独立模式
-
-适配器作为独立程序运行，像一个"中间人"：
-
-- 需要两层网络连接（NapCat → 适配器，适配器 → MaiBot）
-- 适配器和 MaiBot 之间还需要额外一个 WebSocket 连接
-- 适合需要独立部署或有特殊需求的场景
-
-消息流转：**QQ → NapCat → 适配器 → MaiBot**
-
-## 插件模式使用指南
+## 使用指南
 
 ### 第一步：安装适配器
 
