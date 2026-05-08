@@ -46,8 +46,8 @@ export default defineConfig({
               items: [
                 { text: '部署概览', link: '/manual/deployment/' },
                 { text: '源码安装', link: '/manual/deployment/installation' },
+                { text: '一键包安装', link: '/manual/deployment/one_key' },
                 { text: 'Docker安装', link: '/manual/deployment/docker' },
-                { text: '适配器安装', link: '/manual/deployment/adapters_installation' },
               ]
             },
             {
@@ -55,7 +55,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: '适配器概览', link: '/manual/adapters/' },
-                { text: 'QQ 连接', link: '/manual/adapters/napcat' },
+                { text: 'NapCat QQ 连接', link: '/manual/adapters/napcat' },
                 { text: 'GoCQ 适配器', link: '/manual/adapters/gocq' },
               ]
             },
