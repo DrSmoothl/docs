@@ -2,49 +2,66 @@
 title: Deployment Overview
 ---
 
-# MaiBot Deployment Overview
+# MaiBot Introduction
 
 **MaiBot is a personified intelligent agent** that can chat with you, continuously learn about you, collect information, and extend its abilities through plugins or MCP.
 
 MaiBot can talk through the local command line, or connect to different IM platforms or arbitrary clients through adapter plugins.
 
-Currently the QQ (NapCat) platform is the most used and best supported platform, so this guide uses QQ as the example.
+## Deployment Methods
 
-## Deployment Preparation
-
-📱 **A QQ side account** (used to log in to the NapCat client)
-
-🔑 **An AI model API key (requires access to a vision model and an embedding model)**
-
-## 📦 Choose Your Deployment Method
-
-MaiBot offers 2 installation methods, choose either one:
+MaiBot can be deployed in several ways:
 
 | Method | Suitable For |
-|------|---------|
-| [Source Installation](./installation.md) | Users who want to tinker and control details |
-| [Docker Deployment (documentation needs updating)](./docker.md) | Users who want one-click deployment or server deployment |
+| --- | --- |
+| [Source Installation](./installation.md) | Users who prefer deploying from source |
+| [One-Click Package Deployment](./one_key.md) | Users who prefer the one-click package |
+| [Docker Deployment](./docker.md) | Users who prefer Docker |
 
-::: tip 💡 How to connect QQ
-First time using it? Recommended order:
+## How to Chat with MaiMai
 
-1. **Install MaiBot first and start it once**
-2. **Then connect to QQ (or another IM platform)** → [NapCat Adapter (documentation needs updating)](../adapters/napcat.md)
-3. **Finally configure the AI model and fine-tuning settings** → [Configuration Guide](../configuration/index.md)
-:::
+First, install MaiBot correctly and start it.
 
-## 3-Minute Quick Start
+### Chat Through WebUI
 
-If you already have Python environment and AI API ready, you can start right away:
+After starting MaiBot, the WebUI starts with it. By default, you can open the WebUI at http://127.0.0.1:8001/.
 
-```bash
-# 1. Download MaiBot
-git clone https://github.com/Mai-with-u/MaiBot.git
-cd MaiBot
+In the WebUI, follow the **configuration wizard** for basic setup. To chat with MaiMai, you need to configure the required models and settings.
 
-# 2. Install dependencies
-uv sync
+MaiMai needs at least one LLM model to work. If you want image understanding, you also need a VLM. If you want memory features, you also need an embedding model.
 
-# 3. Launch!
-uv run python bot.py
-```
+After configuration, use **MaiMai Chat** in the top navigation to start chatting.
+
+For more help with configuration, read the [Configuration Guide](../configuration/index.md).
+
+### Chat with MaiMai on QQ
+
+To connect MaiBot to QQ, you need an **adapter** to bridge MaiBot and the message platform.
+
+This section uses NapCat as the example.
+
+QQ has official bot APIs, but they expose only limited capabilities and cannot actively receive messages in the way MaiBot needs.
+
+So we recommend **NapCat**. You can roughly understand it as an unofficial QQ bot client.
+
+To connect NapCat to MaiBot, an adapter bridges them and forwards NapCat messages to MaiBot for processing.
+
+This leads to two tasks: deploy NapCat, and install the adapter.
+
+#### How to Deploy NapCat
+
+If you use Docker or the one-click package, a NapCat client is usually included, so you often do not need to install it separately.
+
+If you deploy from source, install NapCat separately by following the NapCat documentation.
+
+[NapCat official documentation](https://napneko.github.io/)
+
+#### How to Install the Adapter
+
+To use the NapCat adapter, see [NapCat Adapter Usage](../adapters/napcat.md).
+
+### Chat with MaiMai on Other Platforms
+
+Similar to QQ, other platforms can also connect through adapter plugins.
+
+You can find other adapters in the [Adapter Overview](../adapters/index.md).

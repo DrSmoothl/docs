@@ -22,14 +22,10 @@ MaiMai now supports config hot reload. After modifying a configuration file, you
 (Some configuration changes, such as switching AI models, may require related services to be reinitialized before they fully take effect.)
 :::
 
-## 🌐 WebUI Graphical Interface
+## 🌐 WebUI Configuration
 
-If you do not like manually editing files, MaiBot also provides a web-based configuration interface (the WebUI for the 1.0.0 pre-release is not finished yet):
+If you do not like manually editing files, MaiBot also provides a web-based configuration interface:
 
 - 🌐 Default address: `http://127.0.0.1:8001`
 - 🖱️ Click to change configs with mouse
 - 📱 Works on both phone and computer
-
-::: warning 🔒 Security Tip
-When using on public networks, it's recommended to use Nginx or other reverse proxy. Don't directly expose port 8001!
-:::

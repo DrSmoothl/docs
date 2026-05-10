@@ -12,7 +12,7 @@ Download from [GitHub Release](https://github.com/Mai-with-u/MaiBot/releases/), 
 
 ::: code-group
 
-```bash [Stable (Recommended)]
+```bash [Stable (includes pre-releases) (Recommended)]
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
@@ -30,7 +30,7 @@ The `dev` branch has new features but may be unstable. First-time users should c
 
 ## 🔧 Install Dependencies
 
-MaiBot uses [uv](https://github.com/astral-sh/uv) to manage dependencies (like pip, but faster and better).
+We recommend using [uv](https://github.com/astral-sh/uv) to manage dependencies.
 
 ### Install uv (Like installing a new tool for your computer)
 
@@ -129,14 +129,6 @@ export PRIVACY_AGREE=<hash shown in terminal>
 # Method 2: Run once to see the hash, then restart with env vars
 uv run python bot.py  # Shows required environment variables
 ```
-
-### How to check if the adapter plugin is enabled?
-
-Check the logs after starting MaiBot:
-- ✅ Enabled: `plugin maibot-team.napcat-adapter ... activated`
-- ❌ Disabled: `plugin ... disabled, skipping activation`
-
-Plugins are disabled by default — you need to enable them manually. See the [NapCat Adapter Guide](../adapters/napcat.md#⚠️-important-plugin-is-disabled-by-default).
 
 ### Want to restart the bot?
 

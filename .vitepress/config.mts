@@ -197,6 +197,7 @@ export default defineConfig({
               items: [
                 { text: 'Deployment Overview', link: '/en/manual/deployment/' },
                 { text: 'Installation Guide', link: '/en/manual/deployment/installation' },
+                { text: 'One-Click Package', link: '/en/manual/deployment/one_key' },
                 { text: 'Docker Deployment', link: '/en/manual/deployment/docker' },
               ]
             },
@@ -239,7 +240,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'Adapters Overview', link: '/en/manual/adapters/' },
-                { text: 'QQ Connection', link: '/en/manual/adapters/napcat' },
+                { text: 'NapCat QQ Connection', link: '/en/manual/adapters/napcat' },
                 { text: 'GoCQ Adapter', link: '/en/manual/adapters/gocq' },
               ]
             },
