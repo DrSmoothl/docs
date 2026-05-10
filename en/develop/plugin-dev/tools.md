@@ -144,6 +144,67 @@ The return value of a Tool handler is returned to LLM as the tool execution resu
 
 LLM will decide the next action based on the return value (e.g., reply to user, call other tools, etc.).
 
+### Returning Images and Other Media
+
+If a Tool needs to pass an image back to Maisaka for further observation or reasoning, do not put the image base64 directly in `content`. Return a `dict` instead: put the text for LLM in `content`, and put the image payload in `content_items`:
+
+```python
+from base64 import b64encode
+
+
+async def handle_draw(self, prompt: str, **kwargs):
+    image_bytes = await self._draw_image(prompt)
+
+    return {
+        "success": True,
+        "content": "The image has been generated. Please inspect the image content by its index.",
+        "content_items": [
+            {
+                "type": "image",
+                "data": b64encode(image_bytes).decode("ascii"),
+                "mime_type": "image/png",
+                "name": "result.png",
+                "description": "Image generated from the prompt",
+            }
+        ],
+    }
+```
+
+Data URLs are also supported:
+
+```python
+return {
+    "success": True,
+    "content": "The image has been generated.",
+    "content_items": [
+        {
+            "type": "image",
+            "uri": f"data:image/png;base64,{b64encode(image_bytes).decode('ascii')}",
+            "mime_type": "image/png",
+            "name": "result.png",
+        }
+    ],
+}
+```
+
+Common fields in `content_items`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` / `content_type` | `str` | Content type. Use `image` for images; `audio`, `resource_link`, `resource`, and `binary` are also supported |
+| `data` / `base64` | `str` | Base64 string of the media bytes. Recommended for image payloads |
+| `uri` | `str` | Media URI. Images may use `data:image/...;base64,...` |
+| `mime_type` | `str` | MIME type, such as `image/png`, `image/jpeg`, or `image/webp` |
+| `name` | `str` | File name or display name |
+| `description` | `str` | Short description of the media content |
+| `metadata` | `dict` | Additional metadata |
+
+Maisaka splits this return value into two context messages. The first message is still a plain-text Tool Result containing a media index like `tool_result:<tool_call_id>:1`. The second message is a normal user message containing the same index and the actual image component. This keeps compatibility with model APIs that do not support images inside tool results, while allowing vision-capable models to observe the image as a normal image message.
+
+::: tip View logic
+The split-out image uses the normal `ImageComponent` rendering path in LLM input and Prompt preview, so it is displayed much like a real received image message. The difference is identity metadata: its source is marked as `tool_result_media`, and its message ID is the tool media index, so it is not treated as a real platform message sent by a user.
+:::
+
 ### Common Extra Parameters in kwargs
 
 | Parameter | Type | Description |
