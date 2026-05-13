@@ -200,7 +200,7 @@ Planner is the main reasoning and tool execution phase:
 1. **Build Tool Definitions**: `_build_action_tool_definitions()`
    - Filter `ACTION_HIDDEN_TOOL_NAMES` (continue, no_reply)
    - Built-in Action tools directly exposed
-   - Third-party/plugin tools placed in deferred pool, discovered via `tool_search`
+   - Third-party/plugin tools are placed in the deferred pool by default and discovered via `tool_search`; plugin tools declared with `core_tool=True` or `visibility="visible"` are exposed directly
 
 2. **Run Interruptible Planner**: `_run_interruptible_planner()`
    - Bind `asyncio.Event` interrupt flag
@@ -281,12 +281,14 @@ Source location: `src/maisaka/builtin_tool/`
 
 ### Deferred Tool Discovery Mechanism
 
-In Action Loop, third-party/plugin tools are not directly exposed to Planner, but discovered in two steps:
+In Action Loop, normal third-party/plugin tools are not directly exposed to Planner by default, but discovered in two steps:
 
 1. **tool_search**: Search deferred tool pool, mark matched tool names as "discovered"
 2. **Next round Planner**: Discovered tools added to visible tool list
 
 This reduces the number of tools Planner sees at once, avoiding choice paralysis.
+
+If a plugin Tool declares `core_tool=True` or `visibility="visible"`, it skips deferred discovery and enters the Planner-visible tool list directly. This is intended for high-frequency, low-risk, strongly contextual tools; regular plugin tools should usually keep the default deferred behavior.
 
 ## MaisakaChatLoopService
 

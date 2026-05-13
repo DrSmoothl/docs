@@ -22,6 +22,7 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
     brief_description: str = "",                            # Brief description for LLM quick judgment
     detailed_description: str = "",                         # Detailed description, including parameter docs
     parameters: list[ToolParameterInfo] | dict | None = None,  # Parameter definition
+    core_tool: bool = False,                                # Whether to expose this tool directly to LLM
     **metadata,                                             # Additional metadata
 )
 ```
@@ -35,6 +36,33 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 | `brief_description` | `str` | Brief description. Passed to LLM as tool description summary, helping LLM decide whether to call it |
 | `detailed_description` | `str` | Detailed description. Can include parameter usage notes, caveats, etc. The SDK automatically merges parameter Schema to generate complete description |
 | `parameters` | `list \| dict \| None` | Tool parameter definition, supports two formats (see below) |
+| `core_tool` | `bool` | Whether to expose the tool directly to LLM as a core tool. Default is `False`; normal plugin tools enter the deferred tool pool and must be discovered through `tool_search` before use |
+
+::: warning Use core tools sparingly
+`core_tool=True` makes the tool visible to the Planner without a prior search. Use it only for high-frequency, low-risk, strongly contextual tools, such as voice replies or current-session sending tools. Too many core tools increase model selection cost and may cause accidental calls to capabilities that should not stay always available.
+:::
+
+To hide a tool from LLM exposure, pass `visibility="hidden"`. The default behavior is equivalent to `visibility="deferred"`.
+
+Example:
+
+```python
+@Tool(
+    "send_tts_voice",
+    description="Synthesize the given text as voice and send it to the current chat.",
+    core_tool=True,
+    parameters=[
+        ToolParameterInfo(
+            name="text",
+            param_type=ToolParamType.STRING,
+            description="Text to synthesize and send",
+            required=True,
+        ),
+    ],
+)
+async def send_tts_voice(self, text: str, **kwargs):
+    ...
+```
 
 ## Parameter Definition
 

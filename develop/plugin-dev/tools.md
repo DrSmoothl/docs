@@ -20,6 +20,7 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
     name: str,                                              # 工具名称（必填）
     description: str = "",                                  # 关于工具的描述，包括使用方法，使用情景，注意事项
     parameters: list[ToolParameterInfo] | dict | None = None,  # 参数定义
+    core_tool: bool = False,                                # 是否作为核心工具直接暴露给 LLM
     **metadata,                                             # 额外元数据
 )
 ```
@@ -31,6 +32,33 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 | `name` | `str` | 工具名称，需在插件内唯一。LLM 通过此名称调用工具 |
 | `description` | `str` | 关于工具的描述，包括使用方法，使用情景，注意事项 |
 | `parameters` | `list \| dict \| None` | 工具参数定义，支持两种格式（见下文） |
+| `core_tool` | `bool` | 是否作为核心工具直接暴露给 LLM。默认 `False`，普通插件工具会先进入 deferred 工具池，需要通过 `tool_search` 发现后再使用 |
+
+::: warning 核心工具请谨慎使用
+`core_tool=True` 会让工具在 Planner 阶段无需搜索即可可见。只建议用于高频、低风险、强场景相关的工具，例如语音回复、当前会话发送类工具。过多核心工具会增加模型选择成本，也可能让模型误调用不该常驻的能力。
+:::
+
+如果希望工具不暴露给 LLM，也可以传入 `visibility="hidden"`；默认行为等价于 `visibility="deferred"`。
+
+示例：
+
+```python
+@Tool(
+    "send_tts_voice",
+    description="把指定文本合成为语音并发送到当前会话。",
+    core_tool=True,
+    parameters=[
+        ToolParameterInfo(
+            name="text",
+            param_type=ToolParamType.STRING,
+            description="要合成为语音并发送的文本",
+            required=True,
+        ),
+    ],
+)
+async def send_tts_voice(self, text: str, **kwargs):
+    ...
+```
 
 描述字段约定：
 - `description`：关于工具的描述，包括使用方法，使用情景，注意事项
