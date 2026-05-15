@@ -38,6 +38,10 @@ features:
 
 - 访问[GitHub仓库](https://github.com/Mai-with-u/MaiBot)提交问题或贡献代码
 - 加入用户交流群获取帮助
+  - QQ：766798517
+  - QQ：571780722
+  - QQ：729957033
+  - QQ：1022489779（闲聊群）
 
 <style scoped>
 #star-canvas {
