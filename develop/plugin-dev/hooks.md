@@ -224,6 +224,25 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `maisaka.planner.before_request` | 向模型发起规划请求前 |
 | `maisaka.planner.after_response` | 收到模型响应后 |
 
+### 表达方式选择链
+
+| Hook 名称 | 触发时机 |
+|-----------|----------|
+| `expression.select.before_select` | 表达候选池载入后、默认选择结果生成前；可改写 `candidates`、`max_num` 或 `abort` 跳过本次选择 |
+| `expression.select.after_selection` | 默认选择结果生成后；可改写 `selected_expression_ids` 或 `selected_expressions` |
+
+`before_select` 会收到 `chat_id`、`session_id`、`chat_info`、`chat_history`、`reply_message`、`reply_tool_args`、`target_message`、`reply_reason`、`max_num`、`think_level`、`candidates`。`reply_tool_args` 包含 reply 工具里除 `msg_id`、`set_quote`、`reference_info` 外的额外参数。`after_selection` 在此基础上额外包含 `selected_expression_ids` 与 `selected_expressions`。
+
+```python
+@HookHandler("expression.select.after_selection", mode=HookMode.BLOCKING)
+async def replace_expression_selection(self, **kwargs):
+    strategy = kwargs.get("reply_tool_args", {}).get("expression_strategy")
+    candidates = kwargs.get("candidates", [])
+    selected_ids = [item["id"] for item in candidates[:1]]
+    kwargs["selected_expression_ids"] = selected_ids
+    return {"action": "continue", "modified_kwargs": kwargs}
+```
+
 ## 处理器返回值
 
 阻塞模式的处理器可以返回字典来控制后续流程：
