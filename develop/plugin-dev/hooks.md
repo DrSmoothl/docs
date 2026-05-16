@@ -186,43 +186,75 @@ class SendInterceptorPlugin(MaiBotPlugin):
         return {"action": "continue", "modified_kwargs": kwargs}
 ```
 
-## 常用 Hook 名称
+## 内置 Hook 清单
+
+以下为 Host 运行时中心表注册的全部 Hook 点。每个 Hook 注明是否允许 abort（中止调用链）和是否允许改参（修改后续处理器接收的 kwargs）。
 
 ### 聊天消息链
 
-| Hook 名称 | 触发时机 |
-|-----------|----------|
-| `chat.receive.before_process` | 入站消息执行 `process()` 之前 |
-| `chat.receive.after_process` | 入站消息完成轻量预处理后 |
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `chat.receive.before_process` | 入站消息执行 `SessionMessage.process()` 前 | 是 | 是 |
+| `chat.receive.after_process` | 入站消息轻量预处理完成后 | 是 | 是 |
 
 ### 命令执行链
 
-| Hook 名称 | 触发时机 |
-|-----------|----------|
-| `chat.command.before_execute` | 命令匹配成功、实际执行前 |
-| `chat.command.after_execute` | 命令执行结束后 |
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `chat.command.before_execute` | 命令匹配成功、正式执行前 | 是 | 是 |
+| `chat.command.after_execute` | 命令执行结束后 | 否 | 是 |
+
+### 表情包链
+
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `emoji.maisaka.before_select` | Maisaka 选择表情前 | 是 | 是 |
+| `emoji.maisaka.after_select` | Maisaka 选出表情后 | 是 | 是 |
+| `emoji.register.after_build_description` | 表情包描述生成完成后 | 是 | 是 |
+| `emoji.register.after_build_emotion` | 表情包情绪标签生成完成后 | 是 | 是 |
+
+### 黑话（Jargon）链
+
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `jargon.query.before_search` | Maisaka 黑话查询前 | 是 | 是 |
+| `jargon.query.after_search` | Maisaka 黑话查询完成后 | 是 | 是 |
+| `jargon.extract.before_persist` | 黑话条目写库前 | 是 | 是 |
+| `jargon.inference.before_finalize` | 黑话推断结果写回前 | 是 | 是 |
+
+### 表达方式（Expression）链
+
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `expression.select.before_select` | 表达方式选择前 | 是 | 是 |
+| `expression.select.after_selection` | 表达方式选择完成后 | 是 | 是 |
+| `expression.learn.after_extract` | 表达方式学习解析候选后 | 是 | 是 |
+| `expression.learn.before_upsert` | 表达方式写库前 | 是 | 是 |
 
 ### 发送服务链
 
-| Hook 名称 | 触发时机 |
-|-----------|----------|
-| `send_service.after_build_message` | 出站消息构建完成后 |
-| `send_service.before_send` | 调用 Platform IO 发送前 |
-| `send_service.after_send` | 发送流程结束后 |
-
-### 心流周期链
-
-| Hook 名称 | 触发时机 |
-|-----------|----------|
-| `heart_fc.heart_flow_cycle_start` | 心流周期开始时 |
-| `heart_fc.heart_flow_cycle_end` | 心流周期结束时 |
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `send_service.after_build_message` | 出站 `SessionMessage` 构建完成后 | 是 | 是 |
+| `send_service.before_send` | 调用 Platform IO 发送前 | 是 | 是 |
+| `send_service.after_send` | 发送流程完成后 | 否 | 否 |
 
 ### Maisaka 规划器链
 
-| Hook 名称 | 触发时机 |
-|-----------|----------|
-| `maisaka.planner.before_request` | 向模型发起规划请求前 |
-| `maisaka.planner.after_response` | 收到模型响应后 |
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `maisaka.planner.before_request` | Maisaka 规划器请求模型前 | 否 | 是 |
+| `maisaka.planner.after_response` | Maisaka 收到模型响应后 | 否 | 是 |
+
+## Host 校验规则
+
+Host 在插件注册阶段会对 `@HookHandler` 声明进行校验，不合法时插件直接注册失败（而非"加载成功但 Hook 不生效"的半成功状态）。校验规则如下：
+
+1. **Hook 名称必须已注册**：`hook` 参数必须是上述内置 Hook 清单中已存在的名称。传入未注册的 Hook 名称会导致注册失败。
+2. **mode 必须符合 Hook 的能力约束**：Host 会检查 `mode` 是否与该 Hook 点的能力兼容（例如，仅允许改参的 Hook 不能以不可改参的模式运行）。
+3. **error_policy=ABORT 须 Hook 允许 abort**：只有当该 Hook 的"允许 abort"列为"是"时，才能声明 `error_policy=ErrorPolicy.ABORT`。对于不允许 abort 的 Hook 声明 `ABORT` 策略将导致注册失败。
+
+运行时 Host 会将这份 Hook 清单公开给 WebUI 后端路由 `/plugins/runtime/hooks`，便于面板或调试工具直接读取动态中心表。
 
 ## 处理器返回值
 
