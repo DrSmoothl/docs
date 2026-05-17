@@ -22,6 +22,7 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
     brief_description: str = "",                            # Brief description for LLM quick judgment
     detailed_description: str = "",                         # Detailed description, including parameter docs
     parameters: list[ToolParameterInfo] | dict | None = None,  # Parameter definition
+    core_tool: bool = False,                                # Whether to expose this tool directly to LLM
     **metadata,                                             # Additional metadata
 )
 ```
@@ -35,6 +36,33 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 | `brief_description` | `str` | Brief description. Passed to LLM as tool description summary, helping LLM decide whether to call it |
 | `detailed_description` | `str` | Detailed description. Can include parameter usage notes, caveats, etc. The SDK automatically merges parameter Schema to generate complete description |
 | `parameters` | `list \| dict \| None` | Tool parameter definition, supports two formats (see below) |
+| `core_tool` | `bool` | Whether to expose the tool directly to LLM as a core tool. Default is `False`; normal plugin tools enter the deferred tool pool and must be discovered through `tool_search` before use |
+
+::: warning Use core tools sparingly
+`core_tool=True` makes the tool visible to the Planner without a prior search. Use it only for high-frequency, low-risk, strongly contextual tools, such as voice replies or current-session sending tools. Too many core tools increase model selection cost and may cause accidental calls to capabilities that should not stay always available.
+:::
+
+To hide a tool from LLM exposure, pass `visibility="hidden"`. The default behavior is equivalent to `visibility="deferred"`.
+
+Example:
+
+```python
+@Tool(
+    "send_tts_voice",
+    description="Synthesize the given text as voice and send it to the current chat.",
+    core_tool=True,
+    parameters=[
+        ToolParameterInfo(
+            name="text",
+            param_type=ToolParamType.STRING,
+            description="Text to synthesize and send",
+            required=True,
+        ),
+    ],
+)
+async def send_tts_voice(self, text: str, **kwargs):
+    ...
+```
 
 ## Parameter Definition
 
@@ -143,6 +171,67 @@ The return value of a Tool handler is returned to LLM as the tool execution resu
 - Other serializable values
 
 LLM will decide the next action based on the return value (e.g., reply to user, call other tools, etc.).
+
+### Returning Images and Other Media
+
+If a Tool needs to pass an image back to Maisaka for further observation or reasoning, do not put the image base64 directly in `content`. Return a `dict` instead: put the text for LLM in `content`, and put the image payload in `content_items`:
+
+```python
+from base64 import b64encode
+
+
+async def handle_draw(self, prompt: str, **kwargs):
+    image_bytes = await self._draw_image(prompt)
+
+    return {
+        "success": True,
+        "content": "The image has been generated. Please inspect the image content by its index.",
+        "content_items": [
+            {
+                "type": "image",
+                "data": b64encode(image_bytes).decode("ascii"),
+                "mime_type": "image/png",
+                "name": "result.png",
+                "description": "Image generated from the prompt",
+            }
+        ],
+    }
+```
+
+Data URLs are also supported:
+
+```python
+return {
+    "success": True,
+    "content": "The image has been generated.",
+    "content_items": [
+        {
+            "type": "image",
+            "uri": f"data:image/png;base64,{b64encode(image_bytes).decode('ascii')}",
+            "mime_type": "image/png",
+            "name": "result.png",
+        }
+    ],
+}
+```
+
+Common fields in `content_items`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` / `content_type` | `str` | Content type. Use `image` for images; `audio`, `resource_link`, `resource`, and `binary` are also supported |
+| `data` / `base64` | `str` | Base64 string of the media bytes. Recommended for image payloads |
+| `uri` | `str` | Media URI. Images may use `data:image/...;base64,...` |
+| `mime_type` | `str` | MIME type, such as `image/png`, `image/jpeg`, or `image/webp` |
+| `name` | `str` | File name or display name |
+| `description` | `str` | Short description of the media content |
+| `metadata` | `dict` | Additional metadata |
+
+Maisaka splits this return value into two context messages. The first message is still a plain-text Tool Result containing a media index like `tool_result:<tool_call_id>:1`. The second message is a normal user message containing the same index and the actual image component. This keeps compatibility with model APIs that do not support images inside tool results, while allowing vision-capable models to observe the image as a normal image message.
+
+::: tip View logic
+The split-out image uses the normal `ImageComponent` rendering path in LLM input and Prompt preview, so it is displayed much like a real received image message. The difference is identity metadata: its source is marked as `tool_result_media`, and its message ID is the tool media index, so it is not treated as a real platform message sent by a user.
+:::
 
 ### Common Extra Parameters in kwargs
 

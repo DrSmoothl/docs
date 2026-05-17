@@ -4,7 +4,7 @@ title: API Reference
 
 # API Reference
 
-MaiBot plugins access 15 capability proxies through `self.ctx` (`PluginContext`). All calls are automatically forwarded to Host via RPC, and the SDK automatically unwraps results.
+MaiBot plugins access 16 capability proxies through `self.ctx` (`PluginContext`). All calls are automatically forwarded to Host via RPC, and the SDK automatically unwraps results.
 
 ```python
 self.ctx.send       # Send messages
@@ -22,6 +22,7 @@ self.ctx.gateway    # Message gateway
 self.ctx.tool       # Tool definitions
 self.ctx.render     # HTML rendering
 self.ctx.knowledge  # Knowledge base search
+self.ctx.maisaka    # Maisaka proactive tasks
 self.ctx.logger     # Logging (standard logging.Logger)
 ```
 
@@ -81,9 +82,21 @@ result = await self.ctx.llm.generate_with_tools(
     model="gpt-4",
 )
 
+# Generate an embedding vector for one text. Uses model_task_config.embedding by default.
+embedding = await self.ctx.llm.embed(text="Text to vectorize")
+
+# Generate embedding vectors in batch. task_name/model/model_name are model task names, not concrete model IDs.
+embeddings = await self.ctx.llm.embed(
+    texts=["First paragraph", "Second paragraph"],
+    task_name="embedding",
+    max_concurrent=4,
+)
+
 # Get available model list
 models = await self.ctx.llm.get_available_models()
 ```
+
+Before using the embedding capability, declare `llm.embed` in the plugin `_manifest.json` `capabilities` list.
 
 ## config — Configuration Reading
 
@@ -135,7 +148,36 @@ stream = await self.ctx.chat.get_stream_by_group_id(group_id="123456")
 
 # Get chat stream by User ID
 stream = await self.ctx.chat.get_stream_by_user_id(user_id="789012")
+
+# Open or create a private chat stream
+stream = await self.ctx.chat.open_session(
+    platform="qq",
+    chat_type="private",
+    user_id="789012",
+)
+
+# Open or create a group chat stream. Group chats only need group_id, not user_id.
+stream = await self.ctx.chat.open_session(
+    platform="qq",
+    chat_type="group",
+    group_id="123456",
+)
 ```
+
+`chat.open_session` returns `stream_id`, `session_id`, `chat_type`, `created`, and the full `stream` object. In multi-account or multi-route deployments, pass `account_id` and `scope` as well to avoid opening the wrong chat stream.
+
+## maisaka - Maisaka Proactive Tasks
+
+```python
+# Ask Maisaka to proactively process one conversation turn for a chat stream.
+result = await self.ctx.maisaka.proactive.trigger(
+    stream_id=stream["stream_id"],
+    intent="Remind the user that they have a schedule item at 20:00 today",
+    reason="calendar_reminder",
+)
+```
+
+`maisaka.proactive.trigger` does not send fixed text directly and does not impersonate a user message. It writes the `intent` into Maisaka's internal context and wakes the Planner, letting Maisaka decide whether to reply and how to express itself using personality, memory, current context, and available tools. The chat stream must already exist; call `chat.open_session` first when you need to open a private or group stream proactively.
 
 ## person — User Information
 

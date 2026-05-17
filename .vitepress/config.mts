@@ -46,8 +46,8 @@ export default defineConfig({
               items: [
                 { text: '部署概览', link: '/manual/deployment/' },
                 { text: '源码安装', link: '/manual/deployment/installation' },
+                { text: '一键包安装', link: '/manual/deployment/one_key' },
                 { text: 'Docker安装', link: '/manual/deployment/docker' },
-                { text: '适配器安装', link: '/manual/deployment/adapters_installation' },
               ]
             },
             {
@@ -55,7 +55,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: '适配器概览', link: '/manual/adapters/' },
-                { text: 'QQ 连接', link: '/manual/adapters/napcat' },
+                { text: 'NapCat QQ 连接', link: '/manual/adapters/napcat' },
                 { text: 'GoCQ 适配器', link: '/manual/adapters/gocq' },
                 { text: 'SnowLuma 适配器', link: '/manual/adapters/snowluma' },
                 { text: 'Telegram 适配器', link: '/manual/adapters/telegram' },
@@ -131,6 +131,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: '开发指南', link: '/develop/plugin-dev/' },
+                { text: 'Vibe Coding 指南', link: '/develop/plugin-dev/vibe-coding' },
                 { text: 'Manifest', link: '/develop/plugin-dev/manifest' },
                 { text: '生命周期', link: '/develop/plugin-dev/lifecycle' },
                 { text: 'Tool', link: '/develop/plugin-dev/tools' },
@@ -203,6 +204,7 @@ export default defineConfig({
               items: [
                 { text: 'Deployment Overview', link: '/en/manual/deployment/' },
                 { text: 'Installation Guide', link: '/en/manual/deployment/installation' },
+                { text: 'One-Click Package', link: '/en/manual/deployment/one_key' },
                 { text: 'Docker Deployment', link: '/en/manual/deployment/docker' },
               ]
             },
@@ -247,7 +249,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'Adapters Overview', link: '/en/manual/adapters/' },
-                { text: 'QQ Connection', link: '/en/manual/adapters/napcat' },
+                { text: 'NapCat QQ Connection', link: '/en/manual/adapters/napcat' },
                 { text: 'GoCQ Adapter', link: '/en/manual/adapters/gocq' },
                 { text: 'SnowLuma Adapter', link: '/en/manual/adapters/snowluma' },
                 { text: 'Telegram Adapter', link: '/en/manual/adapters/telegram' },
@@ -287,6 +289,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'Development Guide', link: '/en/develop/plugin-dev/' },
+                { text: 'Vibe Coding Guide', link: '/en/develop/plugin-dev/vibe-coding' },
                 { text: 'Manifest', link: '/en/develop/plugin-dev/manifest' },
                 { text: 'Lifecycle', link: '/en/develop/plugin-dev/lifecycle' },
                 { text: 'Tool', link: '/en/develop/plugin-dev/tools' },

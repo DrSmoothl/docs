@@ -10,7 +10,7 @@ title: 安装指南
 
 ::: code-group
 
-```bash [稳定版 (推荐)]
+```bash [稳定版（包含预发布版） (推荐)]
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
@@ -28,7 +28,7 @@ cd MaiBot
 
 ## 安装依赖
 
-MaiBot 用 [uv](https://github.com/astral-sh/uv) 管理依赖。
+我们推荐你用 [uv](https://github.com/astral-sh/uv) 管理依赖。
 
 ### 安装 uv
 
@@ -110,11 +110,3 @@ export PRIVACY_AGREE=<终端显示的hash值>
 # 方法二：先运行一次看提示的 hash 值，记录后用环境变量启动
 uv run python bot.py  # 会显示需要的环境变量
 ```
-
-### 如何确认适配器插件已启用？
-
-启动 MaiBot 后查看日志：
-- ✅ 已启用：`插件 maibot-team.napcat-adapter ... 激活`
-- ❌ 未启用：`插件 maibot-team.napcat-adapter 已在配置中禁用，跳过激活`
-
-插件默认是禁用的，需要手动启用。详见 [NapCat 适配器文档](../adapters/napcat.md#⚠️-重要插件默认未启用)。

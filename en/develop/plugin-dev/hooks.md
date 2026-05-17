@@ -224,6 +224,25 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `maisaka.planner.before_request` | Before sending planning request to model |
 | `maisaka.planner.after_response` | After receiving model response |
 
+### Expression Selection Chain
+
+| Hook Name | Trigger Timing |
+|-----------|---------------|
+| `expression.select.before_select` | After the expression candidate pool is loaded and before the default selection is built; can rewrite `candidates`, `max_num`, or `abort` this selection |
+| `expression.select.after_selection` | After the default selection is built; can rewrite `selected_expression_ids` or `selected_expressions` |
+
+`before_select` receives `chat_id`, `session_id`, `chat_info`, `chat_history`, `reply_message`, `reply_tool_args`, `target_message`, `reply_reason`, `max_num`, `think_level`, and `candidates`. `reply_tool_args` contains extra reply tool arguments other than `msg_id`, `set_quote`, and `reference_info`. `after_selection` also receives `selected_expression_ids` and `selected_expressions`.
+
+```python
+@HookHandler("expression.select.after_selection", mode=HookMode.BLOCKING)
+async def replace_expression_selection(self, **kwargs):
+    strategy = kwargs.get("reply_tool_args", {}).get("expression_strategy")
+    candidates = kwargs.get("candidates", [])
+    selected_ids = [item["id"] for item in candidates[:1]]
+    kwargs["selected_expression_ids"] = selected_ids
+    return {"action": "continue", "modified_kwargs": kwargs}
+```
+
 ## Handler Return Values
 
 Blocking mode handlers can return a dictionary to control the subsequent flow:

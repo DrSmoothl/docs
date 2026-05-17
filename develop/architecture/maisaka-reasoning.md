@@ -200,7 +200,7 @@ Planner 是主要的推理和工具执行阶段：
 1. **构建工具定义**：`_build_action_tool_definitions()`
    - 过滤 `ACTION_HIDDEN_TOOL_NAMES`（continue、no_reply）
    - 内置 Action 工具直接暴露
-   - 第三方/插件工具放入 deferred 池，通过 `tool_search` 发现
+   - 默认第三方/插件工具放入 deferred 池，通过 `tool_search` 发现；声明 `core_tool=True` 或 `visibility="visible"` 的插件工具会直接暴露
 
 2. **运行可打断 Planner**：`_run_interruptible_planner()`
    - 绑定 `asyncio.Event` 中断标记
@@ -281,12 +281,14 @@ graph TD
 
 ### Deferred Tool 发现机制
 
-Action Loop 中，第三方/插件工具不直接暴露给 Planner，而是通过两步发现：
+Action Loop 中，普通第三方/插件工具默认不直接暴露给 Planner，而是通过两步发现：
 
 1. **tool_search**：搜索 deferred 工具池，匹配到的工具名标记为"已发现"
 2. **下一轮 Planner**：已发现的工具加入可见工具列表
 
 这减少了 Planner 一次看到的工具数量，避免选择困难。
+
+插件 Tool 如果声明了 `core_tool=True` 或 `visibility="visible"`，会跳过 deferred 发现流程，直接进入 Planner 可见工具列表。该机制适合高频、低风险、上下文强相关的工具；普通插件工具仍建议保持默认 deferred 行为。
 
 ## MaisakaChatLoopService
 
