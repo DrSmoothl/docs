@@ -2,221 +2,421 @@
 title: MCP 工具集成
 ---
 
-# MCP 工具集成 🔌
+# MCP 工具集成
 
-MaiBot 不仅能聊天，它还能"动手"！通过 MCP（Model Context Protocol），MaiBot 可以连接各种外部工具，获取实时信息，完成各种实用任务。
+MaiBot 通过 MCP（Model Context Protocol）协议连接外部工具服务器，让 Maisaka 推理引擎获得超出对话本身的能力——浏览器自动化、文件操作、代码执行、API 调用，都可以通过 MCP 工具实现。
 
 ## 什么是 MCP？
 
-MCP 就像是给 AI 装上了"手脚"，让它能够：
-- **搜索信息** - 上网查资料
-- **获取数据** - 查天气、股票、新闻
-- **操作文件** - 读写文件、处理文档
-- **调用服务** - 用各种在线服务
+MCP（Model Context Protocol）是一个开放协议标准，定义了 AI 应用如何与外部工具和服务进行连接与交互。在 MCP 的世界里，有**客户端**和**服务端**两种角色：
 
-简单来说，就是让 MaiBot 从"只会说"变成"又能说又能做"。
+- **MCP 服务端（Server）**：暴露工具、提示词、资源等能力的服务程序。比如一个"浏览器自动化"服务端会提供网页截图、点击元素等工具。
+- **MCP 客户端（Client）**：连接到服务端，发现并使用其能力的程序。**MaiBot 就是 MCP 客户端**。
 
-## 都能做什么？
+::: tip 关键理解
+MaiBot 自身不包含天气查询、股票查询、网页搜索等内置工具。这些能力全部来自你连接的 MCP 服务端——MaiBot 负责发现和调用它们，具体能做什么取决于你连了哪些服务器。
+:::
 
-### 🌤️ 获取实时信息
-**天气查询**
-```
-你：明天北京天气怎么样？
-MaiBot：我查一下...明天北京晴，
-       气温15-25度，适合出门玩！
-```
+MCP 工具对 Maisaka 推理引擎来说是**透明**的——MCP 工具和内置工具（`reply`、`wait`、`stop` 等）走同一个 ToolProvider 接口，规划器无需区分它们的来源。
 
-**新闻资讯**
-```
-你：今天有什么科技新闻？
-MaiBot：我看看...今天有几个大新闻：
-       1. 某大厂发布了新AI模型
-       2. 新能源汽车销量创新高
-       3.  SpaceX又有新发射计划
-```
+## 架构概览
 
-**股票行情**
+MCP 模块位于 `maibot/src/mcp_module/`，由以下核心组件构成：
+
 ```
-你：帮我看看茅台股价
-MaiBot：贵州茅台当前价格1678.50元，
-       今天涨了2.3%，表现不错！
+mcp_module/
+├── __init__.py          # 包入口，导出 MCPManager
+├── manager.py           # MCPManager — 全局管理器
+├── connection.py        # MCPConnection — 单服务器连接
+├── provider.py          # MCPToolProvider — Maisaka 工具集成
+├── host_llm_bridge.py   # MCPHostLLMBridge — Sampling → LLM 桥接
+├── hooks.py             # MCPHostCallbacks — 宿主回调声明
+├── models.py            # 结构化数据模型与转换
+└── config.py            # TOML → 运行时配置转换
 ```
 
-### 🔍 搜索查询
-**网络搜索**
-```
-你：什么是量子计算？
-MaiBot：我查一下资料...量子计算是
-       一种利用量子力学原理的计算方式，
-       它能够...（给出详细解释）
-```
+各组件职责：
 
-**百科查询**
-```
-你：介绍一下宫崎骏
-MaiBot：宫崎骏是日本著名动画导演，
-       1941年出生，代表作有《千与千寻》、
-       《龙猫》、《天空之城》等...
-```
+| 组件 | 文件 | 职责 |
+|------|------|------|
+| **MCPManager** | manager.py | 全局管理器，管理所有服务器连接，提供统一的工具/Prompt/Resource 访问入口 |
+| **MCPConnection** | connection.py | 管理单个服务器的连接生命周期：连接 → 发现能力 → 调用 → 断开 |
+| **MCPToolProvider** | provider.py | 将 MCPManager 包装为标准 ToolProvider，对接 Maisaka 规划器 |
+| **MCPHostLLMBridge** | host_llm_bridge.py | 将 MCP Sampling 请求桥接到 MaiBot 自身的 LLM 调用链 |
+| **MCPHostCallbacks** | hooks.py | 宿主侧回调集合（Sampling、Elicitation、日志等） |
+| **Models** | models.py | MCP SDK 原始对象与主程序内部模型的转换层 |
+| **Config** | config.py | 将 TOML 配置转换为类型化的 dataclass |
 
-### 📄 文件处理
-**文档读取**
-```
-你：帮我看看这个PDF讲了什么
-MaiBot：这是关于机器学习的论文，
-       主要讲了...（总结内容）
-```
+## 四种能力类型
 
-**数据处理**
-```
-你：分析下这个Excel表格
-MaiBot：根据数据分析，我发现：
-       1. 销售额在持续增长
-       2. 第三季度表现最好
-       3. 建议关注...（给出分析）
-```
+MCP 服务端可以暴露四种类型的能力：
 
-### 🛠️ 实用工具
-**计算器功能**
-```
-你：帮我算一下 15% of 2880
-MaiBot：15% of 2880 = 432
-```
+### 1. 工具（Tools）
 
-**单位转换**
-```
-你：100华氏度等于多少摄氏度？
-MaiBot：100°F = 37.78°C
-```
+可执行函数，带有输入/输出 Schema。这是最常用的能力类型——MCP 工具会被注册到 MaiBot 的工具注册表，Maisaka 规划器可以像调用内置工具一样调用它们。
 
-**时间查询**
-```
-你：纽约现在几点？
-MaiBot：纽约现在是上午10:30
-       （比北京时间慢13小时）
-```
+每个工具包含：
+- **名称**（name）：全局唯一的工具标识符
+- **描述**（description）：工具功能的自然语言描述
+- **输入 Schema**（inputSchema）：JSON Schema 格式的参数定义
+- **输出 Schema**（outputSchema）：可选的返回值结构定义
+- **注解**（annotations）：可选的受众、优先级等元信息
 
-## 是怎么做到的？
+### 2. 提示词（Prompts）
 
-### 🔗 连接工具
-MaiBot 通过 MCP 协议连接各种工具服务：
-- **搜索引擎** - 获取最新信息
-- **天气服务** - 查询天气数据
-- **金融数据** - 获取股票行情
-- **百科知识** - 查询专业资料
+预定义的提示词模板，支持可选参数。可以被获取后用于构建对话上下文。
 
-### 🧠 智能调用
-当你问问题时，它会：
-1. **分析问题** - 判断需要什么工具
-2. **调用工具** - 连接相应的服务
-3. **获取数据** - 拿到需要的信息
-4. **整理回答** - 用自然语言回复你
+每个提示词包含：
+- **名称**（name）：唯一标识
+- **参数列表**（arguments）：可选的模板参数，每个参数可标记为必填
+- **描述**（description）：模板功能说明
 
-### ⚡ 实时响应
-- 工具调用是实时的
-- 数据都是最新的
-- 响应速度很快
+### 3. 资源（Resources）
 
-## 实际使用场景
+通过 URI 访问的静态数据或文件。服务端暴露的资源有固定的 URI，客户端可以直接读取。
 
-### 📊 工作助手
-```
-你：帮我查一下最近AI行业的融资情况
-MaiBot：我搜索了一下，最近AI行业融资很活跃：
-       - 某AI公司获得10亿美元B轮融资
-       - 专注于大语言模型研发
-       - 投资方包括...（详细数据）
+每个资源包含：
+- **URI**：资源的唯一地址
+- **名称/描述**：人类可读标识
+- **MIME 类型**：资源的内容格式
+
+### 4. 资源模板（ResourceTemplates）
+
+参数化的资源 URI，使用 URI 模板语法（如 `file:///logs/{date}/report.md`）。客户端可以传入参数构造具体的资源 URI。
+
+MCPManager 对四种能力分别维护独立的注册表，并在注册时进行冲突检测——如果两个服务器暴露了相同名称的工具或相同 URI 的资源，只有第一个会注册成功，后续的会被跳过并输出警告。
+
+## 传输模式
+
+MaiBot 支持两种 MCP 传输方式：
+
+### stdio（本地子进程）
+
+通过启动本地子进程来运行 MCP 服务器。MaiBot 使用 `command` 和 `args` 配置启动命令，通过标准输入/输出与服务器通信。
+
+- **无需网络**，延迟最低
+- 适合本地安装的工具（文件操作、浏览器自动化等）
+- 推荐使用 `uvx`（来自 [uv](https://docs.astral.sh/uv/)）运行，自动管理依赖
+
+```toml
+[[mcp.servers]]
+name = "playwright"
+transport = "stdio"
+command = "uvx"
+args = ["@playwright/mcp"]
 ```
 
-### 🎓 学习帮手
+::: tip 使用 uvx
+`uvx` 是 Python 工具运行器，无需手动安装 MCP 服务器包，会自动从 PyPI 拉取并运行。确保你的环境中已安装 [uv](https://docs.astral.sh/uv/)。
+:::
+
+### streamable_http（远程 HTTP）
+
+通过 HTTP 连接远程 MCP 服务器端点。适合云服务或他人部署好的工具。
+
+- **需要网络连接**
+- 支持 Bearer Token 认证和自定义请求头
+- 支持配置超时时间
+
+```toml
+[[mcp.servers]]
+name = "remote-api"
+transport = "streamable_http"
+url = "https://mcp.example.com/api"
+
+[mcp.servers.authorization]
+mode = "bearer"
+bearer_token = "sk-your-token"
 ```
-你：我想了解一下区块链技术
-MaiBot：我来给你介绍一下：
-       区块链是一种分布式账本技术，
-       它的核心特点是...（详细解释）
-       目前主要应用在...（实际应用）
+
+MaiBot 内部使用 `mcp` Python SDK 的 `stdio_client` 和 `streamable_http_client` 实现两种传输。
+
+## 连接生命周期
+
+MCP 模块的启动流程如下：
+
+```
+1. MCPManager.from_app_config()
+   ├─ 读取 TOML 配置，转换为运行时 dataclass
+   ├─ 检查 mcp SDK 是否已安装
+   └─ 遍历所有 enabled 的服务器配置
+       └─ 对每个服务器：
+           ├─ 创建 MCPConnection
+           ├─ 根据传输类型建立连接（stdio / streamable_http）
+           ├─ 调用 session.initialize() 初始化 MCP 会话
+           ├─ 加载服务端能力（分页获取 Tools/Prompts/Resources/Templates）
+           └─ 注册到管理器，进行冲突检测
+2. 全部完成后输出连接摘要
 ```
 
-### 🏠 生活助手
+### 启动日志示例
+
+连接成功时，日志中会看到：
+
 ```
-你：明天适合洗车吗？
-MaiBot：我查了天气预报，明天有雨，
-       不建议洗车。后天是晴天，
-       比较适合洗车哦！
+✓ MCP 服务器 'playwright' 已连接 (工具 12 / Prompt 0 / 资源 0 / 模板 0)
 ```
 
-## 支持的工具有哪些？
+如果某个服务器连接失败，会输出警告并跳过，不影响其他服务器。如果**所有**服务器都连接失败，MCPManager 返回 `None`，MCP 功能会被优雅地禁用，MaiBot 仍可正常运行。
 
-### 🔍 搜索类
-- **网页搜索** - 搜索互联网信息
-- **百科查询** - 查询百科知识
-- **新闻搜索** - 获取最新新闻
+### 分页加载
 
-### 📊 数据类
-- **天气查询** - 获取天气信息
-- **股票查询** - 查看股票行情
-- **汇率转换** - 货币汇率查询
+所有能力发现（list_tools、list_prompts、list_resources、list_resource_templates）都支持基于游标（cursor）的分页。MaiBot 会自动循环获取所有页面，直到没有下一页为止。
 
-### 🛠️ 工具类
-- **计算器** - 数学计算
-- **单位转换** - 各种单位换算
-- **时间查询** - 世界各地时间
+## 工具集成与 Maisaka
 
-### 📄 文件类
-- **文档读取** - 读取各种文档
-- **数据分析** - 处理表格数据
-- **文本处理** - 各种文本操作
+### ToolProvider 接口
 
-## 怎么配置？
+MCP 工具通过 `MCPToolProvider` 集成到 Maisaka。该类实现了标准的 `ToolProvider` 接口：
 
-### ⚙️ 简单配置
-在配置文件里添加：
+- `list_tools()` → 返回所有 MCP 工具的 `ToolSpec` 列表
+- `invoke(invocation)` → 将工具调用请求路由到正确的 MCPConnection
+
+MCPToolProvider 在 MaiBot 启动时注册到工具注册表：
+
+```python
+tool_registry.register_provider(MCPToolProvider(manager))
+```
+
+此后，Maisaka 规划器就能看到并使用这些 MCP 工具，与内置工具完全一致。
+
+### 工具调用流程
+
+```
+Maisaka 规划器选择某个工具
+  → ToolRegistry 查找对应 Provider
+  → MCPToolProvider.invoke()
+    → MCPManager.call_tool_invocation()
+      → 根据 _tool_to_server 映射找到目标服务器
+      → MCPConnection.call_tool()
+        → MCP SDK session.call_tool()
+        → 返回 ToolExecutionResult
+```
+
+### 名称冲突与保护
+
+MCPManager 对工具名称有两层保护：
+
+1. **内置工具保护**：以下名称是 MaiBot 内置工具，MCP 工具不允许占用：
+
+   | 内置工具名称 | 用途 |
+   |-------------|------|
+   | `reply` | 回复消息 |
+   | `no_reply` | 不回复 |
+   | `wait` | 等待 |
+   | `stop` | 停止 |
+   | `create_table` | 创建表格 |
+   | `list_tables` | 列出表格 |
+   | `view_table` | 查看表格 |
+
+   如果 MCP 服务器暴露了与内置工具同名的工具，该工具会被跳过并输出警告。
+
+2. **跨服务器冲突检测**：如果两个 MCP 服务器暴露了同名工具，只有第一个注册的服务器会成功，后续的会被跳过。注册顺序与 `bot_config.toml` 中的配置顺序一致。
+
+同样，Prompt 和 Resource 也有冲突检测机制（Prompt 按名称、Resource 按 URI、ResourceTemplate 按 URI 模板）。
+
+## 客户端能力
+
+除了使用 MCP 服务端暴露的能力，MaiBot 作为客户端也可以声明自身的能力，让服务端反过来利用。
+
+### Roots（文件系统路径暴露）
+
+允许你向 MCP 服务器暴露本地文件系统的部分路径，让服务器知道它可以读写哪些目录。
+
+```toml
+[mcp.client.roots]
+enable = true
+
+[[mcp.client.roots.items]]
+enabled = true
+uri = "file:///home/mai/data"
+name = "麦麦的数据目录"
+```
+
+典型场景：连接文件系统 MCP 服务器（如 `@modelcontextprotocol/server-filesystem`）时，开启 Roots 后服务器就能知道你的数据目录在哪里，直接操作该目录下的文件。
+
+### Sampling（采样 / LLM 调用桥接）
+
+允许 MCP 服务端**反过来请求 MaiBot 调用大模型**来完成某些任务。这是一个高级的双向能力，通过 `MCPHostLLMBridge` 实现：
+
+```
+MCP 服务端发起 Sampling 请求
+  → MCPConnection 收到 sampling_callback
+    → MCPHostLLMBridge.handle_sampling_request()
+      → 转换 MCP 消息格式为内部 Message 格式
+      → 通过 LLMServiceClient 调用配置的模型任务
+      → 将响应转换回 MCP CreateMessageResult
+```
+
+```toml
+[mcp.client.sampling]
+enable = true
+task_name = "planner"     # 执行 Sampling 时使用的模型任务名
+tool_support = true       # 允许 Sampling 中继续使用工具
+```
+
+::: warning ⚠️ Sampling 会消耗 Tokens
+启用 Sampling 意味着 MCP 服务端可以触发 MaiBot 的模型调用，会产生额外的 API 费用。确保 `task_name` 指向一个已配置好的模型任务。
+:::
+
+### Elicitation（引导）
+
+允许 MCP 服务端请求用户填写表单或在浏览器中打开 URL。目前 UI 层尚未完全实现，但能力声明已在协议层预留。
+
+```toml
+[mcp.client.elicitation]
+enable = true
+allow_form = true   # 允许表单模式
+allow_url = false   # 允许 URL 模式
+```
+
+## 工具结果的内容类型
+
+MCP 工具的返回结果可以包含多种内容类型，MaiBot 会统一处理：
+
+| 类型 | 说明 |
+|------|------|
+| `text` | 纯文本结果，最常见的形式 |
+| `image` | Base64 编码的图片（支持 PNG、JPEG、WebP、GIF） |
+| `audio` | 音频数据 |
+| `resource_link` | 对 MCP 资源的引用（包含 URI 和描述） |
+| `resource` | 嵌入的资源内容（文本或二进制数据） |
+
+一次工具调用的结果可以包含多个内容项（例如同时返回文本说明和截图），MaiBot 会将它们组合后传递给 Maisaka。
+
+## 前置条件
+
+MCP 功能依赖 `mcp` Python 包，这是一个**可选依赖**——如果你不使用 MCP，不需要安装它。
+
+如果 MaiBot 检测到配置了 MCP 服务器但未安装 `mcp` 包，启动时会提示：
+
+```
+⚠️ 发现 MCP 配置但未安装 mcp SDK，请运行: pip install mcp
+```
+
+安装方式：
+
+```bash
+pip install mcp
+```
+
+::: tip 无 MCP 也能运行
+即使没有任何 MCP 配置或未安装 `mcp` 包，MaiBot 也会正常运行——MCP 是完全可选的增强功能。
+:::
+
+## 配置示例
+
+以下是一些真实的 MCP 服务器配置示例。详细的配置字段说明请参阅 [MCP 配置](../configuration/mcp-config.md)。
+
+### Playwright 浏览器自动化
+
 ```toml
 [mcp]
 enable = true
 
-# 添加你想用的工具服务
 [[mcp.servers]]
-name = "search"
-command = "search-server"
+name = "playwright"
+transport = "stdio"
+command = "uvx"
+args = ["@playwright/mcp"]
 ```
 
-### 🔧 高级设置
-- 可以配置多个工具服务
-- 支持自定义工具
-- 可以设置使用权限
+连接后，Maisaka 可以使用 Playwright 提供的浏览器自动化工具（导航网页、截图、点击元素等）。
 
-## 使用建议
+### 文件系统服务器（配合 Roots）
 
-### 💡 提问技巧
-- 问具体的问题
-- 说明你需要什么信息
-- 可以要求它查资料
+```toml
+[mcp]
+enable = true
 
-### 🎯 使用场景
-- 需要实时信息时
-- 需要专业数据时
-- 需要计算转换时
+[mcp.client.roots]
+enable = true
 
-### ⚠️ 注意事项
-- 工具需要网络连接
-- 有些服务可能需要API密钥
-- 响应速度取决于工具服务
+[[mcp.client.roots.items]]
+enabled = true
+uri = "file:///home/mai/data"
+name = "数据目录"
 
-## 扩展能力
+[[mcp.servers]]
+name = "filesystem"
+transport = "stdio"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/home/mai/data"]
+```
 
-### 🔌 自定义工具
-开发者可以：
-- 开发自己的工具
-- 接入私有服务
-- 定制特殊功能
+通过 Roots 能力，文件系统服务器知道 MaiBot 允许访问的目录范围。
 
-### 🌐 第三方集成
-支持接入：
-- 企业内网服务
-- 专业数据库
-- 定制业务系统
+### GitHub 服务器（带 Token）
 
----
+```toml
+[mcp]
+enable = true
 
-MCP 让 MaiBot 从"聊天机器人"变成"智能助手"，不仅能说会道，还能帮你查资料、做计算、获取信息。它就像给你的 AI 伙伴装上了"千里眼"和"顺风耳"，让它能接触到更广阔的信息世界！
+[[mcp.servers]]
+name = "github"
+transport = "stdio"
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env = { GITHUB_TOKEN = "ghp_your_token_here" }
+```
+
+GitHub MCP 服务器需要通过环境变量传入 Personal Access Token。
+
+### 远程 HTTP 服务器（Bearer 认证）
+
+```toml
+[mcp]
+enable = true
+
+[[mcp.servers]]
+name = "remote-api"
+transport = "streamable_http"
+url = "https://api.example.com/mcp"
+
+[mcp.servers.authorization]
+mode = "bearer"
+bearer_token = "sk-your-api-token"
+```
+
+## 故障排除
+
+### 检查启动日志
+
+MaiBot 启动时会打印每个 MCP 服务器的连接状态。如果连接成功，会显示：
+
+```
+✓ MCP 服务器 'playwright' 已连接 (工具 12 / Prompt 0 / 资源 0 / 模板 0)
+```
+
+如果失败，会显示错误信息：
+
+```
+⚠️ MCP 服务器 'xxx' 连接失败: <错误详情>
+```
+
+### 常见问题
+
+| 问题 | 原因 | 解决方法 |
+|------|------|----------|
+| `⚠️ 发现 MCP 配置但未安装 mcp SDK` | 未安装 `mcp` Python 包 | 运行 `pip install mcp` |
+| 工具名称冲突被跳过 | MCP 工具与内置工具或其他服务器工具同名 | 检查日志中的冲突警告，调整服务器配置 |
+| stdio 服务器启动失败 | `command` 路径不正确或命令不存在 | 确认命令在环境中可用，推荐使用 `uvx` |
+| 环境变量未生效 | `env` 配置格式错误 | 确认使用 `{ KEY = "value" }` 格式 |
+| 远程服务器连接超时 | 网络问题或服务器不可达 | 检查网络连接，增大 `http_timeout_seconds` |
+| Bearer Token 认证失败 | Token 无效或过期 | 重新获取 Token 并更新配置 |
+
+### 独立验证 MCP 服务器
+
+在连接 MaiBot 之前，可以使用 `mcp` SDK 自带的工具独立验证服务器是否正常工作：
+
+```bash
+mcp inspect uvx @playwright/mcp
+```
+
+这可以帮助你排除 MaiBot 之外的问题。
+
+## 相关文档
+
+- [MCP 配置](../configuration/mcp-config.md) — 完整的 TOML 配置字段说明
+- [Bot 配置总览](../configuration/bot-config.md) — 全局配置参考
+- [Maisaka 推理引擎](./maisaka-reasoning.md) — 了解 MCP 工具如何参与推理规划

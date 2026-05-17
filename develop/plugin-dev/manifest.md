@@ -107,6 +107,38 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
 | `locales_path` | 否 | 语言资源文件目录路径 |
 | `supported_locales` | 否 | 支持的语言列表，不可包含空值和重复项。若非空，则 `default_locale` 必须存在于该列表中 |
 
+### llm_providers LLM Provider 声明
+
+声明插件提供的 LLM Provider 能力，供其他插件通过 `ctx.llm` 代理调用。
+
+| 字段 | 必填 | 说明 |
+|------|------|------|
+| `client_type` | 是 | Provider 唯一标识符，必须与 `@LLMProvider` 装饰器中声明的值完全一致 |
+| `name` | 是 | Provider 展示名称 |
+| `description` | 否 | Provider 功能描述 |
+| `version` | 否 | Provider 版本号，默认 `"1.0.0"` |
+
+::: warning 双重声明要求
+`llm_providers` 字段与 `@LLMProvider` 装饰器必须同时声明，且 `client_type` 必须完全匹配。若仅在一处声明，另一处缺失或不一致，插件将被阻止加载。
+:::
+
+::: danger 冲突加载策略
+若两个插件声明了相同的 `client_type`，则**两个插件均被禁止加载**。请在设计 Provider 时使用唯一的前缀（如 `com.example.my-provider`）避免冲突。
+:::
+
+```json
+{
+  "llm_providers": [
+    {
+      "client_type": "my_custom_llm",
+      "name": "My Custom LLM",
+      "description": "A custom LLM provider",
+      "version": "1.0.0"
+    }
+  ]
+}
+```
+
 ## 依赖声明
 
 `dependencies` 数组支持两种类型的依赖，通过 `type` 字段区分：

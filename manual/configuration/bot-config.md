@@ -4,7 +4,7 @@ title: Bot 配置
 
 # Bot 配置
 
-`bot_config.toml` 是 MaiBot 的主配置文件，包含机器人身份、人设、聊天行为、记忆、表达学习、消息连接、WebUI、MCP 和插件运行时等设置。
+`bot_config.toml` 是 MaiBot 的主配置文件，包含机器人身份、人设、聊天行为、记忆、表达学习、黑话、消息连接、WebUI、MCP、插件和知识库等设置。
 
 当前文档按代码中的 `src/config/official_configs.py` 和 `src/config/config.py` 整理。配置文件由 MaiBot 自动生成和升级，不建议手动新增不存在的字段。
 
@@ -19,8 +19,9 @@ title: Bot 配置
 | `[visual]` | 图片理解模式和识图提示词 |
 | `[chat]` | 回复频率、上下文、聊天提示词 |
 | `[message_receive]` | 图片解析阈值、消息过滤 |
-| `[memory]` | 记忆检索、写回、反馈纠错 |
-| `[expression]` | 表达学习、黑话学习、表达检查 |
+| `[A_memorix]` | 长期记忆系统（存储、向量化、检索、画像、演化等）→ [详见 A_Memorix 配置](./amemorix-config.md) |
+| `[expression]` | 表达学习、表达检查、互通组 |
+| `[jargon]` | 黑话学习、黑话互通组 |
 | `[voice]` | 语音识别 |
 | `[emoji]` | 表情包收集、过滤、发送 |
 | `[keyword_reaction]` | 关键词/正则触发反应 |
@@ -34,7 +35,9 @@ title: Bot 配置
 | `[webui]` | WebUI 服务和安全设置 |
 | `[database]` | 消息二进制数据保存策略 |
 | `[mcp]` | MCP 客户端和服务器配置 |
+| `[plugin]` | 插件管理权限 |
 | `[plugin_runtime]` | 插件运行时和浏览器渲染配置 |
+| `[lpmm_knowledge]` | LPMM 知识库（RAG 检索、嵌入、PPR） |
 
 ::: tip
 配置文件开头的 `[inner] version` 由程序管理。需要修改配置模板时，应更新模板版本；普通用户不需要手动改这个版本号。
@@ -47,7 +50,7 @@ title: Bot 配置
 ```toml
 [bot]
 platform = "qq"
-qq_account = 123456789
+qq_account = "123456789"
 platforms = []
 nickname = "麦麦"
 alias_names = ["小麦", "麦子"]
@@ -56,7 +59,7 @@ alias_names = ["小麦", "麦子"]
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | `platform` | `str` | `""` | 当前主要平台标识，例如 `qq` |
-| `qq_account` | `int` | `0` | 机器人登录的 QQ 号，用于识别 @ 和自身消息 |
+| `qq_account` | `str` | `""` | 机器人登录的 QQ 号（字符串），用于识别 @ 和自身消息 |
 | `platforms` | `list[str]` | `[]` | 其他平台标识列表，多平台场景使用 |
 | `nickname` | `str` | `"麦麦"` | 机器人昵称 |
 | `alias_names` | `list[str]` | `[]` | 机器人别名，被提及时可参与回复判断 |
@@ -69,16 +72,22 @@ alias_names = ["小麦", "麦子"]
 [personality]
 personality = "你是一个大二女大学生，现在正在上网和群友聊天。"
 reply_style = "请不要刻意突出自身学科背景。可以参考贴吧，知乎和微博的回复风格。"
-multiple_reply_style = []
-multiple_probability = 0.2
+multiple_reply_style = [
+  "你的风格平淡但不失讽刺，很简短,很白话。可以参考贴吧，微博的回复风格。",
+  "用1-2个字进行回复",
+  "用1-2个符号进行回复",
+  "言辭凝練古雅，穿插《論語》經句卻不晦澀，以文言短句為基，輔以淺白語意，持長者溫和風範，全用繁體字表達，具先秦儒者談吐韻致。",
+  "带点翻译腔，但不要太长",
+]
+multiple_probability = 0
 ```
 
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | `personality` | `str` | 见默认配置 | 人格设定，建议 100 字以内，描述身份和人格特质 |
 | `reply_style` | `str` | 见默认配置 | 默认表达风格，建议 1-2 行 |
-| `multiple_reply_style` | `list[str]` | `[]` | 可选表达风格列表，不为空时可随机替换 `reply_style` |
-| `multiple_probability` | `float` | `0.2` | 随机使用 `multiple_reply_style` 的概率，范围 `0.0-1.0` |
+| `multiple_reply_style` | `list[str]` | 5 条备选风格 | 可选表达风格列表，不为空时可随机替换 `reply_style` |
+| `multiple_probability` | `float` | `0` | 随机使用 `multiple_reply_style` 的概率，范围 `0.0-1.0`，默认不替换 |
 
 ## 视觉 [visual]
 
@@ -96,6 +105,7 @@ replyer_mode = "auto"
 |--------|------|--------|------|
 | `planner_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | 规划器视觉模式，`auto` 会根据模型信息自动选择 |
 | `replyer_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | 回复器视觉模式，`auto` 会根据模型信息自动选择 |
+| `wait_image_recognize_max_time` | `float` | `10` | 非视觉 planner 请求前等待图片识别完成的最长秒数；`0` 时不等待，保持占位请求 |
 
 ## 聊天 [chat]
 
@@ -110,8 +120,12 @@ inevitable_at_reply = true
 enable_at = true
 enable_reply_quote = true
 max_context_size = 40
-max_private_context_size = 40
-planner_interrupt_max_consecutive_count = 2
+max_private_context_size = 60
+enable_context_optimization = true
+enable_independent_timing_gate = true
+typing_speed = 1.0
+planner_interrupt_max_consecutive_count = 0
+timing_gate_non_continue_cooldown_seconds = 8
 group_chat_prompt = "..."
 private_chat_prompts = "..."
 chat_prompts = []
@@ -126,9 +140,13 @@ enable_talk_value_rules = true
 | `inevitable_at_reply` | `bool` | `true` | 是否在被 @ 时必回复 |
 | `enable_at` | `bool` | `true` | 是否允许使用 at 标记 |
 | `enable_reply_quote` | `bool` | `true` | 回复时是否附带引用回复 |
-| `max_context_size` | `int` | `40` | 发送给模型的上下文消息数量 |
-| `max_private_context_size` | `int` | `40` | 私聊上下文长度 |
-| `planner_interrupt_max_consecutive_count` | `int` | `2` | Planner 连续被新消息打断的最大次数，`0` 表示不启用打断保护 |
+| `max_context_size` | `int` | `40` | 发送给模型的群聊上下文消息数量 |
+| `max_private_context_size` | `int` | `60` | 私聊上下文长度 |
+| `enable_context_optimization` | `bool` | `true` | 是否优化约 50% 的 Planner 上下文消耗，可能影响缓存 |
+| `enable_independent_timing_gate` | `bool` | `true` | 是否启用独立 Timing Gate；关闭后节奏控制工具合并到 Planner |
+| `typing_speed` | `float` | `1.0` | 模拟打字时间倍乘，`0` 不等待，`1` 默认等待时间，`2` 两倍 |
+| `planner_interrupt_max_consecutive_count` | `int` | `0` | Planner 连续被新消息打断的最大次数，`0` 表示不启用打断 |
+| `timing_gate_non_continue_cooldown_seconds` | `float` | `8` | Timing Gate 判断频率平滑值，值越大判断越平滑但可能反应变慢 |
 | `group_chat_prompt` | `str` | 见默认配置 | 群聊通用注意事项 |
 | `private_chat_prompts` | `str` | 见默认配置 | 私聊通用注意事项 |
 | `chat_prompts` | `list[ExtraPromptItem]` | `[]` | 按平台/聊天流附加的额外提示词 |
@@ -183,77 +201,41 @@ prompt = "这个群里说话要更简短。"
 | `ban_words` | `set[str]` | `set()` | 过滤词列表 |
 | `ban_msgs_regex` | `set[str]` | `set()` | 过滤正则表达式列表；正则非法会导致配置校验失败 |
 
-## 记忆 [memory]
+## 记忆 [A_memorix]
 
-`[memory]` 控制长期记忆检索、人物事实写回、聊天摘要写回，以及反馈纠错系统。
+A_Memorix 是 MaiBot 的长期记忆系统，负责记忆存储、向量化、检索、人物画像、记忆演化和 Web 运维。它替代了旧版 `[memory]` 配置段落，提供了更细粒度的控制。
 
-### 常用记忆配置
+A_Memorix 配置包含 12 个子段落（integration、plugin、storage、embedding、retrieval、threshold、filter、episode、person_profile、memory、advanced、web），由于配置项较多，完整说明请移步：
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `global_memory` | `bool` | `false` | 是否允许记忆检索忽略当前聊天流限制，仅对相关检索工具生效 |
-| `global_memory_blacklist` | `list[TargetItem]` | `[]` | 全局记忆黑名单，启用全局记忆时排除特定聊天流 |
-| `enable_memory_query_tool` | `bool` | `true` | 是否启用 Maisaka 内置长期记忆检索工具 `query_memory` |
-| `memory_query_default_limit` | `int` | `5` | `query_memory` 默认返回条数，范围 `1-20` |
-| `person_fact_writeback_enabled` | `bool` | `true` | 回复后是否自动提取并写回人物事实 |
-| `chat_summary_writeback_enabled` | `bool` | `true` | 聊天过程中是否按消息窗口自动写回聊天摘要 |
-| `chat_summary_writeback_message_threshold` | `int` | `12` | 触发聊天摘要写回的消息窗口阈值 |
-| `chat_summary_writeback_context_length` | `int` | `50` | 写回聊天摘要时回看的消息条数，范围 `1-500` |
+→ **[A_Memorix 配置详解](./amemorix-config.md)**
 
-### global_memory_blacklist
+### 快速启用
+
+最简单的配置——仅启用记忆系统并使用全部默认值：
 
 ```toml
-[[memory.global_memory_blacklist]]
-platform = "qq"
-item_id = "123456"
-rule_type = "group"
+[A_memorix]
+
+[A_memorix.plugin]
+enabled = true
 ```
 
-`TargetItem` 通用字段：
+### 从旧版 [memory] 迁移
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `platform` | `str` | 平台；和 `item_id` 一起留空表示全局 |
-| `item_id` | `str` | 用户/群 ID；和 `platform` 一起留空表示全局 |
-| `rule_type` | `"group" \| "private"` | 聊天流类型 |
-
-### 反馈纠错配置
-
-反馈纠错默认关闭，属于高级功能。它会基于 `query_memory` 后一段时间内的用户反馈，尝试纠正旧记忆。
-
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `feedback_correction_enabled` | `bool` | `false` | 是否启用反馈驱动的延迟记忆纠错任务 |
-| `feedback_correction_window_hours` | `float` | `12.0` | 反馈窗口时长，单位小时 |
-| `feedback_correction_check_interval_minutes` | `int` | `30` | 纠错任务轮询间隔，单位分钟 |
-| `feedback_correction_batch_size` | `int` | `20` | 每轮最大处理任务数，范围 `1-200` |
-| `feedback_correction_auto_apply_threshold` | `float` | `0.85` | 自动应用纠错动作的最低置信度，范围 `0-1` |
-| `feedback_correction_max_feedback_messages` | `int` | `30` | 每个纠错任务最多使用的反馈消息数 |
-| `feedback_correction_prefilter_enabled` | `bool` | `true` | 是否启用纠错前置预筛 |
-| `feedback_correction_paragraph_mark_enabled` | `bool` | `true` | 是否为受影响 paragraph 写入已纠正旧事实标记 |
-| `feedback_correction_paragraph_hard_filter_enabled` | `bool` | `true` | 查询时是否硬过滤带 stale 标记的 paragraph |
-| `feedback_correction_profile_refresh_enabled` | `bool` | `true` | 纠错后是否将受影响人物画像加入刷新队列 |
-| `feedback_correction_profile_force_refresh_on_read` | `bool` | `true` | 读取脏人物画像时是否强制刷新 |
-| `feedback_correction_episode_rebuild_enabled` | `bool` | `true` | 纠错后是否将受影响 source 加入 episode 重建队列 |
-| `feedback_correction_episode_query_block_enabled` | `bool` | `true` | episode source 重建期间是否屏蔽用户侧查询 |
-| `feedback_correction_reconcile_interval_minutes` | `int` | `5` | 二阶段一致性后台协调任务轮询间隔 |
-| `feedback_correction_reconcile_batch_size` | `int` | `20` | 二阶段一致性每轮处理队列大小 |
+如果你之前使用过 `[memory]`，请参阅 [A_Memorix 配置详解 - 从旧版迁移](./amemorix-config.md#从旧版-memory-迁移)。
 
 ## 表达学习 [expression]
 
-`[expression]` 控制表达方式学习、黑话学习、表达方式自动检查和互通组。
+`[expression]` 控制表达方式学习、表达方式自动检查和互通组。
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `learning_list` | `list[LearningItem]` | 按聊天流配置表达学习 |
-| `advanced_chosen` | `bool` | 是否启用基于子代理的二次表达方式选择 |
-| `expression_groups` | `list[ExpressionGroup]` | 表达学习互通组 |
-| `expression_checked_only` | `bool` | 是否仅选择已检查且未拒绝的表达方式 |
-| `expression_self_reflect` | `bool` | 是否启用自动表达优化 |
-| `expression_auto_check_interval` | `int` | 表达方式自动检查间隔，单位秒 |
-| `expression_auto_check_count` | `int` | 每次自动检查随机选取的表达方式数量 |
-| `expression_auto_check_custom_criteria` | `list[str]` | 额外自定义评估标准 |
-| `all_global_jargon` | `bool` | 是否开启全局黑话模式 |
+| 配置项 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `expression_checked_only` | `bool` | `true` | 是否仅选择已由用户人工检查的表达方式 |
+| `expression_self_reflect` | `bool` | `true` | 是否在表达学习写入前进行 AI 审核 |
+| `enable_precise_expression_selection` | `bool` | `false` | 是否启用精细表达选择；开启后 replyer 使用子代理从候选表达中挑选更贴合语境的表达方式 |
+| `max_expression_learner` | `int` | `3` | 所有聊天流合计允许同时运行的表达学习批次数；同一聊天流始终只允许一个批次 |
+| `learning_list` | `list[LearningItem]` | 1 条默认规则 | 按聊天流配置表达学习 |
+| `expression_groups` | `list[ChatStreamGroup]` | `[]` | 表达学习互通组 |
 
 ### learning_list
 
@@ -261,20 +243,40 @@ rule_type = "group"
 [[expression.learning_list]]
 platform = ""
 item_id = ""
-rule_type = "group"
-use_expression = true
-enable_learning = true
-enable_jargon_learning = true
+type = "group"
+use = true
+learn = true
 ```
 
 | 配置项 | 类型 | 说明 |
 |--------|------|------|
 | `platform` | `str` | 平台；和 `item_id` 一起留空表示全局 |
 | `item_id` | `str` | 用户/群 ID；和 `platform` 一起留空表示全局 |
-| `rule_type` | `"group" \| "private"` | 聊天流类型 |
-| `use_expression` | `bool` | 是否使用表达学习结果 |
-| `enable_learning` | `bool` | 是否启用表达优化学习 |
-| `enable_jargon_learning` | `bool` | 是否启用黑话学习 |
+| `type` | `"group" \| "private"` | 聊天流类型 |
+| `use` | `bool` | 是否使用表达学习结果 |
+| `learn` | `bool` | 是否启用表达优化学习 |
+
+## 黑话 [jargon]
+
+`[jargon]` 控制黑话学习和黑话互通组，从旧版 `[expression]` 中独立出来。
+
+| 配置项 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `learning_list` | `list[LearningItem]` | 1 条默认规则 | 按聊天流配置黑话学习，`platform` 或 `item_id` 可使用 `*` 通配 |
+| `jargon_groups` | `list[ChatStreamGroup]` | `[]` | 黑话学习互通组，默认不互通 |
+
+### learning_list
+
+```toml
+[[jargon.learning_list]]
+platform = ""
+item_id = ""
+type = "group"
+use = true
+learn = true
+```
+
+`LearningItem` 字段与 [expression.learning_list](#learning-list) 相同。
 
 ## 语音 [voice]
 
@@ -292,7 +294,6 @@ enable_jargon_learning = true
 | `check_interval` | `int` | 表情包检查间隔，单位分钟 |
 | `steal_emoji` | `bool` | 是否收集聊天中的表情包 |
 | `content_filtration` | `bool` | 是否启用表情包过滤 |
-| `filtration_prompt` | `str` | 表情包过滤要求 |
 
 ## 关键词反应 [keyword_reaction]
 
@@ -396,16 +397,16 @@ library_log_levels = { aiohttp = "WARNING" }
 
 ### debug
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable_maisaka_stage_board` | `bool` | 是否启用 Maisaka 阶段看板 |
-| `show_maisaka_thinking` | `bool` | 是否显示回复器推理 |
-| `fold_maisaka_thinking` | `bool` | 是否折叠 Maisaka prompt 展示入口 |
-| `show_jargon_prompt` | `bool` | 是否显示黑话相关提示词 |
-| `show_memory_prompt` | `bool` | 是否显示记忆检索相关 prompt |
-| `enable_reply_effect_tracking` | `bool` | 是否开启回复效果评分追踪 |
-| `record_reply_request` | `bool` | `false` | 是否记录 Replyer 请求体，默认关闭 |
-| `enable_llm_cache_stats` | `bool` | `false` | 是否记录 LLM prompt cache 调试统计，默认关闭 |
+| 配置项 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `show_maisaka_thinking` | `bool` | `true` | 是否显示回复器推理 |
+| `fold_maisaka_thinking` | `bool` | `true` | 是否折叠 Maisaka prompt 展示入口 |
+| `show_jargon_prompt` | `bool` | `false` | 是否显示黑话相关提示词 |
+| `show_memory_prompt` | `bool` | `false` | 是否显示记忆检索相关 prompt |
+| `enable_reply_effect_tracking` | `bool` | `false` | 是否开启回复效果评分追踪 |
+| `record_reply_request` | `bool` | `false` | 是否记录 Replyer 请求体 |
+| `record_planner_request` | `bool` | `false` | 是否记录 Planner 完整请求体和完整回复体 |
+| `enable_llm_cache_stats` | `bool` | `false` | 是否记录 LLM prompt cache 调试统计 |
 
 ## 消息服务 [maim_message]
 
@@ -437,6 +438,7 @@ library_log_levels = { aiohttp = "WARNING" }
 | `trusted_proxies` | `str` | `""` | 信任的代理 IP 列表 |
 | `trust_xff` | `bool` | `false` | 是否启用 `X-Forwarded-For` 代理解析 |
 | `secure_cookie` | `bool` | `false` | 是否启用安全 Cookie，仅 HTTPS 传输 |
+| `enforce_public_outbound_url` | `bool` | `true` | 是否要求 WebUI 出站 URL 解析到公网地址；关闭后允许内网、本机或 TUN 代理地址，用于内网 LLM、反向代理等场景 |
 | `enable_paragraph_content` | `bool` | `false` | 是否在知识图谱中加载段落完整内容，会占用额外内存 |
 
 ## 数据库 [database]
@@ -447,7 +449,9 @@ library_log_levels = { aiohttp = "WARNING" }
 
 ## MCP [mcp]
 
-`[mcp]` 控制 MaiBot 的 MCP 客户端宿主能力和外部 MCP 服务器连接。
+`[mcp]` 控制 MaiBot 的 MCP 客户端宿主能力和外部 MCP 服务器连接，让 MaiBot 能够调用各种外部工具。
+
+详细的 MCP 配置指南请移步 → [MCP 配置详解](./mcp-config.md)
 
 | 配置项 | 类型 | 说明 |
 |--------|------|------|
@@ -455,48 +459,54 @@ library_log_levels = { aiohttp = "WARNING" }
 | `client` | `MCPClientConfig` | MCP 客户端宿主能力配置 |
 | `servers` | `list[MCPServerItemConfig]` | MCP 服务器配置列表 |
 
-### mcp.client
+### 快速示例
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `client_name` | `str` | MCP 客户端实现名称 |
-| `client_version` | `str` | MCP 客户端实现版本 |
-| `roots.enable` | `bool` | 是否向 MCP 服务器暴露 Roots 能力 |
-| `roots.items` | `list[MCPRootItemConfig]` | Roots 列表 |
-| `sampling.enable` | `bool` | 是否启用 Sampling 能力声明 |
-| `sampling.task_name` | `str` | Sampling 请求使用的主程序模型任务名 |
-| `sampling.include_context_support` | `bool` | 是否声明支持 `includeContext` 非 `none` 语义 |
-| `sampling.tool_support` | `bool` | 是否声明支持在 Sampling 中继续使用工具 |
-| `elicitation.enable` | `bool` | 是否启用 Elicitation 能力声明 |
-| `elicitation.allow_form` | `bool` | 是否允许表单模式 Elicitation |
-| `elicitation.allow_url` | `bool` | 是否允许 URL 模式 Elicitation |
+最简单的配置——连接一个 Playwright MCP 服务：
 
-### mcp.servers
+```toml
+[mcp]
+enable = true
+
+[[mcp.servers]]
+name = "playwright"
+transport = "stdio"
+command = "uvx"
+args = ["@playwright/mcp"]
+```
+
+连接远程 HTTP 服务（带 Bearer 认证）：
 
 ```toml
 [[mcp.servers]]
-name = "example"
-enabled = true
-transport = "stdio"
-command = "uvx"
-args = ["some-mcp-server"]
-env = {}
+name = "remote-api"
+transport = "streamable_http"
+url = "https://mcp.example.com/api"
+
+[mcp.servers.authorization]
+mode = "bearer"
+bearer_token = "sk-your-token"
 ```
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `name` | `str` | 服务器名称，必须唯一 |
-| `enabled` | `bool` | 是否启用当前服务器 |
-| `transport` | `"stdio" \| "streamable_http"` | 传输方式 |
-| `command` | `str` | `stdio` 模式下启动服务器的命令 |
-| `args` | `list[str]` | `stdio` 模式下的命令参数 |
-| `env` | `dict[str, str]` | `stdio` 模式下附加的环境变量 |
-| `url` | `str` | `streamable_http` 模式下的 MCP 端点 |
-| `headers` | `dict[str, str]` | HTTP 模式下附加请求头 |
-| `http_timeout_seconds` | `float` | HTTP 请求超时时间 |
-| `read_timeout_seconds` | `float` | 会话读取超时时间 |
-| `authorization.mode` | `"none" \| "bearer"` | HTTP 认证模式 |
-| `authorization.bearer_token` | `str` | Bearer Token，仅在 `mode = "bearer"` 时使用 |
+连接远程 SSE 服务：
+
+```toml
+[[mcp.servers]]
+name = "remote-sse"
+transport = "sse"
+url = "https://mcp.example.com/sse"
+```
+
+::: tip 🛠️ 更多配置方式
+详细的字段说明、传输方式对比、Sampling/Roots/Elicitation 高级配置、常见问题解答，请参阅 [MCP 配置详解](./mcp-config.md)。
+:::
+
+## 插件管理 [plugin]
+
+`[plugin]` 控制插件管理权限。
+
+| 配置项 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `permission` | `list[str]` | `[]` | 允许使用内置插件管理命令的用户 ID 列表，格式为 `platform:id`，例如 `qq:123456789` |
 
 ## 插件运行时 [plugin_runtime]
 
@@ -528,6 +538,30 @@ env = {}
 | `download_connection_timeout_sec` | `float` | 自动下载 Chromium 时的连接超时时间 |
 | `restart_after_render_count` | `int` | 累计渲染指定次数后自动重建浏览器，`0` 表示关闭 |
 
+## 知识库 [lpmm_knowledge]
+
+`[lpmm_knowledge]` 控制 LPMM 知识库，包括 RAG 检索、嵌入向量和 PPR 图计算等。
+
+| 配置项 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| `enable` | `bool` | `true` | 是否启用 LPMM 知识库 |
+| `lpmm_mode` | `"classic" \| "agent"` | `"classic"` | 知识库模式：`classic` 经典模式，`agent` 代理模式 |
+| `rag_synonym_search_top_k` | `int` | `10` | 同义检索 Top-K |
+| `rag_synonym_threshold` | `float` | `0.8` | 同义阈值，高于此值的关系视为同义词，范围 `0-1` |
+| `info_extraction_workers` | `int` | `3` | 实体抽取并发线程数，非 Pro 模型不要超过 5 |
+| `qa_relation_search_top_k` | `int` | `10` | 关系检索 Top-K |
+| `qa_relation_threshold` | `float` | `0.75` | 关系阈值，范围 `0-1` |
+| `qa_paragraph_search_top_k` | `int` | `1000` | 段落检索 Top-K（不能过小，可能影响搜索结果） |
+| `qa_paragraph_node_weight` | `float` | `0.05` | 段落节点权重（图搜索 & PPR 计算中的权重，仅使用 DPR 时不起作用） |
+| `qa_ent_filter_top_k` | `int` | `10` | 实体过滤 Top-K |
+| `qa_ppr_damping` | `float` | `0.8` | PPR 阻尼系数，范围 `0-1` |
+| `qa_res_top_k` | `int` | `10` | 最终提供段落 Top-K |
+| `embedding_dimension` | `int` | `1024` | 嵌入向量维度 |
+| `max_embedding_workers` | `int` | `3` | 嵌入/抽取并发线程数 |
+| `embedding_chunk_size` | `int` | `4` | 每批嵌入的条数 |
+| `max_synonym_entities` | `int` | `2000` | 同义边参与的实体数上限，超限则跳过 |
+| `enable_ppr` | `bool` | `true` | 是否启用 PPR，低配机器可关闭 |
+
 ## 常用配置示例
 
 ### 新手最小配置
@@ -535,7 +569,7 @@ env = {}
 ```toml
 [bot]
 platform = "qq"
-qq_account = 123456789
+qq_account = "123456789"
 nickname = "麦麦"
 alias_names = ["小麦"]
 
@@ -544,8 +578,12 @@ talk_value = 0.7
 inevitable_at_reply = true
 max_context_size = 40
 
-[memory]
-global_memory = false
+[A_memorix]
+
+[A_memorix.plugin]
+enabled = true
+
+[A_memorix.integration]
 enable_memory_query_tool = true
 person_fact_writeback_enabled = true
 chat_summary_writeback_enabled = true

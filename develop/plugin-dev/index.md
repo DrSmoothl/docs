@@ -190,7 +190,7 @@ def create_plugin():
 
 ### 组件装饰器
 
-SDK 提供 7 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
+SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
 | 装饰器 | 用途 | 说明 |
 |--------|------|------|
@@ -200,6 +200,7 @@ SDK 提供 7 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 | `@EventHandler` | 消息/工作流事件 | 监听消息、LLM 生成等生命周期事件 |
 | `@API` | 插件间 API | 暴露可被其他插件调用的 API |
 | `@MessageGateway` | 平台适配器 | 将外部平台（QQ、Discord 等）接入 MaiBot |
+| `@LLMProvider` | LLM Provider | 声明新LLM模型接入点（client_type），扩展模型服务 |
 | `@Action` | 兼容旧插件 | 内部自动转换为 `@Tool`，新插件应直接使用 `@Tool` |
 
 ### 能力代理
@@ -286,6 +287,7 @@ MaiBot 维护两个独立的 Runner 子进程：
 - [Hook 系统](./hooks.md)：学习如何使用 @HookHandler 拦截和改写消息
 - [Tool 组件](./tools.md)：学习如何开发 LLM 可调用的工具组件
 - [Command 组件](./commands.md)：学习如何开发斜杠命令组件
+- [LLMProvider 组件](./llmprovider.md)：学习如何开发自定义LLM Provider接入新模型
 - [Action 组件](./actions.md)：了解兼容旧系统的 @Action 装饰器
 - [配置管理](./config.md)：学习如何声明和使用插件配置
 - [API 参考](./api-reference.md)：查阅完整的插件 SDK API

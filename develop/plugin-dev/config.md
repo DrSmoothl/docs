@@ -108,6 +108,7 @@ Field(
 | `default` | `Any` | 字段默认值 |
 | `default_factory` | `Callable` | 默认值工厂函数，用于 `list`、`dict`、嵌套 `PluginConfigBase` 等可变类型 |
 | `description` | `str` | 字段描述，WebUI 中显示为表单标签 |
+| `json_schema_extra` | `dict` | 额外元数据，传递给 WebUI Schema 生成器。常用键: `placeholder`（输入框占位符文本）、`group`（UI 分组提示） |
 
 ### __ui_label__
 
@@ -117,6 +118,28 @@ Field(
 class PluginSection(PluginConfigBase):
     __ui_label__ = "基础设置"  # WebUI 中显示的标题
     enabled: bool = Field(default=True, description="是否启用插件")
+```
+
+### json_schema_extra
+
+`json_schema_extra` 用于传递额外元数据给 WebUI Schema 生成器，常用场景包括：
+
+- `placeholder`：输入框的占位符提示文本
+- `group`：WebUI 中的配置分组提示
+
+```python
+class MyPluginConfig(PluginConfigBase):
+    """插件完整配置"""
+    greeting: str = Field(
+        default="你好！",
+        description="默认问候语",
+        json_schema_extra={"placeholder": "请输入问候语", "group": "basic"}
+    )
+    api_key: str = Field(
+        default="",
+        description="API 密钥",
+        json_schema_extra={"placeholder": "请输入 API Key", "group": "advanced"}
+    )
 ```
 
 ## 访问配置

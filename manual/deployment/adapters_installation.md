@@ -14,9 +14,9 @@ title: 适配器安装
 | --- | --- | --- |
 | [NapCat](../adapters/napcat.md) | QQ | 第一次部署 QQ 时优先选择，推荐插件版。 |
 | [GoCQ](../adapters/gocq.md) | QQ | 旧方案，适合已有 GoCQ 环境或特定需求。 |
-| Snowluma（建设中） | QQ | 仍在建设中，暂不建议新手作为首选。 |
-| [Telegram](https://github.com/xiaoxi68/MaiBot-Telegram-Adapter) | Telegram | 社区适配器，使用前先查看仓库说明。 |
-| [Discord](https://github.com/2829798842/MaiBot-Discord-Adapter) | Discord | 社区适配器，使用前先查看仓库说明。 |
+| [SnowLuma](../adapters/snowluma.md) | QQ | 可用（测试中），新一代QQ适配方案 |
+| [Telegram](../adapters/telegram.md) | Telegram | 社区适配，Telegram平台适配方案 |
+| [Discord](../adapters/discord.md) | Discord | 社区适配，Discord平台适配方案 |
 | 更多适配器 | 微信等 | 可在 [适配器概览](../adapters/index.md) 中查看。 |
 
 第一次部署 QQ 平台时，建议使用 **NapCat 插件版**。它直接作为 MaiBot 插件运行，配置更少，也不需要额外维护适配器与 MaiBot 之间的网络连接。
@@ -27,6 +27,9 @@ title: 适配器安装
 
 - [NapCat 适配器](../adapters/napcat.md)
 - [GoCQ 适配器](../adapters/gocq.md)
+- [SnowLuma 适配器](../adapters/snowluma.md)
+- [Telegram 适配器](../adapters/telegram.md)
+- [Discord 适配器](../adapters/discord.md)
 - [更多适配器](../adapters/index.md)
 
 ::: warning 注意兼容性

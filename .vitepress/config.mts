@@ -57,6 +57,9 @@ export default defineConfig({
                 { text: '适配器概览', link: '/manual/adapters/' },
                 { text: 'QQ 连接', link: '/manual/adapters/napcat' },
                 { text: 'GoCQ 适配器', link: '/manual/adapters/gocq' },
+                { text: 'SnowLuma 适配器', link: '/manual/adapters/snowluma' },
+                { text: 'Telegram 适配器', link: '/manual/adapters/telegram' },
+                { text: 'Discord 适配器', link: '/manual/adapters/discord' },
               ]
             },
             {
@@ -67,6 +70,8 @@ export default defineConfig({
                 { text: 'Bot 配置', link: '/manual/configuration/bot-config' },
                 { text: '模型配置', link: '/manual/configuration/model-config' },
                 { text: '模型额外参数', link: '/manual/configuration/model-extra-params' },
+                { text: 'MCP 配置', link: '/manual/configuration/mcp-config' },
+                { text: 'A_Memorix 配置', link: '/manual/configuration/amemorix-config' },
               ]
             },
             {
@@ -134,6 +139,7 @@ export default defineConfig({
                 { text: '事件处理器', link: '/develop/plugin-dev/event-handlers' },
                 { text: 'API 组件', link: '/develop/plugin-dev/api-components' },
                 { text: '消息网关', link: '/develop/plugin-dev/message-gateway' },
+                { text: 'LLMProvider 组件', link: '/develop/plugin-dev/llmprovider' },
                 { text: 'Action (Legacy)', link: '/develop/plugin-dev/actions' },
                 { text: '配置管理', link: '/develop/plugin-dev/config' },
                 { text: 'API 参考', link: '/develop/plugin-dev/api-reference' },
@@ -208,6 +214,8 @@ export default defineConfig({
                 { text: 'Bot Config', link: '/en/manual/configuration/bot-config' },
                 { text: 'Model Config', link: '/en/manual/configuration/model-config' },
                 { text: 'Model Extra Parameters', link: '/en/manual/configuration/model-extra-params' },
+                { text: 'MCP Configuration', link: '/en/manual/configuration/mcp-config' },
+                { text: 'A_Memorix Config', link: '/en/manual/configuration/amemorix-config' },
               ]
             },
             {
@@ -241,6 +249,9 @@ export default defineConfig({
                 { text: 'Adapters Overview', link: '/en/manual/adapters/' },
                 { text: 'QQ Connection', link: '/en/manual/adapters/napcat' },
                 { text: 'GoCQ Adapter', link: '/en/manual/adapters/gocq' },
+                { text: 'SnowLuma Adapter', link: '/en/manual/adapters/snowluma' },
+                { text: 'Telegram Adapter', link: '/en/manual/adapters/telegram' },
+                { text: 'Discord Adapter', link: '/en/manual/adapters/discord' },
               ]
             },
             {
@@ -284,6 +295,7 @@ export default defineConfig({
                 { text: 'Event Handler', link: '/en/develop/plugin-dev/event-handlers' },
                 { text: 'API Component', link: '/en/develop/plugin-dev/api-components' },
                 { text: 'Message Gateway', link: '/en/develop/plugin-dev/message-gateway' },
+                { text: 'LLMProvider Component', link: '/en/develop/plugin-dev/llmprovider' },
                 { text: 'Action (Legacy)', link: '/en/develop/plugin-dev/actions' },
                 { text: 'Configuration', link: '/en/develop/plugin-dev/config' },
                 { text: 'API Reference', link: '/en/develop/plugin-dev/api-reference' },
