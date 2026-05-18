@@ -22,7 +22,7 @@ graph TD
         G -->|是| H["Timing Gate 子代理"]
         G -->|否| I["Planner (Action Loop)"]
         H -->|continue| I
-        H -->|wait/no_reply| J[结束本轮]
+        H -->|wait/no_action| J[结束本轮]
         I --> K[执行工具调用]
         K --> L{暂停?}
         L -->|是| J
@@ -54,7 +54,7 @@ stateDiagram-v2
     stop --> running: 收到新消息/超时
     running --> running: 消息处理中
     running --> wait: wait 工具触发
-    running --> stop: 处理完成/finish/no_reply
+    running --> stop: 处理完成/finish/no_action
     wait --> running: 等待超时/新消息到达
 ```
 
@@ -75,7 +75,7 @@ stateDiagram-v2
 | `_tool_registry` | `ToolRegistry` | 统一工具注册表 |
 | `_reasoning_engine` | `MaisakaReasoningEngine` | 推理引擎 |
 | `_chat_loop_service` | `MaisakaChatLoopService` | 对话循环服务 |
-| `_max_internal_rounds` | `int` | 最大内部轮次（默认 6） |
+| `_max_internal_rounds` | `int` | 最大内部轮次（默认 10） |
 | `_max_context_size` | `int` | 最大上下文消息数 |
 | `_message_debounce_seconds` | `float` | 消息防抖秒数（默认 1.0） |
 | `_talk_frequency_adjust` | `float` | 说话频率倍率 |
@@ -121,11 +121,11 @@ trigger_threshold = ceil(1.0 / effective_frequency)  # 所需消息数
 
 | 常量 | 值 | 说明 |
 |------|-----|------|
-| `TIMING_GATE_CONTEXT_LIMIT` | 24 | Timing Gate 上下文消息上限 |
+| `TIMING_GATE_CONTEXT_LIMIT` | `_max_context_size`（可配置） | Timing Gate 上下文消息上限（读取 `global_config.chat.max_context_size` / `max_private_context_size`） |
 | `TIMING_GATE_MAX_TOKENS` | 384 | Timing Gate 最大输出 token |
-| `TIMING_GATE_TOOL_NAMES` | `{"continue", "no_reply", "wait"}` | Timing Gate 可用工具 |
-| `ACTION_HIDDEN_TOOL_NAMES` | `{"continue", "no_reply"}` | Action Loop 隐藏的工具 |
-| `MAX_INTERNAL_ROUNDS` | 6 | 最大内部思考轮次 |
+| `TIMING_GATE_TOOL_NAMES` | `{"continue", "no_action", "wait"}` | Timing Gate 可用工具 |
+| `ACTION_HIDDEN_TOOL_NAMES` | `{"continue", "no_action"}` | Action Loop 隐藏的工具 |
+| `MAX_INTERNAL_ROUNDS` | 10 | 最大内部思考轮次 |
 
 ### run_loop 主循环
 
@@ -151,8 +151,8 @@ async def run_loop(self) -> None:
             # 5a. Timing Gate（如果需要）
             if timing_gate_required:
                 timing_action = await _run_timing_gate(anchor_message)
-                if timing_action != "continue":
-                    break  # wait 或 no_reply，结束本轮
+            if timing_action != "continue":
+                break  # wait 或 no_action，结束本轮
 
             # 5b. Planner（Action Loop）
             response = await _run_interruptible_planner()
@@ -183,7 +183,7 @@ flowchart TD
     B -->|否| D["运行子代理 (24条上下文, 384 tokens)"]
     D --> E{模型返回了哪个工具?}
     E -->|wait| F["进入等待状态 (N秒)"]
-    E -->|no_reply| G["结束本轮，等待新消息"]
+    E -->|no_action| G["结束本轮，等待新消息"]
     E -->|continue| H["继续进入 Planner"]
     E -->|无有效工具| H
 ```
@@ -191,14 +191,14 @@ flowchart TD
 Timing Gate 系统提示词：
 - 优先从 `maisaka_timing_gate` 模板加载
 - 兜底提示词强调 **只调用一个工具**，不要输出普通文本
-- 可用工具仅 `wait`、`no_reply`、`continue` 三个
+- 可用工具仅 `wait`、`no_action`、`continue` 三个
 
 ### Planner（Action Loop）
 
 Planner 是主要的推理和工具执行阶段：
 
 1. **构建工具定义**：`_build_action_tool_definitions()`
-   - 过滤 `ACTION_HIDDEN_TOOL_NAMES`（continue、no_reply）
+   - 过滤 `ACTION_HIDDEN_TOOL_NAMES`（continue、no_action）
    - 内置 Action 工具直接暴露
    - 默认第三方/插件工具放入 deferred 池，通过 `tool_search` 发现；声明 `core_tool=True` 或 `visibility="visible"` 的插件工具会直接暴露
 
@@ -263,19 +263,19 @@ graph TD
 | 工具名 | 源文件 | 说明 | 关键参数 |
 |--------|--------|------|---------|
 | `continue` | `continue_tool.py` | 允许继续进入下一轮思考 | 无 |
-| `no_reply` | `no_reply.py` | 停止当前循环，等待新外部消息 | 无 |
+| `no_action` | `no_action.py` | 停止当前循环，等待新外部消息 | 无 |
 | `wait` | `wait.py` | 暂停对话 N 秒后重新判断 | `seconds`（默认 30） |
 
 ### Action 工具
 
 | 工具名 | 源文件 | 说明 | 关键参数 |
 |--------|--------|------|---------|
-| `reply` | `reply.py` | 生成并发送回复消息 | `reply_text`、`msg_id`、`set_quote` |
-| `send_emoji` | `send_emoji.py` | 发送表情包 | `emoji_description`、`msg_id` |
+| `reply` | `reply.py` | 生成并发送回复消息 | `msg_id`、`set_quote`、`reference_info` |
+| `send_emoji` | `send_emoji.py` | 发送表情包 | 无（自动根据上下文选择） |
 | `finish` | `finish.py` | 结束当前思考轮次 | 无 |
 | `query_jargon` | `query_jargon.py` | 查询黑话/词条 | `words` |
 | `query_memory` | `query_memory.py` | 查询长期记忆 | `query`、`mode`、`limit` |
-| `query_person_info` | `query_person_info.py` | 查询人物信息 | `person_name` |
+| `query_person_profile` | `query_person_profile.py` | 查询人物画像 | `person_name` |
 | `view_complex_message` | `view_complex_message.py` | 查看完整转发消息 | `message_id` |
 | `tool_search` | `tool_search.py` | 搜索延迟发现的工具 | `query`、`limit` |
 

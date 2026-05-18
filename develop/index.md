@@ -37,6 +37,8 @@ MaiBot/
 │   ├── learners/            # 表达方式学习与黑话挖掘
 │   ├── emoji_system/        # Emoji 管理
 │   ├── mcp_module/          # Model Context Protocol 集成
+│   ├── manager/              # 全局管理器（表情管理等）
+│   ├── person_info/          # 人物画像信息模块
 │   ├── common/              # 共享工具（数据库、日志、i18n、消息模型）
 │   ├── prompt/              # Prompt 模板管理
 │   └── core/                # 核心类型定义、事件总线、工具注册
@@ -57,8 +59,15 @@ MaiBot/
 - **platform_io/**：平台抽象层。通过 `RouteKey` 路由机制实现多平台消息收发的统一管理，支持驱动的注册、路由绑定、入站去重与出站跟踪。
 - **llm_models/**：LLM 客户端实现，封装各模型 API 的调用逻辑。
 - **services/**：业务服务层，包含 `SendService`（出站消息发送）等核心服务。
-- **webui/**：FastAPI 驱动的 Web 管理后端，提供插件管理、配置编辑、认证鉴权等功能，默认绑定 `0.0.0.0:8001`。
-- **core/**：核心类型定义，包括 `ComponentType`、`ActionInfo`、`CommandInfo`、`ToolInfo`、`MaiMessages` 等。
+- **webui/**：FastAPI 驱动的 Web 管理后端，提供插件管理、配置编辑、认证鉴权等功能，默认绑定 `127.0.0.1:8001`。
+- **core/**：核心类型定义，包括 `ComponentType`、`ActionInfo`、`CommandInfo`、`ToolInfo`、`MaiMessages` 等，以及事件总线 (`EventBus`) 和工具注册中心 (`ToolRegistry`)。
+- **learners/**：表达方式学习与黑话挖掘，通过分析聊天内容自动学习新词和表达习惯。
+- **emoji_system/**：表情包管理与分发系统，支持表情包的加载、匹配、拼图筛选和发送。
+- **mcp_module/**：Model Context Protocol 集成，支持 MCP Server/Client 协议的外部工具调用。
+- **common/**：共享工具模块，包括数据库模型 (`SQLModel`)、日志系统、国际化 (`i18n`)、消息数据模型 (`MaimMessage`) 等公共基础设施。
+- **prompt/**：Prompt 模板管理系统，支持多语言 Prompt 的加载、变量替换和模板热重载。
+- **manager/**：全局管理器模块，管理应用级别的单例服务（如表情管理器等）。
+- **person_info/**：人物画像信息模块，负责用户画像数据的查询与展示。
 
 ## 开发环境搭建
 

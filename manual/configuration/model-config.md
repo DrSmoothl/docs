@@ -8,13 +8,13 @@ title: 模型配置
 
 我们推荐根据不同任务的特性来分配不同的模型
 
-麦麦的配置必须一个LLM模型（或VLM），一个VLM模型和嵌入模型
+最少启动只需要至少一个LLM模型和一个API提供商（`models` 和 `api_providers` 均非空即可）；要完整功能还需要配置 VLM 模型（看图说话）和嵌入模型（记忆搜索）
 
 ## 配置文件结构
 
 ```toml
 [inner]
-version = "1.14.0"
+version = "1.17.0"
 
 [[api_providers]]
 name = "deepseek"
@@ -189,7 +189,7 @@ selection_strategy = "balance"
 
 | 🏷️ 参数 | 💡 是什么 | 📊 推荐值 |
 |----------|----------|----------|
-| `max_tokens` | 最多输出多少字 | `1024` |
+| `max_tokens` | 最多输出多少token | `1024` |
 | `temperature` | 创造性（0-2） | `0.3` 保守，`0.7` 有创意 |
 | `model_list` | 用哪些模型 | 可以写多个，自动切换 |
 | `slow_threshold` | 慢请求阈值（秒） | `15.0`，超过会输出警告日志 |

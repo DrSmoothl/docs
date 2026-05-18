@@ -168,12 +168,12 @@ SDK 要求所有插件实现 `on_load()`、`on_unload()` 和 `on_config_update()
 
 ```python
 from maibot_sdk import MaiBotPlugin, Tool, Command, CONFIG_RELOAD_SCOPE_SELF
-from typing import ClassVar
+from typing import ClassVar, Iterable
 
 
 class MyPlugin(MaiBotPlugin):
     # 订阅全局配置热重载（仅 "bot" 和 "model" 两个值有效）
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     @Tool("my_tool", brief_description="示例工具")
     async def handle_tool(self, **kwargs):

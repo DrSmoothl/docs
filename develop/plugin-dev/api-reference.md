@@ -4,7 +4,7 @@ title: API 参考
 
 # API 参考
 
-MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 16 种能力代理。所有调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果。
+MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 15 种能力代理。所有调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果。
 
 ```python
 self.ctx.send       # 发送消息
@@ -22,7 +22,6 @@ self.ctx.gateway    # 消息网关
 self.ctx.tool       # 工具定义
 self.ctx.render     # HTML 渲染
 self.ctx.knowledge  # 知识库搜索
-self.ctx.maisaka    # Maisaka 主动任务
 self.ctx.logger     # 日志记录（标准 logging.Logger）
 ```
 
@@ -182,21 +181,9 @@ result = await self.ctx.llm.generate_with_tools(
 )
 tool_calls = result.get("tool_calls", [])
 
-# 生成单条文本的嵌入向量，默认使用 model_task_config.embedding
-embedding = await self.ctx.llm.embed(text="要向量化的文本")
-
-# 批量生成嵌入向量；task_name/model/model_name 传入的是模型任务名，不是具体模型 ID
-embeddings = await self.ctx.llm.embed(
-    texts=["第一段", "第二段"],
-    task_name="embedding",
-    max_concurrent=4,
-)
-
 # 获取可用模型列表
 models = await self.ctx.llm.get_available_models()
 ```
-
-使用嵌入能力前，需要在插件 `_manifest.json` 的 `capabilities` 中声明 `llm.embed`。
 
 ## config — 配置读取
 
@@ -286,36 +273,7 @@ stream = await self.ctx.chat.get_stream_by_group_id(group_id="123456")
 
 # 按用户 ID 获取聊天流
 stream = await self.ctx.chat.get_stream_by_user_id(user_id="789012")
-
-# 打开或创建私聊聊天流
-stream = await self.ctx.chat.open_session(
-    platform="qq",
-    chat_type="private",
-    user_id="789012",
-)
-
-# 打开或创建群聊聊天流。群聊只需要 group_id，不需要 user_id
-stream = await self.ctx.chat.open_session(
-    platform="qq",
-    chat_type="group",
-    group_id="123456",
-)
 ```
-
-`chat.open_session` 会返回 `stream_id`、`session_id`、`chat_type`、`created` 和完整 `stream` 信息。多账号或多路由部署时，应同时传入 `account_id` 和 `scope`，避免打开到错误的聊天流。
-
-## maisaka — Maisaka 主动任务
-
-```python
-# 请求 Maisaka 基于指定聊天流主动处理一轮聊天
-result = await self.ctx.maisaka.proactive.trigger(
-    stream_id=stream["stream_id"],
-    intent="提醒用户今天 20:00 有日程",
-    reason="calendar_reminder",
-)
-```
-
-`maisaka.proactive.trigger` 不会直接发送固定文本，也不会伪造成用户消息。它会把 `intent` 写入 Maisaka 内部上下文并唤醒 Planner，由 Maisaka 根据人格、记忆、当前上下文和可用工具决定是否回复以及如何表达。调用前需要确保聊天流已经存在；若需要主动开启私聊或群聊，请先调用 `chat.open_session`。
 
 ## person — 用户信息
 

@@ -150,10 +150,10 @@ class MyPlugin(MaiBotPlugin):
         return {"content": text}
 
     @Command("ping", description="测试插件是否在线", pattern=r"^/ping$")
-    async def ping(self, stream_id: str = "", **kwargs: Any) -> tuple[bool, str, bool]:
+    async def ping(self, stream_id: str = "", **kwargs: Any) -> tuple[bool, str, int]:
         del kwargs
         await self.ctx.send.text("pong", stream_id)
-        return True, "pong", True
+        return True, "pong", 2
 
 
 def create_plugin() -> MyPlugin:

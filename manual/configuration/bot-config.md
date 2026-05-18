@@ -37,7 +37,6 @@ title: Bot 配置
 | `[mcp]` | MCP 客户端和服务器配置 |
 | `[plugin]` | 插件管理权限 |
 | `[plugin_runtime]` | 插件运行时和浏览器渲染配置 |
-| `[lpmm_knowledge]` | LPMM 知识库（RAG 检索、嵌入、PPR） |
 
 ::: tip
 配置文件开头的 `[inner] version` 由程序管理。需要修改配置模板时，应更新模板版本；普通用户不需要手动改这个版本号。
@@ -537,30 +536,6 @@ url = "https://mcp.example.com/sse"
 | `auto_download_chromium` | `bool` | 未检测到可用浏览器时是否自动下载 Playwright Chromium |
 | `download_connection_timeout_sec` | `float` | 自动下载 Chromium 时的连接超时时间 |
 | `restart_after_render_count` | `int` | 累计渲染指定次数后自动重建浏览器，`0` 表示关闭 |
-
-## 知识库 [lpmm_knowledge]
-
-`[lpmm_knowledge]` 控制 LPMM 知识库，包括 RAG 检索、嵌入向量和 PPR 图计算等。
-
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable` | `bool` | `true` | 是否启用 LPMM 知识库 |
-| `lpmm_mode` | `"classic" \| "agent"` | `"classic"` | 知识库模式：`classic` 经典模式，`agent` 代理模式 |
-| `rag_synonym_search_top_k` | `int` | `10` | 同义检索 Top-K |
-| `rag_synonym_threshold` | `float` | `0.8` | 同义阈值，高于此值的关系视为同义词，范围 `0-1` |
-| `info_extraction_workers` | `int` | `3` | 实体抽取并发线程数，非 Pro 模型不要超过 5 |
-| `qa_relation_search_top_k` | `int` | `10` | 关系检索 Top-K |
-| `qa_relation_threshold` | `float` | `0.75` | 关系阈值，范围 `0-1` |
-| `qa_paragraph_search_top_k` | `int` | `1000` | 段落检索 Top-K（不能过小，可能影响搜索结果） |
-| `qa_paragraph_node_weight` | `float` | `0.05` | 段落节点权重（图搜索 & PPR 计算中的权重，仅使用 DPR 时不起作用） |
-| `qa_ent_filter_top_k` | `int` | `10` | 实体过滤 Top-K |
-| `qa_ppr_damping` | `float` | `0.8` | PPR 阻尼系数，范围 `0-1` |
-| `qa_res_top_k` | `int` | `10` | 最终提供段落 Top-K |
-| `embedding_dimension` | `int` | `1024` | 嵌入向量维度 |
-| `max_embedding_workers` | `int` | `3` | 嵌入/抽取并发线程数 |
-| `embedding_chunk_size` | `int` | `4` | 每批嵌入的条数 |
-| `max_synonym_entities` | `int` | `2000` | 同义边参与的实体数上限，超限则跳过 |
-| `enable_ppr` | `bool` | `true` | 是否启用 PPR，低配机器可关闭 |
 
 ## 常用配置示例
 

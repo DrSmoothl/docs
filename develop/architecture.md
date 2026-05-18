@@ -27,36 +27,39 @@ graph TD
 
 ## MainSystem 初始化流程
 
-`MainSystem.initialize()` 通过 `asyncio.gather` 并行初始化各组件：
+`MainSystem.initialize()` 通过 `await` 串行初始化各组件：
 
 ```mermaid
 graph LR
     A[MainSystem.initialize] --> B[_init_components]
     B --> C[配置文件热重载启动]
-    B --> D[异步任务管理器注册定时任务]
-    B --> E[插件运行时启动]
-    B --> F[A_memorix 长期记忆启动]
-    B --> G[表情管理器加载]
-    B --> H[聊天管理器初始化]
-    B --> I[记忆自动化服务启动]
-    B --> J[Prompt 模板加载]
-    B --> K[消息处理器注册]
-    B --> L[ON_START 事件分发]
+    B --> D[注册记忆配置重载回调]
+    B --> E[Prompt 模板加载]
+    B --> F[异步任务管理器注册定时任务]
+    B --> G[插件运行时启动]
+    B --> H[A_memorix 长期记忆启动]
+    B --> I[表情管理器加载]
+    B --> J[聊天管理器初始化]
+    B --> K[记忆自动化服务启动]
+    B --> L[消息处理器注册]
+    B --> M[ON_START 事件分发]
 ```
 
 核心初始化顺序：
 
 1. 启动配置文件热重载监视器
-2. 注册定时任务（在线时间统计、统计输出、遥测心跳、表达方式自动检查）
-3. 启动插件运行时（`PluginRuntimeManager.start()`），建立双子进程（内置插件 + 第三方插件）
-4. 启动 A_memorix 长期记忆服务
-5. 加载表情管理器
-6. 初始化聊天管理器
-7. 将 `ChatBot.message_process` 注册到消息 API 服务器
-8. 加载 Prompt 模板
-9. 触发 `ON_START` 事件并分发到插件运行时
+2. 注册 A_memorix 配置重载回调（`register_config_reload_callback()`）
+3. 加载 Prompt 模板
+4. 注册定时任务（在线时间统计、统计输出、遥测心跳）
+5. 启动插件运行时（`PluginRuntimeManager.start()`），建立双子进程（内置插件 + 第三方插件）
+6. 启动 A_memorix 长期记忆服务
+7. 加载表情管理器
+8. 初始化聊天管理器
+9. 启动记忆自动化服务（`memory_automation_service.start()`）
+10. 将 `ChatBot.message_process` 注册到消息 API 服务器
+11. 触发 `ON_START` 事件（`event_bus.emit`）并分发到插件运行时（`bridge_event`）
 
-`schedule_tasks()` 随后启动持续运行的服务：表情定期维护、消息 API 服务器、消息服务器、WebUI 服务器。
+`schedule_tasks()` 随后启动持续运行的服务：表情定期维护、消息 API 服务器、消息服务器。
 
 ## 消息处理管线
 
@@ -163,7 +166,7 @@ graph TD
 - **PluginRuntimeManager**：单例管理器，管理两个 `PluginSupervisor`（内置插件 + 第三方插件）。
 - **PluginSupervisor**：每个 Supervisor 管理一个 Runner 子进程，负责生命周期、RPC 通信、健康检查和插件重载。
 - **Runner 子进程**：独立进程加载并运行插件代码，通过 msgpack 编解码的 IPC 与 Host 通信。
-- **ComponentRegistry**：组件注册表，管理 Action、Command、Tool 三类组件的注册信息。
+- **ComponentRegistry**：组件注册表，管理 Action、Command、Tool、Event Handler、Hook Handler、Message Gateway 六类组件的注册信息。
 
 ## Platform IO 架构
 

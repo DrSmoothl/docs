@@ -61,7 +61,7 @@ git checkout dev
 
 ### 第 2 步：安装 Python 🐍
 
-> MaiBot 需要 **Python 3.10 及以上版本**（推荐 3.12 / 3.13）。
+> MaiBot 需要 **Python 3.12 及以上版本**（推荐 3.12 / 3.13）。
 
 1. 访问 [python.org](https://www.python.org/downloads/) 下载 Windows 安装包
 2. **安装时务必勾选 "Add Python to PATH"**
@@ -228,7 +228,7 @@ port = 8002   # 改成其他未被占用的端口，如 8002、8003
 
 保存后重新启动，WebUI 访问地址也会变成 `http://127.0.0.1:8002`。
 
-> 💡 如果 `maim_message` 的 WebSocket 端口（默认 8080）也被占用，同样在 `[maim_message]` 段落中修改 `ws_server_port`。
+> 💡 如果 `maim_message` 的 WebSocket 端口（默认 8000）也被占用，同样在 `[maim_message]` 段落中修改 `ws_server_port`。
 
 **解决方法二：关闭占用端口的进程**
 
@@ -271,7 +271,7 @@ kill -9 <PID>
 
 - **通过 WebUI**：浏览器访问 `http://127.0.0.1:8001`，在配置管理页面修改
 - **直接编辑文件**：修改 `config/bot_config.toml` 或 `config/model_config.toml`
-- 修改后无需重启，MaiBot 支持**配置热重载**（大部分配置保存即生效）
+- 修改后大部分配置无需重启，MaiBot 支持**配置热重载**（部分配置仍需重启生效）
 
 
 ## 🎯 下一步

@@ -17,7 +17,7 @@ MCP（Model Context Protocol）是一个开放协议标准，定义了 AI 应用
 MaiBot 自身不包含天气查询、股票查询、网页搜索等内置工具。这些能力全部来自你连接的 MCP 服务端——MaiBot 负责发现和调用它们，具体能做什么取决于你连了哪些服务器。
 :::
 
-MCP 工具对 Maisaka 推理引擎来说是**透明**的——MCP 工具和内置工具（`reply`、`wait`、`stop` 等）走同一个 ToolProvider 接口，规划器无需区分它们的来源。
+MCP 工具对 Maisaka 推理引擎来说是**透明**的——MCP 工具和内置工具（`reply`、`wait`、`finish` 等）走同一个 ToolProvider 接口，规划器无需区分它们的来源。
 
 ## 架构概览
 
@@ -88,7 +88,7 @@ MCPManager 对四种能力分别维护独立的注册表，并在注册时进行
 
 ## 传输模式
 
-MaiBot 支持两种 MCP 传输方式：
+MaiBot 支持三种 MCP 传输方式：
 
 ### stdio（本地子进程）
 
@@ -129,7 +129,26 @@ mode = "bearer"
 bearer_token = "sk-your-token"
 ```
 
-MaiBot 内部使用 `mcp` Python SDK 的 `stdio_client` 和 `streamable_http_client` 实现两种传输。
+### sse（Server-Sent Events）
+
+通过 SSE 连接远程 MCP 服务器。适合需要长连接推送的远程服务。
+
+- **需要网络连接**
+- 支持 Bearer Token 认证和自定义请求头
+- 支持配置超时时间
+
+```toml
+[[mcp.servers]]
+name = "remote-sse"
+transport = "sse"
+url = "https://mcp.example.com/sse"
+
+[mcp.servers.authorization]
+mode = "bearer"
+bearer_token = "sk-your-token"
+```
+
+MaiBot 内部使用 `mcp` Python SDK 的 `stdio_client`、`streamable_http_client` 和 `sse_client` 实现三种传输。
 
 ## 连接生命周期
 
@@ -202,8 +221,7 @@ MCPManager 对工具名称有两层保护：
    | 内置工具名称 | 用途 |
    |-------------|------|
    | `reply` | 回复消息 |
-   | `no_reply` | 不回复 |
-   | `wait` | 等待 |
+   | `no_action` | 本轮不进行任何动作 |
    | `stop` | 停止 |
    | `create_table` | 创建表格 |
    | `list_tables` | 列出表格 |

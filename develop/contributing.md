@@ -58,7 +58,6 @@ def process_message(message, timeout=5.0):
 |--------|------|
 | 修改 `dashboard/` 下任何内容 | 前端由独立仓库构建 |
 | 直接编辑 `bot_config.toml` / `model_config.toml` | 应修改模版 + 版本号 |
-| `as any`、`@ts-ignore` 等类型抑制 | 必须正确处理类型 |
 | 空 catch 块 `catch(e) {}` | 至少记录日志 |
 | 删除失败测试来"通过" | 必须修复问题本身 |
 | 硬编码 API key / 密码 / token | 使用配置系统管理 |
@@ -108,7 +107,7 @@ uv run ruff format .
 
 ### 注意事项
 
-- WebUI 默认绑定 `0.0.0.0:8001`，生产环境需反向代理
+- WebUI 默认绑定 `127.0.0.1:8001`，生产环境需反向代理
 - Token 存储在 `data/webui.json`（明文 JSON），依赖文件系统权限保护
 - 限流器为内存型，多实例部署时无法共享状态
 - 插件安装通过 `git clone` 执行，需确保 Git 安全配置

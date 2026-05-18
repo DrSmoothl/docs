@@ -33,7 +33,7 @@ from maibot_sdk import MessageGateway
 | `"duplex"` | `MessageGatewayRouteType.DUPLEX` | 双向 | 同时支持出站和入站 |
 
 ::: tip 别名支持
-`route_type` 也接受 `"recv"` 作为 `"receive"` 的别名。
+`route_type` 也接受 `"recv"` 和 `"recive"` 作为 `"receive"` 的别名。
 :::
 
 ## ctx.gateway 能力代理

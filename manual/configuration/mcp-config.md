@@ -167,7 +167,7 @@ allow_url = false
 [[mcp.servers]]
 name = "playwright"
 enabled = true
-transport = "stdio"           # 或 "streamable_http"
+transport = "stdio"           # 或 "streamable_http"、"sse"
 http_timeout_seconds = 30.0
 read_timeout_seconds = 300.0
 ```
@@ -176,7 +176,7 @@ read_timeout_seconds = 300.0
 |--------|------|--------|------|
 | `name` | `str` | `""` | **必填**。服务器名称，在同一配置中不能重复 |
 | `enabled` | `bool` | `true` | 是否启用当前服务器 |
-| `transport` | `"stdio"` / `"streamable_http"` | `"stdio"` | 传输方式 |
+| `transport` | `"stdio"` / `"streamable_http"` / `"sse"` | `"stdio"` | 传输方式 |
 | `http_timeout_seconds` | `float` | `30.0` | HTTP 请求超时（秒） |
 | `read_timeout_seconds` | `float` | `300.0` | 会话读取超时（秒） |
 
@@ -400,10 +400,11 @@ url = "https://mcp.example.com/weather"
 - npm 上搜索 `@modelcontextprotocol` 包
 - Python 社区有 `mcp` 生态的服务器实现
 
-### Q: stdio 和 streamable_http 怎么选？
+### Q: stdio、streamable_http 和 sse 怎么选？
 
 - **stdio**：本地安装的工具，延迟低，无需网络。适合文件操作、本地计算等
-- **streamable_http**：远程服务，需要网络。适合云 API、别人部署好的服务
+- **streamable_http**：远程 HTTP 服务，需要网络。适合云 API、别人部署好的服务
+- **sse**：远程 SSE（Server-Sent Events）服务，适合需要服务端推送事件的场景
 
 ### Q: 从哪里获取 API Token？
 

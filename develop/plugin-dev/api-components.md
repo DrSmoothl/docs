@@ -183,8 +183,8 @@ class ManagedApiPlugin(MaiBotPlugin):
 
 | 方法 | 说明 |
 |------|------|
-| `await self.ctx.api.call(plugin_id, api_name, **kwargs)` | 调用其他插件的 API |
-| `await self.ctx.api.get(plugin_id, api_name)` | 获取 API 信息 |
+| `await self.ctx.api.call(api_name, *, version="", **kwargs)` | 调用其他插件的 API |
+| `await self.ctx.api.get(api_name, *, version="")` | 获取 API 信息 |
 | `await self.ctx.api.list()` | 列出所有可用 API |
 | `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` | 替换动态 API |
 
@@ -223,8 +223,7 @@ class CallerPlugin(MaiBotPlugin):
     async def handle_translate(self, text: str, **kwargs):
         # 调用其他插件的翻译 API
         result = await self.ctx.api.call(
-            "com.example.translate",   # 目标插件 ID
-            "translate",                # API 名称
+            "com.example.translate.translate",
             text=text,
             target_lang="en",
         )
@@ -235,7 +234,7 @@ class CallerPlugin(MaiBotPlugin):
 
 ```python
 # 获取特定 API 的详细信息
-api_info = await self.ctx.api.get("com.example.translate", "translate")
+api_info = await self.ctx.api.get("com.example.translate.translate")
 self.ctx.logger.info("API 信息: %s", api_info)
 ```
 

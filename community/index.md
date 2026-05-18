@@ -34,7 +34,7 @@ MaiBot 项目在 GitHub 上开源，欢迎参与贡献和反馈：
 
 ### 参与贡献
 
-欢迎参与 MaiBot 的开发！在提交贡献前，请先阅读 [贡献指南](https://github.com/Mai-with-u/MaiBot/blob/main/docs-src/CONTRIBUTE.md)。
+欢迎参与 MaiBot 的开发！在提交贡献前，请先阅读 [贡献指南](https://github.com/Mai-with-u/MaiBot/blob/main/docs/CONTRIBUTE.md)。
 
 贡献方式：
 - **提交 Issue**：报告 Bug 或提出功能建议

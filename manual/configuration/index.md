@@ -10,9 +10,8 @@ MaiBot 有两个主要的配置文件，都放在 `config/` 文件夹里：
 
 | 📁 文件 | 📝 作用 | 🔗 详细说明 |
 |---------|---------|------------|
-| `bot_config.toml` | 机器人的基本信息、性格、聊天、记忆、学习、日志、知识库... | [查看详情](./bot-config.md) |
+| `bot_config.toml` | 机器人的基本信息、性格、聊天、记忆（含 A_Memorix）、学习、日志等全部主配置 | [查看详情](./bot-config.md) |
 | `model_config.toml` | AI模型设置，设置麦麦使用的LLM | [查看详情](./model-config.md) |
-| `amemorix-config.md` | A_Memorix 记忆系统配置 | [查看详情](./amemorix-config.md) |
 
 ::: tip 💡 小贴士
 这些配置文件需要启动一次MaiBot之后才会生成。如果无法找到，请先启动一次。

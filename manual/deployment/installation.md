@@ -4,6 +4,11 @@ title: 安装指南
 
 # 📦 MaiBot 安装指南
 
+## 环境要求
+
+- **Python 3.12 及以上版本**（推荐 3.12 / 3.13）
+- **Git**
+
 ## 下载 MaiBot
 
 从 [GitHub Release](https://github.com/Mai-with-u/MaiBot/releases/) 下载最新版本，或者直接克隆仓库：
@@ -52,7 +57,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv sync
 ```
 
-```bash [备用：pip]
+```bash [备用：pip（不推荐，可能缺少部分依赖）]
 pip install -r requirements.txt
 ```
 
@@ -78,9 +83,9 @@ uv run python bot.py
 `model_config.toml` 中必须至少包含一个模型配置。如果自动升级失败，需要手动创建模型配置文件，包括：
 - 至少一个 API 提供商（`[[api_providers]]`）
 - 至少一个文本模型（`[[models]]`）
-- 一个视觉模型（`[[models]]`，设置 `visual = true`）
-- 一个嵌入模型（`[[models]]`）
 - 对应的任务分配（`[model_task_config.xxx]`）
+
+视觉模型和嵌入模型是可选的——视觉模型仅在需要看图时配置，嵌入模型仅在启用记忆功能时配置。
 
 参考 [模型配置文档](../configuration/model-config.md) 进行配置。
 

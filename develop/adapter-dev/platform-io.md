@@ -77,12 +77,12 @@ class RouteKey:
     scope: Optional[str] = None             # 额外路由作用域
 ```
 
-路由解析遵循**从最具体到最宽泛**的回退顺序：`platform + account_id + scope` → `platform + account_id` → `platform`。通过 `resolution_order()` 方法可获取完整回退链：
+路由解析遵循**从最具体到最宽泛**的回退顺序：`platform + account_id + scope` → `platform + account_id` → `platform + scope` → `platform`。通过 `resolution_order()` 方法可获取完整回退链：
 
 ```python
 key = RouteKey(platform="qq", account_id="123", scope="group_456")
 key.resolution_order()
-# → [RouteKey("qq", "123", "group_456"), RouteKey("qq", "123", None), RouteKey("qq", None, None)]
+# → [RouteKey("qq", "123", "group_456"), RouteKey("qq", "123", None), RouteKey("qq", None, "group_456"), RouteKey("qq", None, None)]
 ```
 
 `to_dedupe_scope()` 方法生成跨驱动共享的去重作用域字符串，格式为 `platform:account_id:scope`。

@@ -162,12 +162,12 @@ async def on_config_update(
 
 ```python
 from maibot_sdk import MaiBotPlugin, CONFIG_RELOAD_SCOPE_SELF, ON_BOT_CONFIG_RELOAD, ON_MODEL_CONFIG_RELOAD
-from typing import ClassVar
+from typing import ClassVar, Iterable
 
 
 class MyPlugin(MaiBotPlugin):
     # 订阅 bot 和 model 两种全局配置的热重载
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     async def on_load(self) -> None:
         self.ctx.logger.info("插件已加载")
@@ -194,21 +194,21 @@ class MyPlugin(MaiBotPlugin):
 类变量，声明插件需要订阅的全局配置热重载范围。仅支持 `"bot"` 和 `"model"` 两个值：
 
 ```python
-from typing import ClassVar
+from typing import ClassVar, Iterable
 
 
 class MyPlugin(MaiBotPlugin):
     # 订阅两种全局配置
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     # 仅订阅 Bot 配置
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot",)
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot",)
 
     # 仅订阅 Model 配置
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("model",)
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ("model",)
 
     # 不订阅任何全局配置（默认值）
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ()
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ()
 ```
 
 **规则：**
@@ -241,7 +241,7 @@ class GreeterPlugin(MaiBotPlugin):
     """问候插件 —— 演示完整的插件生命周期。"""
 
     # 订阅全局配置热重载
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     async def on_load(self) -> None:
         """插件加载时初始化。"""

@@ -40,9 +40,12 @@ WebUI 让你轻松管理 MaiBot：
 
 ```toml
 [webui]
-enabled = true      # 是否启用 WebUI
-host = "127.0.0.1"  # 绑定地址
-port = 8001         # 端口号
+enabled = true                # 是否启用 WebUI
+host = "127.0.0.1"            # 绑定地址
+port = 8001                   # 端口号
+mode = "production"           # 运行模式：development(开发) 或 production(生产)
+anti_crawler_mode = "basic"   # 防爬虫模式：false / strict / loose / basic
+allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 ```
 
 - `host` 改成 `0.0.0.0` 可以让局域网其他设备访问

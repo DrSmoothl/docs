@@ -22,7 +22,6 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
     brief_description: str = "",                            # 简要描述，优先级高于 description
     detailed_description: str = "",                         # 详细描述，可包含参数说明等
     parameters: list[ToolParameterInfo] | dict | None = None,  # 参数定义
-    core_tool: bool = False,                                # 是否作为核心工具直接暴露给 LLM
     **metadata,                                             # 额外元数据
 )
 ```
@@ -36,40 +35,11 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 | `brief_description` | `str` | 工具主描述（优先使用）。传给 LLM 的工具描述摘要，帮助 LLM 判断是否需要调用 |
 | `detailed_description` | `str` | 详细描述，可包含参数使用说明、注意事项等。SDK 会自动合并参数 Schema 生成完整描述 |
 | `parameters` | `list \| dict \| None` | 工具参数定义，支持两种格式（见下文） |
-| `core_tool` | `bool` | 是否作为核心工具直接暴露给 LLM。默认 `False`，普通插件工具会先进入 deferred 工具池，需要通过 `tool_search` 发现后再使用 |
-
-::: warning 核心工具请谨慎使用
-`core_tool=True` 会让工具在 Planner 阶段无需搜索即可可见。只建议用于高频、低风险、强场景相关的工具，例如语音回复、当前会话发送类工具。过多核心工具会增加模型选择成本，也可能让模型误调用不该常驻的能力。
-:::
-
-如果希望工具不暴露给 LLM，也可以传入 `visibility="hidden"`；默认行为等价于 `visibility="deferred"`。
-
-示例：
-
-```python
-@Tool(
-    "send_tts_voice",
-    description="把指定文本合成为语音并发送到当前会话。",
-    core_tool=True,
-    parameters=[
-        ToolParameterInfo(
-            name="text",
-            param_type=ToolParamType.STRING,
-            description="要合成为语音并发送的文本",
-            required=True,
-        ),
-    ],
-)
-async def send_tts_voice(self, text: str, **kwargs):
-    ...
-```
 
 描述字段约定：
-- `description`：关于工具的描述，包括使用方法，使用情景，注意事项
-
-以下字段已弃用，如果没有`description`，会将`brief_description`作为`description`
-- `brief_description`：给主程序或小模型快速判断“这个工具是做什么的”
-- `detailed_description`：描述参数、必填项、可选项和调用约束
+- `description`：关于工具的描述，包括使用方法，使用情景，注意事项。当 `brief_description` 为空时，`description` 会作为回退描述。
+- `brief_description`：给主程序或小模型快速判断"这个工具是做什么的"的简要描述
+- `detailed_description`：描述参数、必填项、可选项和调用约束的详细描述
 
 ## 参数定义
 
@@ -84,8 +54,8 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 class MyPlugin(MaiBotPlugin):
     @Tool(
         "search",
-        brief_description="搜索互联网获取信息",  # 弃用：SDK 2.4.0+ 推荐使用 description
-        detailed_description="使用搜索引擎查找相关信息。参数说明：\n- query：string，必填。搜索关键词。\n- limit：integer，可选。返回结果数量上限。",  # 弃用：SDK 2.4.0+ 推荐使用 description
+        brief_description="搜索互联网获取信息",
+        detailed_description="使用搜索引擎查找相关信息。参数说明：\n- query：string，必填。搜索关键词。\n- limit：integer，可选。返回结果数量上限。",
         parameters=[
             ToolParameterInfo(
                 name="query",
@@ -115,7 +85,7 @@ class MyPlugin(MaiBotPlugin):
 class MyPlugin(MaiBotPlugin):
     @Tool(
         "search",
-        brief_description="搜索互联网获取信息",  # 弃用：SDK 2.4.0+ 推荐使用 description
+        brief_description="搜索互联网获取信息",
         parameters={
             "query": {"type": "string", "description": "搜索关键词"},
             "limit": {"type": "integer", "description": "返回结果数量上限", "default": 5},
@@ -256,7 +226,7 @@ SDK 会自动为工具生成完整的描述信息，优先级如下：
 
 1. **`brief_description`**：优先使用（如果提供）
 2. **`description`**：降级回退（`brief_description` 为空时使用）
-3. **`detailed_description`**（已弃用）：如果提供了，SDK 会将其与参数 Schema 合并生成完整描述
+3. **`detailed_description`**：如果提供了，SDK 会将其与参数 Schema 合并生成完整描述
 4. **自动生成**：如果上述字段都未提供，SDK 会使用 `"工具 {name}"` 作为描述
 
 自动生成的参数说明格式为：
