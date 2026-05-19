@@ -54,8 +54,14 @@ plugins/my-plugin/
 - `host_application` 和 `sdk` 都要声明 `min_version` 与 `max_version`。
 - Python 包依赖写入 `dependencies`，类型为 `python_package`。
 - 插件间依赖写入 `dependencies`，类型为 `plugin`。
-- `capabilities` 只声明确实需要的能力。
+- `capabilities` 只声明确实需要的能力；凡是代码里调用 `self.ctx.<能力>` 的 Host 能力，都必须在这里声明对应令牌。
 - `i18n.default_locale` 推荐使用 `zh-CN`。
+
+::: warning 能力令牌不是可选项
+插件运行在 Runner 子进程中，调用 `self.ctx.send`、`self.ctx.llm`、`self.ctx.message` 等能力时，会通过 RPC 请求 Host。Host 会先检查 `_manifest.json` 里的 `capabilities`，未声明就会拒绝调用，并在日志中出现类似 `[E_CAPABILITY_DENIED] 插件 <plugin-id> 未注册能力令牌` 的错误。
+
+例如命令里使用 `await self.ctx.llm.generate(...)`，manifest 必须包含 `llm.generate`；使用 `await self.ctx.send.text(...)`，manifest 必须包含 `send.text`。新增或修改功能后，要同步检查代码实际调用的能力和 manifest 是否一致，重载或重启插件后新令牌才会生效。
+:::
 
 ```json
 {
@@ -81,7 +87,7 @@ plugins/my-plugin/
     "max_version": "2.99.99"
   },
   "dependencies": [],
-  "capabilities": ["send_message"],
+  "capabilities": ["send.text"],
   "i18n": {
     "default_locale": "zh-CN"
   }
@@ -186,8 +192,16 @@ def create_plugin() -> MyPlugin:
 
 - 已有 `stream_id` 时，使用 `await self.ctx.send.text(content, stream_id)` 发送文本。
 - 发送图片、表情、转发、混合消息时，优先使用 `self.ctx.send` 和 `self.ctx.emoji` 提供的能力代理。
+- 调用发送能力前，在 `_manifest.json` 中声明对应能力，例如 `send.text`、`send.image`、`send.forward`、`send.hybrid`、`emoji.get_random`。
 - 不要自行计算会话 ID；插件应使用上下文传入的 `stream_id` 或 SDK 提供的消息上下文。
 - 用户可见文本默认使用简体中文。
+
+## LLM 调用要点
+
+- 需要直接生成文本时，使用 `await self.ctx.llm.generate(prompt=..., model=...)`，并在 `_manifest.json` 中声明 `llm.generate`。
+- 需要获取可用模型列表时，使用 `await self.ctx.llm.get_available_models()`，并声明 `llm.get_available_models`。
+- 不要假设插件只要能加载就能调用所有 Host 能力；manifest 是运行时权限边界。
+- 修改 manifest 后要重载或重启插件，否则旧能力令牌仍会继续生效。
 
 ## 配置要点
 
@@ -202,6 +216,7 @@ def create_plugin() -> MyPlugin:
 要求 AI 完成后逐项自检：
 
 - `_manifest.json` 字段完整，版本号和 URL 格式合法。
+- `_manifest.json` 的 `capabilities` 覆盖了代码里实际调用的所有 `self.ctx` 能力，例如 `send.text`、`llm.generate`、`message.get_recent`。
 - `plugin.py` 只从标准库、第三方库和 `maibot_sdk` 导入；导入顺序符合项目规范。
 - 插件类继承 `MaiBotPlugin`，并声明 `config_model`。
 - 已实现 `on_load()`、`on_unload()`、`on_config_update()`。
