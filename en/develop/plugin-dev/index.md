@@ -204,7 +204,7 @@ The SDK provides 7 component decorators, all imported from the `maibot_sdk` top 
 
 ### Capability Proxies
 
-Access 15 capability proxies through `self.ctx`. All calls are automatically forwarded to Host via RPC:
+Access 16 capability proxies through `self.ctx`. All calls are automatically forwarded to Host via RPC:
 
 ```python
 # Context access
@@ -216,17 +216,18 @@ self.ctx.api          # Plugin API query, invocation, and dynamic sync
 self.ctx.gateway      # Message gateway routing and runtime state reporting
 self.ctx.send         # Send text, image, emoji, forward, hybrid messages
 self.ctx.db           # Database CRUD and count
-self.ctx.llm          # LLM text generation and tool calls
+self.ctx.llm          # LLM text generation, tool calls, and embeddings
 self.ctx.config       # Plugin config reading
 self.ctx.emoji        # Emoji management
 self.ctx.message      # Historical message queries
 self.ctx.frequency    # Talk frequency control
 self.ctx.component    # Plugin and component management
-self.ctx.chat         # Chat stream queries
+self.ctx.chat         # Chat stream queries, open or create chat streams
 self.ctx.person       # User information queries
 self.ctx.render       # Render HTML to PNG image
 self.ctx.knowledge    # LPMM knowledge base search
 self.ctx.tool         # LLM tool definition queries
+self.ctx.maisaka      # Maisaka context append and proactive tasks
 ```
 
 ### Configuration Model

@@ -4,7 +4,7 @@ title: API 参考
 
 # API 参考
 
-MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 15 种能力代理。所有调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果。
+MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 16 种能力代理。所有调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果。
 
 ```python
 self.ctx.send       # 发送消息
@@ -22,6 +22,7 @@ self.ctx.gateway    # 消息网关
 self.ctx.tool       # 工具定义
 self.ctx.render     # HTML 渲染
 self.ctx.knowledge  # 知识库搜索
+self.ctx.maisaka    # Maisaka 上下文与主动任务
 self.ctx.logger     # 日志记录（标准 logging.Logger）
 ```
 
@@ -131,6 +132,7 @@ llm = self.ctx.llm
 |------|------|
 | `await llm.generate(prompt, model="", temperature=0.7, max_tokens=2000)` | 文本生成，`prompt` 支持字符串或消息列表 |
 | `await llm.generate_with_tools(prompt, tools, model="", temperature=0.7, max_tokens=2000)` | 带工具调用的生成 |
+| `await llm.embed(text=..., texts=...)` | 生成文本嵌入向量 |
 | `await llm.get_available_models()` | 获取可用模型列表，返回 `list[str]` |
 
 **generate 返回值**：
@@ -181,6 +183,16 @@ result = await self.ctx.llm.generate_with_tools(
 )
 tool_calls = result.get("tool_calls", [])
 
+# 单条文本嵌入
+embedding = await self.ctx.llm.embed(text="需要向量化的文本")
+
+# 批量文本嵌入
+embeddings = await self.ctx.llm.embed(
+    texts=["第一段文本", "第二段文本"],
+    task_name="embedding",
+    max_concurrent=4,
+)
+
 # 获取可用模型列表
 models = await self.ctx.llm.get_available_models()
 ```
@@ -222,6 +234,7 @@ message = self.ctx.message
 | 方法 | 说明 |
 |------|------|
 | `await message.get_recent(chat_id, limit)` | 获取最近消息 |
+| `await message.get_by_id(message_id, chat_id="", stream_id="")` | 按消息 ID 查询单条消息 |
 | `await message.build_readable(messages, **kwargs)` | 将消息列表格式化为可读字符串 |
 | `await message.get_by_time(start_time, end_time)` | 按时间范围查询（全局） |
 | `await message.get_by_time_in_chat(chat_id, start_time, end_time)` | 按时间范围查询指定聊天 |
@@ -233,6 +246,9 @@ message = self.ctx.message
 # 方式 1：传入已查询的消息列表
 msgs = await self.ctx.message.get_recent(chat_id, limit=20)
 readable = await self.ctx.message.build_readable(msgs)
+
+# 按消息 ID 查询
+message_detail = await self.ctx.message.get_by_id(message_id, stream_id=chat_id)
 
 # 方式 2：通过关键字参数传入 chat_id + 时间范围，由 Host 端查询
 readable = await self.ctx.message.build_readable(
@@ -260,6 +276,7 @@ chat = self.ctx.chat
 | `await chat.get_private_streams(platform="qq")` | `platform: str` | 获取所有私聊流 |
 | `await chat.get_stream_by_group_id(group_id, platform="qq")` | `group_id: str` | 按群 ID 查找聊天流 |
 | `await chat.get_stream_by_user_id(user_id, platform="qq")` | `user_id: str` | 按用户 ID 查找私聊流 |
+| `await chat.open_session(platform, chat_type, **kwargs)` | `chat_type: "private" \| "group"` | 打开或创建聊天流 |
 
 ```python
 # 获取所有群聊流
@@ -273,7 +290,45 @@ stream = await self.ctx.chat.get_stream_by_group_id(group_id="123456")
 
 # 按用户 ID 获取聊天流
 stream = await self.ctx.chat.get_stream_by_user_id(user_id="789012")
+
+# 打开或创建私聊聊天流
+stream = await self.ctx.chat.open_session(
+    platform="qq",
+    chat_type="private",
+    user_id="789012",
+)
+
+# 打开或创建群聊聊天流
+stream = await self.ctx.chat.open_session(
+    platform="qq",
+    chat_type="group",
+    group_id="123456",
+)
 ```
+
+`chat.open_session()` 会返回 `stream_id`、`session_id`、`chat_type`、`created` 以及完整 `stream` 对象。在多账号或多路由部署中，建议同时传入 `account_id` 和 `scope`，避免打开到错误的聊天流。
+
+## maisaka — Maisaka 主动任务
+
+```python
+# 请求 Maisaka 基于指定聊天流主动处理一轮对话
+result = await self.ctx.maisaka.proactive.trigger(
+    stream_id=stream["stream_id"],
+    intent="提醒用户今晚 20:00 有日程",
+    reason="calendar_reminder",
+    metadata={"source": "calendar_plugin"},
+)
+
+# 向指定聊天流追加一条插件上下文消息
+await self.ctx.maisaka.context.append(
+    stream_id=stream["stream_id"],
+    segments=[{"type": "text", "content": "用户刚刚完成了一个插件任务"}],
+    visible_text="用户刚刚完成了一个插件任务",
+    source_kind="plugin:calendar",
+)
+```
+
+`maisaka.proactive.trigger()` 不会直接发送固定文本，也不会伪装成用户消息。它会把 `intent` 写入 Maisaka 内部上下文并唤醒 Planner，让 Maisaka 基于人格、记忆、当前上下文和可用工具自行决定是否回复以及如何表达。目标聊天流必须已经存在。
 
 ## person — 用户信息
 

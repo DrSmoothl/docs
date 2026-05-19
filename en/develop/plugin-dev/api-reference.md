@@ -22,7 +22,7 @@ self.ctx.gateway    # Message gateway
 self.ctx.tool       # Tool definitions
 self.ctx.render     # HTML rendering
 self.ctx.knowledge  # Knowledge base search
-self.ctx.maisaka    # Maisaka proactive tasks
+self.ctx.maisaka    # Maisaka context and proactive tasks
 self.ctx.logger     # Logging (standard logging.Logger)
 ```
 
@@ -39,7 +39,7 @@ await self.ctx.send.image(image_base64=base64_str, stream_id=stream_id)
 await self.ctx.send.emoji(emoji_base64=base64_str, stream_id=stream_id)
 
 # Send hybrid message
-await self.ctx.send.hybrid(parts=[...], stream_id=stream_id)
+await self.ctx.send.hybrid(segments=[...], stream_id=stream_id)
 
 # Send forward message
 await self.ctx.send.forward(messages=[...], stream_id=stream_id)
@@ -127,6 +127,9 @@ messages = await self.ctx.message.get_by_time(
 # Count new messages
 count = await self.ctx.message.count_new(stream_id=stream_id)
 
+# Get one message by ID
+message = await self.ctx.message.get_by_id(message_id="msg-001", stream_id=stream_id)
+
 # Build readable text
 text = await self.ctx.message.build_readable(messages=messages)
 ```
@@ -174,6 +177,15 @@ result = await self.ctx.maisaka.proactive.trigger(
     stream_id=stream["stream_id"],
     intent="Remind the user that they have a schedule item at 20:00 today",
     reason="calendar_reminder",
+    metadata={"source": "calendar_plugin"},
+)
+
+# Append a plugin context message to a chat stream.
+await self.ctx.maisaka.context.append(
+    stream_id=stream["stream_id"],
+    segments=[{"type": "text", "content": "The user just completed a plugin task"}],
+    visible_text="The user just completed a plugin task",
+    source_kind="plugin:calendar",
 )
 ```
 
