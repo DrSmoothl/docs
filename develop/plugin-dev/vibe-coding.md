@@ -77,7 +77,7 @@ plugins/my-plugin/
     "max_version": "1.99.99"
   },
   "sdk": {
-    "min_version": "2.5.0",
+    "min_version": "2.5.1",
     "max_version": "2.99.99"
   },
   "dependencies": [],

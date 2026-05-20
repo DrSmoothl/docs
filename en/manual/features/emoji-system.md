@@ -168,16 +168,19 @@ Through WebUI you can:
 - See what emojis MaiBot has collected
 - View tags for each emoji
 - See usage frequency and last used time
+- Filter by emoji status: Known, Unknown, Adopted, or Discarded
 
 ### 🛠️ Manage Emojis
 - Delete inappropriate emojis
 - Add custom tags to emojis
 - Set usage preferences for certain emojis
+- Deleting an unregistered emoji removes both the database record and local file; deleting a registered emoji also unloads it from the usable emoji library first
 
 ### 📤 Upload Emojis
 - Manually upload emojis you like
-- Let it learn new emoji styles
+- Fill in a tag list during upload; tags are merged into the emoji description
 - Enrich its emoji library
+- Emojis uploaded from WebUI are registered immediately as Adopted
 
 ### ⚙️ Set Preferences
 - Set emoji usage frequency

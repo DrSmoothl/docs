@@ -224,6 +224,9 @@ info = await self.ctx.emoji.get_info(emoji_id="emoji_001")
 
 # Get emotion list
 emotions = await self.ctx.emoji.get_emotions()
+
+# Delete an emoji. keep_desc=True keeps the description cache; False removes the DB record too.
+await self.ctx.emoji.delete_emoji(emoji_hash="sha256_hash", keep_desc=True)
 ```
 
 ## frequency — Talk Frequency

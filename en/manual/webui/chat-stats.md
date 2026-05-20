@@ -222,17 +222,20 @@ The emoji module manages emojis collected and used by MaiBot.
 
 `GET /emoji/list` supports:
 - `search`: Search keywords (match description, hash value)
-- `is_registered`: Filter by registration status
-- `is_banned`: Filter by ban status
+- `status`: Filter by unified emoji status (`known` / `unknown` / `adopted` / `discarded`)
+- `format`: Filter by file format (`JPEG` / `PNG` / `GIF` / `WebP`)
 - `sort_by`: Sort field (`query_count` / `register_time` / `record_time` / `last_used_time`)
 - `sort_order`: Sort direction (`asc` / `desc`)
 
 ### Emoji Status
 
-Emojis have three statuses:
-- **Registered** (`is_registered=true`): Can be used by MaiMai
-- **Unregistered** (`is_registered=false`, `is_banned=false`): Collected but not enabled
-- **Banned** (`is_banned=true`): Marked as unavailable
+Emojis have four WebUI statuses:
+- **Known** (`known`): Has a description, but is not registered or banned
+- **Unknown** (`unknown`): Has no description yet, and is not registered or banned
+- **Adopted** (`adopted`): Registered and usable by MaiBot
+- **Discarded** (`discarded`): Banned and unavailable
+
+Manual uploads from WebUI are registered immediately as **Adopted**. If the uploaded image already exists in the database, WebUI reuses the existing record, updates its description from the submitted tags, clears the ban flag, and marks it as registered. Deleting an unregistered emoji removes both the local file and database record; deleting a registered emoji unloads it first, then removes the file and record.
 
 ### Thumbnail Cache
 
