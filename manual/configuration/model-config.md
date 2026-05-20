@@ -95,7 +95,7 @@ auth_query_name = "key"
 
 > 💡 大部分国内服务商都兼容 OpenAI 接口格式，`client_type = "openai"` + `auth_type = "bearer"` 即可。
 
-> 📖 高级鉴权、参数、运行时配置请参阅：[模型高级参数](./model-extra-params#api-提供商高级配置)
+> 📖 高级鉴权、参数、运行时配置请参阅：[模型高级参数](./model-extra-params#高级鉴权配置)
 
 ## 模型列表 [[models]]
 
@@ -119,7 +119,7 @@ auth_query_name = "key"
 | `cache` | 启用缓存计费 | `false`（默认），开启后缓存命中用cache_price_in计费 |
 | `cache_price_in` | 缓存输入价格 | 元/百万token，默认`0.0` |
 
-> 📖 模型级覆盖和高级参数请参阅：[模型高级参数](./model-extra-params#模型高级参数)
+> 📖 模型级覆盖和高级参数请参阅：[模型高级参数](./model-extra-params#其他高级参数)
 
 > 📖 **详细说明请参阅：[模型额外参数 (extra_params)](./model-extra-params)** — 包含思考模式配置、推理深度调整、自定义 HTTP 参数等完整指南。
 >
