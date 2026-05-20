@@ -205,7 +205,7 @@ SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
 ### 能力代理
 
-通过 `self.ctx` 访问 15 种能力代理，所有调用自动通过 RPC 转发到 Host：
+通过 `self.ctx` 访问 16 种能力代理，所有调用自动通过 RPC 转发到 Host：
 
 ```python
 # 上下文访问
@@ -217,17 +217,18 @@ self.ctx.api          # 插件 API 查询、调用与动态同步
 self.ctx.gateway      # 消息网关路由与运行时状态上报
 self.ctx.send         # 发送文本、图片、表情、转发、混合消息
 self.ctx.db           # 数据库增删改查计数
-self.ctx.llm          # LLM 文本生成与工具调用
+self.ctx.llm          # LLM 文本生成、工具调用与嵌入向量
 self.ctx.config       # 插件配置读取
 self.ctx.emoji        # 表情包管理
 self.ctx.message      # 历史消息查询
 self.ctx.frequency    # 发言频率控制
 self.ctx.component    # 插件与组件管理
-self.ctx.chat         # 聊天流查询
+self.ctx.chat         # 聊天流查询、打开或创建聊天流
 self.ctx.person       # 用户信息查询
 self.ctx.render       # 将 HTML 渲染为 PNG 图片
 self.ctx.knowledge    # LPMM 知识库搜索
 self.ctx.tool         # LLM 工具定义查询
+self.ctx.maisaka      # Maisaka 上下文追加与主动任务
 ```
 
 ### 配置模型
