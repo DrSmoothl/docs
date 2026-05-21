@@ -224,6 +224,65 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `maisaka.planner.before_request` | Before sending planning request to model |
 | `maisaka.planner.after_response` | After receiving model response |
 
+### Maisaka Replyer Chain
+
+| Hook Name | Trigger Timing |
+|-----------|---------------|
+| `maisaka.replyer.before_request` | Before the Maisaka replyer sends the model request; can read or rewrite this call's `reply_tool_args` |
+| `maisaka.replyer.after_response` | After the Maisaka replyer receives the model response; can rewrite the reply or request regeneration |
+
+`reply_tool_args` remains visible in the expression selection chain, `maisaka.replyer.before_request`, and `maisaka.replyer.after_response`. It contains extra reply tool arguments other than `msg_id`, `set_quote`, and `reference_info`; modifications returned from `before_request` continue to later replyer hooks.
+
+#### Switching Models or Appending Prompts Before Replyer Requests
+
+`maisaka.replyer.before_request` is the last mutable point before the replyer sends the model request. A blocking handler can rewrite these fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_name` | `str` | Task name used by this replyer request. Changing it uses that task's default model pool and generation options. |
+| `model_name` | `str` | Concrete model name for this replyer request. It must exist in `[[models]]` in `model_config.toml`. When set, only this model is attempted once instead of rotating through the task model pool. |
+| `extra_prompt` | `str` | Extra reply requirements appended to this replyer prompt. |
+| `reference_info` | `str` | Reference information passed by the reply tool. It can be rewritten. |
+| `reply_tool_args` | `dict` | Extra reply tool arguments. Changes continue to later replyer hooks. |
+
+`model_name` is a concrete model name, not a task name. To route through another task's model pool, change `task_name`. If both `task_name` and `model_name` are set, the task supplies generation options such as temperature, token limit, and timeout, while `model_name` selects the actual model.
+
+A common pattern is to first use `maisaka.planner.before_request` to add a parameter schema to the built-in `reply` tool so the planner can fill that parameter, then read `reply_tool_args` in `maisaka.replyer.before_request` to route the model:
+
+```python
+from maibot_sdk import MaiBotPlugin, HookHandler
+from maibot_sdk.types import HookMode
+
+
+class ThinkingLevelPlugin(MaiBotPlugin):
+    @HookHandler("maisaka.planner.before_request", mode=HookMode.BLOCKING)
+    async def add_reply_tool_param(self, **kwargs):
+        for tool in kwargs.get("tool_definitions", []):
+            function = tool.get("function", {})
+            if function.get("name") != "reply":
+                continue
+
+            parameters = function.setdefault("parameters", {})
+            properties = parameters.setdefault("properties", {})
+            properties["thinking_level"] = {
+                "type": "string",
+                "enum": ["normal", "deep"],
+                "description": "Reply thinking intensity. normal means a regular reply; deep uses a stronger model and analyzes context more carefully.",
+            }
+        return {"action": "continue", "modified_kwargs": kwargs}
+
+    @HookHandler("maisaka.replyer.before_request", mode=HookMode.BLOCKING)
+    async def route_replyer_model(self, **kwargs):
+        reply_tool_args = kwargs.get("reply_tool_args", {})
+        if reply_tool_args.get("thinking_level") == "deep":
+            kwargs["model_name"] = "your-deep-model-name"
+            kwargs["extra_prompt"] = "Please understand the context more carefully before replying."
+
+        return {"action": "continue", "modified_kwargs": kwargs}
+```
+
+Adding or changing a hook name usually does not require plugin SDK runtime changes: `@HookHandler` accepts a string hook name, and availability is validated by the Host-registered HookSpec. SDK-side updates are only needed for constants, type hints, docs, or examples.
+
 ### Expression Selection Chain
 
 | Hook Name | Trigger Timing |

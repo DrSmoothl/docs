@@ -246,6 +246,65 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `maisaka.planner.before_request` | Maisaka 规划器请求模型前 | 否 | 是 |
 | `maisaka.planner.after_response` | Maisaka 收到模型响应后 | 否 | 是 |
 
+### Maisaka 回复器链
+
+| Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
+|-----------|----------|-----------|---------|
+| `maisaka.replyer.before_request` | Maisaka replyer 请求模型前；可读取或改写本次 `reply_tool_args` | 否 | 是 |
+| `maisaka.replyer.after_response` | Maisaka replyer 收到模型响应后；可改写回复或要求重生成 | 否 | 是 |
+
+`reply_tool_args` 会在表达方式选择链、`maisaka.replyer.before_request` 和 `maisaka.replyer.after_response` 中保持可见。它包含 reply 工具里除 `msg_id`、`set_quote`、`reference_info` 外的额外参数；`before_request` 返回的 `reply_tool_args` 修改会继续传递给后续 replyer hook。
+
+#### 在 replyer 请求前切换模型或追加提示词
+
+`maisaka.replyer.before_request` 是 replyer 真正请求模型前的最后一个可改写点。阻塞模式处理器可以修改以下字段：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `task_name` | `str` | 本次 replyer 请求使用的任务名。修改后会用该任务的默认模型池和生成参数。 |
+| `model_name` | `str` | 本次 replyer 请求指定的具体模型名称，必须存在于 `model_config.toml` 的 `[[models]]` 中。指定后只尝试该模型一次，不再按任务模型池轮换。 |
+| `extra_prompt` | `str` | 追加到本次 replyer prompt 的额外回复要求。 |
+| `reference_info` | `str` | 本次 reply 工具传入的引用信息，可以被改写。 |
+| `reply_tool_args` | `dict` | reply 工具额外参数，修改后会传给后续 replyer hook。 |
+
+`model_name` 是具体模型名，不是 task 名；如果只想切换到另一个任务的模型池，修改 `task_name` 即可。如果同时设置 `task_name` 和 `model_name`，任务提供温度、token 上限、超时等生成参数，`model_name` 指定实际调用的模型。
+
+常见用法是先通过 `maisaka.planner.before_request` 给内置 `reply` 工具追加参数 schema，让 planner 可以在调用 reply 工具时填入参数；随后在 `maisaka.replyer.before_request` 中读取 `reply_tool_args` 并路由模型：
+
+```python
+from maibot_sdk import MaiBotPlugin, HookHandler
+from maibot_sdk.types import HookMode
+
+
+class ThinkingLevelPlugin(MaiBotPlugin):
+    @HookHandler("maisaka.planner.before_request", mode=HookMode.BLOCKING)
+    async def add_reply_tool_param(self, **kwargs):
+        for tool in kwargs.get("tool_definitions", []):
+            function = tool.get("function", {})
+            if function.get("name") != "reply":
+                continue
+
+            parameters = function.setdefault("parameters", {})
+            properties = parameters.setdefault("properties", {})
+            properties["thinking_level"] = {
+                "type": "string",
+                "enum": ["normal", "deep"],
+                "description": "回复时的思考强度。normal 表示常规回复，deep 表示使用更强模型并更细致分析。",
+            }
+        return {"action": "continue", "modified_kwargs": kwargs}
+
+    @HookHandler("maisaka.replyer.before_request", mode=HookMode.BLOCKING)
+    async def route_replyer_model(self, **kwargs):
+        reply_tool_args = kwargs.get("reply_tool_args", {})
+        if reply_tool_args.get("thinking_level") == "deep":
+            kwargs["model_name"] = "your-deep-model-name"
+            kwargs["extra_prompt"] = "请更细致地理解上下文后再回复。"
+
+        return {"action": "continue", "modified_kwargs": kwargs}
+```
+
+只新增或修改 hook 名本身通常不需要改插件 SDK 运行时代码：`@HookHandler` 接收的是字符串 hook 名，是否可用由 Host 注册的 HookSpec 校验。只有需要 SDK 常量、类型提示、文档或示例同步时，才需要更新 SDK 侧内容。
+
 ## Host 校验规则
 
 Host 在插件注册阶段会对 `@HookHandler` 声明进行校验，不合法时插件直接注册失败（而非"加载成功但 Hook 不生效"的半成功状态）。校验规则如下：
