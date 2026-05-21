@@ -110,7 +110,11 @@ inevitable_at_reply = true
 enable_at = true
 enable_reply_quote = true
 max_context_size = 40
-max_private_context_size = 40
+max_private_context_size = 60
+enable_context_optimization = true
+mid_term_memory = true
+mid_term_memory_lenth = 5
+enable_independent_timing_gate = true
 planner_interrupt_max_consecutive_count = 2
 group_chat_prompt = "..."
 private_chat_prompts = "..."
@@ -127,7 +131,11 @@ enable_talk_value_rules = true
 | `enable_at` | `bool` | `true` | Whether to allow using at mentions |
 | `enable_reply_quote` | `bool` | `true` | Whether to include quoted replies |
 | `max_context_size` | `int` | `40` | Number of context messages sent to the model |
-| `max_private_context_size` | `int` | `40` | Private chat context length |
+| `max_private_context_size` | `int` | `60` | Private chat context length |
+| `enable_context_optimization` | `bool` | `true` | Whether to optimize Planner context usage, with possible cache impact |
+| `mid_term_memory` | `bool` | `true` | Whether to summarize trimmed chat history with the `utils` model and keep it as an expandable complex message |
+| `mid_term_memory_lenth` | `int` | `5` | Maximum number of mid-term summary messages to retain; the oldest one is removed when exceeded |
+| `enable_independent_timing_gate` | `bool` | `true` | Whether to use an independent Timing Gate; when disabled, pacing tools are merged into Planner |
 | `planner_interrupt_max_consecutive_count` | `int` | `2` | Maximum consecutive planner interruptions by new messages. `0` disables interruption protection |
 | `group_chat_prompt` | `str` | See default config | General group chat instructions |
 | `private_chat_prompts` | `str` | See default config | General private chat instructions |

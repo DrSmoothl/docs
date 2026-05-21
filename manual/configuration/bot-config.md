@@ -121,6 +121,8 @@ enable_reply_quote = true
 max_context_size = 40
 max_private_context_size = 60
 enable_context_optimization = true
+mid_term_memory = true
+mid_term_memory_lenth = 5
 enable_independent_timing_gate = true
 typing_speed = 1.0
 planner_interrupt_max_consecutive_count = 0
@@ -142,6 +144,8 @@ enable_talk_value_rules = true
 | `max_context_size` | `int` | `40` | 发送给模型的群聊上下文消息数量 |
 | `max_private_context_size` | `int` | `60` | 私聊上下文长度 |
 | `enable_context_optimization` | `bool` | `true` | 是否优化约 50% 的 Planner 上下文消耗，可能影响缓存 |
+| `mid_term_memory` | `bool` | `true` | 上下文裁切时是否使用 `utils` 模型生成中期聊天摘要，并作为可展开复杂消息保留 |
+| `mid_term_memory_lenth` | `int` | `5` | 最多保留的中期聊天摘要消息数；超出后移除最早一条 |
 | `enable_independent_timing_gate` | `bool` | `true` | 是否启用独立 Timing Gate；关闭后节奏控制工具合并到 Planner |
 | `typing_speed` | `float` | `1.0` | 模拟打字时间倍乘，`0` 不等待，`1` 默认等待时间，`2` 两倍 |
 | `planner_interrupt_max_consecutive_count` | `int` | `0` | Planner 连续被新消息打断的最大次数，`0` 表示不启用打断 |
