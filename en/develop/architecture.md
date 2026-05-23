@@ -125,6 +125,9 @@ Messages not intercepted by commands enter `HeartFCMessageReceiver`, scheduled t
 - **maisaka.planner.before_request**: Can rewrite message windows and tool definitions
 - LLM request and tool call loop
 - **maisaka.planner.after_response**: Can adjust text results and tool call lists
+- **maisaka.replyer.before_request**: Before replyer builds the model request; can rewrite task, model, extra prompt, and `reply_tool_args`
+- **maisaka.replyer.before_model_request**: After replyer builds final `messages` and before requesting the model; can rewrite the actual message list sent to the model
+- **maisaka.replyer.after_response**: After replyer receives the model response; can rewrite the reply or request regeneration
 
 #### 8. Outbound Sending
 

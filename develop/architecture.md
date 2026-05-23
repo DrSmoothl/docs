@@ -128,6 +128,9 @@ flowchart TD
 - **maisaka.planner.before_request**：可改写消息窗口与工具定义
 - LLM 请求与工具调用循环
 - **maisaka.planner.after_response**：可调整文本结果与工具调用列表
+- **maisaka.replyer.before_request**：replyer 构建模型请求前，可改写任务、模型、额外提示和 `reply_tool_args`
+- **maisaka.replyer.before_model_request**：replyer 构造完最终 `messages` 后、请求模型前，可改写实际发送给模型的消息列表
+- **maisaka.replyer.after_response**：replyer 收到模型响应后，可改写回复或要求重生成
 
 #### 8. 出站发送
 

@@ -325,6 +325,9 @@ flowchart TD
 |------|--------|--------|------|
 | `maisaka.planner.before_request` | ✗ | ✓ | 可改写消息列表和工具定义 |
 | `maisaka.planner.after_response` | ✗ | ✓ | 可调整文本结果和工具调用列表 |
+| `maisaka.replyer.before_request` | ✗ | ✓ | 可改写 replyer 任务名、指定模型、额外提示和 `reply_tool_args` |
+| `maisaka.replyer.before_model_request` | ✗ | ✓ | 可改写 replyer 已构造完成、即将发给模型的 `messages` |
+| `maisaka.replyer.after_response` | ✗ | ✓ | 可改写回复文本或要求 replyer 重生成 |
 
 ## 上下文消息类型
 

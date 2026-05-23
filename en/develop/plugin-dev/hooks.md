@@ -229,6 +229,7 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | Hook Name | Trigger Timing |
 |-----------|---------------|
 | `maisaka.replyer.before_request` | Before the Maisaka replyer sends the model request; can read or rewrite this call's `reply_tool_args` |
+| `maisaka.replyer.before_model_request` | After the Maisaka replyer builds the final `messages` and before the model request; can rewrite the actual message list sent to the model |
 | `maisaka.replyer.after_response` | After the Maisaka replyer receives the model response; can rewrite the reply or request regeneration |
 
 `reply_tool_args` remains visible in the expression selection chain, `maisaka.replyer.before_request`, and `maisaka.replyer.after_response`. It contains extra reply tool arguments other than `msg_id`, `set_quote`, and `reference_info`; modifications returned from `before_request` continue to later replyer hooks.
@@ -246,6 +247,8 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `reply_tool_args` | `dict` | Extra reply tool arguments. Changes continue to later replyer hooks. |
 
 `model_name` is a concrete model name, not a task name. To route through another task's model pool, change `task_name`. If both `task_name` and `model_name` are set, the task supplies generation options such as temperature, token limit, and timeout, while `model_name` selects the actual model.
+
+If you need to rewrite the exact message list sent by the replyer, use `maisaka.replyer.before_model_request`. This Hook fires after the replyer has built `messages` for the currently selected model capability. Blocking handlers can return a new `messages` list; this is useful for inserting a synthetic first `user` message after `system`, experimenting with temporary prompts, or logging the final request body. The Hook only changes this temporary LLM request and does not write back to chat history or affect mid-term memory insertion.
 
 A common pattern is to first use `maisaka.planner.before_request` to add a parameter schema to the built-in `reply` tool so the planner can fill that parameter, then read `reply_tool_args` in `maisaka.replyer.before_request` to route the model:
 

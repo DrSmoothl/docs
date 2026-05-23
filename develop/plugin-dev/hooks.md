@@ -251,6 +251,7 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | Hook 名称 | 触发时机 | 允许 abort | 允许改参 |
 |-----------|----------|-----------|---------|
 | `maisaka.replyer.before_request` | Maisaka replyer 请求模型前；可读取或改写本次 `reply_tool_args` | 否 | 是 |
+| `maisaka.replyer.before_model_request` | Maisaka replyer 构造完最终 `messages` 后、请求模型前；可改写实际发送给模型的消息列表 | 否 | 是 |
 | `maisaka.replyer.after_response` | Maisaka replyer 收到模型响应后；可改写回复或要求重生成 | 否 | 是 |
 
 `reply_tool_args` 会在表达方式选择链、`maisaka.replyer.before_request` 和 `maisaka.replyer.after_response` 中保持可见。它包含 reply 工具里除 `msg_id`、`set_quote`、`reference_info` 外的额外参数；`before_request` 返回的 `reply_tool_args` 修改会继续传递给后续 replyer hook。
@@ -268,6 +269,8 @@ class SendInterceptorPlugin(MaiBotPlugin):
 | `reply_tool_args` | `dict` | reply 工具额外参数，修改后会传给后续 replyer hook。 |
 
 `model_name` 是具体模型名，不是 task 名；如果只想切换到另一个任务的模型池，修改 `task_name` 即可。如果同时设置 `task_name` 和 `model_name`，任务提供温度、token 上限、超时等生成参数，`model_name` 指定实际调用的模型。
+
+如果需要改写 replyer 真正发给模型的消息列表，请使用 `maisaka.replyer.before_model_request`。该 Hook 会在 replyer 已经根据当前模型能力构造好 `messages` 后触发，阻塞模式处理器可以返回新的 `messages`；适合在 `system` 后插入一条合成的第一条 `user` 消息、做临时提示词实验或记录最终请求体。这个 Hook 只改写本次临时 LLM 请求，不会回写聊天历史，也不会影响中期记忆插入。
 
 常见用法是先通过 `maisaka.planner.before_request` 给内置 `reply` 工具追加参数 schema，让 planner 可以在调用 reply 工具时填入参数；随后在 `maisaka.replyer.before_request` 中读取 `reply_tool_args` 并路由模型：
 

@@ -325,6 +325,9 @@ flowchart TD
 |------|-----------|-------------|-------------|
 | `maisaka.planner.before_request` | ✗ | ✓ | Can rewrite message list and tool definitions |
 | `maisaka.planner.after_response` | ✗ | ✓ | Can adjust text result and tool call list |
+| `maisaka.replyer.before_request` | ✗ | ✓ | Can rewrite replyer task name, requested model, extra prompt, and `reply_tool_args` |
+| `maisaka.replyer.before_model_request` | ✗ | ✓ | Can rewrite the fully built replyer `messages` that are about to be sent to the model |
+| `maisaka.replyer.after_response` | ✗ | ✓ | Can rewrite the reply text or request replyer regeneration |
 
 ## Context Message Types
 
