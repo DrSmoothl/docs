@@ -35,16 +35,12 @@ class PlatformIODriver(ABC):
 
 ### 必须实现的方法
 
-| 方法 | 说明 |
-|------|------|
-| `send_message(message, route_key, metadata)` | 通过具体驱动发送消息，返回 `DeliveryReceipt`。这是唯一必须实现的抽象方法 |
+- **`send_message(message, route_key, metadata)`** — 通过具体驱动发送消息，返回 `DeliveryReceipt`。这是唯一必须实现的抽象方法
 
 ### 可选覆盖的钩子
 
-| 方法 | 说明 |
-|------|------|
-| `start()` | 启动驱动生命周期（默认空实现） |
-| `stop()` | 停止驱动生命周期（默认空实现） |
+- **`start()`** — 启动驱动生命周期（默认空实现）
+- **`stop()`** — 停止驱动生命周期（默认空实现）
 
 ### 入站消息上报
 
@@ -121,12 +117,10 @@ class DeliveryReceipt:
 
 `DeliveryStatus` 枚举值：
 
-| 状态 | 说明 |
-|------|------|
-| `PENDING` | 待发送 |
-| `SENT` | 已发送 |
-| `FAILED` | 发送失败 |
-| `DROPPED` | 已丢弃 |
+- **`PENDING`** — 待发送
+- **`SENT`** — 已发送
+- **`FAILED`** — 发送失败
+- **`DROPPED`** — 已丢弃
 
 ### DriverDescriptor — 驱动描述
 

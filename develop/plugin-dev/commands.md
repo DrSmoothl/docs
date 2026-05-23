@@ -22,12 +22,10 @@ from maibot_sdk import Command
 
 ### 参数说明
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `name` | `str` | 命令名称，需在插件内唯一 |
-| `description` | `str` | 命令描述 |
-| `pattern` | `str` | 正则匹配模式字符串。当用户消息匹配此模式时，触发该命令 |
-| `aliases` | `list[str] \| None` | 命令别名列表，提供额外的触发方式 |
+- **`name`** `str` — 命令名称，需在插件内唯一
+- **`description`** `str` — 命令描述
+- **`pattern`** `str` — 正则匹配模式字符串。当用户消息匹配此模式时，触发该命令
+- **`aliases`** `list[str] | None` — 命令别名列表，提供额外的触发方式
 
 ## 基本用法
 
@@ -71,12 +69,10 @@ async def handle_echo(self, **kwargs):
 
 Command 处理函数接收 `**kwargs`，其中包含以下参数：
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `stream_id` | `str` | 当前聊天流 ID，用于发送消息 |
-| `matched_groups` | `dict` | 正则命名捕获组的匹配结果 |
-| `raw_message` | `str` | 用户发送的原始消息文本 |
-| `message` | `dict` | 完整的消息对象 |
+- **`stream_id`** `str` — 当前聊天流 ID，用于发送消息
+- **`matched_groups`** `dict` — 正则命名捕获组的匹配结果
+- **`raw_message`** `str` — 用户发送的原始消息文本
+- **`message`** `dict` — 完整的消息对象
 
 ### 返回值
 
@@ -86,11 +82,9 @@ Command 处理函数必须返回三元组：
 return success, response, weight
 ```
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `success` | `bool` | 命令是否成功执行 |
-| `response` | `str` | 命令执行结果的文本描述 |
-| `weight` | `int` | 命令优先级权重，数值越高优先级越高 |
+- **`success`** `bool` — 命令是否成功执行
+- **`response`** `str` — 命令执行结果的文本描述
+- **`weight`** `int` — 命令优先级权重，数值越高优先级越高
 
 ```python
 # 命令成功执行

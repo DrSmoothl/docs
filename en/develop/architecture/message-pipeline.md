@@ -71,33 +71,29 @@ Source location: `src/chat/message_receive/message.py`
 
 `SessionMessage` inherits from `MaiMessage` and is the core message object flowing through the pipeline:
 
-| Attribute | Type | Description |
-|------|------|------|
-| `message_id` | `str` | Unique message ID |
-| `platform` | `str` | Source platform identifier |
-| `session_id` | `str` | Session ID (calculated by `SessionUtils.calculate_session_id()`) |
-| `processed_plain_text` | `str` | Preprocessed plain text |
-| `message_info` | `MessageInfo` | Contains `user_info`, `group_info`, `additional_config` |
-| `raw_message` | `MessageSequence` | Original message component sequence |
-| `is_at` | `bool` | Whether bot was @ mentioned |
-| `is_mentioned` | `bool` | Whether bot was mentioned |
-| `is_command` | `bool` | Whether message hit a command |
-| `is_notify` | `bool` | Whether it's a notification message |
-| `timestamp` | `datetime` | Message timestamp |
+- **`message_id`** `str` — Unique message ID
+- **`platform`** `str` — Source platform identifier
+- **`session_id`** `str` — Session ID (calculated by `SessionUtils.calculate_session_id()`)
+- **`processed_plain_text`** `str` — Preprocessed plain text
+- **`message_info`** `MessageInfo` — Contains `user_info`, `group_info`, `additional_config`
+- **`raw_message`** `MessageSequence` — Original message component sequence
+- **`is_at`** `bool` — Whether bot was @ mentioned
+- **`is_mentioned`** `bool` — Whether bot was mentioned
+- **`is_command`** `bool` — Whether message hit a command
+- **`is_notify`** `bool` — Whether it's a notification message
+- **`timestamp`** `datetime` — Message timestamp
 
 ### `SessionMessage.process()` Preprocessing
 
 Converts raw message components to plain text, supporting the following component types:
 
-| Component | Processing Method |
-|------|----------|
-| `TextComponent` | Direct text return |
-| `ImageComponent` | Call `image_manager.get_image_description()` to generate `[Image: Description]` |
-| `EmojiComponent` | Call `emoji_manager.get_emoji_description()` to generate `[Emoji: Description]` |
-| `AtComponent` | Parse target username, generate `@nickname` |
-| `VoiceComponent` | Call `get_voice_text()` to transcribe as `[Voice: Transcription]` |
-| `ReplyComponent` | Find original message content, generate `[Reply to XXX's message: Content]` |
-| `ForwardNodeComponent` | Recursively process forward nodes, generate `【Forwarded Message: ...】` |
+- **`TextComponent`** — Direct text return
+- **`ImageComponent`** — Call `image_manager.get_image_description()` to generate `[Image: Description]`
+- **`EmojiComponent`** — Call `emoji_manager.get_emoji_description()` to generate `[Emoji: Description]`
+- **`AtComponent`** — Parse target username, generate `@nickname`
+- **`VoiceComponent`** — Call `get_voice_text()` to transcribe as `[Voice: Transcription]`
+- **`ReplyComponent`** — Find original message content, generate `[Reply to XXX's message: Content]`
+- **`ForwardNodeComponent`** — Recursively process forward nodes, generate `【Forwarded Message: ...】`
 
 The inbound main chain uses lightweight mode (`enable_heavy_media_analysis=False, enable_voice_transcription=False`), with image/emoji binary data filled in on-demand when Maisaka needs it.
 
@@ -107,12 +103,10 @@ The inbound main chain uses lightweight mode (`enable_heavy_media_analysis=False
 
 Triggered before `SessionMessage.process()`, can intercept or rewrite the original message.
 
-| Attribute | Value |
-|------|-----|
-| Registration Location | `src/chat/message_receive/bot.py` `register_chat_hook_specs()` |
-| Default Timeout | 8000ms |
-| Allows Abort | Yes |
-| Allows Rewrite | Yes |
+- **Registration Location**: `src/chat/message_receive/bot.py` `register_chat_hook_specs()`
+- **Default Timeout**: 8000ms
+- **Allows Abort**: Yes
+- **Allows Rewrite**: Yes
 
 Parameter Schema:
 ```json
@@ -125,21 +119,17 @@ Parameter Schema:
 
 Triggered after message preprocessing completes, can rewrite text, message body, or abort subsequent pipeline.
 
-| Attribute | Value |
-|------|-----|
-| Default Timeout | 8000ms |
-| Allows Abort | Yes |
-| Allows Rewrite | Yes |
+- **Default Timeout**: 8000ms
+- **Allows Abort**: Yes
+- **Allows Rewrite**: Yes
 
 ### chat.command.before_execute
 
 Triggered after command matching succeeds, before actual execution.
 
-| Attribute | Value |
-|------|-----|
-| Default Timeout | 5000ms |
-| Allows Abort | Yes |
-| Allows Rewrite | Yes |
+- **Default Timeout**: 5000ms
+- **Allows Abort**: Yes
+- **Allows Rewrite**: Yes
 
 Parameters include: `message`, `command_name`, `plugin_id`, `matched_groups`
 
@@ -147,11 +137,9 @@ Parameters include: `message`, `command_name`, `plugin_id`, `matched_groups`
 
 Triggered after command execution completes, can adjust return text and whether to continue main chain processing.
 
-| Attribute | Value |
-|------|-----|
-| Default Timeout | 5000ms |
-| Allows Abort | No |
-| Allows Rewrite | Yes |
+- **Default Timeout**: 5000ms
+- **Allows Abort**: No
+- **Allows Rewrite**: Yes
 
 Parameters include: `message`, `command_name`, `plugin_id`, `matched_groups`, `success`, `response`, `intercept_message_level`, `continue_process`
 
@@ -159,20 +147,16 @@ Parameters include: `message`, `command_name`, `plugin_id`, `matched_groups`, `s
 
 Triggered after outbound `SessionMessage` construction completes, can rewrite message body or cancel sending.
 
-| Attribute | Value |
-|------|-----|
-| Registration Location | `src/services/send_service.py` `register_send_service_hook_specs()` |
-| Default Timeout | 5000ms |
-| Allows Abort | Yes |
+- **Registration Location**: `src/services/send_service.py` `register_send_service_hook_specs()`
+- **Default Timeout**: 5000ms
+- **Allows Abort**: Yes
 
 ### send_service.before_send
 
 Triggered before actually calling Platform IO to send, final interception point.
 
-| Attribute | Value |
-|------|-----|
-| Default Timeout | 5000ms |
-| Allows Abort | Yes |
+- **Default Timeout**: 5000ms
+- **Allows Abort**: Yes
 
 ### send_service.after_send
 
@@ -217,16 +201,12 @@ Generated by `SessionUtils.calculate_session_id()` based on the following parame
 
 Inherits from `MaiChatSession`, extended with:
 
-| Attribute | Type | Description |
-|------|------|------|
-| `context` | `SessionContext` | Session context (including recent messages, template name) |
-| `accept_format` | `List[str]` | List of acceptable message formats |
+- **`context`** `SessionContext` — Session context (including recent messages, template name)
+- **`accept_format`** `List[str]` — List of acceptable message formats
 
-| Method | Description |
-|------|------|
-| `update_active_time()` | Update last active time |
-| `set_context(message)` | Set session context |
-| `check_types(types)` | Check if message matches acceptable types |
+- **`update_active_time()`** — Update last active time
+- **`set_context(message)`** — Set session context
+- **`check_types(types)`** — Check if message matches acceptable types
 
 ## Command Processing
 
@@ -297,17 +277,15 @@ Source location: `src/services/send_service.py`
 
 All built-in Hooks are registered uniformly by `hook_catalog.py`:
 
-| Hook Name | Registration Module | Trigger Timing | Abortable |
-|-----------|---------|---------|--------|
-| `chat.receive.before_process` | `chat/message_receive/bot.py` | Before message preprocessing | ✓ |
-| `chat.receive.after_process` | `chat/message_receive/bot.py` | After message preprocessing | ✓ |
-| `chat.command.before_execute` | `chat/message_receive/bot.py` | Before command execution | ✓ |
-| `chat.command.after_execute` | `chat/message_receive/bot.py` | After command execution | ✗ |
-| `maisaka.planner.before_request` | `maisaka/chat_loop_service.py` | Before LLM request | ✗ |
-| `maisaka.planner.after_response` | `maisaka/chat_loop_service.py` | After LLM response | ✗ |
-| `send_service.after_build_message` | `services/send_service.py` | After outbound message build | ✓ |
-| `send_service.before_send` | `services/send_service.py` | Before sending | ✓ |
-| `send_service.after_send` | `services/send_service.py` | After sending | ✗ |
+- **`chat.receive.before_process`** — Registration module `chat/message_receive/bot.py` · Before message preprocessing · Abortable ✓
+- **`chat.receive.after_process`** — Registration module `chat/message_receive/bot.py` · After message preprocessing · Abortable ✓
+- **`chat.command.before_execute`** — Registration module `chat/message_receive/bot.py` · Before command execution · Abortable ✓
+- **`chat.command.after_execute`** — Registration module `chat/message_receive/bot.py` · After command execution · Abortable ✗
+- **`maisaka.planner.before_request`** — Registration module `maisaka/chat_loop_service.py` · Before LLM request · Abortable ✗
+- **`maisaka.planner.after_response`** — Registration module `maisaka/chat_loop_service.py` · After LLM response · Abortable ✗
+- **`send_service.after_build_message`** — Registration module `services/send_service.py` · After outbound message build · Abortable ✓
+- **`send_service.before_send`** — Registration module `services/send_service.py` · Before sending · Abortable ✓
+- **`send_service.after_send`** — Registration module `services/send_service.py` · After sending · Abortable ✗
 
 ## Data Flow Diagram
 

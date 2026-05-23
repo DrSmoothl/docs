@@ -85,34 +85,28 @@ config_version = "1.0.0"
 
 ### 插件设置 (`[plugin]`)
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `enabled` | `bool` | `false` | 是否启用 SnowLuma 适配器。关闭时插件只注册消息网关，不会主动连接 SnowLuma |
-| `config_version` | `str` | `"1.0.0"` | 当前配置结构版本（自动管理，一般不需要手动修改） |
+- **`enabled`** — 是否启用 SnowLuma 适配器。关闭时插件只注册消息网关，不会主动连接 SnowLuma。默认关闭
+- **`config_version`** — 当前配置结构版本（自动管理，一般不需要手动修改）。默认 "1.0.0"
 
 ### SnowLuma 连接 (`[luma_client]`)
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `server` | `str` | `"127.0.0.1"` | SnowLuma WebSocket 服务地址 |
-| `port` | `int` | `3001` | SnowLuma WebSocket 服务端口 |
-| `token` | `str` | `""` | SnowLuma 访问令牌（可留空） |
-| `connection_id` | `str` | `""` | 可选连接标识，用于区分多条适配器链路 |
-| `reconnect_delay_sec` | `float` | `5.0` | 连接断开后的重连等待时间（秒） |
-| `action_timeout_sec` | `float` | `10.0` | 调用 SnowLuma 动作接口的超时时间（秒） |
+- **`server`** — SnowLuma WebSocket 服务地址。默认 "127.0.0.1"
+- **`port`** — SnowLuma WebSocket 服务端口。默认 3001
+- **`token`** — SnowLuma 访问令牌（可留空）。默认为空
+- **`connection_id`** — 可选连接标识，用于区分多条适配器链路。默认为空
+- **`reconnect_delay_sec`** — 连接断开后的重连等待时间（秒）。默认 5.0
+- **`action_timeout_sec`** — 调用 SnowLuma 动作接口的超时时间（秒）。默认 10.0
 
 ### 聊天过滤 (`[chat]`)
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `enable_chat_list_filter` | `bool` | `true` | 是否启用群聊与私聊名单过滤。关闭后仅保留 `ban_user_id` 规则 |
-| `show_dropped_chat_list_messages` | `bool` | `false` | 是否记录未通过聊天名单过滤而被丢弃的消息 |
-| `group_list_type` | `"whitelist"` / `"blacklist"` | `"whitelist"` | 群聊名单模式。白名单只接收列表内群聊，黑名单则忽略列表内群聊 |
-| `group_list` | `list[str]` | `[]` | 群聊名单中的群号列表（自动去重） |
-| `private_list_type` | `"whitelist"` / `"blacklist"` | `"whitelist"` | 私聊名单模式。白名单只接收列表内私聊，黑名单则忽略列表内私聊 |
-| `private_list` | `list[str]` | `[]` | 私聊名单中的用户 ID 列表（自动去重） |
-| `ban_user_id` | `list[str]` | `[]` | 全局屏蔽的用户 ID 列表，这些用户的消息会在进入 MaiBot 之前被直接丢弃 |
-| `ban_qq_bot` | `bool` | `false` | 是否屏蔽 QQ 官方机器人消息 |
+- **`enable_chat_list_filter`** — 是否启用群聊与私聊名单过滤。关闭后仅保留 `ban_user_id` 规则。默认开启
+- **`show_dropped_chat_list_messages`** — 是否记录未通过聊天名单过滤而被丢弃的消息。默认关闭
+- **`group_list_type`** — 群聊名单模式。白名单只接收列表内群聊，黑名单则忽略列表内群聊。默认 "whitelist"
+- **`group_list`** — 群聊名单中的群号列表（自动去重）。默认为空
+- **`private_list_type`** — 私聊名单模式。白名单只接收列表内私聊，黑名单则忽略列表内私聊。默认 "whitelist"
+- **`private_list`** — 私聊名单中的用户 ID 列表（自动去重）。默认为空
+- **`ban_user_id`** — 全局屏蔽的用户 ID 列表，这些用户的消息会在进入 MaiBot 之前被直接丢弃。默认为空
+- **`ban_qq_bot`** — 是否屏蔽 QQ 官方机器人消息。默认关闭
 
 ::: tip 群聊白名单默认开启
 适配器默认启用聊天名单过滤，且群聊默认是白名单模式。意味着没有写进 `group_list` 的群消息会被直接丢弃。如果连接成功但群里 @ 机器人没有反应，优先检查这里。
@@ -136,9 +130,7 @@ group_list = ["你的QQ群号"]
 
 ### 消息过滤 (`[filters]`)
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `ignore_self_message` | `bool` | `true` | 是否忽略机器人自身发送的消息（建议保持开启，避免机器人处理自己刚发出的消息） |
+- **`ignore_self_message`** — 是否忽略机器人自身发送的消息（建议保持开启，避免机器人处理自己刚发出的消息）。默认开启
 
 ### 完整配置示例
 

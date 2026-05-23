@@ -100,31 +100,25 @@ platforms = ["telegram:123456789"]
 
 ### `[plugin]` — 插件设置
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `enabled` | `bool` | `false` | 是否启用 Telegram 适配器。关闭后插件保持空闲，不会启动轮询 |
-| `config_version` | `str` | `"0.1.0"` | 当前配置结构版本（自动维护，无需手动修改） |
+- **`enabled`** — 是否启用 Telegram 适配器。关闭后插件保持空闲，不会启动轮询。默认关闭
+- **`config_version`** — 当前配置结构版本（自动维护，无需手动修改）。默认 "0.1.0"
 
 ### `[telegram_bot]` — Telegram Bot 连接配置
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `token` | `str` | `""` | Bot Token，从 @BotFather 获取。启用适配器时必填 |
-| `api_base` | `str` | `"https://api.telegram.org"` | Telegram Bot API 基础地址。使用自建 API 服务器时可修改此项 |
-| `poll_timeout` | `int` | `20` | 长轮询超时时间（秒）。增大此值可减少请求频率，但会增加消息延迟感知 |
-| `proxy_enabled` | `bool` | `false` | 是否启用代理 |
-| `proxy_url` | `str` | `""` | 代理地址，支持 `http://`、`https://` 和 `socks5://` 协议。例如 `http://127.0.0.1:7890` 或 `socks5://127.0.0.1:1080` |
-| `proxy_from_env` | `bool` | `false` | 是否从环境变量（如 `HTTP_PROXY`、`HTTPS_PROXY`）读取代理设置 |
+- **`token`** — Bot Token，从 @BotFather 获取。启用适配器时必填。默认为空
+- **`api_base`** — Telegram Bot API 基础地址。使用自建 API 服务器时可修改此项。默认 "https://api.telegram.org"
+- **`poll_timeout`** — 长轮询超时时间（秒）。增大此值可减少请求频率，但会增加消息延迟感知。默认 20
+- **`proxy_enabled`** — 是否启用代理。默认关闭
+- **`proxy_url`** — 代理地址，支持 `http://`、`https://` 和 `socks5://` 协议。例如 `http://127.0.0.1:7890` 或 `socks5://127.0.0.1:1080`。默认为空
+- **`proxy_from_env`** — 是否从环境变量（如 `HTTP_PROXY`、`HTTPS_PROXY`）读取代理设置。默认关闭
 
 ### `[chat]` — 聊天过滤
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `group_list_type` | `str` | `"whitelist"` | 群聊名单模式，可选 `whitelist`（白名单）或 `blacklist`（黑名单） |
-| `group_list` | `list[str]` | `[]` | 群聊名单中的 chat_id 列表 |
-| `private_list_type` | `str` | `"whitelist"` | 私聊名单模式，可选 `whitelist`（白名单）或 `blacklist`（黑名单） |
-| `private_list` | `list[str]` | `[]` | 私聊名单中的用户 ID 列表 |
-| `ban_user_id` | `list[str]` | `[]` | 全局屏蔽的用户 ID 列表，被屏蔽用户的消息会被直接丢弃 |
+- **`group_list_type`** — 群聊名单模式，可选 `whitelist`（白名单）或 `blacklist`（黑名单）。默认 "whitelist"
+- **`group_list`** — 群聊名单中的 chat_id 列表。默认为空
+- **`private_list_type`** — 私聊名单模式，可选 `whitelist`（白名单）或 `blacklist`（黑名单）。默认 "whitelist"
+- **`private_list`** — 私聊名单中的用户 ID 列表。默认为空
+- **`ban_user_id`** — 全局屏蔽的用户 ID 列表，被屏蔽用户的消息会被直接丢弃。默认为空
 
 ::: tip 聊天过滤说明
 - **白名单模式**：只处理名单中的群聊/私聊消息，其余丢弃
@@ -134,17 +128,15 @@ platforms = ["telegram:123456789"]
 
 ## 消息类型支持
 
-| 消息类型 | 入站（Telegram → MaiBot） | 出站（MaiBot → Telegram） |
-|:---:|:---:|:---:|
-| 文本 | 支持 | 支持 |
-| 图片 | 支持（自动下载转 base64） | 支持（base64 / URL） |
-| 语音 | 支持（自动下载转 base64） | 支持（base64） |
-| 贴纸 | 支持（转 emoji 类型） | 支持（以动图发送） |
-| GIF 动图 | 支持（转 emoji 类型） | 支持（以动图发送） |
-| 视频 | 不支持 | 支持（URL） |
-| 文件 | 支持（转文本标记） | 支持（URL） |
-| 回复消息 | 支持（关联消息 ID） | 支持（reply_parameters） |
-| @Bot | 支持（多种识别方式） | — |
+- **文本** — 入站：支持 | 出站：支持
+- **图片** — 入站：支持（自动下载转 base64） | 出站：支持（base64 / URL）
+- **语音** — 入站：支持（自动下载转 base64） | 出站：支持（base64）
+- **贴纸** — 入站：支持（转 emoji 类型） | 出站：支持（以动图发送）
+- **GIF 动图** — 入站：支持（转 emoji 类型） | 出站：支持（以动图发送）
+- **视频** — 入站：不支持 | 出站：支持（URL）
+- **文件** — 入站：支持（转文本标记） | 出站：支持（URL）
+- **回复消息** — 入站：支持（关联消息 ID） | 出站：支持（reply_parameters）
+- **@Bot** — 入站：支持（多种识别方式）
 
 ## 代理配置
 

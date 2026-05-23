@@ -10,10 +10,8 @@ WebUI provides complete configuration management functionality, supporting modif
 
 MaiBot's core configuration is divided into two files:
 
-| File | Description | Corresponding Pydantic Class |
-|------|-------------|------------------------------|
-| `bot_config.toml` | Robot main configuration (platform, personality, features, etc.) | `Config` |
-| `model_config.toml` | Model configuration (API providers, model task assignment) | `ModelConfig` |
+- **`bot_config.toml`** — Robot main configuration (platform, personality, features, etc.). Corresponding class: `Config`
+- **`model_config.toml`** — Model configuration (API providers, model task assignment). Corresponding class: `ModelConfig`
 
 ## Configuration Architecture and Dynamic Forms
 
@@ -21,44 +19,38 @@ WebUI frontend uses `ConfigSchemaGenerator` to automatically generate JSON Schem
 
 ### Get Configuration Schema
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/webui/config/schema/bot` | Get complete schema for `bot_config.toml` |
-| `GET /api/webui/config/schema/model` | Get complete schema for `model_config.toml` |
-| `GET /api/webui/config/schema/section/{name}` | Get schema for specified configuration section |
+- **`GET /api/webui/config/schema/bot`** — Get complete schema for `bot_config.toml`
+- **`GET /api/webui/config/schema/model`** — Get complete schema for `model_config.toml`
+- **`GET /api/webui/config/schema/section/{name}`** — Get schema for specified configuration section
 
 ### Supported Configuration Sections
 
 The `/schema/section/{name}` interface supports the following section names:
 
-| Section Name | Corresponding Configuration Class | Description |
-|--------------|-----------------------------------|-------------|
-| `bot` | `BotConfig` | Basic information (platform, account, nickname) |
-| `personality` | `PersonalityConfig` | Personality and expression style |
-| `chat` | `ChatConfig` | Chat behavior control |
-| `message_receive` | `MessageReceiveConfig` | Message receiving settings |
-| `emoji` | `EmojiConfig` | Emoji functionality |
-| `expression` | `ExpressionConfig` | Expression methods |
-| `keyword_reaction` | `KeywordReactionConfig` | Keyword reactions |
-| `chinese_typo` | `ChineseTypoConfig` | Chinese typo simulation |
-| `response_post_process` | `ResponsePostProcessConfig` | Response post-processing |
-| `response_splitter` | `ResponseSplitterConfig` | Response splitting |
-| `telemetry` | `TelemetryConfig` | Telemetry |
-| `maim_message` | `MaimMessageConfig` | maim-message integration |
-| `memory` | `MemoryConfig` | Memory system |
-| `debug` | `DebugConfig` | Debug options |
-| `voice` | `VoiceConfig` | Speech recognition |
-| `model_task_config` | `ModelTaskConfig` | Model task configuration |
-| `api_provider` | `APIProvider` | API provider |
-| `model_info` | `ModelInfo` | Model information |
+- **`bot`** — Basic information (platform, account, nickname)
+- **`personality`** — Personality and expression style
+- **`chat`** — Chat behavior control
+- **`message_receive`** — Message receiving settings
+- **`emoji`** — Emoji functionality
+- **`expression`** — Expression methods
+- **`keyword_reaction`** — Keyword reactions
+- **`chinese_typo`** — Chinese typo simulation
+- **`response_post_process`** — Response post-processing
+- **`response_splitter`** — Response splitting
+- **`telemetry`** — Telemetry
+- **`maim_message`** — maim-message integration
+- **`memory`** — Memory system
+- **`debug`** — Debug options
+- **`voice`** — Speech recognition
+- **`model_task_config`** — Model task configuration
+- **`api_provider`** — API provider
+- **`model_info`** — Model information
 
 ## Read Configuration
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/webui/config/bot` | Read all content of `bot_config.toml` |
-| `GET /api/webui/config/model` | Read all content of `model_config.toml` |
-| `GET /api/webui/config/bot/raw` | Read raw TOML text of `bot_config.toml` |
+- **`GET /api/webui/config/bot`** — Read all content of `bot_config.toml`
+- **`GET /api/webui/config/model`** — Read all content of `model_config.toml`
+- **`GET /api/webui/config/bot/raw`** — Read raw TOML text of `bot_config.toml`
 
 The read interface returns structured data (JSON format) parsed by tomlkit, containing all configuration items and comment information in the file.
 
@@ -66,19 +58,15 @@ The read interface returns structured data (JSON format) parsed by tomlkit, cont
 
 ### Overall Update
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /api/webui/config/bot` | Overall update of `bot_config.toml` |
-| `POST /api/webui/config/model` | Overall update of `model_config.toml` |
+- **`POST /api/webui/config/bot`** — Overall update of `bot_config.toml`
+- **`POST /api/webui/config/model`** — Overall update of `model_config.toml`
 
 Overall update will replace the entire configuration file content. Before submission, the backend will perform complete validation through `Config.from_dict()` / `ModelConfig.from_dict()`. Validation failure will return 400 error and specific failure reasons. When saving, `save_toml_with_format` automatically preserves comments and format.
 
 ### Section Update
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /api/webui/config/bot/section/{section_name}` | Update specified section of `bot_config.toml` |
-| `POST /api/webui/config/model/section/{section_name}` | Update specified section of `model_config.toml` |
+- **`POST /api/webui/config/bot/section/{section_name}`** — Update specified section of `bot_config.toml`
+- **`POST /api/webui/config/model/section/{section_name}`** — Update specified section of `model_config.toml`
 
 Section updates adopt recursive merge strategy:
 - **Dictionary type** fields: Recursive merge, preserving unmodified keys and comments
@@ -89,10 +77,8 @@ After merge completion, the complete configuration will be validated. For the `a
 
 ### Raw TOML Editing
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/webui/config/bot/raw` | Get raw TOML text |
-| `POST /api/webui/config/bot/raw` | Save raw TOML text |
+- **`GET /api/webui/config/bot/raw`** — Get raw TOML text
+- **`POST /api/webui/config/bot/raw`** — Save raw TOML text
 
 Raw editing mode is suitable for advanced users to directly edit TOML files. When submitting, the backend will:
 1. Use `tomlkit.loads()` to verify TOML format correctness
@@ -105,10 +91,8 @@ WebUI also supports managing independent configuration files for adapters (such 
 
 ### Path Management
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/webui/config/adapter-config/path` | Get adapter configuration file path |
-| `POST /api/webui/config/adapter-config/path` | Save adapter configuration file path |
+- **`GET /api/webui/config/adapter-config/path`** — Get adapter configuration file path
+- **`POST /api/webui/config/adapter-config/path`** — Save adapter configuration file path
 
 Path preferences are stored in the `adapter_config_path` field of `data/webui.json`.
 
@@ -121,10 +105,8 @@ Adapter configuration paths must meet the following security conditions:
 
 ### Configuration Read/Write
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/webui/config/adapter-config?path=...` | Read adapter configuration file content |
-| `POST /api/webui/config/adapter-config` | Save adapter configuration file content |
+- **`GET /api/webui/config/adapter-config?path=...`** — Read adapter configuration file content
+- **`POST /api/webui/config/adapter-config`** — Save adapter configuration file content
 
 When saving, it will first verify TOML format, and write to file after validation passes. If the target directory doesn't exist, it will be automatically created.
 

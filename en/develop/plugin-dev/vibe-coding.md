@@ -163,15 +163,13 @@ def create_plugin() -> MyPlugin:
 
 ## Component Choice
 
-| Need | Preferred component | Notes |
-| --- | --- | --- |
-| Let the LLM call a capability | `@Tool` | Default tools enter the deferred pool and are discovered by search; use `core_tool=True` only for frequent, low-risk tools |
-| Trigger from user commands | `@Command` | Match text with regex `pattern`, such as `/ping` |
-| Intercept or observe host flow | `@HookHandler` | Good for message rewrite, send auditing, and flow interception |
-| Listen to messages or lifecycle events | `@EventHandler` | Good for statistics, logging, and async helper tasks |
-| Expose capability to other plugins | `@API` | Only make stable interfaces public |
-| Connect an external chat platform | `@MessageGateway` | Used by adapter plugins |
-| Maintain legacy plugins | `@Action` | Legacy only; do not use it for new plugins |
+- **Let the LLM call a capability** → `@Tool` — Default tools enter the deferred pool and are discovered by search; use `core_tool=True` only for frequent, low-risk tools
+- **Trigger from user commands** → `@Command` — Match text with regex `pattern`, such as `/ping`
+- **Intercept or observe host flow** → `@HookHandler` — Good for message rewrite, send auditing, and flow interception
+- **Listen to messages or lifecycle events** → `@EventHandler` — Good for statistics, logging, and async helper tasks
+- **Expose capability to other plugins** → `@API` — Only make stable interfaces public
+- **Connect an external chat platform** → `@MessageGateway` — Used by adapter plugins
+- **Maintain legacy plugins** → `@Action` — Legacy only; do not use it for new plugins
 
 ## Tool Rules
 

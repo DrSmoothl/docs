@@ -57,9 +57,7 @@ bearer_token = ""
 
 ## Master Switch [mcp]
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enable` | `bool` | `true` | Whether to enable MCP. When `false`, no MCP servers will be connected |
+- **`enable`** — Whether to enable MCP. When `false`, no MCP servers will be connected. Default: enabled
 
 ---
 
@@ -77,10 +75,8 @@ client_version = "1.0.0"
 
 Usually you don't need to change this, unless you want MCP servers to see a different client identity.
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `client_name` | `str` | `"MaiBot"` | Client implementation name |
-| `client_version` | `str` | `"1.0.0"` | Client implementation version |
+- **`client_name`** — Client implementation name. Default: `"MaiBot"`
+- **`client_version`** — Client implementation version. Default: `"1.0.0"`
 
 ### Roots Capability [mcp.client.roots]
 
@@ -96,18 +92,14 @@ uri = "file:///home/mai/data"
 name = "Mai's data directory"
 ```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enable` | `bool` | `false` | Whether to expose Roots capability to MCP servers |
-| `items` | `list` | `[]` | Roots list |
+- **`enable`** — Whether to expose Roots capability to MCP servers. Default: disabled
+- **`items`** — Roots list. Default: empty
 
 Each Root item:
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enabled` | `bool` | `true` | Whether to enable this root |
-| `uri` | `str` | `""` | Root URI, typically a `file://` path. Required when enabled |
-| `name` | `str` | `""` | Display name |
+- **`enabled`** — Whether to enable this root. Default: enabled
+- **`uri`** — Root URI, typically a `file://` path. Required when enabled. Default: empty
+- **`name`** — Display name. Default: empty
 
 ::: tip 💡 What are Roots good for?
 If you connect a filesystem MCP server (e.g., `@modelcontextprotocol/server-filesystem`), enabling Roots tells the server where your data directory is, so it can read and write files there.
@@ -125,12 +117,10 @@ include_context_support = false
 tool_support = true
 ```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enable` | `bool` | `false` | Whether to declare Sampling capability |
-| `task_name` | `str` | `"planner"` | Model task name used for Sampling requests |
-| `include_context_support` | `bool` | `false` | Whether to declare support for non-`none` `includeContext` semantics |
-| `tool_support` | `bool` | `false` | Whether to declare support for continued tool use in Sampling |
+- **`enable`** — Whether to declare Sampling capability. Default: disabled
+- **`task_name`** — Model task name used for Sampling requests. Default: `"planner"`
+- **`include_context_support`** — Whether to declare support for non-`none` `includeContext` semantics. Default: disabled
+- **`tool_support`** — Whether to declare support for continued tool use in Sampling. Default: disabled
 
 ::: warning ⚠️ Sampling Consumes Tokens
 Enabling Sampling means MCP servers can trigger model calls, incurring additional API costs. Make sure `task_name` points to a properly configured model task.
@@ -147,11 +137,9 @@ allow_form = true
 allow_url = false
 ```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `enable` | `bool` | `false` | Whether to declare Elicitation capability |
-| `allow_form` | `bool` | `true` | Whether to allow form-mode Elicitation |
-| `allow_url` | `bool` | `false` | Whether to allow URL-mode Elicitation |
+- **`enable`** — Whether to declare Elicitation capability. Default: disabled
+- **`allow_form`** — Whether to allow form-mode Elicitation. Default: enabled
+- **`allow_url`** — Whether to allow URL-mode Elicitation. Default: disabled
 
 At least one mode (`allow_form` or `allow_url`) must be enabled when Elicitation is turned on.
 
@@ -172,23 +160,19 @@ http_timeout_seconds = 30.0
 read_timeout_seconds = 300.0
 ```
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `name` | `str` | `""` | **Required**. Server name, must be unique across all servers |
-| `enabled` | `bool` | `true` | Whether to enable this server |
-| `transport` | `"stdio"` / `"streamable_http"` | `"stdio"` | Transport mode |
-| `http_timeout_seconds` | `float` | `30.0` | HTTP request timeout (seconds) |
-| `read_timeout_seconds` | `float` | `300.0` | Session read timeout (seconds) |
+- **`name`** — **Required**. Server name, must be unique across all servers. Default: empty
+- **`enabled`** — Whether to enable this server. Default: enabled
+- **`transport`** — Transport mode, `"stdio"` (default), `"streamable_http"`, `"sse"`
+- **`http_timeout_seconds`** — HTTP request timeout (seconds). Default: 30.0
+- **`read_timeout_seconds`** — Session read timeout (seconds). Default: 300.0
 
 ### stdio Mode
 
 Launches a local subprocess to run the MCP server. Ideal for locally installed tools. Key fields:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `command` | `str` | Launch command, e.g. `uvx`, `npx`, `python` |
-| `args` | `list[str]` | Command arguments |
-| `env` | `dict[str, str]` | Extra environment variables |
+- **`command`** — Launch command, e.g. `uvx`, `npx`, `python`
+- **`args`** — Command arguments
+- **`env`** — Extra environment variables
 
 #### Via uvx (Recommended)
 
@@ -246,11 +230,9 @@ env = { PYTHONUNBUFFERED = "1" }
 
 Connects to a remote MCP service via HTTP. Suitable for cloud services or tools hosted by others. Key fields:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `url` | `str` | MCP endpoint URL, required |
-| `headers` | `dict[str, str]` | Extra HTTP headers |
-| `authorization` | `object` | HTTP auth configuration |
+- **`url`** — MCP endpoint URL, required
+- **`headers`** — Extra HTTP headers
+- **`authorization`** — HTTP auth configuration
 
 #### Unauthenticated Remote Service
 

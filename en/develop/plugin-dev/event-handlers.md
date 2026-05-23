@@ -24,28 +24,24 @@ from maibot_sdk.types import EventType
 
 ## EventType Event Types
 
-| Enum Value | Description |
-|--------|------|
-| `UNKNOWN` | Unknown event |
-| `ON_START` | Plugin startup |
-| `ON_STOP` | Plugin stop |
-| `ON_MESSAGE_PRE_PROCESS` | Message preprocessing stage (best timing for filtering/interception) |
-| `ON_MESSAGE` | Message processing stage |
-| `ON_PLAN` | Planning stage |
-| `POST_LLM` | After LLM call (response generated) |
-| `AFTER_LLM` | After LLM call completed |
-| `POST_SEND_PRE_PROCESS` | Send preprocessing stage |
-| `POST_SEND` | After message sent |
-| `AFTER_SEND` | After message send completed |
+- **`UNKNOWN`** — Unknown event
+- **`ON_START`** — Plugin startup
+- **`ON_STOP`** — Plugin stop
+- **`ON_MESSAGE_PRE_PROCESS`** — Message preprocessing stage (best timing for filtering/interception)
+- **`ON_MESSAGE`** — Message processing stage
+- **`ON_PLAN`** — Planning stage
+- **`POST_LLM`** — After LLM call (response generated)
+- **`AFTER_LLM`** — After LLM call completed
+- **`POST_SEND_PRE_PROCESS`** — Send preprocessing stage
+- **`POST_SEND`** — After message sent
+- **`AFTER_SEND`** — After message send completed
 
 ## intercept_message Parameter
 
 `intercept_message` controls whether EventHandler participates in the message processing chain in blocking mode:
 
-| Value | Behavior |
-|----|------|
-| `False` (default) | Async fire-and-forget, doesn't affect main message flow |
-| `True` | Synchronous blocking, main program waits for handler return before continuing |
+- **`False`** (default) — Async fire-and-forget, doesn't affect main message flow
+- **`True`** — Synchronous blocking, main program waits for handler return before continuing
 
 When set to `True`, the handler can intercept, modify, or even prevent subsequent message processing.
 
@@ -215,14 +211,12 @@ class SendAuditPlugin(MaiBotPlugin):
 
 ## Difference from HookHandler
 
-| Feature | @EventHandler | @HookHandler |
-|------|--------------|-------------|
-| Subscription Method | `EventType` enum values | Named Hook point strings |
-| Granularity | Fixed event types, limited quantity | Custom Hook names, infinitely extensible |
-| Interception Method | `intercept_message=True` | `mode=HookMode.BLOCKING` |
-| Priority | `weight` numeric weight | `order` three-level enum + global sorting |
-| Exception Strategy | No dedicated parameter | Controlled by `error_policy` |
-| Use Cases | Fixed stages of message flow | Arbitrary extension points defined by main program |
+- **Subscription Method** — `@EventHandler` `EventType` enum values → `@HookHandler` named Hook point strings
+- **Granularity** — `@EventHandler` fixed event types, limited quantity → `@HookHandler` custom Hook names, infinitely extensible
+- **Interception Method** — `@EventHandler` `intercept_message=True` → `@HookHandler` `mode=HookMode.BLOCKING`
+- **Priority** — `@EventHandler` `weight` numeric weight → `@HookHandler` `order` three-level enum + global sorting
+- **Exception Strategy** — `@EventHandler` no dedicated parameter → `@HookHandler` controlled by `error_policy`
+- **Use Cases** — `@EventHandler` fixed stages of message flow → `@HookHandler` arbitrary extension points defined by main program
 
 General principles:
 - If you need to execute logic at **fixed stages** of the message flow (e.g., when receiving messages, after LLM returns), use `@EventHandler`

@@ -12,13 +12,11 @@ The `@Action` decorator is deprecated. The SDK internally auto-converts it to a 
 
 Core differences between `@Action` and `@Tool`:
 
-| Comparison | `@Action` (Legacy) | `@Tool` (New) |
-|------------|-------------------|---------------|
-| Parameter types | All `string` | Supports 7 types: `string`, `integer`, `boolean`, `array`, `object`, etc. |
-| Parameter declaration | `action_parameters={"key": "description"}` | `parameters=[ToolParameterInfo(...)]` |
-| Parameter Schema | No JSON Schema generation | Automatically generates complete JSON Schema |
-| Activation method | `activation_type` + `activation_keywords` | Always available (LLM decides when to call) |
-| Description mechanism | Single `description` | `brief_description` + `detailed_description` |
+- **Parameter types** — `@Action` all `string` → `@Tool` supports 7 types: `string`, `integer`, `boolean`, `array`, `object`, etc.
+- **Parameter declaration** — `action_parameters={"key": "description"}` → `parameters=[ToolParameterInfo(...)]`
+- **Parameter Schema** — No JSON Schema generation → Automatically generates complete JSON Schema
+- **Activation method** — `activation_type` + `activation_keywords` → Always available (LLM decides when to call)
+- **Description mechanism** — Single `description` → `brief_description` + `detailed_description`
 
 ### Migration Example
 
@@ -88,21 +86,17 @@ from maibot_sdk import Action
 
 ### ActivationType Enum
 
-| Enum Value | Description |
-|------------|-------------|
-| `NEVER` | Never activate |
-| `ALWAYS` | Always as candidate tool |
-| `RANDOM` | Randomly enable with certain probability |
-| `KEYWORD` | Enable when message contains keywords |
+- **`NEVER`** — Never activate
+- **`ALWAYS`** — Always as candidate tool
+- **`RANDOM`** — Randomly enable with certain probability
+- **`KEYWORD`** — Enable when message contains keywords
 
 ### ChatMode Enum
 
-| Enum Value | Description |
-|------------|-------------|
-| `FOCUS` | Focus mode |
-| `NORMAL` | Normal mode |
-| `PRIORITY` | Priority mode |
-| `ALL` | All modes |
+- **`FOCUS`** — Focus mode
+- **`NORMAL`** — Normal mode
+- **`PRIORITY`** — Priority mode
+- **`ALL`** — All modes
 
 ## Internal Conversion Mechanism
 

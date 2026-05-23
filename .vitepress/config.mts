@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 import { MermaidPlugin, MermaidMarkdown } from "vitepress-plugin-mermaid"
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs"
+import { InlineLinkPreviewElementTransform } from '@nolebase/vitepress-plugin-inline-link-preview/markdown-it'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -341,15 +342,26 @@ export default defineConfig({
     config(md) {
       md.use(tabsMarkdownPlugin);
       md.use(MermaidMarkdown);
+      md.use(InlineLinkPreviewElementTransform);
     },
   },
   vite: {
     plugins: [MermaidPlugin()],
     optimizeDeps: {
       include: ['mermaid'],
+      exclude: [
+        '@nolebase/vitepress-plugin-inline-link-preview/client',
+        '@nolebase/vitepress-plugin-enhanced-readabilities/client',
+        '@nolebase/ui',
+      ],
     },
     ssr: {
-      noExternal: ['mermaid'],
+      noExternal: [
+        'mermaid',
+        '@nolebase/vitepress-plugin-inline-link-preview',
+        '@nolebase/vitepress-plugin-enhanced-readabilities',
+        '@nolebase/ui',
+      ],
     },
   },
 })

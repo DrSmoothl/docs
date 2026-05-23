@@ -55,31 +55,27 @@ title: Manifest
 
 ## 必填字段
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `manifest_version` | `2` | Manifest 协议版本，当前固定为 `2` |
-| `id` | string | 插件唯一标识符，格式为小写字母/数字，以点号或横线分隔（如 `com.author.plugin`） |
-| `version` | string | 插件版本号，必须为严格三段式语义版本（如 `1.0.0`） |
-| `name` | string | 插件展示名称 |
-| `description` | string | 插件描述 |
-| `author` | object | 插件作者信息，包含 `name`（作者名）和 `url`（作者主页，必须为 HTTP/HTTPS URL） |
-| `license` | string | 插件许可证 |
-| `urls` | object | 插件相关链接集合（见下文） |
-| `host_application` | object | Host 兼容区间（见下文） |
-| `sdk` | object | SDK 兼容区间（见下文） |
-| `capabilities` | string[] | 插件声明的能力请求列表，不允许包含空值 |
-| `i18n` | object | 国际化配置（见下文） |
+- **`manifest_version`** `2` — Manifest 协议版本，当前固定为 `2`
+- **`id`** `string` — 插件唯一标识符，格式为小写字母/数字，以点号或横线分隔（如 `com.author.plugin`）
+- **`version`** `string` — 插件版本号，必须为严格三段式语义版本（如 `1.0.0`）
+- **`name`** `string` — 插件展示名称
+- **`description`** `string` — 插件描述
+- **`author`** `object` — 插件作者信息，包含 `name`（作者名）和 `url`（作者主页，必须为 HTTP/HTTPS URL）
+- **`license`** `string` — 插件许可证
+- **`urls`** `object` — 插件相关链接集合（见下文）
+- **`host_application`** `object` — Host 兼容区间（见下文）
+- **`sdk`** `object` — SDK 兼容区间（见下文）
+- **`capabilities`** `string[]` — 插件声明的能力请求列表，不允许包含空值
+- **`i18n`** `object` — 国际化配置（见下文）
 
 ## 可选字段
 
 ### urls 链接集合
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| `repository` | 是 | 插件仓库地址，必须为 HTTP/HTTPS URL |
-| `homepage` | 否 | 插件主页地址 |
-| `documentation` | 否 | 插件文档地址 |
-| `issues` | 否 | 插件问题反馈地址 |
+- **`repository`** · 必填 — 插件仓库地址，必须为 HTTP/HTTPS URL
+- **`homepage`** · 可选 — 插件主页地址
+- **`documentation`** · 可选 — 插件文档地址
+- **`issues`** · 可选 — 插件问题反馈地址
 
 ### host_application / sdk 版本区间
 
@@ -101,22 +97,18 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
 
 ### i18n 国际化配置
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| `default_locale` | 是 | 默认语言代码（如 `zh-CN`） |
-| `locales_path` | 否 | 语言资源文件目录路径 |
-| `supported_locales` | 否 | 支持的语言列表，不可包含空值和重复项。若非空，则 `default_locale` 必须存在于该列表中 |
+- **`default_locale`** · 必填 — 默认语言代码（如 `zh-CN`）
+- **`locales_path`** · 可选 — 语言资源文件目录路径
+- **`supported_locales`** · 可选 — 支持的语言列表，不可包含空值和重复项。若非空，则 `default_locale` 必须存在于该列表中
 
 ### llm_providers LLM Provider 声明
 
 声明插件提供的 LLM Provider 能力，供其他插件通过 `ctx.llm` 代理调用。
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| `client_type` | 是 | Provider 唯一标识符，必须与 `@LLMProvider` 装饰器中声明的值完全一致 |
-| `name` | 是 | Provider 展示名称 |
-| `description` | 否 | Provider 功能描述 |
-| `version` | 否 | Provider 版本号，默认 `"1.0.0"` |
+- **`client_type`** · 必填 — Provider 唯一标识符，必须与 `@LLMProvider` 装饰器中声明的值完全一致
+- **`name`** · 必填 — Provider 展示名称
+- **`description`** · 可选 — Provider 功能描述
+- **`version`** · 可选 · 默认 `"1.0.0"` — Provider 版本号
 
 ::: warning 双重声明要求
 `llm_providers` 字段与 `@LLMProvider` 装饰器必须同时声明，且 `client_type` 必须完全匹配。若仅在一处声明，另一处缺失或不一致，插件将被阻止加载。

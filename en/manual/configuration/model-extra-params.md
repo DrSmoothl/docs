@@ -13,31 +13,25 @@ Each model in `model_config.toml` can set the `extra_params` field, allowing you
 
 ### Advanced Auth Configuration
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `auth_header_name` | Header auth name | `Authorization` (default) |
-| `auth_header_prefix` | Header auth prefix | `Bearer` (default) |
-| `auth_query_name` | Query auth param name | `api_key` (default) |
+- **`auth_header_name`** — Header auth name. Default: `Authorization`
+- **`auth_header_prefix`** — Header auth prefix. Default: `Bearer`
+- **`auth_query_name`** — Query auth param name. Default: `api_key`
 
 ### Advanced Parameters
 
-| 🏷️ Item | 💡 Purpose | 📊 Recommended |
-|-----------|--------|----------|
-| `default_headers` | Default HTTP headers | `{}` |
-| `default_query` | Default query params | `{}` |
-| `organization` | OpenAI org (optional) | `None` |
-| `project` | OpenAI project (optional) | `None` |
-| `model_list_endpoint` | Model list endpoint | `/models` |
-| `reasoning_parse_mode` | Reasoning parse mode | `auto` |
-| `tool_argument_parse_mode` | Tool argument parse mode | `auto` |
+- **`default_headers`** — Default HTTP headers. Default: empty
+- **`default_query`** — Default query params. Default: empty
+- **`organization`** — OpenAI org (optional). Default: none
+- **`project`** — OpenAI project (optional). Default: none
+- **`model_list_endpoint`** — Model list endpoint. Default: `/models`
+- **`reasoning_parse_mode`** — Reasoning parse mode. Default: `auto`
+- **`tool_argument_parse_mode`** — Tool argument parse mode. Default: `auto`
 
 ### Runtime Configuration
 
-| 🏷️ Item | 💡 Purpose | 📊 Recommended |
-|-----------|--------|----------|
-| `timeout` | Timeout | `10` seconds |
-| `max_retry` | Max retries | `2` times |
-| `retry_interval` | Retry interval | `10` seconds |
+- **`timeout`** — Timeout. Recommended: 10 seconds
+- **`max_retry`** — Max retries. Recommended: 2 times
+- **`retry_interval`** — Retry interval. Recommended: 10 seconds
 
 #### Internal Translation Mechanism
 
@@ -45,12 +39,10 @@ Each model in `model_config.toml` can set the `extra_params` field, allowing you
 
 The OpenAI-compatible client (`client_type = "openai"`) splits `extra_params` using these rules:
 
-| Syntax | Actual Use |
-|--------|-----------|
-| `headers` | Sent as request headers |
-| `query` | Sent as URL query parameters |
-| `body` | Merged into the request body |
-| Other plain keys | Sent as extra request body fields |
+- **`headers`** — Sent as request headers
+- **`query`** — Sent as URL query parameters
+- **`body`** — Merged into the request body
+- **Other plain keys** — Sent as extra request body fields
 
 For example:
 
@@ -80,17 +72,13 @@ A common configuration like `extra_params = {enable_thinking = "false"}` sends `
 
 ### Parameter Overrides
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `temperature` | Model-level temperature | Overrides task config temp, optional |
-| `max_tokens` | Model-level max tokens | Overrides task config max_tokens, optional |
+- **`temperature`** — Model-level temperature, overrides task config temp. Optional
+- **`max_tokens`** — Model-level max tokens, overrides task config max_tokens. Optional
 
 ### Other Advanced Parameters
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `force_stream_mode` | Force streaming | `false` (default), set `true` if non-streaming unsupported |
-| `extra_params` | Extra parameters | `{}` (default), custom API params, see scenarios below |
+- **`force_stream_mode`** — Force streaming, set `true` if non-streaming unsupported. Default: disabled
+- **`extra_params`** — Extra parameters, custom API params, see scenarios below. Default: empty
 
 #### Priority Rules
 
@@ -127,22 +115,18 @@ visual = false
 extra_params = {enable_thinking = true}   # Enable thinking mode
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `enable_thinking` | `bool` | `true` to enable thinking, `false` to disable |
+- **`enable_thinking`** — `true` to enable thinking, `false` to disable
 
 ## Adjusting Reasoning Depth
 
 OpenAI's reasoning models use the `reasoning_effort` parameter to control reasoning depth.
 
-| Level | Use Case | Characteristics |
-|-------|----------|----------|
-| `none` | Simple Q&A, information retrieval | Fastest, no reasoning |
-| `minimal` | Minimal reasoning | Almost no added latency |
-| `low` | Tool calls, search, multi-step decisions | Light reasoning |
-| `medium` | Planning, complex reasoning (default) | Balance of quality and speed |
-| `high` | Complex debugging, deep planning | Quality prioritized |
-| `xhigh` | Deep research, async tasks | Highest quality, maximum latency |
+- **`none`** — Simple Q&A, information retrieval. Fastest, no reasoning
+- **`minimal`** — Minimal reasoning. Almost no added latency
+- **`low`** — Tool calls, search, multi-step decisions. Light reasoning
+- **`medium`** — Planning, complex reasoning (default). Balance of quality and speed
+- **`high`** — Complex debugging, deep planning. Quality prioritized
+- **`xhigh`** — Deep research, async tasks. Highest quality, maximum latency
 
 ```toml
 [[models]]
@@ -159,10 +143,8 @@ extra_params = {reasoning_effort = "medium"}
 
 `client_type` determines which client MaiBot uses to communicate with the API:
 
-| Value | Description |
-|-------|-------------|
-| `openai` | OpenAI-compatible interface (default), works with DeepSeek, Alibaba Bailian, OpenAI, etc. |
-| `google` | Google Gemini native interface, supports thinking budget control |
+- **`openai`** — OpenAI-compatible interface (default), works with DeepSeek, Alibaba Bailian, OpenAI, etc.
+- **`google`** — Google Gemini native interface, supports thinking budget control
 
 ### Gemini Thinking Configuration
 
@@ -187,24 +169,20 @@ When `client_type = "google"`, `extra_params` does not follow the OpenAI-compati
 - Content generation: mapped to supported `GenerateContentConfig` fields
 - Embeddings: mapped to supported `EmbedContentConfig` fields
 
-| Parameter | Purpose |
-|-----------|---------|
-| `thinking_budget` | Thinking budget (token count) |
-| `include_thoughts` | Whether to include thinking process in responses |
-| `enable_google_search` | Enable Google search capability |
-| `task_type` | Embedding task type |
-| `output_dimensionality` | Embedding output dimensionality |
-| `audio_mime_type` | MIME type for audio requests |
+- **`thinking_budget`** — Thinking budget (token count)
+- **`include_thoughts`** — Whether to include thinking process in responses
+- **`enable_google_search`** — Enable Google search capability
+- **`task_type`** — Embedding task type
+- **`output_dimensionality`** — Embedding output dimensionality
+- **`audio_mime_type`** — MIME type for audio requests
 
 ## Custom HTTP Requests
 
 `extra_params` supports three special keys for precise API request control:
 
-| Special Key | Purpose | Example |
-|-------------|---------|----------|
-| `headers` | Add HTTP request headers | `{headers: {"X-Custom": "value"}}` |
-| `query` | Add URL query parameters | `{query: {"key": "value"}}` |
-| `body` | Override request body fields | `{body: {"field": "value"}}` |
+- **`headers`** — Add HTTP request headers, e.g. `{headers: {"X-Custom": "value"}}`
+- **`query`** — Add URL query parameters, e.g. `{query: {"key": "value"}}`
+- **`body`** — Override request body fields, e.g. `{body: {"field": "value"}}`
 
 ```toml
 [[models]]
@@ -233,13 +211,11 @@ extra_params = {
 
 ## Quick Parameter Reference
 
-| Parameter | Providers | Type | Description |
-|-----------|-----------|------|-------------|
-| `enable_thinking` | DeepSeek | `bool` | Enable thinking mode |
-| `reasoning_effort` | OpenAI | `str` | Reasoning depth level |
-| `headers` | All | `dict` | Custom HTTP request headers |
-| `query` | All | `dict` | Custom URL query parameters |
-| `body` | All | `dict` | Custom request body fields |
-| `thinking_config` | Gemini | `dict` | Thinking budget config |
+- **`enable_thinking`** — Enable thinking mode. Providers: DeepSeek
+- **`reasoning_effort`** — Reasoning depth level. Providers: OpenAI
+- **`headers`** — Custom HTTP request headers. Providers: All
+- **`query`** — Custom URL query parameters. Providers: All
+- **`body`** — Custom request body fields. Providers: All
+- **`thinking_config`** — Thinking budget config. Providers: Gemini
 
 > ⚠️ **Note**: Parameters are passed directly to the LLM API. Ensure parameter names and value formats match your provider's documentation, otherwise API calls may fail.

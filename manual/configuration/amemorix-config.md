@@ -41,39 +41,35 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 ### 基础集成
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable_memory_query_tool` | `bool` | `true` | 是否允许麦麦在聊天时查询长期记忆 |
-| `memory_query_default_limit` | `int` | `5` | 每次默认从长期记忆中取回多少条结果，范围 `1-20` |
-| `enable_person_profile_query_tool` | `bool` | `true` | 是否允许麦麦查询人物画像记忆 |
-| `enable_person_profile_injection` | `bool` | `true` | 是否在 Maisaka Planner 调用前自动注入当前对象相关的人物画像 |
-| `person_profile_injection_max_profiles` | `int` | `3` | 每轮自动注入的人物画像数量上限，范围 `1-5` |
-| `person_fact_writeback_enabled` | `bool` | `true` | 是否在发送回复后自动提取并写回人物事实到长期记忆 |
-| `chat_summary_writeback_enabled` | `bool` | `true` | 是否在 Maisaka 聊天过程中按消息窗口自动写回聊天摘要到长期记忆 |
-| `chat_summary_writeback_message_threshold` | `int` | `36` | 自动写回聊天摘要的消息窗口阈值（高级） |
-| `chat_summary_writeback_context_length` | `int` | `36` | 自动写回聊天摘要时，从聊天流中回看的消息条数，范围 `1-500`（高级） |
+- **`enable_memory_query_tool`** — 是否允许麦麦在聊天时查询长期记忆。默认开启
+- **`memory_query_default_limit`** — 每次默认从长期记忆中取回多少条结果，范围 `1-20`。默认 5
+- **`enable_person_profile_query_tool`** — 是否允许麦麦查询人物画像记忆。默认开启
+- **`enable_person_profile_injection`** — 是否在 Maisaka Planner 调用前自动注入当前对象相关的人物画像。默认开启
+- **`person_profile_injection_max_profiles`** — 每轮自动注入的人物画像数量上限，范围 `1-5`。默认 3
+- **`person_fact_writeback_enabled`** — 是否在发送回复后自动提取并写回人物事实到长期记忆。默认开启
+- **`chat_summary_writeback_enabled`** — 是否在 Maisaka 聊天过程中按消息窗口自动写回聊天摘要到长期记忆。默认开启
+- **`chat_summary_writeback_message_threshold`** — 自动写回聊天摘要的消息窗口阈值（高级）。默认 36
+- **`chat_summary_writeback_context_length`** — 自动写回聊天摘要时，从聊天流中回看的消息条数，范围 `1-500`（高级）。默认 36
 
 ### 反馈纠错
 
 反馈纠错默认关闭，属于高级功能。它会基于 `query_memory` 后一段时间内的用户反馈，尝试纠正旧记忆。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `feedback_correction_enabled` | `bool` | `false` | 是否启用反馈驱动的延迟记忆纠错任务（高级） |
-| `feedback_correction_window_hours` | `float` | `12.0` | 反馈窗口时长（小时），以 `query_memory` 执行时间为起点（高级） |
-| `feedback_correction_check_interval_minutes` | `int` | `30` | 反馈纠错定时任务轮询间隔（分钟）（高级） |
-| `feedback_correction_batch_size` | `int` | `20` | 反馈纠错每轮最大处理任务数，范围 `1-200`（高级） |
-| `feedback_correction_auto_apply_threshold` | `float` | `0.85` | 自动应用纠错动作的最低置信度阈值，范围 `0-1`（高级） |
-| `feedback_correction_max_feedback_messages` | `int` | `30` | 每个纠错任务最多使用的窗口内用户反馈消息数（高级） |
-| `feedback_correction_prefilter_enabled` | `bool` | `true` | 是否启用纠错前置预筛，用于减少不必要的模型调用（高级） |
-| `feedback_correction_paragraph_mark_enabled` | `bool` | `true` | 是否为受影响 paragraph 写入已纠正旧事实标记（高级） |
-| `feedback_correction_paragraph_hard_filter_enabled` | `bool` | `true` | 是否在用户侧查询中硬过滤带有 stale 标记的 paragraph（高级） |
-| `feedback_correction_profile_refresh_enabled` | `bool` | `true` | 是否在反馈纠错后将受影响人物画像加入刷新队列（高级） |
-| `feedback_correction_profile_force_refresh_on_read` | `bool` | `true` | 人物画像处于脏队列时，读取是否强制刷新而不直接复用旧快照（高级） |
-| `feedback_correction_episode_rebuild_enabled` | `bool` | `true` | 是否在反馈纠错后将受影响 source 加入 episode 重建队列（高级） |
-| `feedback_correction_episode_query_block_enabled` | `bool` | `true` | episode source 处于重建队列时，是否对用户侧查询做屏蔽（高级） |
-| `feedback_correction_reconcile_interval_minutes` | `int` | `5` | 反馈纠错二阶段一致性后台协调任务轮询间隔（分钟）（高级） |
-| `feedback_correction_reconcile_batch_size` | `int` | `20` | 反馈纠错二阶段一致性每轮处理 profile/episode 队列的批大小（高级） |
+- **`feedback_correction_enabled`** — 是否启用反馈驱动的延迟记忆纠错任务（高级）。默认关闭
+- **`feedback_correction_window_hours`** — 反馈窗口时长（小时），以 `query_memory` 执行时间为起点（高级）。默认 12.0
+- **`feedback_correction_check_interval_minutes`** — 反馈纠错定时任务轮询间隔（分钟）（高级）。默认 30
+- **`feedback_correction_batch_size`** — 反馈纠错每轮最大处理任务数，范围 `1-200`（高级）。默认 20
+- **`feedback_correction_auto_apply_threshold`** — 自动应用纠错动作的最低置信度阈值，范围 `0-1`（高级）。默认 0.85
+- **`feedback_correction_max_feedback_messages`** — 每个纠错任务最多使用的窗口内用户反馈消息数（高级）。默认 30
+- **`feedback_correction_prefilter_enabled`** — 是否启用纠错前置预筛，用于减少不必要的模型调用（高级）。默认开启
+- **`feedback_correction_paragraph_mark_enabled`** — 是否为受影响 paragraph 写入已纠正旧事实标记（高级）。默认开启
+- **`feedback_correction_paragraph_hard_filter_enabled`** — 是否在用户侧查询中硬过滤带有 stale 标记的 paragraph（高级）。默认开启
+- **`feedback_correction_profile_refresh_enabled`** — 是否在反馈纠错后将受影响人物画像加入刷新队列（高级）。默认开启
+- **`feedback_correction_profile_force_refresh_on_read`** — 人物画像处于脏队列时，读取是否强制刷新而不直接复用旧快照（高级）。默认开启
+- **`feedback_correction_episode_rebuild_enabled`** — 是否在反馈纠错后将受影响 source 加入 episode 重建队列（高级）。默认开启
+- **`feedback_correction_episode_query_block_enabled`** — episode source 处于重建队列时，是否对用户侧查询做屏蔽（高级）。默认开启
+- **`feedback_correction_reconcile_interval_minutes`** — 反馈纠错二阶段一致性后台协调任务轮询间隔（分钟）（高级）。默认 5
+- **`feedback_correction_reconcile_batch_size`** — 反馈纠错二阶段一致性每轮处理 profile/episode 队列的批大小（高级）。默认 20
 
 ::: warning 反馈纠错是高级功能
 反馈纠错默认关闭。启用后会产生额外的模型调用和计算开销。如果你不清楚它的作用，建议保持默认的 `false`。
@@ -85,9 +81,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 长期记忆系统的总开关。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `false` | 是否启用长期记忆系统 |
+- **`enabled`** — 是否启用长期记忆系统。默认关闭
 
 ::: warning 默认关闭
 记忆系统默认关闭，需要手动设为 `true` 才能启用。启用前请确保已正确配置 embedding 模型。
@@ -97,9 +91,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 ## 存储 [A_memorix.storage]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `data_dir` | `str` | `"data/a-memorix"` | 数据目录，记忆数据将存储在此目录下 |
+- **`data_dir`** — 数据目录，记忆数据将存储在此目录下。默认 `data/a-memorix`
 
 ---
 
@@ -109,35 +101,29 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 ### 基础配置
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `model_name` | `str` | `"auto"` | 用于把记忆内容转换成向量的模型，`auto` 表示自动选择 |
-| `dimension` | `int` | `1024` | 记忆向量的维度，需要与向量化模型保持一致 |
-| `batch_size` | `int` | `32` | 每次向量化请求处理的记忆条数 |
-| `max_concurrent` | `int` | `5` | 同时进行的向量化请求数量 |
-| `enable_cache` | `bool` | `false` | 是否缓存向量化结果 |
-| `quantization_type` | `"int8"` | `"int8"` | 向量压缩方式，当前仅支持 `int8`（SQ8） |
+- **`model_name`** — 用于把记忆内容转换成向量的模型，`auto` 表示自动选择。默认 `auto`
+- **`dimension`** — 记忆向量的维度，需要与向量化模型保持一致。默认 1024
+- **`batch_size`** — 每次向量化请求处理的记忆条数。默认 32
+- **`max_concurrent`** — 同时进行的向量化请求数量。默认 5
+- **`enable_cache`** — 是否缓存向量化结果。默认关闭
+- **`quantization_type`** — 向量压缩方式，当前仅支持 `int8`（SQ8）。默认 `int8`
 
 ### Embedding 回退 [A_memorix.embedding.fallback]
 
 当主力 embedding 服务不可用时的降级策略。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用回退机制 |
-| `probe_interval_seconds` | `int` | `180` | 探测间隔秒数，定期检测主力服务是否恢复 |
-| `allow_metadata_only_write` | `bool` | `true` | 是否允许仅写入元数据（回退期间跳过向量化） |
+- **`enabled`** — 是否启用回退机制。默认开启
+- **`probe_interval_seconds`** — 探测间隔秒数，定期检测主力服务是否恢复。默认 180
+- **`allow_metadata_only_write`** — 是否允许仅写入元数据（回退期间跳过向量化）。默认开启
 
 ### 段落向量回填 [A_memorix.embedding.paragraph_vector_backfill]
 
 处理缺少向量的段落，异步补全向量数据。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用回填任务 |
-| `interval_seconds` | `int` | `60` | 回填轮询间隔（秒） |
-| `batch_size` | `int` | `64` | 单批回填数量 |
-| `max_retry` | `int` | `5` | 最大重试次数 |
+- **`enabled`** — 是否启用回填任务。默认开启
+- **`interval_seconds`** — 回填轮询间隔（秒）。默认 60
+- **`batch_size`** — 单批回填数量。默认 64
+- **`max_retry`** — 最大重试次数。默认 5
 
 ---
 
@@ -147,30 +133,26 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 ### 基础检索配置
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `top_k_paragraphs` | `int` | `20` | 段落候选数 |
-| `top_k_relations` | `int` | `10` | 关系候选数 |
-| `top_k_final` | `int` | `10` | 最终返回条数 |
-| `alpha` | `float` | `0.5` | 关系融合权重，范围 `0.0-1.0` |
-| `enable_ppr` | `bool` | `true` | 是否启用 PPR（Personalized PageRank）图计算 |
-| `ppr_alpha` | `float` | `0.85` | PPR alpha 参数，范围 `0.0-1.0` |
-| `ppr_timeout_seconds` | `float` | `1.5` | PPR 超时秒数 |
-| `ppr_concurrency_limit` | `int` | `4` | PPR 并发限制 |
-| `enable_parallel` | `bool` | `true` | 是否启用并行检索 |
+- **`top_k_paragraphs`** — 段落候选数。默认 20
+- **`top_k_relations`** — 关系候选数。默认 10
+- **`top_k_final`** — 最终返回条数。默认 10
+- **`alpha`** — 关系融合权重，范围 `0.0-1.0`。默认 0.5
+- **`enable_ppr`** — 是否启用 PPR（Personalized PageRank）图计算。默认开启
+- **`ppr_alpha`** — PPR alpha 参数，范围 `0.0-1.0`。默认 0.85
+- **`ppr_timeout_seconds`** — PPR 超时秒数。默认 1.5
+- **`ppr_concurrency_limit`** — PPR 并发限制。默认 4
+- **`enable_parallel`** — 是否启用并行检索。默认开启
 
 ### 稀疏检索 [A_memorix.retrieval.sparse]
 
 基于全文检索（FTS5）的稀疏检索配置，用于补充向量检索。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用稀疏检索 |
-| `backend` | `"fts5"` | `"fts5"` | 稀疏检索后端 |
-| `mode` | `"auto"` / `"fallback_only"` / `"hybrid"` | `"auto"` | 稀疏检索模式：`auto` 自动选择、`fallback_only` 仅在向量检索失败时回退、`hybrid` 混合模式 |
-| `tokenizer_mode` | `"jieba"` / `"mixed"` / `"char_2gram"` | `"jieba"` | 分词模式 |
-| `candidate_k` | `int` | `80` | 段落候选数 |
-| `relation_candidate_k` | `int` | `60` | 关系候选数 |
+- **`enabled`** — 是否启用稀疏检索。默认开启
+- **`backend`** — 稀疏检索后端。默认 `fts5`
+- **`mode`** — 稀疏检索模式：`auto` 自动选择、`fallback_only` 仅在向量检索失败时回退、`hybrid` 混合模式。默认 `auto`
+- **`tokenizer_mode`** — 分词模式。可选 `jieba`、`mixed`、`char_2gram`。默认 `jieba`
+- **`candidate_k`** — 段落候选数。默认 80
+- **`relation_candidate_k`** — 关系候选数。默认 60
 
 ---
 
@@ -178,13 +160,11 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 控制检索结果的阈值过滤策略，用于筛选出高质量的记忆条目。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `min_threshold` | `float` | `0.3` | 最小阈值，低于此值的检索结果将被过滤，范围 `0.0-1.0` |
-| `max_threshold` | `float` | `0.95` | 最大阈值，范围 `0.0-1.0` |
-| `percentile` | `int` | `75` | 动态阈值百分位，范围 `0-100` |
-| `min_results` | `int` | `3` | 最小保留条数，即使阈值过滤后结果不足也至少保留此数量 |
-| `enable_auto_adjust` | `bool` | `true` | 是否启用自动阈值调整 |
+- **`min_threshold`** — 最小阈值，低于此值的检索结果将被过滤，范围 `0.0-1.0`。默认 0.3
+- **`max_threshold`** — 最大阈值，范围 `0.0-1.0`。默认 0.95
+- **`percentile`** — 动态阈值百分位，范围 `0-100`。默认 75
+- **`min_results`** — 最小保留条数，即使阈值过滤后结果不足也至少保留此数量。默认 3
+- **`enable_auto_adjust`** — 是否启用自动阈值调整。默认开启
 
 ---
 
@@ -192,11 +172,9 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 控制哪些聊天流参与记忆系统的读写。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用聊天过滤 |
-| `mode` | `"blacklist"` / `"whitelist"` | `"blacklist"` | 过滤模式：黑名单模式排除列表中的聊天流，白名单模式仅包含列表中的聊天流 |
-| `chats` | `list[str]` | `[]` | 聊天流列表 |
+- **`enabled`** — 是否启用聊天过滤。默认开启
+- **`mode`** — 过滤模式：黑名单模式排除列表中的聊天流，白名单模式仅包含列表中的聊天流。可选 `blacklist`、`whitelist`。默认 `blacklist`
+- **`chats`** — 聊天流列表。默认为空
 
 ---
 
@@ -204,16 +182,14 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[A_memorix]` 段落下，包含 12
 
 Episode 是对一段对话的自动总结与分段，是记忆系统的核心数据单元之一。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用 Episode |
-| `generation_enabled` | `bool` | `true` | 是否启用自动生成 |
-| `pending_batch_size` | `int` | `50` | 待处理批大小 |
-| `pending_max_retry` | `int` | `3` | 待处理最大重试次数 |
-| `max_paragraphs_per_call` | `int` | `20` | 单次最大段落数 |
-| `max_chars_per_call` | `int` | `6000` | 单次最大字符数，范围 `100+` |
-| `source_time_window_hours` | `float` | `24.0` | 来源时间窗口小时数 |
-| `segmentation_model` | `str` | `"auto"` | 分段模型选择，`auto` 表示自动选择 |
+- **`enabled`** — 是否启用 Episode。默认开启
+- **`generation_enabled`** — 是否启用自动生成。默认开启
+- **`pending_batch_size`** — 待处理批大小。默认 50
+- **`pending_max_retry`** — 待处理最大重试次数。默认 3
+- **`max_paragraphs_per_call`** — 单次最大段落数。默认 20
+- **`max_chars_per_call`** — 单次最大字符数，范围 `100+`。默认 6000
+- **`source_time_window_hours`** — 来源时间窗口小时数。默认 24.0
+- **`segmentation_model`** — 分段模型选择，`auto` 表示自动选择。默认 `auto`
 
 ---
 
@@ -221,13 +197,11 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 人物画像为每个用户维护一份摘要档案，包含关键事实和偏好，在聊天时自动注入上下文。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用画像 |
-| `refresh_interval_minutes` | `int` | `30` | 刷新间隔分钟数 |
-| `active_window_hours` | `float` | `72.0` | 活跃窗口小时数，范围 `1.0+` |
-| `max_refresh_per_cycle` | `int` | `50` | 单轮最大刷新数 |
-| `top_k_evidence` | `int` | `12` | 证据条数 |
+- **`enabled`** — 是否启用画像。默认开启
+- **`refresh_interval_minutes`** — 刷新间隔分钟数。默认 30
+- **`active_window_hours`** — 活跃窗口小时数，范围 `1.0+`。默认 72.0
+- **`max_refresh_per_cycle`** — 单轮最大刷新数。默认 50
+- **`top_k_evidence`** — 证据条数。默认 12
 
 ---
 
@@ -235,22 +209,18 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 记忆演化控制记忆的衰减机制，使旧记忆随时间自然弱化，避免过时信息干扰。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用记忆演化 |
-| `half_life_hours` | `float` | `24.0` | 半衰期小时数，记忆权重每经过此时长衰减一半 |
-| `prune_threshold` | `float` | `0.1` | 裁剪阈值，权重低于此值的记忆将被标记为待裁剪，范围 `0.0-1.0` |
-| `freeze_duration_hours` | `float` | `24.0` | 冻结时长小时数，新写入的记忆在冻结期内不参与演化 |
+- **`enabled`** — 是否启用记忆演化。默认开启
+- **`half_life_hours`** — 半衰期小时数，记忆权重每经过此时长衰减一半。默认 24.0
+- **`prune_threshold`** — 裁剪阈值，权重低于此值的记忆将被标记为待裁剪，范围 `0.0-1.0`。默认 0.1
+- **`freeze_duration_hours`** — 冻结时长小时数，新写入的记忆在冻结期内不参与演化。默认 24.0
 
 ---
 
 ## 高级运行时 [A_memorix.advanced]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable_auto_save` | `bool` | `true` | 是否启用自动保存 |
-| `auto_save_interval_minutes` | `int` | `5` | 自动保存间隔（分钟） |
-| `debug` | `bool` | `false` | 是否启用调试模式 |
+- **`enable_auto_save`** — 是否启用自动保存。默认开启
+- **`auto_save_interval_minutes`** — 自动保存间隔（分钟）。默认 5
+- **`debug`** — 是否启用调试模式。默认关闭
 
 ---
 
@@ -260,27 +230,23 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ### 导入中心 [A_memorix.web.import_config]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用导入中心 |
-| `max_queue_size` | `int` | `20` | 最大队列长度 |
-| `max_files_per_task` | `int` | `200` | 单任务最大文件数 |
-| `max_file_size_mb` | `int` | `20` | 单文件大小上限（MB） |
-| `max_paste_chars` | `int` | `200000` | 粘贴字符数上限 |
-| `default_file_concurrency` | `int` | `2` | 默认文件并发数 |
-| `default_chunk_concurrency` | `int` | `4` | 默认分块并发数 |
+- **`enabled`** — 是否启用导入中心。默认开启
+- **`max_queue_size`** — 最大队列长度。默认 20
+- **`max_files_per_task`** — 单任务最大文件数。默认 200
+- **`max_file_size_mb`** — 单文件大小上限（MB）。默认 20
+- **`max_paste_chars`** — 粘贴字符数上限。默认 200000
+- **`default_file_concurrency`** — 默认文件并发数。默认 2
+- **`default_chunk_concurrency`** — 默认分块并发数。默认 4
 
 ### 调优中心 [A_memorix.web.tuning]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用调优中心 |
-| `max_queue_size` | `int` | `8` | 最大队列长度 |
-| `poll_interval_ms` | `int` | `1200` | 轮询间隔（毫秒） |
-| `default_intensity` | `"quick"` / `"standard"` / `"deep"` | `"standard"` | 默认调优强度 |
-| `default_objective` | `"precision_priority"` / `"balanced"` / `"recall_priority"` | `"precision_priority"` | 默认调优目标 |
-| `default_top_k_eval` | `int` | `20` | 默认评估 Top-K |
-| `default_sample_size` | `int` | `24` | 默认样本数 |
+- **`enabled`** — 是否启用调优中心。默认开启
+- **`max_queue_size`** — 最大队列长度。默认 8
+- **`poll_interval_ms`** — 轮询间隔（毫秒）。默认 1200
+- **`default_intensity`** — 默认调优强度，可选 `quick`、`standard`、`deep`。默认 `standard`
+- **`default_objective`** — 默认调优目标，可选 `precision_priority`、`balanced`、`recall_priority`。默认 `precision_priority`
+- **`default_top_k_eval`** — 默认评估 Top-K。默认 20
+- **`default_sample_size`** — 默认样本数。默认 24
 
 ---
 
@@ -290,24 +256,20 @@ A_Memorix 替代了旧版 `[memory]` 配置段落。如果你之前使用过 `[m
 
 ### 字段映射
 
-| 旧版 [memory] | 新版 [A_memorix] | 说明 |
-|---------------|------------------|------|
-| `global_memory` | `filter.mode` | 全局记忆功能现由过滤模式控制。旧版 `global_memory = true` 对应新版 `filter.mode = "blacklist"` + 清空 `filter.chats`；旧版 `global_memory = false` 对应白名单模式或黑名单+加入所有聊天流 |
-| `global_memory_blacklist` | `filter.chats` | 黑名单列表迁移到 `filter.chats`，配合 `filter.mode = "blacklist"` |
-| `enable_memory_query_tool` | `integration.enable_memory_query_tool` | 直接迁移 |
-| `memory_query_default_limit` | `integration.memory_query_default_limit` | 直接迁移 |
-| `person_fact_writeback_enabled` | `integration.person_fact_writeback_enabled` | 直接迁移 |
-| `chat_summary_writeback_enabled` | `integration.chat_summary_writeback_enabled` | 直接迁移 |
-| `chat_summary_writeback_message_threshold` | `integration.chat_summary_writeback_message_threshold` | 直接迁移，注意默认值从 `12` 变为 `36` |
-| `chat_summary_writeback_context_length` | `integration.chat_summary_writeback_context_length` | 直接迁移，注意默认值从 `50` 变为 `36` |
-| `feedback_correction_*` | `integration.feedback_correction_*` | 反馈纠错配置全部移入 `integration` 子段落 |
+- **`global_memory`** → **`filter.mode`** — 全局记忆功能现由过滤模式控制。旧版 `global_memory = true` 对应新版 `filter.mode = "blacklist"` + 清空 `filter.chats`；旧版 `global_memory = false` 对应白名单模式或黑名单+加入所有聊天流
+- **`global_memory_blacklist`** → **`filter.chats`** — 黑名单列表迁移到 `filter.chats`，配合 `filter.mode = "blacklist"`
+- **`enable_memory_query_tool`** → **`integration.enable_memory_query_tool`** — 直接迁移
+- **`memory_query_default_limit`** → **`integration.memory_query_default_limit`** — 直接迁移
+- **`person_fact_writeback_enabled`** → **`integration.person_fact_writeback_enabled`** — 直接迁移
+- **`chat_summary_writeback_enabled`** → **`integration.chat_summary_writeback_enabled`** — 直接迁移
+- **`chat_summary_writeback_message_threshold`** → **`integration.chat_summary_writeback_message_threshold`** — 直接迁移，注意默认值从 `12` 变为 `36`
+- **`chat_summary_writeback_context_length`** → **`integration.chat_summary_writeback_context_length`** — 直接迁移，注意默认值从 `50` 变为 `36`
+- **`feedback_correction_*`** → **`integration.feedback_correction_*`** — 反馈纠错配置全部移入 `integration` 子段落
 
 ### 默认值变更
 
-| 配置项 | 旧默认值 | 新默认值 | 说明 |
-|--------|----------|----------|------|
-| `chat_summary_writeback_message_threshold` | `12` | `36` | 消息窗口阈值增大，减少摘要写回频率 |
-| `chat_summary_writeback_context_length` | `50` | `36` | 回看消息数调整 |
+- **`chat_summary_writeback_message_threshold`** — 旧默认值 `12`，新默认值 `36`。消息窗口阈值增大，减少摘要写回频率
+- **`chat_summary_writeback_context_length`** — 旧默认值 `50`，新默认值 `36`。回看消息数调整
 
 ### 迁移示例
 

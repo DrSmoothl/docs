@@ -66,10 +66,8 @@ pip install -r requirements.txt
 
 MaiBot's configuration files are in the `config/` directory, like the robot's "brain settings":
 
-| File | Purpose | See Here |
-|------|------|------|
-| `bot_config.toml` | Basic bot info | [Configuration Overview](../configuration/index.md) |
-| `model_config.toml` | AI model settings | [Model Configuration](../configuration/model-config.md) |
+- **`bot_config.toml`** — Basic bot info. See [Configuration Overview](../configuration/index.md)
+- **`model_config.toml`** — AI model settings. See [Model Configuration](../configuration/model-config.md)
 
 On first startup, MaiBot will automatically generate default configs. You need to change two things:
 

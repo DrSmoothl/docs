@@ -58,29 +58,25 @@ stateDiagram-v2
     wait --> running: 等待超时/新消息到达
 ```
 
-| 状态 | 说明 |
-|------|------|
-| `running` | 正在执行推理循环 |
-| `wait` | 等待状态，wait 工具设定了超时时间 |
-| `stop` | 空闲状态，等待新的外部消息触发 |
+- **`running`** — 正在执行推理循环
+- **`wait`** — 等待状态，wait 工具设定了超时时间
+- **`stop`** — 空闲状态，等待新的外部消息触发
 
 ### 核心属性
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `session_id` | `str` | 会话 ID |
-| `_chat_history` | `list[LLMContextMessage]` | 内部上下文历史 |
-| `message_cache` | `list[SessionMessage]` | 待处理消息缓存 |
-| `_internal_turn_queue` | `asyncio.Queue` | 内部循环触发队列（"message" / "timeout"） |
-| `_tool_registry` | `ToolRegistry` | 统一工具注册表 |
-| `_reasoning_engine` | `MaisakaReasoningEngine` | 推理引擎 |
-| `_chat_loop_service` | `MaisakaChatLoopService` | 对话循环服务 |
-| `_max_internal_rounds` | `int` | 最大内部轮次（默认 10） |
-| `_max_context_size` | `int` | 最大上下文消息数 |
-| `_message_debounce_seconds` | `float` | 消息防抖秒数（默认 1.0） |
-| `_talk_frequency_adjust` | `float` | 说话频率倍率 |
-| `deferred_tool_specs_by_name` | `dict[str, ToolSpec]` | 延迟发现工具池 |
-| `discovered_tool_names` | `set[str]` | 已发现的延迟工具 |
+- **`session_id`** `str` — 会话 ID
+- **`_chat_history`** `list[LLMContextMessage]` — 内部上下文历史
+- **`message_cache`** `list[SessionMessage]` — 待处理消息缓存
+- **`_internal_turn_queue`** `asyncio.Queue` — 内部循环触发队列（"message" / "timeout"）
+- **`_tool_registry`** `ToolRegistry` — 统一工具注册表
+- **`_reasoning_engine`** `MaisakaReasoningEngine` — 推理引擎
+- **`_chat_loop_service`** `MaisakaChatLoopService` — 对话循环服务
+- **`_max_internal_rounds`** `int` — 最大内部轮次（默认 10）
+- **`_max_context_size`** `int` — 最大上下文消息数
+- **`_message_debounce_seconds`** `float` — 消息防抖秒数（默认 1.0）
+- **`_talk_frequency_adjust`** `float` — 说话频率倍率
+- **`deferred_tool_specs_by_name`** `dict[str, ToolSpec]` — 延迟发现工具池
+- **`discovered_tool_names`** `set[str]` — 已发现的延迟工具
 
 ### 消息触发机制
 
@@ -119,13 +115,11 @@ trigger_threshold = ceil(1.0 / effective_frequency)  # 所需消息数
 
 ### 关键常量
 
-| 常量 | 值 | 说明 |
-|------|-----|------|
-| `TIMING_GATE_CONTEXT_LIMIT` | `_max_context_size`（可配置） | Timing Gate 上下文消息上限（读取 `global_config.chat.max_context_size` / `max_private_context_size`） |
-| `TIMING_GATE_MAX_TOKENS` | 384 | Timing Gate 最大输出 token |
-| `TIMING_GATE_TOOL_NAMES` | `{"continue", "no_action", "wait"}` | Timing Gate 可用工具 |
-| `ACTION_HIDDEN_TOOL_NAMES` | `{"continue", "no_action"}` | Action Loop 隐藏的工具 |
-| `MAX_INTERNAL_ROUNDS` | 10 | 最大内部思考轮次 |
+- **`TIMING_GATE_CONTEXT_LIMIT`** — `_max_context_size`（可配置） · Timing Gate 上下文消息上限（读取 `global_config.chat.max_context_size` / `max_private_context_size`）
+- **`TIMING_GATE_MAX_TOKENS`** — 384 · Timing Gate 最大输出 token
+- **`TIMING_GATE_TOOL_NAMES`** — `{"continue", "no_action", "wait"}` · Timing Gate 可用工具
+- **`ACTION_HIDDEN_TOOL_NAMES`** — `{"continue", "no_action"}` · Action Loop 隐藏的工具
+- **`MAX_INTERNAL_ROUNDS`** — 10 · 最大内部思考轮次
 
 ### run_loop 主循环
 
@@ -260,24 +254,20 @@ graph TD
 
 ### Timing Gate 工具
 
-| 工具名 | 源文件 | 说明 | 关键参数 |
-|--------|--------|------|---------|
-| `continue` | `continue_tool.py` | 允许继续进入下一轮思考 | 无 |
-| `no_action` | `no_action.py` | 停止当前循环，等待新外部消息 | 无 |
-| `wait` | `wait.py` | 暂停对话 N 秒后重新判断 | `seconds`（默认 30） |
+- **`continue`** — `continue_tool.py` · 允许继续进入下一轮思考 · 关键参数：无
+- **`no_action`** — `no_action.py` · 停止当前循环，等待新外部消息 · 关键参数：无
+- **`wait`** — `wait.py` · 暂停对话 N 秒后重新判断 · 关键参数：`seconds`（默认 30）
 
 ### Action 工具
 
-| 工具名 | 源文件 | 说明 | 关键参数 |
-|--------|--------|------|---------|
-| `reply` | `reply.py` | 生成并发送回复消息 | `msg_id`、`set_quote`、`reference_info` |
-| `send_emoji` | `send_emoji.py` | 发送表情包 | 无（自动根据上下文选择） |
-| `finish` | `finish.py` | 结束当前思考轮次 | 无 |
-| `query_jargon` | `query_jargon.py` | 查询黑话/词条 | `words` |
-| `query_memory` | `query_memory.py` | 查询长期记忆 | `query`、`mode`、`limit` |
-| `query_person_profile` | `query_person_profile.py` | 查询人物画像 | `person_name` |
-| `view_complex_message` | `view_complex_message.py` | 查看完整转发消息 | `message_id` |
-| `tool_search` | `tool_search.py` | 搜索延迟发现的工具 | `query`、`limit` |
+- **`reply`** — `reply.py` · 生成并发送回复消息 · 关键参数：`msg_id`、`set_quote`、`reference_info`
+- **`send_emoji`** — `send_emoji.py` · 发送表情包 · 关键参数：无（自动根据上下文选择）
+- **`finish`** — `finish.py` · 结束当前思考轮次 · 关键参数：无
+- **`query_jargon`** — `query_jargon.py` · 查询黑话/词条 · 关键参数：`words`
+- **`query_memory`** — `query_memory.py` · 查询长期记忆 · 关键参数：`query`、`mode`、`limit`
+- **`query_person_profile`** — `query_person_profile.py` · 查询人物画像 · 关键参数：`person_name`
+- **`view_complex_message`** — `view_complex_message.py` · 查看完整转发消息 · 关键参数：`message_id`
+- **`tool_search`** — `tool_search.py` · 搜索延迟发现的工具 · 关键参数：`query`、`limit`
 
 ### Deferred Tool 发现机制
 
@@ -321,13 +311,11 @@ flowchart TD
 
 ### Hook Specs
 
-| Hook | 可中止 | 可改写 | 说明 |
-|------|--------|--------|------|
-| `maisaka.planner.before_request` | ✗ | ✓ | 可改写消息列表和工具定义 |
-| `maisaka.planner.after_response` | ✗ | ✓ | 可调整文本结果和工具调用列表 |
-| `maisaka.replyer.before_request` | ✗ | ✓ | 可改写 replyer 任务名、指定模型、额外提示和 `reply_tool_args` |
-| `maisaka.replyer.before_model_request` | ✗ | ✓ | 可改写 replyer 已构造完成、即将发给模型的 `messages` |
-| `maisaka.replyer.after_response` | ✗ | ✓ | 可改写回复文本或要求 replyer 重生成 |
+- **`maisaka.planner.before_request`** — 可中止 ✗ · 可改写 ✓ · 可改写消息列表和工具定义
+- **`maisaka.planner.after_response`** — 可中止 ✗ · 可改写 ✓ · 可调整文本结果和工具调用列表
+- **`maisaka.replyer.before_request`** — 可中止 ✗ · 可改写 ✓ · 可改写 replyer 任务名、指定模型、额外提示和 `reply_tool_args`
+- **`maisaka.replyer.before_model_request`** — 可中止 ✗ · 可改写 ✓ · 可改写 replyer 已构造完成、即将发给模型的 `messages`
+- **`maisaka.replyer.after_response`** — 可中止 ✗ · 可改写 ✓ · 可改写回复文本或要求 replyer 重生成
 
 ## 上下文消息类型
 
@@ -387,23 +375,19 @@ classDiagram
 
 ### ReferenceMessageType
 
-| 值 | 说明 |
-|----|------|
-| `custom` | 自定义参考消息 |
-| `jargon` | 黑话/词条查询结果 |
-| `memory` | 长期记忆检索结果 |
-| `tool_hint` | 工具提示信息（如 deferred tools 提醒） |
+- **`custom`** — 自定义参考消息
+- **`jargon`** — 黑话/词条查询结果
+- **`memory`** — 长期记忆检索结果
+- **`tool_hint`** — 工具提示信息（如 deferred tools 提醒）
 
 ### 上下文窗口占用
 
-| 消息类型 | 占用窗口 | 说明 |
-|----------|---------|------|
-| `SessionBackedMessage` | ✓ | 真实用户消息 |
-| `ComplexSessionMessage` | ✓ | 复杂/转发消息 |
-| `ReferenceMessage` | ✗ | 参考信息（不占用窗口） |
-| `AssistantMessage` (assistant) | ✓ | 内部思考文本 |
-| `AssistantMessage` (perception) | ✗ | 感知类文本（打断提示等） |
-| `ToolResultMessage` | ✗ | 工具执行结果 |
+- **`SessionBackedMessage`** — 占用窗口 ✓ · 真实用户消息
+- **`ComplexSessionMessage`** — 占用窗口 ✓ · 复杂/转发消息
+- **`ReferenceMessage`** — 占用窗口 ✗ · 参考信息（不占用窗口）
+- **`AssistantMessage`** (assistant) — 占用窗口 ✓ · 内部思考文本
+- **`AssistantMessage`** (perception) — 占用窗口 ✗ · 感知类文本（打断提示等）
+- **`ToolResultMessage`** — 占用窗口 ✗ · 工具执行结果
 
 ## Planner 消息前缀
 
@@ -427,13 +411,11 @@ classDiagram
 
 通过 WebSocket 向前端监控面板广播事件：
 
-| 事件 | 触发时机 | 关键数据 |
-|------|---------|---------|
-| `session.start` | 运行时启动 | session_id, session_name |
-| `message.ingested` | 消息注入历史 | speaker_name, content, message_id |
-| `cycle.start` | 思考循环开始 | cycle_id, round_index, max_rounds |
-| `timing_gate.result` | Timing Gate 决策完成 | action, content, tool_calls, prompt_tokens |
-| `planner.finalized` | 规划器完成 | 完整 cycle 数据、token 统计、耗时 |
+- **`session.start`** — 运行时启动 · 关键数据：session_id, session_name
+- **`message.ingested`** — 消息注入历史 · 关键数据：speaker_name, content, message_id
+- **`cycle.start`** — 思考循环开始 · 关键数据：cycle_id, round_index, max_rounds
+- **`timing_gate.result`** — Timing Gate 决策完成 · 关键数据：action, content, tool_calls, prompt_tokens
+- **`planner.finalized`** — 规划器完成 · 关键数据：完整 cycle 数据、token 统计、耗时
 
 ## 完整推理流程示例
 

@@ -57,9 +57,7 @@ bearer_token = ""
 
 ## 总开关 [mcp]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable` | `bool` | `true` | 是否启用 MCP。设为 `false` 时所有 MCP 服务器都不会连接 |
+- **`enable`** — 是否启用 MCP，设为 `false` 时所有 MCP 服务器都不会连接。默认开启
 
 ---
 
@@ -77,10 +75,8 @@ client_version = "1.0.0"
 
 一般不需要改，除非你希望 MCP 服务端看到不同的客户端标识。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `client_name` | `str` | `"MaiBot"` | 客户端实现名称 |
-| `client_version` | `str` | `"1.0.0"` | 客户端实现版本 |
+- **`client_name`** — 客户端实现名称。默认 `"MaiBot"`
+- **`client_version`** — 客户端实现版本。默认 `"1.0.0"`
 
 ### Roots 能力 [mcp.client.roots]
 
@@ -96,18 +92,14 @@ uri = "file:///home/mai/data"
 name = "麦麦的数据目录"
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable` | `bool` | `false` | 是否向 MCP 服务器暴露 Roots 能力 |
-| `items` | `list` | `[]` | Roots 列表 |
+- **`enable`** — 是否向 MCP 服务器暴露 Roots 能力。默认关闭
+- **`items`** — Roots 列表。默认为空
 
 每个 Root 项：
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用 |
-| `uri` | `str` | `""` | Root URI，通常为 `file://` 路径。启用时必填 |
-| `name` | `str` | `""` | 显示名称 |
+- **`enabled`** — 是否启用。默认开启
+- **`uri`** — Root URI，通常为 `file://` 路径，启用时必填。默认为空
+- **`name`** — 显示名称。默认为空
 
 ::: tip 💡 Roots 有什么用？
 如果连接了一个文件系统 MCP 服务器（如 `@modelcontextprotocol/server-filesystem`），开启 Roots 后，服务器就能知道你的数据目录在哪，从而读写该目录下的文件。
@@ -125,12 +117,10 @@ include_context_support = false
 tool_support = true
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable` | `bool` | `false` | 是否启用 Sampling 能力声明 |
-| `task_name` | `str` | `"planner"` | 执行 Sampling 请求时使用的主程序模型任务名 |
-| `include_context_support` | `bool` | `false` | 是否声明支持 `includeContext` 非 `none` 语义 |
-| `tool_support` | `bool` | `false` | 是否声明支持在 Sampling 中继续使用工具 |
+- **`enable`** — 是否启用 Sampling 能力声明。默认关闭
+- **`task_name`** — 执行 Sampling 请求时使用的主程序模型任务名。默认 `"planner"`
+- **`include_context_support`** — 是否声明支持 `includeContext` 非 `none` 语义。默认关闭
+- **`tool_support`** — 是否声明支持在 Sampling 中继续使用工具。默认关闭
 
 ::: warning ⚠️ Sampling 会消耗 Tokens
 启用 Sampling 意味着 MCP 服务端可以触发 MaiBot 的模型调用，会产生额外的 API 费用。确保 `task_name` 指向一个已配置好的模型任务。
@@ -147,11 +137,9 @@ allow_form = true
 allow_url = false
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable` | `bool` | `false` | 是否启用 Elicitation 能力声明 |
-| `allow_form` | `bool` | `true` | 是否允许表单模式 Elicitation |
-| `allow_url` | `bool` | `false` | 是否允许 URL 模式 Elicitation |
+- **`enable`** — 是否启用 Elicitation 能力声明。默认关闭
+- **`allow_form`** — 是否允许表单模式 Elicitation。默认开启
+- **`allow_url`** — 是否允许 URL 模式 Elicitation。默认关闭
 
 启用时至少需要允许一种模式（`allow_form` 或 `allow_url`）。
 
@@ -172,23 +160,19 @@ http_timeout_seconds = 30.0
 read_timeout_seconds = 300.0
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `name` | `str` | `""` | **必填**。服务器名称，在同一配置中不能重复 |
-| `enabled` | `bool` | `true` | 是否启用当前服务器 |
-| `transport` | `"stdio"` / `"streamable_http"` / `"sse"` | `"stdio"` | 传输方式 |
-| `http_timeout_seconds` | `float` | `30.0` | HTTP 请求超时（秒） |
-| `read_timeout_seconds` | `float` | `300.0` | 会话读取超时（秒） |
+- **`name`** — **必填**。服务器名称，在同一配置中不能重复。默认为空
+- **`enabled`** — 是否启用当前服务器。默认开启
+- **`transport`** — 传输方式，`"stdio"`（默认）、`"streamable_http"`、`"sse"`
+- **`http_timeout_seconds`** — HTTP 请求超时（秒）。默认 30.0
+- **`read_timeout_seconds`** — 会话读取超时（秒）。默认 300.0
 
 ### stdio 模式
 
 通过启动一个本地子进程来运行 MCP 服务器，适合本地安装的工具。关键字段：
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `command` | `str` | 启动命令，如 `uvx`、`npx`、`python` |
-| `args` | `list[str]` | 命令参数列表 |
-| `env` | `dict[str, str]` | 附加环境变量 |
+- **`command`** — 启动命令，如 `uvx`、`npx`、`python`
+- **`args`** — 命令参数列表
+- **`env`** — 附加环境变量
 
 #### 通过 uvx 运行（推荐）
 
@@ -246,11 +230,9 @@ env = { PYTHONUNBUFFERED = "1" }
 
 连接远程 MCP 服务（HTTP 端点），适合云服务或别人部署好的工具。关键字段：
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `url` | `str` | MCP 端点地址，必填 |
-| `headers` | `dict[str, str]` | 附加 HTTP 请求头 |
-| `authorization` | `object` | HTTP 认证配置 |
+- **`url`** — MCP 端点地址，必填
+- **`headers`** — 附加 HTTP 请求头
+- **`authorization`** — HTTP 认证配置
 
 #### 无认证的远程服务
 

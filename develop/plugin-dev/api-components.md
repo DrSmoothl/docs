@@ -28,10 +28,8 @@ API 的唯一标识名称。同一插件内不能有重复名称的 API。其他
 
 ### public
 
-| 值 | 行为 |
-|----|------|
-| `False`（默认） | 仅插件内部可见，其他插件无法调用 |
-| `True` | 公开 API，其他插件可通过 `ctx.api.call()` 调用 |
+- **`False`**（默认） — 仅插件内部可见，其他插件无法调用
+- **`True`** — 公开 API，其他插件可通过 `ctx.api.call()` 调用
 
 ### version
 
@@ -85,12 +83,10 @@ class RenderPlugin(MaiBotPlugin):
 
 ### 动态 API 方法
 
-| 方法 | 说明 |
-|------|------|
-| `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` | 注册动态 API |
-| `self.unregister_dynamic_api(name, *, version="1")` | 注销动态 API |
-| `self.clear_dynamic_apis()` | 清空所有动态 API |
-| `await self.sync_dynamic_apis(*, offline_reason="动态 API 已下线")` | 将动态 API 同步到主程序 |
+- `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` — 注册动态 API
+- `self.unregister_dynamic_api(name, *, version="1")` — 注销动态 API
+- `self.clear_dynamic_apis()` — 清空所有动态 API
+- `await self.sync_dynamic_apis(*, offline_reason="动态 API 已下线")` — 将动态 API 同步到主程序
 
 ### 动态注册示例
 
@@ -181,12 +177,10 @@ class ManagedApiPlugin(MaiBotPlugin):
 
 ### ctx.api 方法
 
-| 方法 | 说明 |
-|------|------|
-| `await self.ctx.api.call(api_name, *, version="", **kwargs)` | 调用其他插件的 API |
-| `await self.ctx.api.get(api_name, *, version="")` | 获取 API 信息 |
-| `await self.ctx.api.list()` | 列出所有可用 API |
-| `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` | 替换动态 API |
+- `await self.ctx.api.call(api_name, *, version="", **kwargs)` — 调用其他插件的 API
+- `await self.ctx.api.get(api_name, *, version="")` — 获取 API 信息
+- `await self.ctx.api.list()` — 列出所有可用 API
+- `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` — 替换动态 API
 
 ### 调用示例
 
@@ -260,10 +254,8 @@ self.ctx.logger.info("API 信息: %s", api_info)
 
 ## 静态 API 与动态 API 对比
 
-| 特性 | 静态 @API | 动态 register_dynamic_api() |
-|------|-----------|---------------------------|
-| 声明时机 | 类定义时 | 运行时（通常在 on_load 中） |
-| 条件暴露 | 不支持 | 可根据配置动态决定 |
-| 注销 | 不支持 | 可通过 unregister 动态注销 |
-| 同步 | 自动 | 需调用 sync_dynamic_apis() |
-| 适用场景 | 固定不变的 API | 按需启用/禁用的 API |
+- **声明时机**：`@API` 类定义时 → `register_dynamic_api()` 运行时（通常在 on_load 中）
+- **条件暴露**：`@API` 不支持 → `register_dynamic_api()` 可根据配置动态决定
+- **注销**：`@API` 不支持 → `register_dynamic_api()` 可通过 unregister 动态注销
+- **同步**：`@API` 自动 → `register_dynamic_api()` 需调用 sync_dynamic_apis()
+- **适用场景**：`@API` 固定不变的 API → `register_dynamic_api()` 按需启用/禁用的 API

@@ -67,28 +67,24 @@ flowchart TD
 
 检索请求的数据结构：
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `query` | `str` | `""` | 查询文本 |
-| `limit` | `int` | `5` | 返回条数 |
-| `mode` | `str` | `"search"` | 检索模式 |
-| `chat_id` | `str` | `""` | 聊天流 ID |
-| `person_id` | `str` | `""` | 人物 ID |
-| `time_start` | `Optional[str\|float]` | `None` | 起始时间 |
-| `time_end` | `Optional[str\|float]` | `None` | 结束时间 |
-| `respect_filter` | `bool` | `True` | 是否应用聊天过滤配置 |
-| `user_id` | `str` | `""` | 用户 ID |
-| `group_id` | `str` | `""` | 群组 ID |
+- **`query`** `str` · 默认为空 — 查询文本
+- **`limit`** `int` · 默认 `5` — 返回条数
+- **`mode`** `str` · 默认 `"search"` — 检索模式
+- **`chat_id`** `str` · 默认为空 — 聊天流 ID
+- **`person_id`** `str` · 默认为空 — 人物 ID
+- **`time_start`** `Optional[str|float]` · 默认 `None` — 起始时间
+- **`time_end`** `Optional[str|float]` · 默认 `None` — 结束时间
+- **`respect_filter`** `bool` · 默认开启 — 是否应用聊天过滤配置
+- **`user_id`** `str` · 默认为空 — 用户 ID
+- **`group_id`** `str` · 默认为空 — 群组 ID
 
 ### 检索模式
 
-| 模式 | 说明 | 必需参数 |
-|------|------|---------|
-| `search` | 语义向量检索 | `query` |
-| `time` | 时间范围检索 | `time_start` 或 `time_end` |
-| `hybrid` | 向量 + 时间混合 | `time_start` 或 `time_end` |
-| `episode` | Episode 检索 | `query` |
-| `aggregate` | 聚合检索 | `query` |
+- **`search`** — 语义向量检索 · 必需参数：`query`
+- **`time`** — 时间范围检索 · 必需参数：`time_start` 或 `time_end`
+- **`hybrid`** — 向量 + 时间混合 · 必需参数：`time_start` 或 `time_end`
+- **`episode`** — Episode 检索 · 必需参数：`query`
+- **`aggregate`** — 聚合检索 · 必需参数：`query`
 
 ::: warning
 `semantic` 模式已移除，传入将返回参数错误。`time` 和 `hybrid` 模式**必须**提供 `time_start` 或 `time_end`，否则返回错误。
@@ -115,23 +111,21 @@ class AMemorixHostService:
 
 `invoke()` 根据组件名路由到内核的对应方法：
 
-| 组件名 | 对应内核方法 |
-|--------|-------------|
-| `search_memory` | `kernel.search_memory()` |
-| `ingest_summary` | `kernel.ingest_summary()` |
-| `ingest_text` | `kernel.ingest_text()` |
-| `get_person_profile` | `kernel.get_person_profile()` |
-| `maintain_memory` | `kernel.maintain_memory()` |
-| `memory_stats` | `kernel.memory_stats()` |
-| `memory_graph_admin` | `kernel.memory_graph_admin()` |
-| `memory_source_admin` | `kernel.memory_source_admin()` |
-| `memory_episode_admin` | `kernel.memory_episode_admin()` |
-| `memory_profile_admin` | `kernel.memory_profile_admin()` |
-| `memory_runtime_admin` | `kernel.memory_runtime_admin()` |
-| `memory_import_admin` | `kernel.memory_import_admin()` |
-| `memory_tuning_admin` | `kernel.memory_tuning_admin()` |
-| `memory_v5_admin` | `kernel.memory_v5_admin()` |
-| `memory_delete_admin` | `kernel.memory_delete_admin()` |
+- **`search_memory`** — `kernel.search_memory()`
+- **`ingest_summary`** — `kernel.ingest_summary()`
+- **`ingest_text`** — `kernel.ingest_text()`
+- **`get_person_profile`** — `kernel.get_person_profile()`
+- **`maintain_memory`** — `kernel.maintain_memory()`
+- **`memory_stats`** — `kernel.memory_stats()`
+- **`memory_graph_admin`** — `kernel.memory_graph_admin()`
+- **`memory_source_admin`** — `kernel.memory_source_admin()`
+- **`memory_episode_admin`** — `kernel.memory_episode_admin()`
+- **`memory_profile_admin`** — `kernel.memory_profile_admin()`
+- **`memory_runtime_admin`** — `kernel.memory_runtime_admin()`
+- **`memory_import_admin`** — `kernel.memory_import_admin()`
+- **`memory_tuning_admin`** — `kernel.memory_tuning_admin()`
+- **`memory_v5_admin`** — `kernel.memory_v5_admin()`
+- **`memory_delete_admin`** — `kernel.memory_delete_admin()`
 
 ### 配置管理
 
@@ -202,13 +196,11 @@ flowchart TD
 
 ### 关键组件
 
-| 文件 | 组件 | 说明 |
-|------|------|------|
-| `dual_path.py` | `DualPathRetriever` | 协调向量 + 图谱联合召回 |
-| `graph_relation_recall.py` | 图谱关系召回 | 基于图的关联查找 |
-| `sparse_bm25.py` | `SparseBM25Index` | 基于 BM25 的稀疏检索（需 FTS5 支持） |
-| `pagerank.py` | PageRank | 图结构权重计算 |
-| `threshold.py` | 阈值过滤 | 相似度阈值控制 |
+- **`dual_path.py`** — `DualPathRetriever` · 协调向量 + 图谱联合召回
+- **`graph_relation_recall.py`** — 图谱关系召回 · 基于图的关联查找
+- **`sparse_bm25.py`** — `SparseBM25Index` · 基于 BM25 的稀疏检索（需 FTS5 支持）
+- **`pagerank.py`** — PageRank · 图结构权重计算
+- **`threshold.py`** — 阈值过滤 · 相似度阈值控制
 
 ### RetrivalResult
 
@@ -220,11 +212,9 @@ flowchart TD
 
 写入策略决定记忆如何被处理和存储：
 
-| 策略 | 源文件 | 说明 |
-|------|--------|------|
-| `factual` | `factual.py` | 事实性知识策略，提取实体和关系 |
-| `narrative` | `narrative.py` | 叙事性策略，处理对话摘要 |
-| `quote` | `quote.py` | 引用策略，保留原文 |
+- **`factual`** — `factual.py` · 事实性知识策略，提取实体和关系
+- **`narrative`** — `narrative.py` · 叙事性策略，处理对话摘要
+- **`quote`** — `quote.py` · 引用策略，保留原文
 
 所有策略继承自 `base.py` 中的基类，定义统一的处理接口。
 
@@ -286,16 +276,14 @@ Web 导入任务管理器：
 
 **参数**：
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `query` | `str` | 否 | 查询文本 |
-| `mode` | `str` | 否 | 检索模式（search/time/hybrid/episode/aggregate） |
-| `limit` | `int` | 否 | 返回条数（默认 5） |
-| `chat_id` | `str` | 否 | 聊天流 ID |
-| `person_id` | `str` | 否 | 人物 ID |
-| `time_start` | `float` | 否 | 起始时间戳 |
-| `time_end` | `float` | 否 | 结束时间戳 |
-| `respect_filter` | `bool` | 否 | 是否应用聊天过滤配置 |
+- **`query`** `str` — 查询文本
+- **`mode`** `str` — 检索模式（search/time/hybrid/episode/aggregate）
+- **`limit`** `int` — 返回条数（默认 5）
+- **`chat_id`** `str` — 聊天流 ID
+- **`person_id`** `str` — 人物 ID
+- **`time_start`** `float` — 起始时间戳
+- **`time_end`** `float` — 结束时间戳
+- **`respect_filter`** `bool` — 是否应用聊天过滤配置
 
 ### ingest_summary
 
@@ -303,65 +291,55 @@ Web 导入任务管理器：
 
 **参数**：
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `external_id` | `str` | 是 | 外部幂等 ID |
-| `chat_id` | `str` | 是 | 聊天流 ID |
-| `text` | `str` | 是 | 摘要文本 |
-| `participants` | `list[str]` | 否 | 参与者列表 |
-| `time_start` | `float` | 否 | 起始时间戳 |
-| `time_end` | `float` | 否 | 结束时间戳 |
-| `tags` | `list[str]` | 否 | 标签 |
-| `metadata` | `dict` | 否 | 元数据 |
+- **`external_id`** `str` — 外部幂等 ID（必填）
+- **`chat_id`** `str` — 聊天流 ID（必填）
+- **`text`** `str` — 摘要文本（必填）
+- **`participants`** `list[str]` — 参与者列表
+- **`time_start`** `float` — 起始时间戳
+- **`time_end`** `float` — 结束时间戳
+- **`tags`** `list[str]` — 标签
+- **`metadata`** `dict` — 元数据
 
 ### ingest_text
 
 写入普通文本记忆。
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `external_id` | `str` | 是 | 外部幂等 ID |
-| `source_type` | `str` | 是 | 来源类型 |
-| `text` | `str` | 是 | 原始文本 |
-| `chat_id` | `str` | 否 | 聊天流 ID |
-| `entities` | `list` | 否 | 实体列表 |
-| `relations` | `list` | 否 | 关系列表 |
+- **`external_id`** `str` — 外部幂等 ID（必填）
+- **`source_type`** `str` — 来源类型（必填）
+- **`text`** `str` — 原始文本（必填）
+- **`chat_id`** `str` — 聊天流 ID
+- **`entities`** `list` — 实体列表
+- **`relations`** `list` — 关系列表
 
 ### get_person_profile
 
 获取人物画像。
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `person_id` | `str` | 是 | 人物 ID |
-| `chat_id` | `str` | 否 | 聊天流 ID |
-| `limit` | `int` | 否 | 证据条数 |
+- **`person_id`** `str` — 人物 ID（必填）
+- **`chat_id`** `str` — 聊天流 ID
+- **`limit`** `int` — 证据条数
 
 ### maintain_memory
 
 维护长期记忆关系状态。
 
-| action | 说明 |
-|--------|------|
-| `reinforce` | 强化关系 |
-| `protect` | 保护关系（指定小时数内不衰减） |
-| `restore` | 恢复关系 |
-| `freeze` | 冻结关系 |
-| `recycle_bin` | 查看回收站 |
+- **`reinforce`** — 强化关系
+- **`protect`** — 保护关系（指定小时数内不衰减）
+- **`restore`** — 恢复关系
+- **`freeze`** — 冻结关系
+- **`recycle_bin`** — 查看回收站
 
 ## 管理工具接口
 
-| 工具 | 常用 action |
-|------|------------|
-| `memory_graph_admin` | `get_graph` / `create_node` / `delete_node` / `rename_node` / `create_edge` / `delete_edge` / `update_edge_weight` |
-| `memory_source_admin` | `list` / `delete` / `batch_delete` |
-| `memory_episode_admin` | `query` / `list` / `get` / `status` / `rebuild` / `process_pending` |
-| `memory_profile_admin` | `query` / `list` / `set_override` / `delete_override` |
-| `memory_runtime_admin` | `save` / `get_config` / `self_check` / `refresh_self_check` / `set_auto_save` |
-| `memory_import_admin` | `settings` / `get_guide` / `create_upload` / `create_paste` / `list` / `get` / `chunks` / `cancel` / `retry_failed` |
-| `memory_tuning_admin` | `settings` / `get_profile` / `apply_profile` / `rollback_profile` / `create_task` / `list_tasks` / `get_task` / `cancel` / `apply_best` / `get_report` |
-| `memory_v5_admin` | `status` / `recycle_bin` / `restore` / `reinforce` / `weaken` / `remember_forever` / `forget` |
-| `memory_delete_admin` | `preview` / `execute` / `restore` / `get_operation` / `list_operations` / `purge` |
+- **`memory_graph_admin`** — `get_graph` / `create_node` / `delete_node` / `rename_node` / `create_edge` / `delete_edge` / `update_edge_weight`
+- **`memory_source_admin`** — `list` / `delete` / `batch_delete`
+- **`memory_episode_admin`** — `query` / `list` / `get` / `status` / `rebuild` / `process_pending`
+- **`memory_profile_admin`** — `query` / `list` / `set_override` / `delete_override`
+- **`memory_runtime_admin`** — `save` / `get_config` / `self_check` / `refresh_self_check` / `set_auto_save`
+- **`memory_import_admin`** — `settings` / `get_guide` / `create_upload` / `create_paste` / `list` / `get` / `chunks` / `cancel` / `retry_failed`
+- **`memory_tuning_admin`** — `settings` / `get_profile` / `apply_profile` / `rollback_profile` / `create_task` / `list_tasks` / `get_task` / `cancel` / `apply_best` / `get_report`
+- **`memory_v5_admin`** — `status` / `recycle_bin` / `restore` / `reinforce` / `weaken` / `remember_forever` / `forget`
+- **`memory_delete_admin`** — `preview` / `execute` / `restore` / `get_operation` / `list_operations` / `purge`
 
 ## 与 MaiBot 的集成
 
@@ -392,10 +370,8 @@ Web 导入任务管理器：
 
 ## 删除语义（source 模式）
 
-| 字段 | 说明 |
-|------|------|
-| `requested_source_count` | 请求删除的 source 数 |
-| `matched_source_count` | 实际命中的 source 数 |
-| `deleted_paragraph_count` | 实际删除段落数 |
-| `deleted_count` | 与实际删除对象一致 |
-| `success` | 基于实际命中与实际删除判定 |
+- **`requested_source_count`** — 请求删除的 source 数
+- **`matched_source_count`** — 实际命中的 source 数
+- **`deleted_paragraph_count`** — 实际删除段落数
+- **`deleted_count`** — 与实际删除对象一致
+- **`success`** — 基于实际命中与实际删除判定

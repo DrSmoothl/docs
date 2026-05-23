@@ -32,13 +32,11 @@ from maibot_sdk import LLMProvider
 
 ### 参数说明
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `client_type` | `str` | (必填) | 客户端类型标识，对应模型配置中的 `api_providers[].client_type`。不能为空 |
-| `name` | `str` | `""` | Provider 展示名称。留空时使用 `client_type` |
-| `description` | `str` | `""` | Provider 描述信息 |
-| `version` | `str` | `"1.0.0"` | Provider 实现版本号 |
-| `**metadata` | `Any` | — | 额外元数据键值对 |
+- **`client_type`** `str` · 必填 — 客户端类型标识，对应模型配置中的 `api_providers[].client_type`。不能为空
+- **`name`** `str` · 默认 `""` — Provider 展示名称。留空时使用 `client_type`
+- **`description`** `str` · 默认 `""` — Provider 描述信息
+- **`version`** `str` · 默认 `"1.0.0"` — Provider 实现版本号
+- **`**metadata`** `Any` — 额外元数据键值对
 
 ## Manifest 声明
 
@@ -59,12 +57,10 @@ from maibot_sdk import LLMProvider
 
 ### llm\_providers 字段说明
 
-| 字段 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `client_type` | `str` | (必填) | Provider 客户端类型，必须与模型配置 `api_providers[].client_type` 一致 |
-| `name` | `str` | `""` | Provider 展示名称 |
-| `description` | `str` | `""` | Provider 描述 |
-| `version` | `str` | `"1.0.0"` | Provider 实现版本 |
+- **`client_type`** `str` · 必填 — Provider 客户端类型，必须与模型配置 `api_providers[].client_type` 一致
+- **`name`** `str` · 默认 `""` — Provider 展示名称
+- **`description`** `str` · 默认 `""` — Provider 描述
+- **`version`** `str` · 默认 `"1.0.0"` — Provider 实现版本
 
 ::: danger
 不要在 manifest 的 `llm_providers` 中写 `handler_name` 或 `metadata`——处理函数由 `@LLMProvider` 装饰器自动收集，不需要手动指定。
@@ -74,41 +70,33 @@ from maibot_sdk import LLMProvider
 
 处理方法通过 `operation` 参数区分请求类型。三种 operation 分别对应不同的 LLM 能力：
 
-| operation | 用途 | 主要请求字段 | 返回字段 |
-|-----------|------|-------------|----------|
-| `response` | LLM 文本/工具响应 | `message_list`、`tool_options`、`max_tokens`、`temperature`、`response_format`、`extra_params`、`model_info`、`api_provider` | `content` / `response`、`reasoning_content`、`tool_calls`、`usage` |
-| `embedding` | 文本向量化 | `embedding_input`、`extra_params`、`model_info`、`api_provider` | `embedding` |
-| `audio_transcription` | 语音识别 | `audio_base64`、`max_tokens`、`extra_params`、`model_info`、`api_provider` | `content` |
+- **`response`** — LLM 文本/工具响应。主要请求字段：`message_list`、`tool_options`、`max_tokens`、`temperature`、`response_format`、`extra_params`、`model_info`、`api_provider`。返回字段：`content` / `response`、`reasoning_content`、`tool_calls`、`usage`
+- **`embedding`** — 文本向量化。主要请求字段：`embedding_input`、`extra_params`、`model_info`、`api_provider`。返回字段：`embedding`
+- **`audio_transcription`** — 语音识别。主要请求字段：`audio_base64`、`max_tokens`、`extra_params`、`model_info`、`api_provider`。返回字段：`content`
 
 三种 operation 的请求中都会包含以下公共字段：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `model_info` | `dict` | 当前请求的模型信息 |
-| `api_provider` | `dict` | 当前请求的 API Provider 配置 |
-| `extra_params` | `dict` | 额外参数 |
+- **`model_info`** `dict` — 当前请求的模型信息
+- **`api_provider`** `dict` — 当前请求的 API Provider 配置
+- **`extra_params`** `dict` — 额外参数
 
 ## 请求与返回字段
 
 ### 处理方法参数
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `operation` | `str` | 请求类型：`response`、`embedding`、`audio_transcription` |
-| `request` | `dict[str, Any]` | Host 序列化后的请求内容 |
+- **`operation`** `str` — 请求类型：`response`、`embedding`、`audio_transcription`
+- **`request`** `dict[str, Any]` — Host 序列化后的请求内容
 
 ### 返回值字段
 
 返回值必须是可序列化字典。Host 会识别以下字段并恢复为统一响应：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `content` / `response` | `str` | 文本响应或音频转写文本 |
-| `reasoning_content` / `reasoning` | `str` | 推理内容 |
-| `embedding` | `list[float]` | 嵌入向量 |
-| `tool_calls` | `list` | 工具调用快照 |
-| `usage` | `dict` | token 使用量字典 |
-| `raw_data` | `dict` | 原始响应数据 |
+- **`content` / `response`** `str` — 文本响应或音频转写文本
+- **`reasoning_content` / `reasoning`** `str` — 推理内容
+- **`embedding`** `list[float]` — 嵌入向量
+- **`tool_calls`** `list` — 工具调用快照
+- **`usage`** `dict` — token 使用量字典
+- **`raw_data`** `dict` — 原始响应数据
 
 ## 基本用法
 
@@ -190,11 +178,9 @@ def create_plugin():
 
 `LLMProviderBase` 提供以下方法供子类覆写：
 
-| 方法 | operation | 说明 | 默认行为 |
-|------|-----------|------|----------|
-| `get_response()` | `response` | 生成文本或多模态响应 | 抽象方法，必须实现 |
-| `get_embedding()` | `embedding` | 生成文本嵌入 | 抛出 `NotImplementedError` |
-| `get_audio_transcriptions()` | `audio_transcription` | 生成音频转写 | 抛出 `NotImplementedError` |
+- **`get_response()`** · operation `response` — 生成文本或多模态响应（抽象方法，必须实现）
+- **`get_embedding()`** · operation `embedding` — 生成文本嵌入（默认抛出 `NotImplementedError`）
+- **`get_audio_transcriptions()`** · operation `audio_transcription` — 生成音频转写（默认抛出 `NotImplementedError`）
 
 ::: tip
 `LLMProviderBase` 只是推荐基类，不参与注册。真正的注册入口始终是 `@LLMProvider` 装饰器。

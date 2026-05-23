@@ -24,28 +24,24 @@ from maibot_sdk.types import EventType
 
 ## EventType 事件类型
 
-| 枚举值 | 说明 |
-|--------|------|
-| `UNKNOWN` | 未知事件 |
-| `ON_START` | 插件启动 |
-| `ON_STOP` | 插件停止 |
-| `ON_MESSAGE_PRE_PROCESS` | 消息预处理阶段（过滤、拦截的最佳时机） |
-| `ON_MESSAGE` | 消息处理阶段 |
-| `ON_PLAN` | 规划阶段 |
-| `POST_LLM` | LLM 调用后（响应已生成） |
-| `AFTER_LLM` | LLM 调用完成后 |
-| `POST_SEND_PRE_PROCESS` | 发送预处理阶段 |
-| `POST_SEND` | 消息发送后 |
-| `AFTER_SEND` | 消息发送完成后 |
+- **`UNKNOWN`** — 未知事件
+- **`ON_START`** — 插件启动
+- **`ON_STOP`** — 插件停止
+- **`ON_MESSAGE_PRE_PROCESS`** — 消息预处理阶段（过滤、拦截的最佳时机）
+- **`ON_MESSAGE`** — 消息处理阶段
+- **`ON_PLAN`** — 规划阶段
+- **`POST_LLM`** — LLM 调用后（响应已生成）
+- **`AFTER_LLM`** — LLM 调用完成后
+- **`POST_SEND_PRE_PROCESS`** — 发送预处理阶段
+- **`POST_SEND`** — 消息发送后
+- **`AFTER_SEND`** — 消息发送完成后
 
 ## intercept_message 参数
 
 `intercept_message` 控制 EventHandler 是否以阻塞方式参与消息处理链：
 
-| 值 | 行为 |
-|----|------|
-| `False`（默认） | 异步 fire-and-forget，不影响消息主流程 |
-| `True` | 同步阻塞，主程序等待处理器返回后才继续 |
+- **`False`**（默认） — 异步 fire-and-forget，不影响消息主流程
+- **`True`** — 同步阻塞，主程序等待处理器返回后才继续
 
 设为 `True` 时，处理器可以拦截、修改甚至阻止消息的后续处理。
 
@@ -215,14 +211,12 @@ class SendAuditPlugin(MaiBotPlugin):
 
 ## 与 HookHandler 的区别
 
-| 特性 | @EventHandler | @HookHandler |
-|------|--------------|-------------|
-| 订阅方式 | `EventType` 枚举值 | 命名 Hook 点字符串 |
-| 粒度 | 固定事件类型，数量有限 | 自定义 Hook 名称，可无限扩展 |
-| 拦截方式 | `intercept_message=True` | `mode=HookMode.BLOCKING` |
-| 优先级 | `weight` 数值权重 | `order` 三档枚举 + 全局排序 |
-| 异常策略 | 无专用参数 | `error_policy` 控制 |
-| 适用场景 | 消息流程的固定阶段 | 主程序定义的任意扩展点 |
+- **订阅方式**：`@EventHandler` `EventType` 枚举值 → `@HookHandler` 命名 Hook 点字符串
+- **粒度**：`@EventHandler` 固定事件类型，数量有限 → `@HookHandler` 自定义 Hook 名称，可无限扩展
+- **拦截方式**：`@EventHandler` `intercept_message=True` → `@HookHandler` `mode=HookMode.BLOCKING`
+- **优先级**：`@EventHandler` `weight` 数值权重 → `@HookHandler` `order` 三档枚举 + 全局排序
+- **异常策略**：`@EventHandler` 无专用参数 → `@HookHandler` `error_policy` 控制
+- **适用场景**：`@EventHandler` 消息流程的固定阶段 → `@HookHandler` 主程序定义的任意扩展点
 
 一般原则：
 - 如果需要在消息流程的**固定阶段**（如收到消息、LLM 返回后）执行逻辑，使用 `@EventHandler`

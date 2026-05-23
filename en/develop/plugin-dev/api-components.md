@@ -28,10 +28,8 @@ Unique identifier name for the API. Duplicate API names are not allowed within t
 
 ### public
 
-| Value | Behavior |
-|----|------|
-| `False` (default) | Only visible within the plugin, other plugins cannot call |
-| `True` | Public API, other plugins can call through `ctx.api.call()` |
+- **`False`** (default) — Only visible within the plugin, other plugins cannot call
+- **`True`** — Public API, other plugins can call through `ctx.api.call()`
 
 ### version
 
@@ -85,12 +83,10 @@ In addition to using the `@API` decorator for static declaration, APIs can also 
 
 ### Dynamic API Methods
 
-| Method | Description |
-|------|------|
-| `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` | Register dynamic API |
-| `self.unregister_dynamic_api(name, *, version="1")` | Unregister dynamic API |
-| `self.clear_dynamic_apis()` | Clear all dynamic APIs |
-| `await self.sync_dynamic_apis(*, offline_reason="Dynamic API offline")` | Sync dynamic APIs to main program |
+- `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` — Register dynamic API
+- `self.unregister_dynamic_api(name, *, version="1")` — Unregister dynamic API
+- `self.clear_dynamic_apis()` — Clear all dynamic APIs
+- `await self.sync_dynamic_apis(*, offline_reason="Dynamic API offline")` — Sync dynamic APIs to main program
 
 ### Dynamic Registration Example
 
@@ -181,12 +177,10 @@ Query and call other plugins' public APIs through the `self.ctx.api` proxy.
 
 ### ctx.api Methods
 
-| Method | Description |
-|------|------|
-| `await self.ctx.api.call(plugin_id, api_name, **kwargs)` | Call other plugin's API |
-| `await self.ctx.api.get(plugin_id, api_name)` | Get API information |
-| `await self.ctx.api.list()` | List all available APIs |
-| `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` | Replace dynamic APIs |
+- `await self.ctx.api.call(plugin_id, api_name, **kwargs)` — Call other plugin's API
+- `await self.ctx.api.get(plugin_id, api_name)` — Get API information
+- `await self.ctx.api.list()` — List all available APIs
+- `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` — Replace dynamic APIs
 
 ### Calling Example
 
@@ -261,10 +255,8 @@ self.ctx.logger.info("API info: %s", api_info)
 
 ## Static API vs Dynamic API Comparison
 
-| Feature | Static @API | Dynamic register_dynamic_api() |
-|------|-----------|---------------------------|
-| Declaration Timing | At class definition | At runtime (usually in on_load) |
-| Conditional Exposure | Not supported | Can be decided dynamically based on configuration |
-| Unregistration | Not supported | Can be dynamically unregistered via unregister |
-| Synchronization | Automatic | Requires calling sync_dynamic_apis() |
-| Use Cases | Fixed APIs | APIs that need to be enabled/disabled on demand |
+- **Declaration Timing** — `@API` at class definition → `register_dynamic_api()` at runtime (usually in on_load)
+- **Conditional Exposure** — `@API` not supported → `register_dynamic_api()` can be decided dynamically based on configuration
+- **Unregistration** — `@API` not supported → `register_dynamic_api()` can be dynamically unregistered via unregister
+- **Synchronization** — `@API` automatic → `register_dynamic_api()` requires calling sync_dynamic_apis()
+- **Use Cases** — `@API` for fixed APIs → `register_dynamic_api()` for APIs that need to be enabled/disabled on demand

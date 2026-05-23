@@ -58,29 +58,25 @@ stateDiagram-v2
     wait --> running: Timeout / New Message Arrived
 ```
 
-| State | Description |
-|-------|-------------|
-| `running` | Executing reasoning loop |
-| `wait` | Waiting state, wait tool set a timeout |
-| `stop` | Idle state, waiting for new external message trigger |
+- **`running`** — Executing reasoning loop
+- **`wait`** — Waiting state, wait tool set a timeout
+- **`stop`** — Idle state, waiting for new external message trigger
 
 ### Core Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `session_id` | `str` | Session ID |
-| `_chat_history` | `list[LLMContextMessage]` | Internal context history |
-| `message_cache` | `list[SessionMessage]` | Pending message cache |
-| `_internal_turn_queue` | `asyncio.Queue` | Internal loop trigger queue ("message" / "timeout") |
-| `_tool_registry` | `ToolRegistry` | Unified tool registry |
-| `_reasoning_engine` | `MaisakaReasoningEngine` | Reasoning engine |
-| `_chat_loop_service` | `MaisakaChatLoopService` | Chat loop service |
-| `_max_internal_rounds` | `int` | Max internal rounds (default 6) |
-| `_max_context_size` | `int` | Max context message count |
-| `_message_debounce_seconds` | `float` | Message debounce seconds (default 1.0) |
-| `_talk_frequency_adjust` | `float` | Talk frequency multiplier |
-| `deferred_tool_specs_by_name` | `dict[str, ToolSpec]` | Deferred discovery tool pool |
-| `discovered_tool_names` | `set[str]` | Discovered deferred tools |
+- **`session_id`** `str` — Session ID
+- **`_chat_history`** `list[LLMContextMessage]` — Internal context history
+- **`message_cache`** `list[SessionMessage]` — Pending message cache
+- **`_internal_turn_queue`** `asyncio.Queue` — Internal loop trigger queue ("message" / "timeout")
+- **`_tool_registry`** `ToolRegistry` — Unified tool registry
+- **`_reasoning_engine`** `MaisakaReasoningEngine` — Reasoning engine
+- **`_chat_loop_service`** `MaisakaChatLoopService` — Chat loop service
+- **`_max_internal_rounds`** `int` — Max internal rounds (default 6)
+- **`_max_context_size`** `int` — Max context message count
+- **`_message_debounce_seconds`** `float` — Message debounce seconds (default 1.0)
+- **`_talk_frequency_adjust`** `float` — Talk frequency multiplier
+- **`deferred_tool_specs_by_name`** `dict[str, ToolSpec]` — Deferred discovery tool pool
+- **`discovered_tool_names`** `set[str]` — Discovered deferred tools
 
 ### Message Trigger Mechanism
 
@@ -119,13 +115,11 @@ Core reasoning engine, responsible for internal thinking loops and tool executio
 
 ### Key Constants
 
-| Constant | Value | Description |
-|----------|-------|-------------|
-| `TIMING_GATE_CONTEXT_LIMIT` | 24 | Timing Gate context message limit |
-| `TIMING_GATE_MAX_TOKENS` | 384 | Timing Gate max output tokens |
-| `TIMING_GATE_TOOL_NAMES` | `{"continue", "no_reply", "wait"}` | Timing Gate available tools |
-| `ACTION_HIDDEN_TOOL_NAMES` | `{"continue", "no_reply"}` | Action Loop hidden tools |
-| `MAX_INTERNAL_ROUNDS` | 6 | Max internal thinking rounds |
+- **`TIMING_GATE_CONTEXT_LIMIT`** — 24 · Timing Gate context message limit
+- **`TIMING_GATE_MAX_TOKENS`** — 384 · Timing Gate max output tokens
+- **`TIMING_GATE_TOOL_NAMES`** — `{"continue", "no_reply", "wait"}` · Timing Gate available tools
+- **`ACTION_HIDDEN_TOOL_NAMES`** — `{"continue", "no_reply"}` · Action Loop hidden tools
+- **`MAX_INTERNAL_ROUNDS`** — 6 · Max internal thinking rounds
 
 ### run_loop Main Loop
 
@@ -260,24 +254,20 @@ Source location: `src/maisaka/builtin_tool/`
 
 ### Timing Gate Tools
 
-| Tool Name | Source File | Description | Key Parameters |
-|-----------|-------------|-------------|----------------|
-| `continue` | `continue_tool.py` | Allow continuing to next thinking round | None |
-| `no_reply` | `no_reply.py` | Stop current loop, wait for new external message | None |
-| `wait` | `wait.py` | Pause dialogue for N seconds then re-judge | `seconds` (default 30) |
+- **`continue`** — `continue_tool.py` · Allow continuing to next thinking round · Key Parameters: None
+- **`no_reply`** — `no_reply.py` · Stop current loop, wait for new external message · Key Parameters: None
+- **`wait`** — `wait.py` · Pause dialogue for N seconds then re-judge · Key Parameters: `seconds` (default 30)
 
 ### Action Tools
 
-| Tool Name | Source File | Description | Key Parameters |
-|-----------|-------------|-------------|----------------|
-| `reply` | `reply.py` | Generate and send reply message | `reply_text`, `msg_id`, `set_quote` |
-| `send_emoji` | `send_emoji.py` | Send emoji | `emoji_description`, `msg_id` |
-| `finish` | `finish.py` | End current thinking round | None |
-| `query_jargon` | `query_jargon.py` | Query jargon/terms | `words` |
-| `query_memory` | `query_memory.py` | Query long-term memory | `query`, `mode`, `limit` |
-| `query_person_info` | `query_person_info.py` | Query person information | `person_name` |
-| `view_complex_message` | `view_complex_message.py` | View complete forwarded message | `message_id` |
-| `tool_search` | `tool_search.py` | Search deferred discovery tools | `query`, `limit` |
+- **`reply`** — `reply.py` · Generate and send reply message · Key Parameters: `reply_text`, `msg_id`, `set_quote`
+- **`send_emoji`** — `send_emoji.py` · Send emoji · Key Parameters: `emoji_description`, `msg_id`
+- **`finish`** — `finish.py` · End current thinking round · Key Parameters: None
+- **`query_jargon`** — `query_jargon.py` · Query jargon/terms · Key Parameters: `words`
+- **`query_memory`** — `query_memory.py` · Query long-term memory · Key Parameters: `query`, `mode`, `limit`
+- **`query_person_info`** — `query_person_info.py` · Query person information · Key Parameters: `person_name`
+- **`view_complex_message`** — `view_complex_message.py` · View complete forwarded message · Key Parameters: `message_id`
+- **`tool_search`** — `tool_search.py` · Search deferred discovery tools · Key Parameters: `query`, `limit`
 
 ### Deferred Tool Discovery Mechanism
 
@@ -321,13 +311,11 @@ flowchart TD
 
 ### Hook Specs
 
-| Hook | Can Abort | Can Rewrite | Description |
-|------|-----------|-------------|-------------|
-| `maisaka.planner.before_request` | ✗ | ✓ | Can rewrite message list and tool definitions |
-| `maisaka.planner.after_response` | ✗ | ✓ | Can adjust text result and tool call list |
-| `maisaka.replyer.before_request` | ✗ | ✓ | Can rewrite replyer task name, requested model, extra prompt, and `reply_tool_args` |
-| `maisaka.replyer.before_model_request` | ✗ | ✓ | Can rewrite the fully built replyer `messages` that are about to be sent to the model |
-| `maisaka.replyer.after_response` | ✗ | ✓ | Can rewrite the reply text or request replyer regeneration |
+- **`maisaka.planner.before_request`** — Can Abort ✗ · Can Rewrite ✓ · Can rewrite message list and tool definitions
+- **`maisaka.planner.after_response`** — Can Abort ✗ · Can Rewrite ✓ · Can adjust text result and tool call list
+- **`maisaka.replyer.before_request`** — Can Abort ✗ · Can Rewrite ✓ · Can rewrite replyer task name, requested model, extra prompt, and `reply_tool_args`
+- **`maisaka.replyer.before_model_request`** — Can Abort ✗ · Can Rewrite ✓ · Can rewrite the fully built replyer `messages` that are about to be sent to the model
+- **`maisaka.replyer.after_response`** — Can Abort ✗ · Can Rewrite ✓ · Can rewrite the reply text or request replyer regeneration
 
 ## Context Message Types
 
@@ -387,23 +375,19 @@ classDiagram
 
 ### ReferenceMessageType
 
-| Value | Description |
-|-------|-------------|
-| `custom` | Custom reference message |
-| `jargon` | Jargon/term query result |
-| `memory` | Long-term memory retrieval result |
-| `tool_hint` | Tool hint information (e.g., deferred tools reminder) |
+- **`custom`** — Custom reference message
+- **`jargon`** — Jargon/term query result
+- **`memory`** — Long-term memory retrieval result
+- **`tool_hint`** — Tool hint information (e.g., deferred tools reminder)
 
 ### Context Window Occupation
 
-| Message Type | Occupies Window | Description |
-|--------------|-----------------|-------------|
-| `SessionBackedMessage` | ✓ | Real user message |
-| `ComplexSessionMessage` | ✓ | Complex/forwarded message |
-| `ReferenceMessage` | ✗ | Reference info (doesn't occupy window) |
-| `AssistantMessage` (assistant) | ✓ | Internal thinking text |
-| `AssistantMessage` (perception) | ✗ | Perception text (interrupt hints, etc.) |
-| `ToolResultMessage` | ✗ | Tool execution result |
+- **`SessionBackedMessage`** — Occupies Window ✓ · Real user message
+- **`ComplexSessionMessage`** — Occupies Window ✓ · Complex/forwarded message
+- **`ReferenceMessage`** — Occupies Window ✗ · Reference info (doesn't occupy window)
+- **`AssistantMessage`** (assistant) — Occupies Window ✓ · Internal thinking text
+- **`AssistantMessage`** (perception) — Occupies Window ✗ · Perception text (interrupt hints, etc.)
+- **`ToolResultMessage`** — Occupies Window ✗ · Tool execution result
 
 ## Planner Message Prefix
 
@@ -427,13 +411,11 @@ Source location: `src/maisaka/monitor_events.py`
 
 Broadcasts events to frontend monitoring panel via WebSocket:
 
-| Event | Trigger Timing | Key Data |
-|-------|----------------|----------|
-| `session.start` | Runtime starts | session_id, session_name |
-| `message.ingested` | Message injected to history | speaker_name, content, message_id |
-| `cycle.start` | Thinking loop starts | cycle_id, round_index, max_rounds |
-| `timing_gate.result` | Timing Gate decision completed | action, content, tool_calls, prompt_tokens |
-| `planner.finalized` | Planner completed | Complete cycle data, token statistics, time spent |
+- **`session.start`** — Runtime starts · Key Data: session_id, session_name
+- **`message.ingested`** — Message injected to history · Key Data: speaker_name, content, message_id
+- **`cycle.start`** — Thinking loop starts · Key Data: cycle_id, round_index, max_rounds
+- **`timing_gate.result`** — Timing Gate decision completed · Key Data: action, content, tool_calls, prompt_tokens
+- **`planner.finalized`** — Planner completed · Key Data: Complete cycle data, token statistics, time spent
 
 ## Complete Reasoning Flow Example
 

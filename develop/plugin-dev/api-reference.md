@@ -32,15 +32,13 @@ self.ctx.logger     # 日志记录（标准 logging.Logger）
 send = self.ctx.send
 ```
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `await send.text(text, stream_id)` | `text: str`, `stream_id: str` | 发送文本消息 |
-| `await send.image(image_data, stream_id)` | `image_data: str (base64)` | 发送图片 |
-| `await send.emoji(emoji_data, stream_id)` | `emoji_data: str (base64)` | 发送表情 |
-| `await send.command(command, stream_id)` | `command: str`, `stream_id: str` | 发送指令消息 |
-| `await send.forward(messages, stream_id)` | `messages: list[dict]` | 发送转发消息 |
-| `await send.hybrid(segments, stream_id)` | `segments: list[dict]` | 发送图文混合消息 |
-| `await send.custom(custom_type, data, stream_id)` | `custom_type: str`, `data: Any` | 发送自定义类型消息 |
+- `await send.text(text, stream_id)` — 发送文本消息
+- `await send.image(image_data, stream_id)` — 发送图片
+- `await send.emoji(emoji_data, stream_id)` — 发送表情
+- `await send.command(command, stream_id)` — 发送指令消息
+- `await send.forward(messages, stream_id)` — 发送转发消息
+- `await send.hybrid(segments, stream_id)` — 发送图文混合消息
+- `await send.custom(custom_type, data, stream_id)` — 发送自定义类型消息
 
 ```python
 # 发送文本
@@ -69,13 +67,11 @@ await self.ctx.send.hybrid([
 db = self.ctx.db
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await db.query(model_name, query_type="get", data=None, filters=None, order_by=None, limit=None, single_result=False)` | 通用数据库操作 |
-| `await db.save(model_name, data, key_field="id", key_value=None)` | 插入或按字段更新 |
-| `await db.get(model_name, filters=None, limit=None, order_by=None, single_result=False)` | 按条件获取记录 |
-| `await db.delete(model_name, filters)` | 删除数据 |
-| `await db.count(model_name, filters)` | 计数 |
+- `await db.query(model_name, query_type="get", data=None, filters=None, order_by=None, limit=None, single_result=False)` — 通用数据库操作
+- `await db.save(model_name, data, key_field="id", key_value=None)` — 插入或按字段更新
+- `await db.get(model_name, filters=None, limit=None, order_by=None, single_result=False)` — 按条件获取记录
+- `await db.delete(model_name, filters)` — 删除数据
+- `await db.count(model_name, filters)` — 计数
 
 `db.count()` 的返回值始终是 `int`。即使 Host 侧 RPC 返回的是带 `count` 字段的对象，SDK 也会自动解包。
 
@@ -128,12 +124,10 @@ count = await self.ctx.db.count("ChatHistory", {"session_id": "session-123"})
 llm = self.ctx.llm
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await llm.generate(prompt, model="", temperature=None, max_tokens=None)` | 文本生成，`prompt` 支持字符串或消息列表 |
-| `await llm.generate_with_tools(prompt, tools, model="", temperature=None, max_tokens=None)` | 带工具调用的生成 |
-| `await llm.embed(text=..., texts=...)` | 生成文本嵌入向量 |
-| `await llm.get_available_models()` | 获取可用模型列表，返回 `list[str]` |
+- `await llm.generate(prompt, model="", temperature=None, max_tokens=None)` — 文本生成，`prompt` 支持字符串或消息列表
+- `await llm.generate_with_tools(prompt, tools, model="", temperature=None, max_tokens=None)` — 带工具调用的生成
+- `await llm.embed(text=..., texts=...)` — 生成文本嵌入向量
+- `await llm.get_available_models()` — 获取可用模型列表，返回 `list[str]`
 
 `temperature` 和 `max_tokens` 省略或传入 `None` 时，会使用模型管理页中当前模型/任务配置的值；只有显式传入具体值时才会覆盖配置。
 
@@ -205,11 +199,9 @@ models = await self.ctx.llm.get_available_models()
 config = self.ctx.config
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await config.get(key, default=None)` | 获取配置值，`key` 支持点分割 |
-| `await config.get_plugin(plugin_name=None)` | 获取指定插件的配置 |
-| `await config.get_all()` | 获取插件全部配置 |
+- `await config.get(key, default=None)` — 获取配置值，`key` 支持点分割
+- `await config.get_plugin(plugin_name=None)` — 获取指定插件的配置
+- `await config.get_all()` — 获取插件全部配置
 
 配置来源为插件目录下的 `config.toml`。
 
@@ -233,14 +225,12 @@ all_config = await self.ctx.config.get_all()
 message = self.ctx.message
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await message.get_recent(chat_id, limit)` | 获取最近消息 |
-| `await message.get_by_id(message_id, chat_id="", stream_id="")` | 按消息 ID 查询单条消息 |
-| `await message.build_readable(messages, **kwargs)` | 将消息列表格式化为可读字符串 |
-| `await message.get_by_time(start_time, end_time)` | 按时间范围查询（全局） |
-| `await message.get_by_time_in_chat(chat_id, start_time, end_time)` | 按时间范围查询指定聊天 |
-| `await message.count_new(chat_id, since)` | 统计新消息数（`since` 为 UNIX 时间戳字符串） |
+- `await message.get_recent(chat_id, limit)` — 获取最近消息
+- `await message.get_by_id(message_id, chat_id="", stream_id="")` — 按消息 ID 查询单条消息
+- `await message.build_readable(messages, **kwargs)` — 将消息列表格式化为可读字符串
+- `await message.get_by_time(start_time, end_time)` — 按时间范围查询（全局）
+- `await message.get_by_time_in_chat(chat_id, start_time, end_time)` — 按时间范围查询指定聊天
+- `await message.count_new(chat_id, since)` — 统计新消息数（`since` 为 UNIX 时间戳字符串）
 
 `build_readable` 支持两种调用方式：
 
@@ -271,14 +261,12 @@ readable = await self.ctx.message.build_readable(
 chat = self.ctx.chat
 ```
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `await chat.get_all_streams(platform="qq")` | `platform: str` | 获取所有聊天流 |
-| `await chat.get_group_streams(platform="qq")` | `platform: str` | 获取所有群聊流 |
-| `await chat.get_private_streams(platform="qq")` | `platform: str` | 获取所有私聊流 |
-| `await chat.get_stream_by_group_id(group_id, platform="qq")` | `group_id: str` | 按群 ID 查找聊天流 |
-| `await chat.get_stream_by_user_id(user_id, platform="qq")` | `user_id: str` | 按用户 ID 查找私聊流 |
-| `await chat.open_session(platform, chat_type, **kwargs)` | `chat_type: "private" \| "group"` | 打开或创建聊天流 |
+- `await chat.get_all_streams(platform="qq")` — 获取所有聊天流
+- `await chat.get_group_streams(platform="qq")` — 获取所有群聊流
+- `await chat.get_private_streams(platform="qq")` — 获取所有私聊流
+- `await chat.get_stream_by_group_id(group_id, platform="qq")` — 按群 ID 查找聊天流
+- `await chat.get_stream_by_user_id(user_id, platform="qq")` — 按用户 ID 查找私聊流
+- `await chat.open_session(platform, chat_type, **kwargs)` — 打开或创建聊天流
 
 ```python
 # 获取所有群聊流
@@ -338,11 +326,9 @@ await self.ctx.maisaka.context.append(
 person = self.ctx.person
 ```
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `await person.get_id(platform, user_id)` | `platform: str`, `user_id: str` | 获取 person_id |
-| `await person.get_value(person_id, field_name)` | `person_id: str`, `field_name: str` | 获取用户字段值 |
-| `await person.get_id_by_name(person_name)` | `person_name: str` | 根据用户名获取 person_id |
+- `await person.get_id(platform, user_id)` — 获取 person_id
+- `await person.get_value(person_id, field_name)` — 获取用户字段值
+- `await person.get_id_by_name(person_name)` — 根据用户名获取 person_id
 
 ```python
 # 获取 person_id
@@ -358,16 +344,14 @@ name = await self.ctx.person.get_value(pid, "nickname") or "未知"
 emoji = self.ctx.emoji
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await emoji.get_random(count)` | 随机获取表情包 |
-| `await emoji.get_by_description(description, limit)` | 按描述搜索 |
-| `await emoji.get_count()` | 获取总数 |
-| `await emoji.get_info()` | 获取统计信息 |
-| `await emoji.get_emotions()` | 获取情感标签列表 |
-| `await emoji.get_all()` | 获取全部表情包 |
-| `await emoji.register_emoji(emoji_base64)` | 注册新表情 |
-| `await emoji.delete_emoji(emoji_hash, keep_desc=None)` | 删除表情；`keep_desc=True` 时保留描述缓存，仅移除文件和注册状态，`False` 时同步删除数据库记录，默认 `None` 由主程序按当前记录决定 |
+- `await emoji.get_random(count)` — 随机获取表情包
+- `await emoji.get_by_description(description, limit)` — 按描述搜索
+- `await emoji.get_count()` — 获取总数
+- `await emoji.get_info()` — 获取统计信息
+- `await emoji.get_emotions()` — 获取情感标签列表
+- `await emoji.get_all()` — 获取全部表情包
+- `await emoji.register_emoji(emoji_base64)` — 注册新表情
+- `await emoji.delete_emoji(emoji_hash, keep_desc=None)` — 删除表情；`keep_desc=True` 时保留描述缓存，仅移除文件和注册状态，`False` 时同步删除数据库记录，默认 `None` 由主程序按当前记录决定
 
 ## frequency — 发言频率
 
@@ -375,11 +359,9 @@ emoji = self.ctx.emoji
 frequency = self.ctx.frequency
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await frequency.get_current_talk_value(chat_id)` | 获取当前 talk value |
-| `await frequency.set_adjust(chat_id, value)` | 设置频率调整值 |
-| `await frequency.get_adjust(chat_id)` | 获取频率调整值 |
+- `await frequency.get_current_talk_value(chat_id)` — 获取当前 talk value
+- `await frequency.set_adjust(chat_id, value)` — 设置频率调整值
+- `await frequency.get_adjust(chat_id)` — 获取频率调整值
 
 两个 `get_*` 方法都会直接返回数值；`set_adjust()` 返回布尔值表示是否设置成功。
 
@@ -389,17 +371,15 @@ frequency = self.ctx.frequency
 component = self.ctx.component
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await component.get_all_plugins()` | 获取所有插件信息（含各插件注册的组件列表） |
-| `await component.get_plugin_info(plugin_name)` | 获取指定插件信息 |
-| `await component.list_loaded_plugins()` | 列出已加载插件 |
-| `await component.list_registered_plugins()` | 列出已注册插件 |
-| `await component.enable_component(name, component_type, scope="global", stream_id="")` | 启用组件（`name` 支持 `plugin_id.comp_name` 全名或短名） |
-| `await component.disable_component(name, component_type, scope="global", stream_id="")` | 禁用组件（`name` 支持 `plugin_id.comp_name` 全名或短名） |
-| `await component.load_plugin(plugin_name)` | 加载插件（会校验插件是否存在并路由到对应 Supervisor） |
-| `await component.unload_plugin(plugin_name)` | 卸载插件 |
-| `await component.reload_plugin(plugin_name)` | 重新加载插件 |
+- `await component.get_all_plugins()` — 获取所有插件信息（含各插件注册的组件列表）
+- `await component.get_plugin_info(plugin_name)` — 获取指定插件信息
+- `await component.list_loaded_plugins()` — 列出已加载插件
+- `await component.list_registered_plugins()` — 列出已注册插件
+- `await component.enable_component(name, component_type, scope="global", stream_id="")` — 启用组件（`name` 支持 `plugin_id.comp_name` 全名或短名）
+- `await component.disable_component(name, component_type, scope="global", stream_id="")` — 禁用组件（`name` 支持 `plugin_id.comp_name` 全名或短名）
+- `await component.load_plugin(plugin_name)` — 加载插件（会校验插件是否存在并路由到对应 Supervisor）
+- `await component.unload_plugin(plugin_name)` — 卸载插件
+- `await component.reload_plugin(plugin_name)` — 重新加载插件
 
 `scope` 支持 `"global"` 和 `"stream"`，`stream` 级别需传入 `stream_id`。
 
@@ -413,12 +393,10 @@ component = self.ctx.component
 api = self.ctx.api
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await api.call(api_name, version="", **kwargs)` | 调用其他插件公开的 API |
-| `await api.get(api_name, version="")` | 获取单个可见 API 的元信息 |
-| `await api.list(plugin_id="")` | 列出当前插件可见的 API |
-| `await api.replace_dynamic_apis(apis, offline_reason="动态 API 已下线")` | 用新的动态 API 集合替换当前插件已暴露的动态 API |
+- `await api.call(api_name, version="", **kwargs)` — 调用其他插件公开的 API
+- `await api.get(api_name, version="")` — 获取单个可见 API 的元信息
+- `await api.list(plugin_id="")` — 列出当前插件可见的 API
+- `await api.replace_dynamic_apis(apis, offline_reason="动态 API 已下线")` — 用新的动态 API 集合替换当前插件已暴露的动态 API
 
 ```python
 # 调用其他插件公开的 API
@@ -441,12 +419,10 @@ info = await self.ctx.api.get("plugin_a.sum_numbers", version="1")
 gateway = self.ctx.gateway
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await gateway.route_message(gateway_name, message, route_metadata=None, external_message_id="", dedupe_key="")` | 通过指定消息网关把外部平台消息注入 Host |
-| `await gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` | 向 Host 上报消息网关运行时状态 |
-| `await gateway.receive_external_message(message, gateway_name=..., ...)` | `route_message()` 的兼容别名 |
-| `await gateway.update_runtime_state(gateway_name=..., connected=..., ...)` | `update_state()` 的兼容别名 |
+- `await gateway.route_message(gateway_name, message, route_metadata=None, external_message_id="", dedupe_key="")` — 通过指定消息网关把外部平台消息注入 Host
+- `await gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` — 向 Host 上报消息网关运行时状态
+- `await gateway.receive_external_message(message, gateway_name=..., ...)` — `route_message()` 的兼容别名
+- `await gateway.update_runtime_state(gateway_name=..., connected=..., ...)` — `update_state()` 的兼容别名
 
 ```python
 await self.ctx.gateway.update_state(
@@ -480,9 +456,7 @@ accepted = await self.ctx.gateway.route_message(
 tool = self.ctx.tool
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await tool.get_definitions()` | 获取 LLM 可用的工具定义列表 |
+- `await tool.get_definitions()` — 获取 LLM 可用的工具定义列表
 
 返回的列表中每个元素包含 `name` 和 `definition` 字段。`tool.get_definitions()` 会直接返回工具定义列表，不需要再从 RPC 结果里手动读取 `tools` 字段。
 
@@ -492,9 +466,7 @@ tool = self.ctx.tool
 render = self.ctx.render
 ```
 
-| 方法 | 说明 |
-|------|------|
-| `await render.html2png(html, **kwargs)` | 将 HTML 内容渲染为 PNG 图片 |
+- `await render.html2png(html, **kwargs)` — 将 HTML 内容渲染为 PNG 图片
 
 常用参数包括：
 
@@ -525,9 +497,7 @@ await self.ctx.send.image(card["image_base64"], stream_id)
 knowledge = self.ctx.knowledge
 ```
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `await knowledge.search(query, limit=5)` | `query: str`, `limit: int` | 搜索 LPMM 知识库 |
+- `await knowledge.search(query, limit=5)` — 搜索 LPMM 知识库
 
 ```python
 content = await self.ctx.knowledge.search("Python 是什么", limit=3)

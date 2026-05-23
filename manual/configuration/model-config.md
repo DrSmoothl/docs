@@ -44,12 +44,10 @@ API 提供商代表提供LLM服务的对象
 
 ### 基础配置（必填）
 
-| 🏷️ 配置项 | 💡 是什么 | 📝 怎么填 |
-|-----------|----------|----------|
-| `name` | 服务商名字 | 自己取个名字，比如"deepseek"、"openai" |
-| `base_url` | API地址 | 服务商提供的url |
-| `api_key` | 密钥 | 注册后获得的密钥 |
-| `auth_type` | 鉴权方式 | `bearer`（默认）、`header`、`query`、`none` |
+- **`name`** — 服务商名字，自己取个名字，比如"deepseek"、"openai"
+- **`base_url`** — API地址，服务商提供的url
+- **`api_key`** — 密钥，注册后获得的密钥
+- **`auth_type`** — 鉴权方式，`bearer`（默认）、`header`、`query`、`none`
 
 ### 常见服务商配置示例
 
@@ -87,11 +85,9 @@ auth_query_name = "key"
 
 :::
 
-| 服务商 | `base_url` | 备注 |
-|--------|-----------|------|
-| OpenAI | `https://api.openai.com/v1` | 可选填 `organization`、`project` |
-| 阿里百炼 | `https://dashscope.aliyuncs.com/compatible-mode/v1` | auth_type 用 `bearer` |
-| 字节火山 | `https://ark.cn-beijing.volces.com/api/v3` | auth_type 用 `bearer` |
+- **OpenAI** — `https://api.openai.com/v1`，可选填 `organization`、`project`
+- **阿里百炼** — `https://dashscope.aliyuncs.com/compatible-mode/v1`，auth_type 用 `bearer`
+- **字节火山** — `https://ark.cn-beijing.volces.com/api/v3`，auth_type 用 `bearer`
 
 > 💡 大部分国内服务商都兼容 OpenAI 接口格式，`client_type = "openai"` + `auth_type = "bearer"` 即可。
 
@@ -103,21 +99,17 @@ auth_query_name = "key"
 
 ### 基础配置（必填）
 
-| 🏷️ 配置项 | 💡 是什么 | 📝 怎么填 |
-|-----------|----------|----------|
-| `name` | 模型名字 | 自己取个名字，比如"gpt-5"、"deepseek-v4" |
-| `model_identifier` | 模型ID | 服务商提供的具体模型名称 |
-| `api_provider` | 用哪个服务商 | 填上面api_providers（提供商）里的name |
-| `visual` | 是否启用视觉 | 只有多模态模型可以打开此选项 |
+- **`name`** — 模型名字，自己取个名字，比如"gpt-5"、"deepseek-v4"
+- **`model_identifier`** — 模型ID，服务商提供的具体模型名称
+- **`api_provider`** — 用哪个服务商，填上面api_providers（提供商）里的name
+- **`visual`** — 是否启用视觉，只有多模态模型可以打开此选项
 
 ### 计费配置（可选）
 
-| 🏷️ 配置项 | 💡 是什么 | 📝 怎么填 |
-|-----------|----------|----------|
-| `price_in` | 输入价格 | 元/百万token，默认`0.0` |
-| `price_out` | 输出价格 | 元/百万token，默认`0.0` |
-| `cache` | 启用缓存计费 | `false`（默认），开启后缓存命中用cache_price_in计费 |
-| `cache_price_in` | 缓存输入价格 | 元/百万token，默认`0.0` |
+- **`price_in`** — 输入价格，元/百万token。默认 0.0
+- **`price_out`** — 输出价格，元/百万token。默认 0.0
+- **`cache`** — 启用缓存计费，开启后缓存命中用cache_price_in计费。默认关闭
+- **`cache_price_in`** — 缓存输入价格，元/百万token。默认 0.0
 
 > 📖 模型级覆盖和高级参数请参阅：[模型高级参数](./model-extra-params#其他高级参数)
 
@@ -156,14 +148,12 @@ price_out = 0.2
 
 ### 任务类型说明
 
-| 🏷️ 任务 | 💡 干什么 | 🎯 推荐模型 | 示例模型 |
-|----------|----------|------------|------------|
-| `utils` | 工具类：表情包、学习分析 | 便宜实用的模型 | dsv4/qwen3.5-35A3B/gemini3.1-flash/gptmini |
-| `planner` | 规划器：决定行动逻辑，搜集信息，何时回复等 | 实用的模型（需要支持tool调用 | dsv4/qwen3.5-35A3B/gemini3.1|
-| `replyer` | 回复器：生成实际回复 | 质量好的模型 | dsv4(思考)/gemini3.1 |
-| `vlm` | 看图说话：理解图片 | 视觉模型 | qwen3.5-35A3B/gemini3.1-flash |
-| `voice` | 语音识别：语音转文字 | 语音模型 | whisper-1/qwen-audio |
-| `embedding` | 生成向量：用于记忆搜索 | 嵌入模型 | qwen3-embbeding |
+- **`utils`** — 工具类：表情包、学习分析。推荐便宜实用的模型，如 dsv4/qwen3.5-35A3B/gemini3.1-flash/gptmini
+- **`planner`** — 规划器：决定行动逻辑，搜集信息，何时回复等。推荐实用的模型（需要支持tool调用），如 dsv4/qwen3.5-35A3B/gemini3.1
+- **`replyer`** — 回复器：生成实际回复。推荐质量好的模型，如 dsv4(思考)/gemini3.1
+- **`vlm`** — 看图说话：理解图片。推荐视觉模型，如 qwen3.5-35A3B/gemini3.1-flash
+- **`voice`** — 语音识别：语音转文字。推荐语音模型，如 whisper-1/qwen-audio
+- **`embedding`** — 生成向量：用于记忆搜索。推荐嵌入模型，如 qwen3-embbeding
 
 ### 任务配置示例
 
@@ -187,13 +177,11 @@ selection_strategy = "balance"
 
 ### 参数说明
 
-| 🏷️ 参数 | 💡 是什么 | 📊 推荐值 |
-|----------|----------|----------|
-| `max_tokens` | 最多输出多少token | `1024` |
-| `temperature` | 创造性（0-2） | `0.3` 保守，`0.7` 有创意 |
-| `model_list` | 用哪些模型 | 可以写多个，自动切换 |
-| `slow_threshold` | 慢请求阈值（秒） | `15.0`，超过会输出警告日志 |
-| `selection_strategy` | 模型选择策略 | `balance`（默认）、`random`、`sequential` |
+- **`max_tokens`** — 最多输出多少token。推荐 `1024`
+- **`temperature`** — 创造性（0-2），`0.3` 保守，`0.7` 有创意
+- **`model_list`** — 用哪些模型，可以写多个，自动切换
+- **`slow_threshold`** — 慢请求阈值（秒），超过会输出警告日志。推荐 `15.0`
+- **`selection_strategy`** — 模型选择策略，`balance`（默认）、`random`、`sequential`
 
 ## 🎯 推荐配置（新手专用）
 

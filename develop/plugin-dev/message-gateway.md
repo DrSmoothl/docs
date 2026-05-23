@@ -26,11 +26,9 @@ from maibot_sdk import MessageGateway
 
 ## 路由类型
 
-| route_type | 枚举值 | 方向 | 说明 |
-|------------|--------|------|------|
-| `"send"` | `MessageGatewayRouteType.SEND` | 出站 | Host → 插件 → 外部平台 |
-| `"receive"` | `MessageGatewayRouteType.RECEIVE` | 入站 | 外部平台 → 插件 → Host |
-| `"duplex"` | `MessageGatewayRouteType.DUPLEX` | 双向 | 同时支持出站和入站 |
+- **`"send"`** → `MessageGatewayRouteType.SEND` — 出站：Host → 插件 → 外部平台
+- **`"receive"`** → `MessageGatewayRouteType.RECEIVE` — 入站：外部平台 → 插件 → Host
+- **`"duplex"`** → `MessageGatewayRouteType.DUPLEX` — 双向：同时支持出站和入站
 
 ::: tip 别名支持
 `route_type` 也接受 `"recv"` 和 `"recive"` 作为 `"receive"` 的别名。
@@ -38,10 +36,8 @@ from maibot_sdk import MessageGateway
 
 ## ctx.gateway 能力代理
 
-| 方法 | 说明 |
-|------|------|
-| `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` | 注入入站消息到 Host |
-| `await self.ctx.gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` | 上报网关状态 |
+- `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` — 注入入站消息到 Host
+- `await self.ctx.gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` — 上报网关状态
 
 ### 状态管理
 
@@ -230,13 +226,11 @@ def create_plugin():
 
 `@MessageGateway` 装饰的处理器方法接收以下参数：
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `self` | `MaiBotPlugin` | 插件实例 |
-| `message` | `dict[str, Any]` | Host 传出的消息字典（出站方向） |
-| `route` | `dict[str, Any] \| None` | 路由信息 |
-| `metadata` | `dict[str, Any] \| None` | 路由元数据 |
-| `**kwargs` | `Any` | 其他参数 |
+- **`self`** `MaiBotPlugin` — 插件实例
+- **`message`** `dict[str, Any]` — Host 传出的消息字典（出站方向）
+- **`route`** `dict[str, Any] | None` — 路由信息
+- **`metadata`** `dict[str, Any] | None` — 路由元数据
+- **`**kwargs`** `Any` — 其他参数
 
 处理器返回值为 `dict[str, Any]`，应至少包含 `success` 字段表示发送是否成功。
 
@@ -293,11 +287,9 @@ stateDiagram-v2
 
 ## 平台字段说明
 
-| 字段 | 说明 | 示例 |
-|------|------|------|
-| `platform` | 目标平台名称 | `"qq"`、`"discord"`、`"webhook"` |
-| `protocol` | 协议或实现名称 | `"napcat"`、`"go-cqhttp"`、`"discord.py"` |
-| `account_id` | 机器人账号 ID | `"10001"`、`"bot#1234"` |
-| `scope` | 路由作用域 | `"primary"`、`"default"` |
+- **`platform`** `str` — 目标平台名称（如 `"qq"`、`"discord"`、`"webhook"`）
+- **`protocol`** `str` — 协议或实现名称（如 `"napcat"`、`"go-cqhttp"`、`"discord.py"`）
+- **`account_id`** `str` — 机器人账号 ID（如 `"10001"`、`"bot#1234"`）
+- **`scope`** `str` — 路由作用域（如 `"primary"`、`"default"`）
 
 `platform`、`protocol`、`account_id`、`scope` 也可以在运行时通过 `ctx.gateway.update_state()` 动态上报，无需在装饰器中固定。

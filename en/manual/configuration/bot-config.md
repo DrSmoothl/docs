@@ -12,29 +12,27 @@ This document is organized according to `src/config/official_configs.py` and `sr
 
 `bot_config.toml` contains these top-level sections:
 
-| Section | Purpose |
-|------|------|
-| `[bot]` | Bot identity, platform, nickname, aliases |
-| `[personality]` | Character setting and reply style |
-| `[visual]` | Image understanding mode and visual prompt |
-| `[chat]` | Reply frequency, context, chat prompts |
-| `[message_receive]` | Image parsing threshold and message filtering |
-| `[memory]` | Memory retrieval, writeback, feedback correction |
-| `[expression]` | Expression learning, jargon learning, expression checking |
-| `[voice]` | Speech recognition |
-| `[emoji]` | Emoji collection, filtering, sending |
-| `[keyword_reaction]` | Keyword/regex triggered reactions |
-| `[response_post_process]` | Global response post-processing switch |
-| `[chinese_typo]` | Chinese typo generation |
-| `[log]` | Log configuration |
-| `[response_splitter]` | Response splitting |
-| `[telemetry]` | Telemetry switch |
-| `[debug]` | Debug display and tracking |
-| `[maim_message]` | maim_message WebSocket/API Server |
-| `[webui]` | WebUI service and security settings |
-| `[database]` | Message binary data saving policy |
-| `[mcp]` | MCP client and server configuration |
-| `[plugin_runtime]` | Plugin runtime and browser rendering configuration |
+- **`[bot]`** — Bot identity, platform, nickname, aliases
+- **`[personality]`** — Character setting and reply style
+- **`[visual]`** — Image understanding mode and visual prompt
+- **`[chat]`** — Reply frequency, context, chat prompts
+- **`[message_receive]`** — Image parsing threshold and message filtering
+- **`[memory]`** — Memory retrieval, writeback, feedback correction
+- **`[expression]`** — Expression learning, jargon learning, expression checking
+- **`[voice]`** — Speech recognition
+- **`[emoji]`** — Emoji collection, filtering, sending
+- **`[keyword_reaction]`** — Keyword/regex triggered reactions
+- **`[response_post_process]`** — Global response post-processing switch
+- **`[chinese_typo]`** — Chinese typo generation
+- **`[log]`** — Log configuration
+- **`[response_splitter]`** — Response splitting
+- **`[telemetry]`** — Telemetry switch
+- **`[debug]`** — Debug display and tracking
+- **`[maim_message]`** — maim_message WebSocket/API Server
+- **`[webui]`** — WebUI service and security settings
+- **`[database]`** — Message binary data saving policy
+- **`[mcp]`** — MCP client and server configuration
+- **`[plugin_runtime]`** — Plugin runtime and browser rendering configuration
 
 ::: tip
 The `[inner] version` at the top of the configuration file is managed by the program. Users usually do not need to edit this version manually.
@@ -53,13 +51,11 @@ nickname = "MaiMai"
 alias_names = ["XiaoMai", "MaiZi"]
 ```
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `platform` | `str` | `""` | Main platform identifier, such as `qq` |
-| `qq_account` | `int` | `0` | QQ account used by the bot, used to identify @mentions and self messages |
-| `platforms` | `list[str]` | `[]` | Other platform identifiers, used in multi-platform scenarios |
-| `nickname` | `str` | `"麦麦"` | Bot nickname |
-| `alias_names` | `list[str]` | `[]` | Bot aliases, used when detecting mentions |
+- **`platform`** — Main platform identifier, such as qq. Default: empty
+- **`qq_account`** — QQ account used by the bot, used to identify @mentions and self messages. Default: 0
+- **`platforms`** — Other platform identifiers, used in multi-platform scenarios. Default: empty
+- **`nickname`** — Bot nickname. Default: `麦麦`
+- **`alias_names`** — Bot aliases, used when detecting mentions. Default: empty
 
 ## Personality [personality]
 
@@ -73,12 +69,10 @@ multiple_reply_style = []
 multiple_probability = 0.2
 ```
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `personality` | `str` | See default config | Character setting, recommended within 100 Chinese characters |
-| `reply_style` | `str` | See default config | Default expression style, recommended 1-2 lines |
-| `multiple_reply_style` | `list[str]` | `[]` | Optional style list; can randomly replace `reply_style` when not empty |
-| `multiple_probability` | `float` | `0.2` | Probability of using `multiple_reply_style`, range `0.0-1.0` |
+- **`personality`** — Character setting, recommended within 100 Chinese characters. See default config
+- **`reply_style`** — Default expression style, recommended 1-2 lines. See default config
+- **`multiple_reply_style`** — Optional style list; can randomly replace reply_style when not empty. Default: empty
+- **`multiple_probability`** — Probability of using multiple_reply_style, range 0.0-1.0. Default: 0.2
 
 ## Visual [visual]
 
@@ -92,10 +86,8 @@ replyer_mode = "auto"
 
 The image description prompt is managed by the Prompt template `prompts/<locale>/image_description.prompt`.
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `planner_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | Planner visual mode. `auto` chooses based on model metadata |
-| `replyer_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | Replyer visual mode. `auto` chooses based on model metadata |
+- **`planner_mode`** — Planner visual mode, options are text, multimodal, or auto; auto chooses based on model metadata. Default: `auto`
+- **`replyer_mode`** — Replyer visual mode, options are text, multimodal, or auto; auto chooses based on model metadata. Default: `auto`
 
 ## Chat [chat]
 
@@ -122,26 +114,24 @@ chat_prompts = []
 enable_talk_value_rules = true
 ```
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `talk_value` | `float` | `1.0` | Chat frequency. Smaller means quieter, range `0-1` |
-| `private_talk_value` | `float` | `1.0` | Private chat frequency. Smaller means quieter, range `0-1` |
-| `mentioned_bot_reply` | `bool` | `false` | Whether to tend to reply when the bot name is mentioned in plain text |
-| `inevitable_at_reply` | `bool` | `true` | Whether to always reply when @mentioned |
-| `enable_at` | `bool` | `true` | Whether to allow using at mentions |
-| `enable_reply_quote` | `bool` | `true` | Whether to include quoted replies |
-| `max_context_size` | `int` | `40` | Number of context messages sent to the model |
-| `max_private_context_size` | `int` | `60` | Private chat context length |
-| `enable_context_optimization` | `bool` | `true` | Whether to optimize Planner context usage, with possible cache impact |
-| `mid_term_memory` | `bool` | `true` | Whether to summarize trimmed chat history with the `utils` model and keep it as an expandable complex message |
-| `mid_term_memory_lenth` | `int` | `5` | Maximum number of mid-term summary messages to retain; the oldest one is removed when exceeded |
-| `enable_independent_timing_gate` | `bool` | `true` | Whether to use an independent Timing Gate; when disabled, pacing tools are merged into Planner |
-| `planner_interrupt_max_consecutive_count` | `int` | `2` | Maximum consecutive planner interruptions by new messages. `0` disables interruption protection |
-| `group_chat_prompt` | `str` | See default config | General group chat instructions |
-| `private_chat_prompts` | `str` | See default config | General private chat instructions |
-| `chat_prompts` | `list[ExtraPromptItem]` | `[]` | Extra prompts by platform/chat flow |
-| `enable_talk_value_rules` | `bool` | `true` | Whether to enable dynamic talk frequency rules |
-| `talk_value_rules` | `list[TalkRulesItem]` | Two default rules | Adjusts `talk_value` by chat flow and time range |
+- **`talk_value`** — Chat frequency. Smaller means quieter, range 0-1. Default: 1.0
+- **`private_talk_value`** — Private chat frequency. Smaller means quieter, range 0-1. Default: 1.0
+- **`mentioned_bot_reply`** — Whether to tend to reply when the bot name is mentioned in plain text. Default: disabled
+- **`inevitable_at_reply`** — Whether to always reply when @mentioned. Default: enabled
+- **`enable_at`** — Whether to allow using at mentions. Default: enabled
+- **`enable_reply_quote`** — Whether to include quoted replies. Default: enabled
+- **`max_context_size`** — Number of context messages sent to the model. Default: 40
+- **`max_private_context_size`** — Private chat context length. Default: 60
+- **`enable_context_optimization`** — Whether to optimize Planner context usage, with possible cache impact. Default: enabled
+- **`mid_term_memory`** — Whether to summarize trimmed chat history with the utils model and keep it as an expandable complex message. Default: enabled
+- **`mid_term_memory_lenth`** — Maximum number of mid-term summary messages to retain; the oldest one is removed when exceeded. Default: 5
+- **`enable_independent_timing_gate`** — Whether to use an independent Timing Gate; when disabled, pacing tools are merged into Planner. Default: enabled
+- **`planner_interrupt_max_consecutive_count`** — Maximum consecutive planner interruptions by new messages. 0 disables interruption protection. Default: 2
+- **`group_chat_prompt`** — General group chat instructions. See default config
+- **`private_chat_prompts`** — General private chat instructions. See default config
+- **`chat_prompts`** — Extra prompts by platform/chat flow. Default: empty
+- **`enable_talk_value_rules`** — Whether to enable dynamic talk frequency rules. Default: enabled
+- **`talk_value_rules`** — Adjusts talk_value by chat flow and time range. Two default rules
 
 ### talk_value_rules
 
@@ -161,13 +151,11 @@ time = "09:00-18:59"
 value = 1.0
 ```
 
-| Field | Type | Description |
-|--------|------|------|
-| `platform` | `str` | Platform. Empty together with `item_id` means global |
-| `item_id` | `str` | User/group ID. Empty together with `platform` means global |
-| `rule_type` | `"group" \| "private"` | Chat flow type |
-| `time` | `str` | Time range in `"HH:MM-HH:MM"` format. Overnight ranges are supported |
-| `value` | `float` | Chat frequency value for this range, `0-1` |
+- **`platform`** — Platform. Empty together with item_id means global
+- **`item_id`** — User/group ID. Empty together with platform means global
+- **`rule_type`** — Chat flow type, group or private
+- **`time`** — Time range in `HH:MM-HH:MM` format. Overnight ranges are supported
+- **`value`** — Chat frequency value for this range, 0-1
 
 ### chat_prompts
 
@@ -185,11 +173,9 @@ prompt = "Speak more briefly in this group."
 
 `[message_receive]` controls image parsing and message filtering.
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `image_parse_threshold` | `int` | `5` | Parse images only when image count in one message does not exceed this threshold |
-| `ban_words` | `set[str]` | `set()` | Filter word list |
-| `ban_msgs_regex` | `set[str]` | `set()` | Filter regex list. Invalid regex causes configuration validation failure |
+- **`image_parse_threshold`** — Parse images only when image count in one message does not exceed this threshold. Default: 5
+- **`ban_words`** — Filter word list. Default: empty
+- **`ban_msgs_regex`** — Filter regex list. Invalid regex causes configuration validation failure. Default: empty
 
 ## Memory [memory]
 
@@ -197,16 +183,14 @@ prompt = "Speak more briefly in this group."
 
 ### Common Memory Fields
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `global_memory` | `bool` | `false` | Whether memory retrieval can ignore the current chat flow restriction |
-| `global_memory_blacklist` | `list[TargetItem]` | `[]` | Global memory blacklist, used to exclude specific chat flows |
-| `enable_memory_query_tool` | `bool` | `true` | Whether to enable Maisaka's built-in long-term memory tool `query_memory` |
-| `memory_query_default_limit` | `int` | `5` | Default return count for `query_memory`, range `1-20` |
-| `person_fact_writeback_enabled` | `bool` | `true` | Whether to extract and write person facts after replies |
-| `chat_summary_writeback_enabled` | `bool` | `true` | Whether to write chat summaries by message window |
-| `chat_summary_writeback_message_threshold` | `int` | `12` | Message window threshold for chat summary writeback |
-| `chat_summary_writeback_context_length` | `int` | `50` | Number of messages to look back for summary writeback, range `1-500` |
+- **`global_memory`** — Whether memory retrieval can ignore the current chat flow restriction. Default: disabled
+- **`global_memory_blacklist`** — Global memory blacklist, used to exclude specific chat flows. Default: empty
+- **`enable_memory_query_tool`** — Whether to enable Maisaka's built-in long-term memory tool query_memory. Default: enabled
+- **`memory_query_default_limit`** — Default return count for query_memory, range 1-20. Default: 5
+- **`person_fact_writeback_enabled`** — Whether to extract and write person facts after replies. Default: enabled
+- **`chat_summary_writeback_enabled`** — Whether to write chat summaries by message window. Default: enabled
+- **`chat_summary_writeback_message_threshold`** — Message window threshold for chat summary writeback. Default: 12
+- **`chat_summary_writeback_context_length`** — Number of messages to look back for summary writeback, range 1-500. Default: 50
 
 ### global_memory_blacklist
 
@@ -217,51 +201,45 @@ item_id = "123456"
 rule_type = "group"
 ```
 
-Common `TargetItem` fields:
+Common TargetItem fields:
 
-| Field | Type | Description |
-|--------|------|------|
-| `platform` | `str` | Platform. Empty together with `item_id` means global |
-| `item_id` | `str` | User/group ID. Empty together with `platform` means global |
-| `rule_type` | `"group" \| "private"` | Chat flow type |
+- **`platform`** — Platform. Empty together with item_id means global
+- **`item_id`** — User/group ID. Empty together with platform means global
+- **`rule_type`** — Chat flow type, group or private
 
 ### Feedback Correction Fields
 
-Feedback correction is disabled by default and is an advanced feature. It uses user feedback after `query_memory` to try correcting stale memories.
+Feedback correction is disabled by default and is an advanced feature. It uses user feedback after query_memory to try correcting stale memories.
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `feedback_correction_enabled` | `bool` | `false` | Whether to enable feedback-driven delayed memory correction |
-| `feedback_correction_window_hours` | `float` | `12.0` | Feedback window duration in hours |
-| `feedback_correction_check_interval_minutes` | `int` | `30` | Polling interval in minutes |
-| `feedback_correction_batch_size` | `int` | `20` | Maximum tasks per round, range `1-200` |
-| `feedback_correction_auto_apply_threshold` | `float` | `0.85` | Minimum confidence for automatically applying correction, range `0-1` |
-| `feedback_correction_max_feedback_messages` | `int` | `30` | Maximum feedback messages used per correction task |
-| `feedback_correction_prefilter_enabled` | `bool` | `true` | Whether to enable prefiltering |
-| `feedback_correction_paragraph_mark_enabled` | `bool` | `true` | Whether to mark affected paragraphs with corrected-old-fact metadata |
-| `feedback_correction_paragraph_hard_filter_enabled` | `bool` | `true` | Whether to hard-filter paragraphs with stale marks in user queries |
-| `feedback_correction_profile_refresh_enabled` | `bool` | `true` | Whether to enqueue affected person profiles for refresh |
-| `feedback_correction_profile_force_refresh_on_read` | `bool` | `true` | Whether to force-refresh dirty profiles on read |
-| `feedback_correction_episode_rebuild_enabled` | `bool` | `true` | Whether to enqueue affected sources for episode rebuild |
-| `feedback_correction_episode_query_block_enabled` | `bool` | `true` | Whether to block user queries while episode sources are rebuilding |
-| `feedback_correction_reconcile_interval_minutes` | `int` | `5` | Second-stage consistency polling interval |
-| `feedback_correction_reconcile_batch_size` | `int` | `20` | Queue batch size for second-stage consistency |
+- **`feedback_correction_enabled`** — Whether to enable feedback-driven delayed memory correction. Default: disabled
+- **`feedback_correction_window_hours`** — Feedback window duration in hours. Default: 12.0
+- **`feedback_correction_check_interval_minutes`** — Polling interval in minutes. Default: 30
+- **`feedback_correction_batch_size`** — Maximum tasks per round, range 1-200. Default: 20
+- **`feedback_correction_auto_apply_threshold`** — Minimum confidence for automatically applying correction, range 0-1. Default: 0.85
+- **`feedback_correction_max_feedback_messages`** — Maximum feedback messages used per correction task. Default: 30
+- **`feedback_correction_prefilter_enabled`** — Whether to enable prefiltering. Default: enabled
+- **`feedback_correction_paragraph_mark_enabled`** — Whether to mark affected paragraphs with corrected-old-fact metadata. Default: enabled
+- **`feedback_correction_paragraph_hard_filter_enabled`** — Whether to hard-filter paragraphs with stale marks in user queries. Default: enabled
+- **`feedback_correction_profile_refresh_enabled`** — Whether to enqueue affected person profiles for refresh. Default: enabled
+- **`feedback_correction_profile_force_refresh_on_read`** — Whether to force-refresh dirty profiles on read. Default: enabled
+- **`feedback_correction_episode_rebuild_enabled`** — Whether to enqueue affected sources for episode rebuild. Default: enabled
+- **`feedback_correction_episode_query_block_enabled`** — Whether to block user queries while episode sources are rebuilding. Default: enabled
+- **`feedback_correction_reconcile_interval_minutes`** — Second-stage consistency polling interval. Default: 5
+- **`feedback_correction_reconcile_batch_size`** — Queue batch size for second-stage consistency. Default: 20
 
 ## Expression Learning [expression]
 
 `[expression]` controls expression learning, jargon learning, expression auto-checking, and shared expression groups.
 
-| Field | Type | Description |
-|--------|------|------|
-| `learning_list` | `list[LearningItem]` | Expression learning configuration by chat flow |
-| `advanced_chosen` | `bool` | Whether to enable sub-agent based second-stage expression selection |
-| `expression_groups` | `list[ExpressionGroup]` | Shared expression learning groups |
-| `expression_checked_only` | `bool` | Whether to select only checked and non-rejected expressions |
-| `expression_self_reflect` | `bool` | Whether to enable automatic expression optimization |
-| `expression_auto_check_interval` | `int` | Auto-check interval in seconds |
-| `expression_auto_check_count` | `int` | Number of expressions randomly selected for each auto-check |
-| `expression_auto_check_custom_criteria` | `list[str]` | Additional custom evaluation criteria |
-| `all_global_jargon` | `bool` | Whether to enable global jargon mode |
+- **`learning_list`** — Expression learning configuration by chat flow
+- **`advanced_chosen`** — Whether to enable sub-agent based second-stage expression selection
+- **`expression_groups`** — Shared expression learning groups
+- **`expression_checked_only`** — Whether to select only checked and non-rejected expressions
+- **`expression_self_reflect`** — Whether to enable automatic expression optimization
+- **`expression_auto_check_interval`** — Auto-check interval in seconds
+- **`expression_auto_check_count`** — Number of expressions randomly selected for each auto-check
+- **`expression_auto_check_custom_criteria`** — Additional custom evaluation criteria
+- **`all_global_jargon`** — Whether to enable global jargon mode
 
 ### learning_list
 
@@ -275,32 +253,26 @@ enable_learning = true
 enable_jargon_learning = true
 ```
 
-| Field | Type | Description |
-|--------|------|------|
-| `platform` | `str` | Platform. Empty together with `item_id` means global |
-| `item_id` | `str` | User/group ID. Empty together with `platform` means global |
-| `rule_type` | `"group" \| "private"` | Chat flow type |
-| `use_expression` | `bool` | Whether to use learned expressions |
-| `enable_learning` | `bool` | Whether to enable expression optimization learning |
-| `enable_jargon_learning` | `bool` | Whether to enable jargon learning |
+- **`platform`** — Platform. Empty together with item_id means global
+- **`item_id`** — User/group ID. Empty together with platform means global
+- **`rule_type`** — Chat flow type, group or private
+- **`use_expression`** — Whether to use learned expressions
+- **`enable_learning`** — Whether to enable expression optimization learning
+- **`enable_jargon_learning`** — Whether to enable jargon learning
 
 ## Voice [voice]
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `enable_asr` | `bool` | See default config | Whether to enable speech recognition |
+- **`enable_asr`** — Whether to enable speech recognition. See default config
 
 ## Emoji [emoji]
 
-| Field | Type | Description |
-|--------|------|------|
-| `emoji_send_num` | `int` | Number of emoji candidates to choose from when sending, maximum `64` |
-| `max_reg_num` | `int` | Maximum number of registered emojis |
-| `do_replace` | `bool` | Whether to replace old emojis after reaching the maximum |
-| `check_interval` | `int` | Emoji check interval in minutes |
-| `steal_emoji` | `bool` | Whether to collect emojis from chat |
-| `content_filtration` | `bool` | Whether to enable emoji filtering |
-| `filtration_prompt` | `str` | Emoji filtering requirement |
+- **`emoji_send_num`** — Number of emoji candidates to choose from when sending, maximum 64
+- **`max_reg_num`** — Maximum number of registered emojis
+- **`do_replace`** — Whether to replace old emojis after reaching the maximum
+- **`check_interval`** — Emoji check interval in minutes
+- **`steal_emoji`** — Whether to collect emojis from chat
+- **`content_filtration`** — Whether to enable emoji filtering
+- **`filtration_prompt`** — Emoji filtering requirement
 
 ## Keyword Reaction [keyword_reaction]
 
@@ -314,36 +286,28 @@ regex = ["^regex.*"]
 reaction = "reaction after trigger"
 ```
 
-| Field | Type | Description |
-|--------|------|------|
-| `keyword_rules` | `list[KeywordRuleConfig]` | Keyword rule list |
-| `regex_rules` | `list[KeywordRuleConfig]` | Regex rule list |
+- **`keyword_rules`** — Keyword rule list
+- **`regex_rules`** — Regex rule list
 
 `KeywordRuleConfig` fields:
 
-| Field | Type | Description |
-|--------|------|------|
-| `keywords` | `list[str]` | Keyword list |
-| `regex` | `list[str]` | Regex list |
-| `reaction` | `str` | Reaction after keyword or regex trigger |
+- **`keywords`** — Keyword list
+- **`regex`** — Regex list
+- **`reaction`** — Reaction after keyword or regex trigger
 
 ## Response Post-Processing
 
 ### response_post_process
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable_response_post_process` | `bool` | Whether to enable response post-processing, including typo generation and response splitting |
+- **`enable_response_post_process`** — Whether to enable response post-processing, including typo generation and response splitting
 
 ### chinese_typo
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable` | `bool` | Whether to enable Chinese typo generation |
-| `error_rate` | `float` | Single-character replacement probability |
-| `min_freq` | `int` | Minimum character frequency threshold |
-| `tone_error_rate` | `float` | Tone error probability |
-| `word_replace_rate` | `float` | Whole-word replacement probability |
+- **`enable`** — Whether to enable Chinese typo generation
+- **`error_rate`** — Single-character replacement probability
+- **`min_freq`** — Minimum character frequency threshold
+- **`tone_error_rate`** — Tone error probability
+- **`word_replace_rate`** — Whole-word replacement probability
 
 ### log
 
@@ -367,117 +331,99 @@ suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "htt
 library_log_levels = { aiohttp = "WARNING" }
 ```
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `date_style` | `str` | `"m-d H:i:s"` | Log date format |
-| `log_level_style` | `"lite" \| "compact" \| "full"` | `"lite"` | Log level display style |
-| `color_text` | `"none" \| "title" \| "full"` | `"full"` | Console log color mode |
-| `log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"INFO"` | Global log level |
-| `console_log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"INFO"` | Console log level |
-| `file_log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"DEBUG"` | File log level |
-| `log_file_max_bytes` | `int` | `5242880` | Maximum bytes per log file, default 5MB |
-| `max_log_files` | `int` | `30` | Maximum number of main log files to keep |
-| `log_cleanup_days` | `int` | `30` | Main log file retention days |
-| `llm_request_snapshot_limit` | `int` | `128` | Maximum number of failed request snapshots to keep |
-| `maisaka_prompt_preview_limit` | `int` | `256` | Maximum number of Maisaka Prompt preview groups per session |
-| `maisaka_reply_effect_limit` | `int` | `256` | Maximum number of Maisaka reply effect records per session |
-| `suppress_libraries` | `list[str]` | 11 libraries | List of third-party libraries to completely suppress logs |
-| `library_log_levels` | `dict[str, str]` | `{"aiohttp": "WARNING"}` | Log levels for specific third-party libraries |
+- **`date_style`** — Log date format. Default: `m-d H:i:s`
+- **`log_level_style`** — Log level display style, options are lite, compact, or full. Default: `lite`
+- **`color_text`** — Console log color mode, options are none, title, or full. Default: `full`
+- **`log_level`** — Global log level, options are DEBUG, INFO, WARNING, ERROR, or CRITICAL. Default: `INFO`
+- **`console_log_level`** — Console log level. Default: `INFO`
+- **`file_log_level`** — File log level. Default: `DEBUG`
+- **`log_file_max_bytes`** — Maximum bytes per log file, default 5MB. Default: 5242880
+- **`max_log_files`** — Maximum number of main log files to keep. Default: 30
+- **`log_cleanup_days`** — Main log file retention days. Default: 30
+- **`llm_request_snapshot_limit`** — Maximum number of failed request snapshots to keep. Default: 128
+- **`maisaka_prompt_preview_limit`** — Maximum number of Maisaka Prompt preview groups per session. Default: 256
+- **`maisaka_reply_effect_limit`** — Maximum number of Maisaka reply effect records per session. Default: 256
+- **`suppress_libraries`** — List of third-party libraries to completely suppress logs. 11 libraries
+- **`library_log_levels`** — Log levels for specific third-party libraries. Default: `{"aiohttp": "WARNING"}`
 
 ### response_splitter
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable` | `bool` | Whether to enable response splitting |
-| `max_length` | `int` | Maximum allowed response length |
-| `max_sentence_num` | `int` | Maximum allowed sentence count |
-| `enable_kaomoji_protection` | `bool` | Whether to protect kaomoji |
-| `enable_overflow_return_all` | `bool` | Whether to return all content when sentence count exceeds the limit |
+- **`enable`** — Whether to enable response splitting
+- **`max_length`** — Maximum allowed response length
+- **`max_sentence_num`** — Maximum allowed sentence count
+- **`enable_kaomoji_protection`** — Whether to protect kaomoji
+- **`enable_overflow_return_all`** — Whether to return all content when sentence count exceeds the limit
 
 ## Telemetry and Debug
 
 ### telemetry
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable` | `bool` | Whether to enable telemetry |
+- **`enable`** — Whether to enable telemetry
 
 ### debug
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable_maisaka_stage_board` | `bool` | Whether to enable the Maisaka stage board |
-| `show_maisaka_thinking` | `bool` | Whether to show replyer reasoning |
-| `fold_maisaka_thinking` | `bool` | Whether to fold the Maisaka prompt display entry |
-| `show_jargon_prompt` | `bool` | Whether to show jargon-related prompts |
-| `show_memory_prompt` | `bool` | Whether to show memory retrieval prompts |
-| `enable_reply_effect_tracking` | `bool` | Whether to enable reply effect score tracking |
-| `record_reply_request` | `bool` | `false` | Whether to record Replyer request body, disabled by default |
-| `enable_llm_cache_stats` | `bool` | `false` | Whether to record LLM prompt cache debug statistics, disabled by default |
+- **`enable_maisaka_stage_board`** — Whether to enable the Maisaka stage board
+- **`show_maisaka_thinking`** — Whether to show replyer reasoning
+- **`fold_maisaka_thinking`** — Whether to fold the Maisaka prompt display entry
+- **`show_jargon_prompt`** — Whether to show jargon-related prompts
+- **`show_memory_prompt`** — Whether to show memory retrieval prompts
+- **`enable_reply_effect_tracking`** — Whether to enable reply effect score tracking
+- **`record_reply_request`** — Whether to record Replyer request body. Disabled by default
+- **`enable_llm_cache_stats`** — Whether to record LLM prompt cache debug statistics. Disabled by default
 
 ## Message Service [maim_message]
 
 `[maim_message]` contains both the legacy WebSocket service and the additional new API Server configuration.
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `ws_server_host` | `str` | `127.0.0.1` | Legacy WebSocket server host |
-| `ws_server_port` | `int` | `8000` | Legacy WebSocket server port |
-| `auth_token` | `list[str]` | `[]` | Legacy API auth tokens. Empty means no auth |
-| `enable_api_server` | `bool` | See default config | Whether to enable the additional new API Server |
-| `api_server_host` | `str` | See default config | New API Server host |
-| `api_server_port` | `int` | See default config | New API Server port |
-| `api_server_use_wss` | `bool` | See default config | Whether the new API Server uses WSS |
-| `api_server_cert_file` | `str` | `""` | SSL certificate file path |
-| `api_server_key_file` | `str` | `""` | SSL key file path |
-| `api_server_allowed_api_keys` | `list[str]` | `[]` | Allowed API key list. Empty allows all connections |
+- **`ws_server_host`** — Legacy WebSocket server host. Default: `127.0.0.1`
+- **`ws_server_port`** — Legacy WebSocket server port. Default: 8000
+- **`auth_token`** — Legacy API auth tokens. Empty means no auth. Default: empty
+- **`enable_api_server`** — Whether to enable the additional new API Server. See default config
+- **`api_server_host`** — New API Server host. See default config
+- **`api_server_port`** — New API Server port. See default config
+- **`api_server_use_wss`** — Whether the new API Server uses WSS. See default config
+- **`api_server_cert_file`** — SSL certificate file path. Default: empty
+- **`api_server_key_file`** — SSL key file path. Default: empty
+- **`api_server_allowed_api_keys`** — Allowed API key list. Empty allows all connections. Default: empty
 
 ## WebUI [webui]
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | Whether to enable WebUI |
-| `host` | `str` | `127.0.0.1` | WebUI bind host |
-| `port` | `int` | `8001` | WebUI bind port |
-| `mode` | `"development" \| "production"` | `"production"` | WebUI running mode |
-| `anti_crawler_mode` | `"false" \| "strict" \| "loose" \| "basic"` | `"basic"` | Anti-crawler mode |
-| `allowed_ips` | `str` | `127.0.0.1` | IP whitelist, comma-separated; supports exact IP, CIDR, and wildcard |
-| `trusted_proxies` | `str` | `""` | Trusted proxy IP list |
-| `trust_xff` | `bool` | `false` | Whether to parse `X-Forwarded-For` |
-| `secure_cookie` | `bool` | `false` | Whether to enable secure cookies, HTTPS only |
-| `enable_paragraph_content` | `bool` | `false` | Whether to load full paragraph content in the knowledge graph; uses extra memory |
+- **`enabled`** — Whether to enable WebUI. Default: enabled
+- **`host`** — WebUI bind host. Default: `127.0.0.1`
+- **`port`** — WebUI bind port. Default: 8001
+- **`mode`** — WebUI running mode, options are development or production. Default: `production`
+- **`anti_crawler_mode`** — Anti-crawler mode, options are false, strict, loose, or basic. Default: `basic`
+- **`allowed_ips`** — IP whitelist, comma-separated; supports exact IP, CIDR, and wildcard. Default: `127.0.0.1`
+- **`trusted_proxies`** — Trusted proxy IP list. Default: empty
+- **`trust_xff`** — Whether to parse `X-Forwarded-For`. Default: disabled
+- **`secure_cookie`** — Whether to enable secure cookies, HTTPS only. Default: disabled
+- **`enable_paragraph_content`** — Whether to load full paragraph content in the knowledge graph; uses extra memory. Default: disabled
 
 ## Database [database]
 
-| Field | Type | Default | Description |
-|--------|------|--------|------|
-| `save_binary_data` | `bool` | `false` | Whether to save binary data such as voice as independent files. Only affects newly stored messages |
+- **`save_binary_data`** — Whether to save binary data such as voice as independent files. Only affects newly stored messages. Default: disabled
 
 ## MCP [mcp]
 
 `[mcp]` controls MaiBot's MCP client host capabilities and external MCP server connections.
 
-| Field | Type | Description |
-|--------|------|------|
-| `enable` | `bool` | Whether to enable MCP |
-| `client` | `MCPClientConfig` | MCP client host capability configuration |
-| `servers` | `list[MCPServerItemConfig]` | MCP server configuration list |
+- **`enable`** — Whether to enable MCP
+- **`client`** — MCP client host capability configuration
+- **`servers`** — MCP server configuration list
 
 ### mcp.client
 
-| Field | Type | Description |
-|--------|------|------|
-| `client_name` | `str` | MCP client implementation name |
-| `client_version` | `str` | MCP client implementation version |
-| `roots.enable` | `bool` | Whether to expose Roots capability to MCP servers |
-| `roots.items` | `list[MCPRootItemConfig]` | Roots list |
-| `sampling.enable` | `bool` | Whether to declare Sampling capability |
-| `sampling.task_name` | `str` | Main model task name used for Sampling requests |
-| `sampling.include_context_support` | `bool` | Whether to declare support for non-`none` `includeContext` semantics |
-| `sampling.tool_support` | `bool` | Whether to declare support for continuing to use tools in Sampling |
-| `elicitation.enable` | `bool` | Whether to declare Elicitation capability |
-| `elicitation.allow_form` | `bool` | Whether to allow form-mode Elicitation |
-| `elicitation.allow_url` | `bool` | Whether to allow URL-mode Elicitation |
+- **`client_name`** — MCP client implementation name
+- **`client_version`** — MCP client implementation version
+- **`roots.enable`** — Whether to expose Roots capability to MCP servers
+- **`roots.items`** — Roots list
+- **`sampling.enable`** — Whether to declare Sampling capability
+- **`sampling.task_name`** — Main model task name used for Sampling requests
+- **`sampling.include_context_support`** — Whether to declare support for non-none includeContext semantics
+- **`sampling.tool_support`** — Whether to declare support for continuing to use tools in Sampling
+- **`elicitation.enable`** — Whether to declare Elicitation capability
+- **`elicitation.allow_form`** — Whether to allow form-mode Elicitation
+- **`elicitation.allow_url`** — Whether to allow URL-mode Elicitation
 
 ### mcp.servers
 
@@ -491,50 +437,44 @@ args = ["some-mcp-server"]
 env = {}
 ```
 
-| Field | Type | Description |
-|--------|------|------|
-| `name` | `str` | Server name, must be unique |
-| `enabled` | `bool` | Whether to enable this server |
-| `transport` | `"stdio" \| "streamable_http"` | Transport mode |
-| `command` | `str` | Command used to start the server in `stdio` mode |
-| `args` | `list[str]` | Command arguments in `stdio` mode |
-| `env` | `dict[str, str]` | Extra environment variables in `stdio` mode |
-| `url` | `str` | MCP endpoint in `streamable_http` mode |
-| `headers` | `dict[str, str]` | Extra HTTP headers |
-| `http_timeout_seconds` | `float` | HTTP request timeout |
-| `read_timeout_seconds` | `float` | Session read timeout |
-| `authorization.mode` | `"none" \| "bearer"` | HTTP authorization mode |
-| `authorization.bearer_token` | `str` | Bearer Token, only used when `mode = "bearer"` |
+- **`name`** — Server name, must be unique
+- **`enabled`** — Whether to enable this server
+- **`transport`** — Transport mode, stdio or streamable_http
+- **`command`** — Command used to start the server in stdio mode
+- **`args`** — Command arguments in stdio mode
+- **`env`** — Extra environment variables in stdio mode
+- **`url`** — MCP endpoint in streamable_http mode
+- **`headers`** — Extra HTTP headers
+- **`http_timeout_seconds`** — HTTP request timeout
+- **`read_timeout_seconds`** — Session read timeout
+- **`authorization.mode`** — HTTP authorization mode, none or bearer
+- **`authorization.bearer_token`** — Bearer Token, only used when mode is bearer
 
 ## Plugin Runtime [plugin_runtime]
 
 `[plugin_runtime]` controls the plugin runner and plugin runtime browser rendering capability.
 
-| Field | Type | Description |
-|--------|------|------|
-| `enabled` | `bool` | Whether to enable the plugin system |
-| `health_check_interval_sec` | `float` | Health check interval |
-| `max_restart_attempts` | `int` | Maximum auto-restarts after runner crash |
-| `runner_spawn_timeout_sec` | `float` | Timeout waiting for runner subprocess startup and registration |
-| `hook_blocking_timeout_sec` | `float` | Global timeout for blocking hook steps |
-| `ipc_socket_path` | `str` | Custom IPC socket path, Linux/macOS only; empty means auto-generated |
+- **`enabled`** — Whether to enable the plugin system
+- **`health_check_interval_sec`** — Health check interval
+- **`max_restart_attempts`** — Maximum auto-restarts after runner crash
+- **`runner_spawn_timeout_sec`** — Timeout waiting for runner subprocess startup and registration
+- **`hook_blocking_timeout_sec`** — Global timeout for blocking hook steps
+- **`ipc_socket_path`** — Custom IPC socket path, Linux/macOS only; empty means auto-generated
 
 ### plugin_runtime.render
 
-| Field | Type | Description |
-|--------|------|------|
-| `enabled` | `bool` | Whether to enable browser rendering in plugin runtime |
-| `browser_ws_endpoint` | `str` | Existing Chromium CDP address to reuse first |
-| `executable_path` | `str` | Browser executable path; empty means auto-detect |
-| `browser_install_root` | `str` | Playwright-managed browser directory |
-| `headless` | `bool` | Whether to launch browser in headless mode |
-| `launch_args` | `list[str]` | Browser launch arguments |
-| `concurrency_limit` | `int` | Maximum concurrent rendering tasks |
-| `startup_timeout_sec` | `float` | Browser connection or startup timeout |
-| `render_timeout_sec` | `float` | Default timeout for a single render |
-| `auto_download_chromium` | `bool` | Whether to automatically download Playwright Chromium if no browser is found |
-| `download_connection_timeout_sec` | `float` | Connection timeout when automatically downloading Chromium |
-| `restart_after_render_count` | `int` | Rebuild local browser after this many renders; `0` disables this policy |
+- **`enabled`** — Whether to enable browser rendering in plugin runtime
+- **`browser_ws_endpoint`** — Existing Chromium CDP address to reuse first
+- **`executable_path`** — Browser executable path; empty means auto-detect
+- **`browser_install_root`** — Playwright-managed browser directory
+- **`headless`** — Whether to launch browser in headless mode
+- **`launch_args`** — Browser launch arguments
+- **`concurrency_limit`** — Maximum concurrent rendering tasks
+- **`startup_timeout_sec`** — Browser connection or startup timeout
+- **`render_timeout_sec`** — Default timeout for a single render
+- **`auto_download_chromium`** — Whether to automatically download Playwright Chromium if no browser is found
+- **`download_connection_timeout_sec`** — Connection timeout when automatically downloading Chromium
+- **`restart_after_render_count`** — Rebuild local browser after this many renders; 0 disables this policy
 
 ## Common Examples
 

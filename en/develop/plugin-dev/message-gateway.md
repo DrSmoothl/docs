@@ -26,11 +26,9 @@ from maibot_sdk import MessageGateway
 
 ## Route Types
 
-| route_type | Enum Value | Direction | Description |
-|------------|--------|------|------|
-| `"send"` | `MessageGatewayRouteType.SEND` | Outbound | Host → Plugin → External Platform |
-| `"receive"` | `MessageGatewayRouteType.RECEIVE` | Inbound | External Platform → Plugin → Host |
-| `"duplex"` | `MessageGatewayRouteType.DUPLEX` | Bidirectional | Supports both outbound and inbound |
+- **`"send"`** → `MessageGatewayRouteType.SEND` — Outbound: Host → Plugin → External Platform
+- **`"receive"`** → `MessageGatewayRouteType.RECEIVE` — Inbound: External Platform → Plugin → Host
+- **`"duplex"`** → `MessageGatewayRouteType.DUPLEX` — Bidirectional: Supports both outbound and inbound
 
 ::: tip Alias Support
 `route_type` also accepts `"recv"` as an alias for `"receive"`.
@@ -38,10 +36,8 @@ from maibot_sdk import MessageGateway
 
 ## ctx.gateway Capability Proxy
 
-| Method | Description |
-|------|------|
-| `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` | Inject inbound message to Host |
-| `await self.ctx.gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` | Report gateway status |
+- `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` — Inject inbound message to Host
+- `await self.ctx.gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` — Report gateway status
 
 ### Status Management
 
@@ -230,13 +226,11 @@ def create_plugin():
 
 The handler method decorated with `@MessageGateway` receives the following parameters:
 
-| Parameter | Type | Description |
-|------|------|------|
-| `self` | `MaiBotPlugin` | Plugin instance |
-| `message` | `dict[str, Any]` | Message dictionary from Host (outbound direction) |
-| `route` | `dict[str, Any] \| None` | Route information |
-| `metadata` | `dict[str, Any] \| None` | Route metadata |
-| `**kwargs` | `Any` | Other parameters |
+- **`self`** `MaiBotPlugin` — Plugin instance
+- **`message`** `dict[str, Any]` — Message dictionary from Host (outbound direction)
+- **`route`** `dict[str, Any] | None` — Route information
+- **`metadata`** `dict[str, Any] | None` — Route metadata
+- **`**kwargs`** `Any` — Other parameters
 
 The handler return value is `dict[str, Any]`, which should at least contain a `success` field indicating whether the send was successful.
 
@@ -293,11 +287,9 @@ stateDiagram-v2
 
 ## Platform Field Description
 
-| Field | Description | Example |
-|------|------|------|
-| `platform` | Target platform name | `"qq"`, `"discord"`, `"webhook"` |
-| `protocol` | Protocol or implementation name | `"napcat"`, `"go-cqhttp"`, `"discord.py"` |
-| `account_id` | Bot account ID | `"10001"`, `"bot#1234"` |
-| `scope` | Route scope | `"primary"`, `"default"` |
+- **`platform`** `str` — Target platform name (e.g., `"qq"`, `"discord"`, `"webhook"`)
+- **`protocol`** `str` — Protocol or implementation name (e.g., `"napcat"`, `"go-cqhttp"`, `"discord.py"`)
+- **`account_id`** `str` — Bot account ID (e.g., `"10001"`, `"bot#1234"`)
+- **`scope`** `str` — Route scope (e.g., `"primary"`, `"default"`)
 
 `platform`, `protocol`, `account_id`, `scope` can also be dynamically reported at runtime through `ctx.gateway.update_state()`, no need to be fixed in the decorator.

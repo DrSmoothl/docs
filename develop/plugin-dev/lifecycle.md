@@ -147,11 +147,9 @@ async def on_config_update(
 
 ### scope 取值
 
-| scope | 常量 | 含义 | 触发条件 |
-|-------|------|------|----------|
-| `"self"` | `CONFIG_RELOAD_SCOPE_SELF` | 插件自身配置 | 插件目录下的 `config.toml` 变化时**始终触发**，无需订阅 |
-| `"bot"` | `ON_BOT_CONFIG_RELOAD` | 全局 Bot 配置 | 需要通过 `config_reload_subscriptions` 订阅 |
-| `"model"` | `ON_MODEL_CONFIG_RELOAD` | LLM 模型配置 | 需要通过 `config_reload_subscriptions` 订阅 |
+- **`"self"`** → `CONFIG_RELOAD_SCOPE_SELF` — 插件自身配置。插件目录下的 `config.toml` 变化时**始终触发**，无需订阅
+- **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — 全局 Bot 配置。需要通过 `config_reload_subscriptions` 订阅
+- **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM 模型配置。需要通过 `config_reload_subscriptions` 订阅
 
 ::: important
 - `scope == "self"` 的回调**始终触发**，不需要额外订阅

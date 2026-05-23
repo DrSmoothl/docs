@@ -54,21 +54,17 @@ class HookMode(str, Enum):
 
 Handlers within the same mode are sorted and executed by `order`:
 
-| Value | Description |
-|-------|-------------|
-| `HookOrder.EARLY` | Execute first, suitable for pre-interception |
-| `HookOrder.NORMAL` | Default order |
-| `HookOrder.LATE` | Execute later, suitable for supplementary processing |
+- **`HookOrder.EARLY`** — Execute first, suitable for pre-interception
+- **`HookOrder.NORMAL`** — Default order
+- **`HookOrder.LATE`** — Execute later, suitable for supplementary processing
 
 ## Error Policy
 
 When a handler raises an exception, subsequent behavior is determined by `error_policy`:
 
-| Value | Description |
-|-------|-------------|
-| `ErrorPolicy.ABORT` | On exception, abort the current Hook call |
-| `ErrorPolicy.SKIP` | Log the error, skip this handler and continue (**default**) |
-| `ErrorPolicy.LOG` | Log the error, and continue executing subsequent hooks |
+- **`ErrorPolicy.ABORT`** — On exception, abort the current Hook call
+- **`ErrorPolicy.SKIP`** — Log the error, skip this handler and continue (**default**)
+- **`ErrorPolicy.LOG`** — Log the error, and continue executing subsequent hooks
 
 ## Scheduling Order
 
@@ -190,47 +186,35 @@ class SendInterceptorPlugin(MaiBotPlugin):
 
 ### Chat Message Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `chat.receive.before_process` | Before inbound message executes `process()` |
-| `chat.receive.after_process` | After inbound message completes lightweight preprocessing |
+- **`chat.receive.before_process`** — Before inbound message executes `process()`
+- **`chat.receive.after_process`** — After inbound message completes lightweight preprocessing
 
 ### Command Execution Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `chat.command.before_execute` | After command matches successfully, before actual execution |
-| `chat.command.after_execute` | After command execution ends |
+- **`chat.command.before_execute`** — After command matches successfully, before actual execution
+- **`chat.command.after_execute`** — After command execution ends
 
 ### Send Service Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `send_service.after_build_message` | After outbound message is built |
-| `send_service.before_send` | Before calling Platform IO to send |
-| `send_service.after_send` | After send process ends |
+- **`send_service.after_build_message`** — After outbound message is built
+- **`send_service.before_send`** — Before calling Platform IO to send
+- **`send_service.after_send`** — After send process ends
 
 ### Heart Flow Cycle Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `heart_fc.heart_flow_cycle_start` | When heart flow cycle starts |
-| `heart_fc.heart_flow_cycle_end` | When heart flow cycle ends |
+- **`heart_fc.heart_flow_cycle_start`** — When heart flow cycle starts
+- **`heart_fc.heart_flow_cycle_end`** — When heart flow cycle ends
 
 ### Maisaka Planner Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `maisaka.planner.before_request` | Before sending planning request to model |
-| `maisaka.planner.after_response` | After receiving model response |
+- **`maisaka.planner.before_request`** — Before sending planning request to model
+- **`maisaka.planner.after_response`** — After receiving model response
 
 ### Maisaka Replyer Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `maisaka.replyer.before_request` | Before the Maisaka replyer sends the model request; can read or rewrite this call's `reply_tool_args` |
-| `maisaka.replyer.before_model_request` | After the Maisaka replyer builds the final `messages` and before the model request; can rewrite the actual message list sent to the model |
-| `maisaka.replyer.after_response` | After the Maisaka replyer receives the model response; can rewrite the reply or request regeneration |
+- **`maisaka.replyer.before_request`** — Before the Maisaka replyer sends the model request; can read or rewrite this call's `reply_tool_args`
+- **`maisaka.replyer.before_model_request`** — After the Maisaka replyer builds the final `messages` and before the model request; can rewrite the actual message list sent to the model
+- **`maisaka.replyer.after_response`** — After the Maisaka replyer receives the model response; can rewrite the reply or request regeneration
 
 `reply_tool_args` remains visible in the expression selection chain, `maisaka.replyer.before_request`, and `maisaka.replyer.after_response`. It contains extra reply tool arguments other than `msg_id`, `set_quote`, and `reference_info`; modifications returned from `before_request` continue to later replyer hooks.
 
@@ -238,13 +222,11 @@ class SendInterceptorPlugin(MaiBotPlugin):
 
 `maisaka.replyer.before_request` is the last mutable point before the replyer sends the model request. A blocking handler can rewrite these fields:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `task_name` | `str` | Task name used by this replyer request. Changing it uses that task's default model pool and generation options. |
-| `model_name` | `str` | Concrete model name for this replyer request. It must exist in `[[models]]` in `model_config.toml`. When set, only this model is attempted once instead of rotating through the task model pool. |
-| `extra_prompt` | `str` | Extra reply requirements appended to this replyer prompt. |
-| `reference_info` | `str` | Reference information passed by the reply tool. It can be rewritten. |
-| `reply_tool_args` | `dict` | Extra reply tool arguments. Changes continue to later replyer hooks. |
+- **`task_name`** `str` — Task name used by this replyer request. Changing it uses that task's default model pool and generation options.
+- **`model_name`** `str` — Concrete model name for this replyer request. It must exist in `[[models]]` in `model_config.toml`. When set, only this model is attempted once instead of rotating through the task model pool.
+- **`extra_prompt`** `str` — Extra reply requirements appended to this replyer prompt.
+- **`reference_info`** `str` — Reference information passed by the reply tool. It can be rewritten.
+- **`reply_tool_args`** `dict` — Extra reply tool arguments. Changes continue to later replyer hooks.
 
 `model_name` is a concrete model name, not a task name. To route through another task's model pool, change `task_name`. If both `task_name` and `model_name` are set, the task supplies generation options such as temperature, token limit, and timeout, while `model_name` selects the actual model.
 
@@ -288,10 +270,8 @@ Adding or changing a hook name usually does not require plugin SDK runtime chang
 
 ### Expression Selection Chain
 
-| Hook Name | Trigger Timing |
-|-----------|---------------|
-| `expression.select.before_select` | After the expression candidate pool is loaded and before the default selection is built; can rewrite `candidates`, `max_num`, or `abort` this selection |
-| `expression.select.after_selection` | After the default selection is built; can rewrite `selected_expression_ids` or `selected_expressions` |
+- **`expression.select.before_select`** — After the expression candidate pool is loaded and before the default selection is built; can rewrite `candidates`, `max_num`, or `abort` this selection
+- **`expression.select.after_selection`** — After the default selection is built; can rewrite `selected_expression_ids` or `selected_expressions`
 
 `before_select` receives `chat_id`, `session_id`, `chat_info`, `chat_history`, `reply_message`, `reply_tool_args`, `target_message`, `reply_reason`, `max_num`, `think_level`, and `candidates`. `reply_tool_args` contains extra reply tool arguments other than `msg_id`, `set_quote`, and `reference_info`. `after_selection` also receives `selected_expression_ids` and `selected_expressions`.
 
@@ -309,10 +289,8 @@ async def replace_expression_selection(self, **kwargs):
 
 Blocking mode handlers can return a dictionary to control the subsequent flow:
 
-| Return Field | Type | Description |
-|-------------|------|-------------|
-| `action` | `str` | `"continue"` to continue the call chain, `"abort"` to terminate it |
-| `modified_kwargs` | `dict` | Modified parameters, will be passed to subsequent handlers |
+- **`action`** `str` — `"continue"` to continue the call chain, `"abort"` to terminate it
+- **`modified_kwargs`** `dict` — Modified parameters, will be passed to subsequent handlers
 
 Observe mode handler return values are ignored — no need to return a control dictionary.
 
@@ -338,12 +316,10 @@ sequenceDiagram
 
 ## Migration Guide: WorkflowStep → HookHandler
 
-| Old API | New API | Description |
-|---------|---------|-------------|
-| `@WorkflowStep(stage="pre_process")` | `@HookHandler("chat.receive.before_process")` | Use named Hook points instead of fixed stages |
-| `blocking=True` | `mode=HookMode.BLOCKING` | Parameter name change |
-| `observe=True` | `mode=HookMode.OBSERVE` | Parameter name change |
-| `priority=10` | `order=HookOrder.EARLY` | Changed to three-tier enum |
+- **`@WorkflowStep(stage="pre_process")`** → **`@HookHandler("chat.receive.before_process")`** — Use named Hook points instead of fixed stages
+- **`blocking=True`** → **`mode=HookMode.BLOCKING`** — Parameter name change
+- **`observe=True`** → **`mode=HookMode.OBSERVE`** — Parameter name change
+- **`priority=10`** → **`order=HookOrder.EARLY`** — Changed to three-tier enum
 
 ::: danger
 Calling `WorkflowStep(...)` directly now immediately raises `RuntimeError` — there is no compatibility mapping. You must manually replace all `@WorkflowStep` with `@HookHandler`.

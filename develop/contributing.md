@@ -54,14 +54,12 @@ def process_message(message, timeout=5.0):
 
 以下行为在项目中**严格禁止**：
 
-| 反模式 | 说明 |
-|--------|------|
-| 修改 `dashboard/` 下任何内容 | 前端由独立仓库构建 |
-| 直接编辑 `bot_config.toml` / `model_config.toml` | 应修改模版 + 版本号 |
-| 空 catch 块 `catch(e) {}` | 至少记录日志 |
-| 删除失败测试来"通过" | 必须修复问题本身 |
-| 硬编码 API key / 密码 / token | 使用配置系统管理 |
-| `eval()` / `exec()` / `__import__` | 存在安全风险 |
+- **修改 `dashboard/` 下任何内容** — 前端由独立仓库构建
+- **直接编辑 `bot_config.toml` / `model_config.toml`** — 应修改模版 + 版本号
+- **空 catch 块 `catch(e) {}`** — 至少记录日志
+- **删除失败测试来"通过"** — 必须修复问题本身
+- **硬编码 API key / 密码 / token** — 使用配置系统管理
+- **`eval()` / `exec()` / `__import__`** — 存在安全风险
 
 ## 变量与属性规范
 

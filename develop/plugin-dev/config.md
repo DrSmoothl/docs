@@ -103,12 +103,10 @@ Field(
 )
 ```
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `default` | `Any` | 字段默认值 |
-| `default_factory` | `Callable` | 默认值工厂函数，用于 `list`、`dict`、嵌套 `PluginConfigBase` 等可变类型 |
-| `description` | `str` | 字段描述，WebUI 中显示为表单标签 |
-| `json_schema_extra` | `dict` | 额外元数据，传递给 WebUI Schema 生成器。常用键: `placeholder`（输入框占位符文本）、`group`（UI 分组提示） |
+- **`default`** `Any` — 字段默认值
+- **`default_factory`** `Callable` — 默认值工厂函数，用于 `list`、`dict`、嵌套 `PluginConfigBase` 等可变类型
+- **`description`** `str` — 字段描述，WebUI 中显示为表单标签
+- **`json_schema_extra`** `dict` — 额外元数据，传递给 WebUI Schema 生成器。常用键: `placeholder`（输入框占位符文本）、`group`（UI 分组提示）
 
 ### __ui_label__
 

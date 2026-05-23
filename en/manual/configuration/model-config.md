@@ -48,12 +48,10 @@ API providers represent the services that provide LLM capabilities.
 
 ### Basic Configuration (Required)
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `name` | Provider name | Choose a name yourself, such as "deepseek" or "openai" |
-| `base_url` | API address | The URL provided by the service provider |
-| `api_key` | Key | The key you get after registration |
-| `auth_type` | Authentication type | `bearer` (default), `header`, `query`, `none` |
+- **`name`** — Provider name, choose a name yourself, such as "deepseek" or "openai"
+- **`base_url`** — API address, the URL provided by the service provider
+- **`api_key`** — Key, the key you get after registration
+- **`auth_type`** — Authentication type, `bearer` (default), `header`, `query`, `none`
 
 ### Common Provider Configuration Examples
 
@@ -126,23 +124,19 @@ Models are specific LLMs, such as GPT-5.4, DeepSeek V4, and so on.
 
 ### Basic Configuration (Required)
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `name` | Model name | Choose a name yourself, such as "gpt-5" or "deepseek-v4" |
-| `model_identifier` | Model ID | The specific model name provided by the service provider |
-| `api_provider` | Which provider to use | Fill in the `name` from `api_providers` above |
-| `visual` | Whether to enable vision | Only multimodal models can enable this option |
-| `price_in` | Input price | Yuan per million tokens, default `0.0` |
-| `price_out` | Output price | Yuan per million tokens, default `0.0` |
+- **`name`** — Model name, choose a name yourself, such as "gpt-5" or "deepseek-v4"
+- **`model_identifier`** — Model ID, the specific model name provided by the service provider
+- **`api_provider`** — Which provider to use, fill in the `name` from `api_providers` above
+- **`visual`** — Whether to enable vision, only multimodal models can enable this option
+- **`price_in`** — Input price, yuan per million tokens. Default: 0.0
+- **`price_out`** — Output price, yuan per million tokens. Default: 0.0
 
 ### Billing Configuration (Optional)
 
-| 🏷️ Item | 💡 What It Is | 📝 How to Fill |
-|-----------|----------|----------|
-| `price_in` | Input price | Yuan per million tokens, default `0.0` |
-| `price_out` | Output price | Yuan per million tokens, default `0.0` |
-| `cache` | Enable cache billing | `false` (default), use cache_price_in for cache hits when enabled |
-| `cache_price_in` | Cache input price | Yuan per million tokens, default `0.0` |
+- **`price_in`** — Input price, yuan per million tokens. Default: 0.0
+- **`price_out`** — Output price, yuan per million tokens. Default: 0.0
+- **`cache`** — Enable cache billing, use cache_price_in for cache hits when enabled. Default: disabled
+- **`cache_price_in`** — Cache input price, yuan per million tokens. Default: 0.0
 
 > 📖 See: [Model Advanced Parameters](./model-extra-params#model-advanced-parameters) for model-level overrides and advanced parameters.
 
@@ -188,14 +182,12 @@ You need to assign models to different tasks based on model characteristics to a
 
 ### Task Type Description
 
-| 🏷️ Task | 💡 What It Does | 🎯 Recommended Model | Example Model |
-|----------|----------|------------|------------|
-| `utils` | Tool tasks: emoji, learning analysis | Cheap and practical model | dsv4/qwen3.5-35A3B/gemini3.1-flash/gptmini |
-| `planner` | Planner: decides action logic, collects information, decides when to reply, etc. | Practical model (needs tool calling support | dsv4/qwen3.5-35A3B/gemini3.1|
-| `replyer` | Replyer: generates the actual reply | High-quality model | dsv4(thinking)/gemini3.1 |
-| `vlm` | Image understanding: talks about pictures | Vision model | qwen3.5-35A3B/gemini3.1-flash |
-| `voice` | Speech recognition: voice to text | Speech model | whisper-1/qwen-audio |
-| `embedding` | Generate vectors: used for memory search | Embedding model | qwen3-embbeding |
+- **`utils`** — Tool tasks: emoji, learning analysis. Recommended: cheap and practical models, e.g. dsv4/qwen3.5-35A3B/gemini3.1-flash/gptmini
+- **`planner`** — Planner: decides action logic, collects information, decides when to reply, etc. Recommended: practical models (needs tool calling support), e.g. dsv4/qwen3.5-35A3B/gemini3.1
+- **`replyer`** — Replyer: generates the actual reply. Recommended: high-quality models, e.g. dsv4(thinking)/gemini3.1
+- **`vlm`** — Image understanding: talks about pictures. Recommended: vision models, e.g. qwen3.5-35A3B/gemini3.1-flash
+- **`voice`** — Speech recognition: voice to text. Recommended: speech models, e.g. whisper-1/qwen-audio
+- **`embedding`** — Generate vectors: used for memory search. Recommended: embedding models, e.g. qwen3-embbeding
 
 ### Task Configuration Example
 
@@ -219,13 +211,11 @@ selection_strategy = "balance"
 
 ### Parameter Description
 
-| 🏷️ Parameter | 💡 What It Is | 📊 Recommended Value |
-|----------|----------|----------|
-| `max_tokens` | Maximum output length | `1024` |
-| `temperature` | Creativity (0-2) | `0.3` conservative, `0.7` creative |
-| `model_list` | Which models to use | Multiple models can be written, automatically switched |
-| `slow_threshold` | Slow request threshold (seconds) | `15.0`, outputs warning log when exceeded |
-| `selection_strategy` | Model selection strategy | `balance` (default), `random`, `sequential` |
+- **`max_tokens`** — Maximum output length. Recommended: `1024`
+- **`temperature`** — Creativity (0-2), `0.3` conservative, `0.7` creative
+- **`model_list`** — Which models to use, multiple models can be written, automatically switched
+- **`slow_threshold`** — Slow request threshold (seconds), outputs warning log when exceeded. Recommended: `15.0`
+- **`selection_strategy`** — Model selection strategy, `balance` (default), `random`, `sequential`
 
 ## 🎯 Recommended Configuration (For Beginners)
 

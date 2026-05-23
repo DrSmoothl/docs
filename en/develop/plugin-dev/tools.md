@@ -29,14 +29,12 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 ### Parameter Description
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `name` | `str` | Tool name, must be unique within the plugin. LLM calls the tool by this name |
-| `description` | `str` | Legacy parameter, recommend using `brief_description` directly |
-| `brief_description` | `str` | Brief description. Passed to LLM as tool description summary, helping LLM decide whether to call it |
-| `detailed_description` | `str` | Detailed description. Can include parameter usage notes, caveats, etc. The SDK automatically merges parameter Schema to generate complete description |
-| `parameters` | `list \| dict \| None` | Tool parameter definition, supports two formats (see below) |
-| `core_tool` | `bool` | Whether to expose the tool directly to LLM as a core tool. Default is `False`; normal plugin tools enter the deferred tool pool and must be discovered through `tool_search` before use |
+- **`name`** `str` — Tool name, must be unique within the plugin. LLM calls the tool by this name
+- **`description`** `str` — Legacy parameter, recommend using `brief_description` directly
+- **`brief_description`** `str` — Brief description. Passed to LLM as tool description summary, helping LLM decide whether to call it
+- **`detailed_description`** `str` — Detailed description. Can include parameter usage notes, caveats, etc. The SDK automatically merges parameter Schema to generate complete description
+- **`parameters`** `list | dict | None` — Tool parameter definition, supports two formats (see below)
+- **`core_tool`** `bool` · Default `False` — Whether to expose the tool directly to LLM as a core tool. Normal plugin tools enter the deferred tool pool and must be discovered through `tool_search` before use
 
 ::: warning Use core tools sparingly
 `core_tool=True` makes the tool visible to the Planner without a prior search. Use it only for high-frequency, low-risk, strongly contextual tools, such as voice replies or current-session sending tools. Too many core tools increase model selection cost and may cause accidental calls to capabilities that should not stay always available.
@@ -121,30 +119,26 @@ class MyPlugin(MaiBotPlugin):
 
 ## ToolParameterInfo Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | `str` | Parameter name |
-| `param_type` | `ToolParamType` | Parameter type enum |
-| `description` | `str` | Parameter description |
-| `required` | `bool` | Whether required, default `True` |
-| `enum_values` | `list \| None` | Optional enum value list |
-| `default` | `Any` | Default value |
-| `items_schema` | `dict \| None` | Array element Schema (used when `param_type=ARRAY`) |
-| `properties` | `dict \| None` | Object property definitions (used when `param_type=OBJECT`) |
-| `required_properties` | `list[str]` | Required fields within the object |
-| `additional_properties` | `bool \| dict \| None` | Whether additional fields are allowed |
+- **`name`** `str` — Parameter name
+- **`param_type`** `ToolParamType` — Parameter type enum
+- **`description`** `str` — Parameter description
+- **`required`** `bool` · Default `True` — Whether required
+- **`enum_values`** `list | None` — Optional enum value list
+- **`default`** `Any` — Default value
+- **`items_schema`** `dict | None` — Array element Schema (used when `param_type=ARRAY`)
+- **`properties`** `dict | None` — Object property definitions (used when `param_type=OBJECT`)
+- **`required_properties`** `list[str]` — Required fields within the object
+- **`additional_properties`** `bool | dict | None` — Whether additional fields are allowed
 
 ## ToolParamType Enum
 
-| Enum Value | JSON Schema Type | Description |
-|------------|-----------------|-------------|
-| `STRING` | `string` | String |
-| `INTEGER` | `integer` | Integer |
-| `NUMBER` | `number` | Number (integer or float) |
-| `FLOAT` | `number` | Float (equivalent to NUMBER) |
-| `BOOLEAN` | `boolean` | Boolean |
-| `ARRAY` | `array` | Array |
-| `OBJECT` | `object` | Object |
+- **`STRING`** → JSON Schema `string` — String
+- **`INTEGER`** → JSON Schema `integer` — Integer
+- **`NUMBER`** → JSON Schema `number` — Number (integer or float)
+- **`FLOAT`** → JSON Schema `number` — Float (equivalent to NUMBER)
+- **`BOOLEAN`** → JSON Schema `boolean` — Boolean
+- **`ARRAY`** → JSON Schema `array` — Array
+- **`OBJECT`** → JSON Schema `object` — Object
 
 ## Handler Function
 
@@ -217,15 +211,13 @@ return {
 
 Common fields in `content_items`:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `type` / `content_type` | `str` | Content type. Use `image` for images; `audio`, `resource_link`, `resource`, and `binary` are also supported |
-| `data` / `base64` | `str` | Base64 string of the media bytes. Recommended for image payloads |
-| `uri` | `str` | Media URI. Images may use `data:image/...;base64,...` |
-| `mime_type` | `str` | MIME type, such as `image/png`, `image/jpeg`, or `image/webp` |
-| `name` | `str` | File name or display name |
-| `description` | `str` | Short description of the media content |
-| `metadata` | `dict` | Additional metadata |
+- **`type` / `content_type`** `str` — Content type. Use `image` for images; `audio`, `resource_link`, `resource`, and `binary` are also supported
+- **`data` / `base64`** `str` — Base64 string of the media bytes. Recommended for image payloads
+- **`uri`** `str` — Media URI. Images may use `data:image/...;base64,...`
+- **`mime_type`** `str` — MIME type, such as `image/png`, `image/jpeg`, or `image/webp`
+- **`name`** `str` — File name or display name
+- **`description`** `str` — Short description of the media content
+- **`metadata`** `dict` — Additional metadata
 
 Maisaka splits this return value into two context messages. The first message is still a plain-text Tool Result containing a media index like `tool_result:<tool_call_id>:1`. The second message is a normal user message containing the same index and the actual image component. This keeps compatibility with model APIs that do not support images inside tool results, while allowing vision-capable models to observe the image as a normal image message.
 
@@ -235,10 +227,8 @@ The split-out image uses the normal `ImageComponent` rendering path in LLM input
 
 ### Common Extra Parameters in kwargs
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `stream_id` | `str` | Current chat stream ID, can be used with `ctx.send.text()` etc. to send messages |
-| `message` | `dict` | Original message that triggered this tool call |
+- **`stream_id`** `str` — Current chat stream ID, can be used with `ctx.send.text()` etc. to send messages
+- **`message`** `dict` — Original message that triggered this tool call
 
 ::: tip stream_id
 `stream_id` is one of the most important parameters in Tool components. It identifies the current conversation stream. Use `ctx.send.text("message", stream_id)` to send messages to the corresponding chat stream.

@@ -103,11 +103,9 @@ Field(
 )
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `default` | `Any` | Field default value |
-| `default_factory` | `Callable` | Default value factory function, used for mutable types like `list`, `dict`, nested `PluginConfigBase` |
-| `description` | `str` | Field description, displayed as form label in WebUI |
+- **`default`** `Any` — Field default value
+- **`default_factory`** `Callable` — Default value factory function, used for mutable types like `list`, `dict`, nested `PluginConfigBase`
+- **`description`** `str` — Field description, displayed as form label in WebUI
 
 ### __ui_label__
 

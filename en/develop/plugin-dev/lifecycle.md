@@ -147,11 +147,9 @@ async def on_config_update(
 
 ### scope Values
 
-| scope | Constant | Meaning | Trigger Condition |
-|-------|------|------|----------|
-| `"self"` | `CONFIG_RELOAD_SCOPE_SELF` | Plugin's own configuration | **Always triggered** when `config.toml` in plugin directory changes, no subscription needed |
-| `"bot"` | `ON_BOT_CONFIG_RELOAD` | Global Bot configuration | Requires subscription through `config_reload_subscriptions` |
-| `"model"` | `ON_MODEL_CONFIG_RELOAD` | LLM model configuration | Requires subscription through `config_reload_subscriptions` |
+- **`"self"`** → `CONFIG_RELOAD_SCOPE_SELF` — Plugin's own configuration. **Always triggered** when `config.toml` in plugin directory changes, no subscription needed
+- **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — Global Bot configuration. Requires subscription through `config_reload_subscriptions`
+- **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM model configuration. Requires subscription through `config_reload_subscriptions`
 
 ::: important
 - `scope == "self"` callback **always triggers**, no additional subscription needed

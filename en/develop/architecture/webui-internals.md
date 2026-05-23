@@ -94,15 +94,13 @@ Source: `src/webui/core/security.py`
 
 `TokenManager` manages WebUI access tokens:
 
-| Method | Description |
-|------|------|
-| `_create_new_token()` | Generates a 64-character hex token (`secrets.token_hex(32)`) |
-| `get_token()` | Gets the current valid token |
-| `verify_token(token)` | Verifies token (`secrets.compare_digest` to prevent timing attacks) |
-| `update_token(new_token)` | Updates token (requires ≥10 characters, including uppercase, lowercase, and special symbols) |
-| `regenerate_token()` | Regenerates a random token |
-| `is_first_setup()` | Checks if this is first-time setup |
-| `mark_setup_completed()` | Marks setup as completed |
+- `_create_new_token()` — Generates a 64-character hex token (`secrets.token_hex(32)`)
+- `get_token()` — Gets the current valid token
+- `verify_token(token)` — Verifies token (`secrets.compare_digest` to prevent timing attacks)
+- `update_token(new_token)` — Updates token (requires ≥10 characters, including uppercase, lowercase, and special symbols)
+- `regenerate_token()` — Regenerates a random token
+- `is_first_setup()` — Checks if this is first-time setup
+- `mark_setup_completed()` — Marks setup as completed
 
 Tokens are stored in `data/webui.json` (plain-text JSON), relying on file system permissions for protection.
 
@@ -110,13 +108,11 @@ Tokens are stored in `data/webui.json` (plain-text JSON), relying on file system
 
 Source: `src/webui/core/auth.py`
 
-| Configuration | Value |
-|------|-----|
-| Cookie Name | `maibot_session` |
-| Validity Period | 7 days |
-| HttpOnly | ✓ (prevents JS access) |
-| SameSite | `lax` |
-| Secure | Auto-determined based on environment |
+- **Cookie Name** `maibot_session`
+- **Validity Period** 7 days
+- **HttpOnly** ✓ (prevents JS access)
+- **SameSite** `lax`
+- **Secure** Auto-determined based on environment
 
 Authentication flow:
 
@@ -148,10 +144,8 @@ Source: `src/webui/core/rate_limiter.py`
 
 In-memory sliding window rate limiter:
 
-| Scenario | Limit | Ban |
-|------|------|------|
-| Authentication endpoints | 10 requests/min/IP | 5 consecutive failures → 10-minute ban |
-| General API | 100 requests/min/IP | — |
+- **Authentication endpoints** — 10 requests/min/IP, 5 consecutive failures → 10-minute ban
+- **General API** — 100 requests/min/IP
 
 ::: warning
 The rate limiter is in-memory and cannot share state across multiple instances.
@@ -163,12 +157,10 @@ Source: `src/webui/middleware/anti_crawler.py`
 
 `AntiCrawlerMiddleware` provides four levels of operation:
 
-| Mode | Description |
-|------|------|
-| `false` | Disabled |
-| `basic` | Log only, no blocking (default) |
-| `loose` | 60 requests/min limit, blocks detected crawlers |
-| `strict` | 15 requests/min limit, stricter detection |
+- **`false`** — Disabled
+- **`basic`** — Log only, no blocking (default)
+- **`loose`** — 60 requests/min limit, blocks detected crawlers
+- **`strict`** — 15 requests/min limit, stricter detection
 
 Detection dimensions:
 - **User-Agent**: Matches crawler/scanner tool keywords (googlebot, nmap, shodan, etc.)
@@ -217,12 +209,10 @@ Temporary token characteristics:
 
 ### Subscription Domains
 
-| Domain | Topic | Description |
-|----|------|------|
-| `logs` | `main` | Log stream |
-| `maisaka_monitor` | `main` | Maisaka reasoning monitoring events |
-| `plugin_progress` | `main` | Plugin operation progress |
-| `chat` | `chat_id` | Chat message stream |
+- `logs` `main` — Log stream
+- `maisaka_monitor` `main` — Maisaka reasoning monitoring events
+- `plugin_progress` `main` — Plugin operation progress
+- `chat` `chat_id` — Chat message stream
 
 ## Plugin Management IPC
 
@@ -265,17 +255,15 @@ Source: `src/plugin_runtime/protocol/`
 
 **Envelope structure**:
 
-| Field | Type | Description |
-|------|------|------|
-| `protocol_version` | `str` | Protocol version |
-| `request_id` | `str` | Unique request ID |
-| `message_type` | `MessageType` | REQUEST / RESPONSE / BROADCAST |
-| `method` | `str` | RPC method name |
-| `plugin_id` | `str` | Plugin ID |
-| `timestamp_ms` | `int` | Timestamp |
-| `timeout_ms` | `int` | Timeout |
-| `payload` | `dict` | Payload |
-| `error` | `RPCError` | Error information |
+- **`protocol_version`** `str` — Protocol version
+- **`request_id`** `str` — Unique request ID
+- **`message_type`** `MessageType` — REQUEST / RESPONSE / BROADCAST
+- **`method`** `str` — RPC method name
+- **`plugin_id`** `str` — Plugin ID
+- **`timestamp_ms`** `int` — Timestamp
+- **`timeout_ms`** `int` — Timeout
+- **`payload`** `dict` — Payload
+- **`error`** `RPCError` — Error information
 
 **Message types**:
 - `REQUEST`: RPC request from Host → Runner or Runner → Host
@@ -304,11 +292,9 @@ Source: `src/plugin_runtime/transport/`
 
 Frame format: 4-byte big-endian length prefix + msgpack-encoded Envelope.
 
-| Transport | Platform | Description |
-|----------|------|------|
-| UDS (Unix Domain Socket) | Linux / macOS | Default choice |
-| Named Pipe | Windows | Windows default |
-| TCP | All platforms | Used when explicitly configured |
+- **UDS (Unix Domain Socket)** — Linux / macOS, Default choice
+- **Named Pipe** — Windows, Windows default
+- **TCP** — All platforms, Used when explicitly configured
 
 The transport factory automatically selects the optimal transport based on the runtime platform.
 
@@ -348,34 +334,30 @@ Source: `src/webui/routes.py`
 
 All API routes are mounted under the `/api/webui` prefix:
 
-| Route Module | Prefix | Description |
-|----------|------|------|
-| `config_router` | `/config` | Configuration read/write (TOML) |
-| `system_router` | `/system` | System control (restart/status) |
-| `model_router` | `/model` | Model management |
-| `memory_router` | `/memory` | Long-term memory management |
-| `chat_router` | `/chat` | WebUI chat API |
-| `emoji_router` | `/emoji` | Emoji management |
-| `expression_router` | `/expression` | Expression management |
-| `jargon_router` | `/jargon` | Jargon/term management |
-| `person_router` | `/person` | Person information management |
-| `plugin_router` | `/plugin` | Plugin install/uninstall/update/configure |
-| `statistics_router` | `/statistics` | Statistics data |
-| `ws_auth_router` | `/ws-token` | WebSocket temporary token |
-| `unified_ws_router` | `/ws` | Unified WebSocket |
+- `config_router` `/config` — Configuration read/write (TOML)
+- `system_router` `/system` — System control (restart/status)
+- `model_router` `/model` — Model management
+- `memory_router` `/memory` — Long-term memory management
+- `chat_router` `/chat` — WebUI chat API
+- `emoji_router` `/emoji` — Emoji management
+- `expression_router` `/expression` — Expression management
+- `jargon_router` `/jargon` — Jargon/term management
+- `person_router` `/person` — Person information management
+- `plugin_router` `/plugin` — Plugin install/uninstall/update/configure
+- `statistics_router` `/statistics` — Statistics data
+- `ws_auth_router` `/ws-token` — WebSocket temporary token
+- `unified_ws_router` `/ws` — Unified WebSocket
 
 ### Authentication Endpoints
 
-| Endpoint | Method | Auth Required | Description |
-|------|------|------|------|
-| `/health` | GET | ✗ | Health check |
-| `/auth/verify` | POST | ✗ | Verify token and set cookie |
-| `/auth/logout` | POST | ✓ | Clear cookie |
-| `/auth/check` | GET | ✓ | Check authentication status |
-| `/auth/update` | POST | ✓ | Update token |
-| `/auth/regenerate` | POST | ✓ | Regenerate token |
-| `/setup/status` | GET | ✗ | First-time setup status |
-| `/setup/complete` | POST | ✓ | Mark setup as completed |
+- **`/health`** `GET` No auth required — Health check
+- **`/auth/verify`** `POST` No auth required — Verify token and set cookie
+- **`/auth/logout`** `POST` Auth required — Clear cookie
+- **`/auth/check`** `GET` Auth required — Check authentication status
+- **`/auth/update`** `POST` Auth required — Update token
+- **`/auth/regenerate`** `POST` Auth required — Regenerate token
+- **`/setup/status`** `GET` No auth required — First-time setup status
+- **`/setup/complete`** `POST` Auth required — Mark setup as completed
 
 ## Dependency Injection
 
@@ -383,14 +365,12 @@ Source: `src/webui/dependencies.py`
 
 FastAPI dependency injection provides authentication and rate limiting:
 
-| Dependency | Description |
-|------|------|
-| `require_auth` | Verifies token in Cookie |
-| `require_auth_with_rate_limit` | Verifies token + API rate limiting |
-| `verify_token_optional` | Optional verification (not enforced) |
-| `require_plugin_token` | Plugin-specific authentication |
-| `check_auth_rate_limit` | Authentication endpoint rate limiting |
-| `check_api_rate_limit` | General API rate limiting |
+- `require_auth` — Verifies token in Cookie
+- `require_auth_with_rate_limit` — Verifies token + API rate limiting
+- `verify_token_optional` — Optional verification (not enforced)
+- `require_plugin_token` — Plugin-specific authentication
+- `check_auth_rate_limit` — Authentication endpoint rate limiting
+- `check_api_rate_limit` — General API rate limiting
 
 ## SSRF Protection
 
@@ -435,15 +415,13 @@ flowchart LR
 
 ## Security Audit Points
 
-| Severity | Issue | Location |
-|------|------|------|
-| 🔴 High | File upload has no type/size validation | `routers/memory.py` |
-| 🔴 High | WebSocket has no Origin validation | `routers/websocket/unified.py` |
-| 🔴 High | Config API leaks API Key | `routers/config.py` |
-| 🟡 Medium | No CSRF protection | Global |
-| 🟡 Medium | No CSP headers | Global |
-| 🟡 Medium | System restart has no secondary confirmation | `routers/system.py` |
-| 🟢 Low | In-memory rate limiter not shared | `core/rate_limiter.py` |
+- 🔴 High — File upload has no type/size validation · `routers/memory.py`
+- 🔴 High — WebSocket has no Origin validation · `routers/websocket/unified.py`
+- 🔴 High — Config API leaks API Key · `routers/config.py`
+- 🟡 Medium — No CSRF protection · Global
+- 🟡 Medium — No CSP headers · Global
+- 🟡 Medium — System restart has no secondary confirmation · `routers/system.py`
+- 🟢 Low — In-memory rate limiter not shared · `core/rate_limiter.py`
 
 ::: warning
 Production deployments must use a reverse proxy (such as Nginx), configure HTTPS, and set appropriate CORS and security headers.

@@ -9,12 +9,10 @@ titleTemplate: :title · 模型高级参数
 
 `extra_params` 不会以原样整体发送给服务商，实际请求前客户端会按规则拆分转换：
 
-| 写法 | 实际用途 |
-|------|----------|
-| `headers` | 作为请求头传入 |
-| `query` | 作为 URL 查询参数传入 |
-| `body` | 合并到请求体 |
-| 其他普通键 | 作为请求体额外字段传入（OpenAI SDK 的 `extra_body`） |
+- **`headers`** — 作为请求头传入
+- **`query`** — 作为 URL 查询参数传入
+- **`body`** — 合并到请求体
+- **其他普通键** — 作为请求体额外字段传入（OpenAI SDK 的 `extra_body`）
 
 当 `client_type = "google"` 时，`extra_params` 不按上述规则拆分，而是由 Gemini 客户端按自身支持的字段筛选和映射到 `GenerateContentConfig`。
 
@@ -172,10 +170,8 @@ extra_params = {thinking_config = {thinking_level = "low", include_thoughts = tr
 
 ### Gemini 总览
 
-| 版本 | 思考参数 | 值域 | 关闭方式 | 备注 |
-|------|---------|------|---------|------|
-| Gemini 2.5 | `thinking_budget` | `-1`（自动）/ `0`（关闭）/ `N`（预算） | `budget = 0` | budget 和 level 不可混用 |
-| Gemini 3.0+ | `thinking_level` | `minimal` / `low` / `medium` / `high` | 不设置或 `minimal` | 不支持 token 级预算控制 |
+- **Gemini 2.5** — 通过 `thinking_budget` 控制思考预算，值域：`-1`（自动）/ `0`（关闭）/ `N`（预算），关闭方式为 `budget = 0`。budget 和 level 不可混用
+- **Gemini 3.0+** — 通过 `thinking_level` 控制思考等级，值域：`minimal` / `low` / `medium` / `high`，关闭方式为不设置或 `minimal`。不支持 token 级预算控制
 
 Gemini 2.5 使用 token 数量间接控制强度，`-1` 为自动分配。Gemini 3.0+ 使用枚举值直接指定等级。
 
@@ -185,11 +181,9 @@ Gemini 2.5 使用 token 数量间接控制强度，`-1` 为自动分配。Gemini
 
 `extra_params` 支持三个特殊 key 来精确控制 API 请求：
 
-| 特殊 Key | 作用 | 示例 |
-|----------|------|------|
-| `headers` | 添加 HTTP 请求头 | `{headers = {"X-Custom" = "value"}}` |
-| `query` | 添加 URL 查询参数 | `{query = {"key" = "value"}}` |
-| `body` | 覆盖请求体字段 | `{body = {"field" = "value"}}` |
+- **`headers`** — 添加 HTTP 请求头，如 `{headers = {"X-Custom" = "value"}}`
+- **`query`** — 添加 URL 查询参数，如 `{query = {"key" = "value"}}`
+- **`body`** — 覆盖请求体字段，如 `{body = {"field" = "value"}}`
 
 例如：
 
@@ -218,22 +212,18 @@ extra_body = {"metadata": {"source": "maibot"}}
 
 # 高级鉴权配置
 
-| 配置项 | 作用 | 默认值 |
-|--------|------|--------|
-| `auth_header_name` | Header 鉴权名称 | `Authorization` |
-| `auth_header_prefix` | Header 鉴权前缀 | `Bearer` |
-| `auth_query_name` | Query 鉴权参数名 | `api_key` |
+- **`auth_header_name`** — Header 鉴权名称。默认 `Authorization`
+- **`auth_header_prefix`** — Header 鉴权前缀。默认 `Bearer`
+- **`auth_query_name`** — Query 鉴权参数名。默认 `api_key`
 
 # 其他高级参数
 
 ## 模型级参数覆盖
 
-| 配置项 | 作用 | 填法 |
-|--------|------|------|
-| `temperature` | 模型级温度，覆盖任务配置 | 可选，如 `0.7` |
-| `max_tokens` | 模型级最大 token，覆盖任务配置 | 可选，如 `4096` |
-| `force_stream_mode` | 强制流式输出 | `false`（默认），不支持非流式时设为 `true` |
-| `extra_params` | 额外参数字典 | `{}`（默认） |
+- **`temperature`** — 模型级温度，覆盖任务配置。可选，如 `0.7`
+- **`max_tokens`** — 模型级最大 token，覆盖任务配置。可选，如 `4096`
+- **`force_stream_mode`** — 强制流式输出，不支持非流式时设为 `true`。默认关闭
+- **`extra_params`** — 额外参数字典。默认为空
 
 ## 优先级说明
 
@@ -255,45 +245,37 @@ max_tokens = 4096
 
 ## API 提供商高级配置
 
-| 配置项 | 作用 | 推荐值 |
-|--------|------|--------|
-| `default_headers` | 默认 HTTP 头 | `{}` |
-| `default_query` | 默认查询参数 | `{}` |
-| `organization` | OpenAI 组织（可选） | `None` |
-| `project` | OpenAI 项目（可选） | `None` |
-| `model_list_endpoint` | 模型列表端点 | `/models` |
-| `reasoning_parse_mode` | 推理内容解析模式 | `auto` |
-| `tool_argument_parse_mode` | 工具参数解析模式 | `auto` |
+- **`default_headers`** — 默认 HTTP 头。默认为空
+- **`default_query`** — 默认查询参数。默认为空
+- **`organization`** — OpenAI 组织（可选）。默认无
+- **`project`** — OpenAI 项目（可选）。默认无
+- **`model_list_endpoint`** — 模型列表端点。默认 `/models`
+- **`reasoning_parse_mode`** — 推理内容解析模式。默认 `auto`
+- **`tool_argument_parse_mode`** — 工具参数解析模式。默认 `auto`
 
 ## 运行时配置
 
-| 配置项 | 作用 | 推荐值 |
-|--------|------|--------|
-| `timeout` | 超时时间 | `60` 秒 |
-| `max_retry` | 失败重试次数 | `3` 次 |
-| `retry_interval` | 重试间隔 | `5` 秒 |
+- **`timeout`** — 超时时间。推荐 60 秒
+- **`max_retry`** — 失败重试次数。推荐 3 次
+- **`retry_interval`** — 重试间隔。推荐 5 秒
 
 # 常用参数速查
 
 ## OpenAI 兼容 API
 
-| 参数 | 适用服务商 | 类型 | 说明 |
-|------|-----------|------|------|
-| `thinking` | DeepSeek | `dict` | 思考模式控制，含 `type`（enabled/disabled） |
-| `reasoning_effort` | DeepSeek, OpenAI | `str` | 推理强度等级（DeepSeek V4 仅 high/max，OpenAI 6 级） |
-| `enable_thinking` | 阿里云百炼 | `bool` | 开启思考模式 |
-| `headers` | 全部 | `dict` | 自定义 HTTP 请求头 |
-| `query` | 全部 | `dict` | 自定义 URL 查询参数 |
-| `body` | 全部 | `dict` | 自定义请求体字段 |
+- **`thinking`** — 思考模式控制，含 `type`（enabled/disabled）。适用 DeepSeek
+- **`reasoning_effort`** — 推理强度等级（DeepSeek V4 仅 high/max，OpenAI 6 级）。适用 DeepSeek, OpenAI
+- **`enable_thinking`** — 开启思考模式。适用阿里云百炼
+- **`headers`** — 自定义 HTTP 请求头。适用全部
+- **`query`** — 自定义 URL 查询参数。适用全部
+- **`body`** — 自定义请求体字段。适用全部
 
 ## Gemini 原生 API
 
-| 参数 | 适用版本 | 类型 | 说明 |
-|------|---------|------|------|
-| `thinking_config` | Gemini 全系 | `dict` | 思考配置，含 `thinking_budget` 或 `thinking_level` |
-| `thinking_budget` | Gemini 2.5 | `int` | 思考预算（-1 自动 / 0 关闭 / N 指定） |
-| `thinking_level` | Gemini 3.0+ | `str` | 思考等级（minimal/low/medium/high） |
-| `include_thoughts` | Gemini 全系 | `bool` | 响应是否包含思考过程 |
+- **`thinking_config`** — 思考配置，含 `thinking_budget` 或 `thinking_level`。适用 Gemini 全系
+- **`thinking_budget`** — 思考预算（-1 自动 / 0 关闭 / N 指定）。适用 Gemini 2.5
+- **`thinking_level`** — 思考等级（minimal/low/medium/high）。适用 Gemini 3.0+
+- **`include_thoughts`** — 响应是否包含思考过程。适用 Gemini 全系
 
 > 参数会原样传递给 LLM API，务必与你使用的服务商文档一致，否则可能导致调用失败。
 

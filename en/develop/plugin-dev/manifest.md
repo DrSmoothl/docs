@@ -48,31 +48,27 @@ Here is a complete Manifest example:
 
 ## Required Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `manifest_version` | `2` | Manifest protocol version, currently fixed as `2` |
-| `id` | string | Plugin unique identifier, format is lowercase letters/numbers, separated by dots or dashes (e.g., `com.author.plugin`) |
-| `version` | string | Plugin version number, must be strict three-part semantic version (e.g., `1.0.0`) |
-| `name` | string | Plugin display name |
-| `description` | string | Plugin description |
-| `author` | object | Plugin author information, contains `name` (author name) and `url` (author homepage, must be HTTP/HTTPS URL) |
-| `license` | string | Plugin license |
-| `urls` | object | Plugin related links collection (see below) |
-| `host_application` | object | Host compatibility range (see below) |
-| `sdk` | object | SDK compatibility range (see below) |
-| `capabilities` | string[] | Plugin declared capability request list, cannot contain empty values |
-| `i18n` | object | Internationalization configuration (see below) |
+- **`manifest_version`** `2` — Manifest protocol version, currently fixed as `2`
+- **`id`** `string` — Plugin unique identifier, format is lowercase letters/numbers, separated by dots or dashes (e.g., `com.author.plugin`)
+- **`version`** `string` — Plugin version number, must be strict three-part semantic version (e.g., `1.0.0`)
+- **`name`** `string` — Plugin display name
+- **`description`** `string` — Plugin description
+- **`author`** `object` — Plugin author information, contains `name` (author name) and `url` (author homepage, must be HTTP/HTTPS URL)
+- **`license`** `string` — Plugin license
+- **`urls`** `object` — Plugin related links collection (see below)
+- **`host_application`** `object` — Host compatibility range (see below)
+- **`sdk`** `object` — SDK compatibility range (see below)
+- **`capabilities`** `string[]` — Plugin declared capability request list, cannot contain empty values
+- **`i18n`** `object` — Internationalization configuration (see below)
 
 ## Optional Fields
 
 ### urls Link Collection
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `repository` | Yes | Plugin repository address, must be HTTP/HTTPS URL |
-| `homepage` | No | Plugin homepage address |
-| `documentation` | No | Plugin documentation address |
-| `issues` | No | Plugin issue feedback address |
+- **`repository`** · Required — Plugin repository address, must be HTTP/HTTPS URL
+- **`homepage`** · Optional — Plugin homepage address
+- **`documentation`** · Optional — Plugin documentation address
+- **`issues`** · Optional — Plugin issue feedback address
 
 ### host_application / sdk Version Range
 
@@ -94,11 +90,9 @@ Host will validate whether the current version falls within the declared range d
 
 ### i18n Internationalization Configuration
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `default_locale` | Yes | Default language code (e.g., `zh-CN`) |
-| `locales_path` | No | Language resource file directory path |
-| `supported_locales` | No | Supported language list, cannot contain empty values and duplicates. If not empty, `default_locale` must exist in this list |
+- **`default_locale`** · Required — Default language code (e.g., `zh-CN`)
+- **`locales_path`** · Optional — Language resource file directory path
+- **`supported_locales`** · Optional — Supported language list, cannot contain empty values and duplicates. If not empty, `default_locale` must exist in this list
 
 ## Dependency Declaration
 

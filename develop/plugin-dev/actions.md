@@ -12,13 +12,11 @@ title: Action 组件（Legacy）
 
 `@Action` 和 `@Tool` 的核心区别：
 
-| 对比项 | `@Action`（旧） | `@Tool`（新） |
-|--------|-----------------|---------------|
-| 参数类型 | 全部为 `string` | 支持 `string`、`integer`、`boolean`、`array`、`object` 等 7 种类型 |
-| 参数声明 | `action_parameters={"key": "描述"}` | `parameters=[ToolParameterInfo(...)]` |
-| 参数 Schema | 无 JSON Schema 生成 | 自动生成完整 JSON Schema |
-| 激活方式 | `activation_type` + `activation_keywords` | 始终可用（由 LLM 自行判断何时调用） |
-| 描述机制 | 单一 `description` | `brief_description` + `detailed_description` |
+- **参数类型**：`@Action` 全部为 `string` → `@Tool` 支持 `string`、`integer`、`boolean`、`array`、`object` 等 7 种类型
+- **参数声明**：`action_parameters={"key": "描述"}` → `parameters=[ToolParameterInfo(...)]`
+- **参数 Schema**：无 JSON Schema 生成 → 自动生成完整 JSON Schema
+- **激活方式**：`activation_type` + `activation_keywords` → 始终可用（由 LLM 自行判断何时调用）
+- **描述机制**：单一 `description` → `brief_description` + `detailed_description`
 
 ### 迁移示例
 
@@ -88,21 +86,17 @@ from maibot_sdk import Action
 
 ### ActivationType 枚举
 
-| 枚举值 | 说明 |
-|--------|------|
-| `NEVER` | 从不激活 |
-| `ALWAYS` | 始终作为候选工具 |
-| `RANDOM` | 以一定概率随机启用 |
-| `KEYWORD` | 当消息包含关键词时启用 |
+- **`NEVER`** — 从不激活
+- **`ALWAYS`** — 始终作为候选工具
+- **`RANDOM`** — 以一定概率随机启用
+- **`KEYWORD`** — 当消息包含关键词时启用
 
 ### ChatMode 枚举
 
-| 枚举值 | 说明 |
-|--------|------|
-| `FOCUS` | 专注模式 |
-| `NORMAL` | 普通模式 |
-| `PRIORITY` | 优先模式 |
-| `ALL` | 所有模式 |
+- **`FOCUS`** — 专注模式
+- **`NORMAL`** — 普通模式
+- **`PRIORITY`** — 优先模式
+- **`ALL`** — 所有模式
 
 ## 内部转换机制
 

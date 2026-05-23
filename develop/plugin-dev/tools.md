@@ -28,13 +28,11 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 ### 参数说明
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `name` | `str` | 工具名称，需在插件内唯一。LLM 通过此名称调用工具 |
-| `description` | `str` | 工具备选描述。当 `brief_description` 为空时使用此字段 |
-| `brief_description` | `str` | 工具主描述（优先使用）。传给 LLM 的工具描述摘要，帮助 LLM 判断是否需要调用 |
-| `detailed_description` | `str` | 详细描述，可包含参数使用说明、注意事项等。SDK 会自动合并参数 Schema 生成完整描述 |
-| `parameters` | `list \| dict \| None` | 工具参数定义，支持两种格式（见下文） |
+- **`name`** `str` — 工具名称，需在插件内唯一。LLM 通过此名称调用工具
+- **`description`** `str` — 工具备选描述。当 `brief_description` 为空时使用此字段
+- **`brief_description`** `str` — 工具主描述（优先使用）。传给 LLM 的工具描述摘要，帮助 LLM 判断是否需要调用
+- **`detailed_description`** `str` — 详细描述，可包含参数使用说明、注意事项等。SDK 会自动合并参数 Schema 生成完整描述
+- **`parameters`** `list | dict | None` — 工具参数定义，支持两种格式（见下文）
 
 描述字段约定：
 - `description`：关于工具的描述，包括使用方法，使用情景，注意事项。当 `brief_description` 为空时，`description` 会作为回退描述。
@@ -98,30 +96,26 @@ class MyPlugin(MaiBotPlugin):
 
 ## ToolParameterInfo 字段
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `name` | `str` | 参数名称 |
-| `param_type` | `ToolParamType` | 参数类型枚举 |
-| `description` | `str` | 参数描述 |
-| `required` | `bool` | 是否必填，默认 `True` |
-| `enum_values` | `list \| None` | 可选枚举值列表 |
-| `default` | `Any` | 默认值 |
-| `items_schema` | `dict \| None` | 数组元素 Schema（当 `param_type=ARRAY` 时使用） |
-| `properties` | `dict \| None` | 对象属性定义（当 `param_type=OBJECT` 时使用） |
-| `required_properties` | `list[str]` | 对象内部必填字段 |
-| `additional_properties` | `bool \| dict \| None` | 是否允许额外字段 |
+- **`name`** `str` — 参数名称
+- **`param_type`** `ToolParamType` — 参数类型枚举
+- **`description`** `str` — 参数描述
+- **`required`** `bool` · 默认 `True` — 是否必填
+- **`enum_values`** `list | None` — 可选枚举值列表
+- **`default`** `Any` — 默认值
+- **`items_schema`** `dict | None` — 数组元素 Schema（当 `param_type=ARRAY` 时使用）
+- **`properties`** `dict | None` — 对象属性定义（当 `param_type=OBJECT` 时使用）
+- **`required_properties`** `list[str]` — 对象内部必填字段
+- **`additional_properties`** `bool | dict | None` — 是否允许额外字段
 
 ## ToolParamType 枚举
 
-| 枚举值 | JSON Schema 类型 | 说明 |
-|--------|-----------------|------|
-| `STRING` | `string` | 字符串 |
-| `INTEGER` | `integer` | 整数 |
-| `NUMBER` | `number` | 数字（整数或浮点数） |
-| `FLOAT` | `number` | 浮点数（等价于 NUMBER） |
-| `BOOLEAN` | `boolean` | 布尔值 |
-| `ARRAY` | `array` | 数组 |
-| `OBJECT` | `object` | 对象 |
+- **`STRING`** → JSON Schema `string` — 字符串
+- **`INTEGER`** → JSON Schema `integer` — 整数
+- **`NUMBER`** → JSON Schema `number` — 数字（整数或浮点数）
+- **`FLOAT`** → JSON Schema `number` — 浮点数（等价于 NUMBER）
+- **`BOOLEAN`** → JSON Schema `boolean` — 布尔值
+- **`ARRAY`** → JSON Schema `array` — 数组
+- **`OBJECT`** → JSON Schema `object` — 对象
 
 ## 处理函数
 
@@ -193,15 +187,13 @@ return {
 
 `content_items` 中常用字段如下：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `type` / `content_type` | `str` | 内容类型。图片使用 `image`；也支持 `audio`、`resource_link`、`resource`、`binary` |
-| `data` / `base64` | `str` | 媒体二进制的 base64 字符串，推荐图片直接使用这个字段 |
-| `uri` | `str` | 媒体 URI。图片可使用 `data:image/...;base64,...` |
-| `mime_type` | `str` | MIME 类型，例如 `image/png`、`image/jpeg`、`image/webp` |
-| `name` | `str` | 文件名或展示名称 |
-| `description` | `str` | 对媒体内容的简短说明 |
-| `metadata` | `dict` | 额外元数据 |
+- **`type` / `content_type`** `str` — 内容类型。图片使用 `image`；也支持 `audio`、`resource_link`、`resource`、`binary`
+- **`data` / `base64`** `str` — 媒体二进制的 base64 字符串，推荐图片直接使用这个字段
+- **`uri`** `str` — 媒体 URI。图片可使用 `data:image/...;base64,...`
+- **`mime_type`** `str` — MIME 类型，例如 `image/png`、`image/jpeg`、`image/webp`
+- **`name`** `str` — 文件名或展示名称
+- **`description`** `str` — 对媒体内容的简短说明
+- **`metadata`** `dict` — 额外元数据
 
 Maisaka 会把这类返回拆成两种上下文消息：第一条仍是纯文本 Tool Result，其中包含类似 `tool_result:<tool_call_id>:1` 的媒体索引；随后追加一条普通 user message，里面放入同一索引和真实图片组件。这样可以兼容不支持在 tool result 中直接回传图片的模型 API，同时让支持视觉输入的模型按普通图片消息观察图片。
 
@@ -211,10 +203,8 @@ Maisaka 会把这类返回拆成两种上下文消息：第一条仍是纯文本
 
 ### kwargs 中常见的额外参数
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| `stream_id` | `str` | 当前聊天流 ID，可用于 `ctx.send.text()` 等发送消息 |
-| `message` | `dict` | 触发此工具调用的原始消息 |
+- **`stream_id`** `str` — 当前聊天流 ID，可用于 `ctx.send.text()` 等发送消息
+- **`message`** `dict` — 触发此工具调用的原始消息
 
 ::: tip stream_id
 `stream_id` 是 Tool 组件中最重要的参数之一，它标识了当前对话流。使用 `ctx.send.text("消息", stream_id)` 可以将消息发送到对应的聊天流中。

@@ -12,31 +12,29 @@ title: Bot 配置
 
 `bot_config.toml` 顶层包含以下主要段落：
 
-| 段落 | 作用 |
-|------|------|
-| `[bot]` | 机器人身份、平台、昵称、别名 |
-| `[personality]` | 人设和回复风格 |
-| `[visual]` | 图片理解模式和识图提示词 |
-| `[chat]` | 回复频率、上下文、聊天提示词 |
-| `[message_receive]` | 图片解析阈值、消息过滤 |
-| `[A_memorix]` | 长期记忆系统（存储、向量化、检索、画像、演化等）→ [详见 A_Memorix 配置](./amemorix-config.md) |
-| `[expression]` | 表达学习、表达检查、互通组 |
-| `[jargon]` | 黑话学习、黑话互通组 |
-| `[voice]` | 语音识别 |
-| `[emoji]` | 表情包收集、过滤、发送 |
-| `[keyword_reaction]` | 关键词/正则触发反应 |
-| `[response_post_process]` | 回复后处理总开关 |
-| `[chinese_typo]` | 中文错别字生成 |
-| `[log]` | 日志配置 |
-| `[response_splitter]` | 回复分割 |
-| `[telemetry]` | 遥测开关 |
-| `[debug]` | 调试显示和追踪 |
-| `[maim_message]` | maim_message WebSocket/API Server |
-| `[webui]` | WebUI 服务和安全设置 |
-| `[database]` | 消息二进制数据保存策略 |
-| `[mcp]` | MCP 客户端和服务器配置 |
-| `[plugin]` | 插件管理权限 |
-| `[plugin_runtime]` | 插件运行时和浏览器渲染配置 |
+- **`[bot]`** — 机器人身份、平台、昵称、别名
+- **`[personality]`** — 人设和回复风格
+- **`[visual]`** — 图片理解模式和识图提示词
+- **`[chat]`** — 回复频率、上下文、聊天提示词
+- **`[message_receive]`** — 图片解析阈值、消息过滤
+- **`[A_memorix]`** — 长期记忆系统（存储、向量化、检索、画像、演化等）→ [详见 A_Memorix 配置](./amemorix-config.md)
+- **`[expression]`** — 表达学习、表达检查、互通组
+- **`[jargon]`** — 黑话学习、黑话互通组
+- **`[voice]`** — 语音识别
+- **`[emoji]`** — 表情包收集、过滤、发送
+- **`[keyword_reaction]`** — 关键词/正则触发反应
+- **`[response_post_process]`** — 回复后处理总开关
+- **`[chinese_typo]`** — 中文错别字生成
+- **`[log]`** — 日志配置
+- **`[response_splitter]`** — 回复分割
+- **`[telemetry]`** — 遥测开关
+- **`[debug]`** — 调试显示和追踪
+- **`[maim_message]`** — maim_message WebSocket/API Server
+- **`[webui]`** — WebUI 服务和安全设置
+- **`[database]`** — 消息二进制数据保存策略
+- **`[mcp]`** — MCP 客户端和服务器配置
+- **`[plugin]`** — 插件管理权限
+- **`[plugin_runtime]`** — 插件运行时和浏览器渲染配置
 
 ::: tip
 配置文件开头的 `[inner] version` 由程序管理。需要修改配置模板时，应更新模板版本；普通用户不需要手动改这个版本号。
@@ -55,13 +53,11 @@ nickname = "麦麦"
 alias_names = ["小麦", "麦子"]
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `platform` | `str` | `""` | 当前主要平台标识，例如 `qq` |
-| `qq_account` | `str` | `""` | 机器人登录的 QQ 号（字符串），用于识别 @ 和自身消息 |
-| `platforms` | `list[str]` | `[]` | 其他平台标识列表，多平台场景使用 |
-| `nickname` | `str` | `"麦麦"` | 机器人昵称 |
-| `alias_names` | `list[str]` | `[]` | 机器人别名，被提及时可参与回复判断 |
+- **`platform`** — 当前主要平台标识，例如 qq。默认为空
+- **`qq_account`** — 机器人登录的 QQ 号（字符串），用于识别 @ 和自身消息。默认为空
+- **`platforms`** — 其他平台标识列表，多平台场景使用。默认为空
+- **`nickname`** — 机器人昵称。默认 `麦麦`
+- **`alias_names`** — 机器人别名，被提及时可参与回复判断。默认为空
 
 ## 人格 [personality]
 
@@ -81,12 +77,10 @@ multiple_reply_style = [
 multiple_probability = 0
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `personality` | `str` | 见默认配置 | 人格设定，建议 100 字以内，描述身份和人格特质 |
-| `reply_style` | `str` | 见默认配置 | 默认表达风格，建议 1-2 行 |
-| `multiple_reply_style` | `list[str]` | 5 条备选风格 | 可选表达风格列表，不为空时可随机替换 `reply_style` |
-| `multiple_probability` | `float` | `0` | 随机使用 `multiple_reply_style` 的概率，范围 `0.0-1.0`，默认不替换 |
+- **`personality`** — 人格设定，建议 100 字以内，描述身份和人格特质。见默认配置
+- **`reply_style`** — 默认表达风格，建议 1-2 行。见默认配置
+- **`multiple_reply_style`** — 可选表达风格列表，不为空时可随机替换 reply_style。5 条备选风格
+- **`multiple_probability`** — 随机使用 multiple_reply_style 的概率，范围 0.0-1.0。默认 0
 
 ## 视觉 [visual]
 
@@ -100,11 +94,9 @@ replyer_mode = "auto"
 
 识图提示词由 Prompt 模板 `prompts/<locale>/image_description.prompt` 管理。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `planner_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | 规划器视觉模式，`auto` 会根据模型信息自动选择 |
-| `replyer_mode` | `"text" \| "multimodal" \| "auto"` | `"auto"` | 回复器视觉模式，`auto` 会根据模型信息自动选择 |
-| `wait_image_recognize_max_time` | `float` | `10` | 非视觉 planner 请求前等待图片识别完成的最长秒数；`0` 时不等待，保持占位请求 |
+- **`planner_mode`** — 规划器视觉模式，可选 text、multimodal 或 auto；auto 会根据模型信息自动选择。默认 `auto`
+- **`replyer_mode`** — 回复器视觉模式，可选 text、multimodal 或 auto；auto 会根据模型信息自动选择。默认 `auto`
+- **`wait_image_recognize_max_time`** — 非视觉 planner 请求前等待图片识别完成的最长秒数；0 时不等待，保持占位请求。默认 10
 
 ## 聊天 [chat]
 
@@ -133,28 +125,26 @@ chat_prompts = []
 enable_talk_value_rules = true
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `talk_value` | `float` | `1.0` | 聊天频率，越小越沉默，范围 `0-1` |
-| `private_talk_value` | `float` | `1.0` | 私聊聊天频率，越小越沉默，范围 `0-1` |
-| `mentioned_bot_reply` | `bool` | `false` | 是否在普通文本提到机器人名字时倾向回复 |
-| `inevitable_at_reply` | `bool` | `true` | 是否在被 @ 时必回复 |
-| `enable_at` | `bool` | `true` | 是否允许使用 at 标记 |
-| `enable_reply_quote` | `bool` | `true` | 回复时是否附带引用回复 |
-| `max_context_size` | `int` | `40` | 发送给模型的群聊上下文消息数量 |
-| `max_private_context_size` | `int` | `60` | 私聊上下文长度 |
-| `enable_context_optimization` | `bool` | `true` | 是否优化约 50% 的 Planner 上下文消耗，可能影响缓存 |
-| `mid_term_memory` | `bool` | `true` | 上下文裁切时是否使用 `utils` 模型生成中期聊天摘要，并作为可展开复杂消息保留 |
-| `mid_term_memory_lenth` | `int` | `5` | 最多保留的中期聊天摘要消息数；超出后移除最早一条 |
-| `enable_independent_timing_gate` | `bool` | `true` | 是否启用独立 Timing Gate；关闭后节奏控制工具合并到 Planner |
-| `typing_speed` | `float` | `1.0` | 模拟打字时间倍乘，`0` 不等待，`1` 默认等待时间，`2` 两倍 |
-| `planner_interrupt_max_consecutive_count` | `int` | `0` | Planner 连续被新消息打断的最大次数，`0` 表示不启用打断 |
-| `timing_gate_non_continue_cooldown_seconds` | `float` | `8` | Timing Gate 判断频率平滑值，值越大判断越平滑但可能反应变慢 |
-| `group_chat_prompt` | `str` | 见默认配置 | 群聊通用注意事项 |
-| `private_chat_prompts` | `str` | 见默认配置 | 私聊通用注意事项 |
-| `chat_prompts` | `list[ExtraPromptItem]` | `[]` | 按平台/聊天流附加的额外提示词 |
-| `enable_talk_value_rules` | `bool` | `true` | 是否启用动态发言频率规则 |
-| `talk_value_rules` | `list[TalkRulesItem]` | 两条默认规则 | 按聊天流和时间段调整 `talk_value` |
+- **`talk_value`** — 聊天频率，越小越沉默，范围 0-1。默认 1.0
+- **`private_talk_value`** — 私聊聊天频率，越小越沉默，范围 0-1。默认 1.0
+- **`mentioned_bot_reply`** — 是否在普通文本提到机器人名字时倾向回复。默认关闭
+- **`inevitable_at_reply`** — 是否在被 @ 时必回复。默认开启
+- **`enable_at`** — 是否允许使用 at 标记。默认开启
+- **`enable_reply_quote`** — 回复时是否附带引用回复。默认开启
+- **`max_context_size`** — 发送给模型的群聊上下文消息数量。默认 40
+- **`max_private_context_size`** — 私聊上下文长度。默认 60
+- **`enable_context_optimization`** — 是否优化约 50% 的 Planner 上下文消耗，可能影响缓存。默认开启
+- **`mid_term_memory`** — 上下文裁切时是否使用 utils 模型生成中期聊天摘要，并作为可展开复杂消息保留。默认开启
+- **`mid_term_memory_lenth`** — 最多保留的中期聊天摘要消息数；超出后移除最早一条。默认 5
+- **`enable_independent_timing_gate`** — 是否启用独立 Timing Gate；关闭后节奏控制工具合并到 Planner。默认开启
+- **`typing_speed`** — 模拟打字时间倍乘，0 不等待，1 默认等待时间，2 两倍。默认 1.0
+- **`planner_interrupt_max_consecutive_count`** — Planner 连续被新消息打断的最大次数，0 表示不启用打断。默认 0
+- **`timing_gate_non_continue_cooldown_seconds`** — Timing Gate 判断频率平滑值，值越大判断越平滑但可能反应变慢。默认 8
+- **`group_chat_prompt`** — 群聊通用注意事项。见默认配置
+- **`private_chat_prompts`** — 私聊通用注意事项。见默认配置
+- **`chat_prompts`** — 按平台/聊天流附加的额外提示词。默认为空
+- **`enable_talk_value_rules`** — 是否启用动态发言频率规则。默认开启
+- **`talk_value_rules`** — 按聊天流和时间段调整 talk_value。两条默认规则
 
 ### talk_value_rules
 
@@ -174,13 +164,11 @@ time = "09:00-18:59"
 value = 1.0
 ```
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `platform` | `str` | 平台；和 `item_id` 一起留空表示全局 |
-| `item_id` | `str` | 用户/群 ID；和 `platform` 一起留空表示全局 |
-| `rule_type` | `"group" \| "private"` | 聊天流类型 |
-| `time` | `str` | 时间段，格式 `"HH:MM-HH:MM"`，支持跨夜 |
-| `value` | `float` | 该时间段的聊天频率，范围 `0-1` |
+- **`platform`** — 平台；和 item_id 一起留空表示全局
+- **`item_id`** — 用户/群 ID；和 platform 一起留空表示全局
+- **`rule_type`** — 聊天流类型，group 或 private
+- **`time`** — 时间段，格式 `HH:MM-HH:MM`，支持跨夜
+- **`value`** — 该时间段的聊天频率，范围 0-1
 
 ### chat_prompts
 
@@ -198,11 +186,9 @@ prompt = "这个群里说话要更简短。"
 
 `[message_receive]` 控制图片解析和消息过滤。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `image_parse_threshold` | `int` | `5` | 单条消息图片数量不超过该阈值时解析图片，超过时跳过解析 |
-| `ban_words` | `set[str]` | `set()` | 过滤词列表 |
-| `ban_msgs_regex` | `set[str]` | `set()` | 过滤正则表达式列表；正则非法会导致配置校验失败 |
+- **`image_parse_threshold`** — 单条消息图片数量不超过该阈值时解析图片，超过时跳过解析。默认 5
+- **`ban_words`** — 过滤词列表。默认为空
+- **`ban_msgs_regex`** — 过滤正则表达式列表；正则非法会导致配置校验失败。默认为空
 
 ## 记忆 [A_memorix]
 
@@ -231,14 +217,12 @@ enabled = true
 
 `[expression]` 控制表达方式学习、表达方式自动检查和互通组。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `expression_checked_only` | `bool` | `true` | 是否仅选择已由用户人工检查的表达方式 |
-| `expression_self_reflect` | `bool` | `true` | 是否在表达学习写入前进行 AI 审核 |
-| `enable_precise_expression_selection` | `bool` | `false` | 是否启用精细表达选择；开启后 replyer 使用子代理从候选表达中挑选更贴合语境的表达方式 |
-| `max_expression_learner` | `int` | `3` | 所有聊天流合计允许同时运行的表达学习批次数；同一聊天流始终只允许一个批次 |
-| `learning_list` | `list[LearningItem]` | 1 条默认规则 | 按聊天流配置表达学习 |
-| `expression_groups` | `list[ChatStreamGroup]` | `[]` | 表达学习互通组 |
+- **`expression_checked_only`** — 是否仅选择已由用户人工检查的表达方式。默认开启
+- **`expression_self_reflect`** — 是否在表达学习写入前进行 AI 审核。默认开启
+- **`enable_precise_expression_selection`** — 是否启用精细表达选择；开启后 replyer 使用子代理从候选表达中挑选更贴合语境的表达方式。默认关闭
+- **`max_expression_learner`** — 所有聊天流合计允许同时运行的表达学习批次数；同一聊天流始终只允许一个批次。默认 3
+- **`learning_list`** — 按聊天流配置表达学习。1 条默认规则
+- **`expression_groups`** — 表达学习互通组。默认为空
 
 ### learning_list
 
@@ -251,22 +235,18 @@ use = true
 learn = true
 ```
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `platform` | `str` | 平台；和 `item_id` 一起留空表示全局 |
-| `item_id` | `str` | 用户/群 ID；和 `platform` 一起留空表示全局 |
-| `type` | `"group" \| "private"` | 聊天流类型 |
-| `use` | `bool` | 是否使用表达学习结果 |
-| `learn` | `bool` | 是否启用表达优化学习 |
+- **`platform`** — 平台；和 item_id 一起留空表示全局
+- **`item_id`** — 用户/群 ID；和 platform 一起留空表示全局
+- **`type`** — 聊天流类型，group 或 private
+- **`use`** — 是否使用表达学习结果
+- **`learn`** — 是否启用表达优化学习
 
 ## 黑话 [jargon]
 
 `[jargon]` 控制黑话学习和黑话互通组，从旧版 `[expression]` 中独立出来。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `learning_list` | `list[LearningItem]` | 1 条默认规则 | 按聊天流配置黑话学习，`platform` 或 `item_id` 可使用 `*` 通配 |
-| `jargon_groups` | `list[ChatStreamGroup]` | `[]` | 黑话学习互通组，默认不互通 |
+- **`learning_list`** — 按聊天流配置黑话学习，platform 或 item_id 可使用 `*` 通配。1 条默认规则
+- **`jargon_groups`** — 黑话学习互通组，默认不互通。默认为空
 
 ### learning_list
 
@@ -283,20 +263,16 @@ learn = true
 
 ## 语音 [voice]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enable_asr` | `bool` | 见默认配置 | 是否启用语音识别，启用后可识别语音消息 |
+- **`enable_asr`** — 是否启用语音识别，启用后可识别语音消息。见默认配置
 
 ## 表情包 [emoji]
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `emoji_send_num` | `int` | 一次从多少个表情包中选择发送，最大 `64` |
-| `max_reg_num` | `int` | 表情包最大注册数量 |
-| `do_replace` | `bool` | 达到最大注册数量时是否替换旧表情包 |
-| `check_interval` | `int` | 表情包检查间隔，单位分钟 |
-| `steal_emoji` | `bool` | 是否收集聊天中的表情包 |
-| `content_filtration` | `bool` | 是否启用表情包过滤 |
+- **`emoji_send_num`** — 一次从多少个表情包中选择发送，最大 64
+- **`max_reg_num`** — 表情包最大注册数量
+- **`do_replace`** — 达到最大注册数量时是否替换旧表情包
+- **`check_interval`** — 表情包检查间隔，单位分钟
+- **`steal_emoji`** — 是否收集聊天中的表情包
+- **`content_filtration`** — 是否启用表情包过滤
 
 ## 关键词反应 [keyword_reaction]
 
@@ -310,36 +286,28 @@ regex = ["^正则.*"]
 reaction = "触发后的反应"
 ```
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `keyword_rules` | `list[KeywordRuleConfig]` | 关键词规则列表 |
-| `regex_rules` | `list[KeywordRuleConfig]` | 正则表达式规则列表 |
+- **`keyword_rules`** — 关键词规则列表
+- **`regex_rules`** — 正则表达式规则列表
 
 `KeywordRuleConfig` 字段：
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `keywords` | `list[str]` | 关键词列表 |
-| `regex` | `list[str]` | 正则表达式列表 |
-| `reaction` | `str` | 关键词或正则触发后的反应 |
+- **`keywords`** — 关键词列表
+- **`regex`** — 正则表达式列表
+- **`reaction`** — 关键词或正则触发后的反应
 
 ## 回复后处理
 
 ### response_post_process
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable_response_post_process` | `bool` | 是否启用回复后处理，包括错别字生成器和回复分割器 |
+- **`enable_response_post_process`** — 是否启用回复后处理，包括错别字生成器和回复分割器
 
 ### chinese_typo
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable` | `bool` | 是否启用中文错别字生成器 |
-| `error_rate` | `float` | 单字替换概率 |
-| `min_freq` | `int` | 最小字频阈值 |
-| `tone_error_rate` | `float` | 声调错误概率 |
-| `word_replace_rate` | `float` | 整词替换概率 |
+- **`enable`** — 是否启用中文错别字生成器
+- **`error_rate`** — 单字替换概率
+- **`min_freq`** — 最小字频阈值
+- **`tone_error_rate`** — 声调错误概率
+- **`word_replace_rate`** — 整词替换概率
 
 ### log
 
@@ -363,92 +331,78 @@ suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "htt
 library_log_levels = { aiohttp = "WARNING" }
 ```
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `date_style` | `str` | `"m-d H:i:s"` | 日志日期格式 |
-| `log_level_style` | `"lite" \| "compact" \| "full"` | `"lite"` | 日志等级显示样式 |
-| `color_text` | `"none" \| "title" \| "full"` | `"full"` | 控制台日志颜色模式 |
-| `log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"INFO"` | 全局日志级别 |
-| `console_log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"INFO"` | 控制台日志级别 |
-| `file_log_level` | `"DEBUG" \| "INFO" \| "WARNING" \| "ERROR" \| "CRITICAL"` | `"DEBUG"` | 文件日志级别 |
-| `log_file_max_bytes` | `int` | `5242880` | 单个日志文件最大字节数，默认 5MB |
-| `max_log_files` | `int` | `30` | 最多保留的主日志文件数量 |
-| `log_cleanup_days` | `int` | `30` | 主日志文件保留天数 |
-| `llm_request_snapshot_limit` | `int` | `128` | 失败请求快照最多保留数量 |
-| `maisaka_prompt_preview_limit` | `int` | `256` | 每个会话最多保留的 Maisaka Prompt 预览组数 |
-| `maisaka_reply_effect_limit` | `int` | `256` | 每个会话最多保留的 Maisaka 回复效果记录数 |
-| `suppress_libraries` | `list[str]` | 11 个库 | 完全屏蔽日志的第三方库列表 |
-| `library_log_levels` | `dict[str, str]` | `{"aiohttp": "WARNING"}` | 特定第三方库的日志级别 |
+- **`date_style`** — 日志日期格式。默认 `m-d H:i:s`
+- **`log_level_style`** — 日志等级显示样式，可选 lite、compact 或 full。默认 `lite`
+- **`color_text`** — 控制台日志颜色模式，可选 none、title 或 full。默认 `full`
+- **`log_level`** — 全局日志级别，可选 DEBUG、INFO、WARNING、ERROR 或 CRITICAL。默认 `INFO`
+- **`console_log_level`** — 控制台日志级别。默认 `INFO`
+- **`file_log_level`** — 文件日志级别。默认 `DEBUG`
+- **`log_file_max_bytes`** — 单个日志文件最大字节数，默认 5MB。默认 5242880
+- **`max_log_files`** — 最多保留的主日志文件数量。默认 30
+- **`log_cleanup_days`** — 主日志文件保留天数。默认 30
+- **`llm_request_snapshot_limit`** — 失败请求快照最多保留数量。默认 128
+- **`maisaka_prompt_preview_limit`** — 每个会话最多保留的 Maisaka Prompt 预览组数。默认 256
+- **`maisaka_reply_effect_limit`** — 每个会话最多保留的 Maisaka 回复效果记录数。默认 256
+- **`suppress_libraries`** — 完全屏蔽日志的第三方库列表。11 个库
+- **`library_log_levels`** — 特定第三方库的日志级别。默认 `{"aiohttp": "WARNING"}`
 
 ### response_splitter
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable` | `bool` | 是否启用回复分割器 |
-| `max_length` | `int` | 回复允许的最大长度 |
-| `max_sentence_num` | `int` | 回复允许的最大句子数 |
-| `enable_kaomoji_protection` | `bool` | 是否启用颜文字保护 |
-| `enable_overflow_return_all` | `bool` | 句子数量超出上限时是否一次性返回全部内容 |
+- **`enable`** — 是否启用回复分割器
+- **`max_length`** — 回复允许的最大长度
+- **`max_sentence_num`** — 回复允许的最大句子数
+- **`enable_kaomoji_protection`** — 是否启用颜文字保护
+- **`enable_overflow_return_all`** — 句子数量超出上限时是否一次性返回全部内容
 
 ## 遥测与调试
 
 ### telemetry
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable` | `bool` | 是否启用遥测 |
+- **`enable`** — 是否启用遥测
 
 ### debug
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `show_maisaka_thinking` | `bool` | `true` | 是否显示回复器推理 |
-| `fold_maisaka_thinking` | `bool` | `true` | 是否折叠 Maisaka prompt 展示入口 |
-| `show_jargon_prompt` | `bool` | `false` | 是否显示黑话相关提示词 |
-| `show_memory_prompt` | `bool` | `false` | 是否显示记忆检索相关 prompt |
-| `enable_reply_effect_tracking` | `bool` | `false` | 是否开启回复效果评分追踪 |
-| `record_reply_request` | `bool` | `false` | 是否记录 Replyer 请求体 |
-| `record_planner_request` | `bool` | `false` | 是否记录 Planner 完整请求体和完整回复体 |
-| `enable_llm_cache_stats` | `bool` | `false` | 是否记录 LLM prompt cache 调试统计 |
+- **`show_maisaka_thinking`** — 是否显示回复器推理。默认开启
+- **`fold_maisaka_thinking`** — 是否折叠 Maisaka prompt 展示入口。默认开启
+- **`show_jargon_prompt`** — 是否显示黑话相关提示词。默认关闭
+- **`show_memory_prompt`** — 是否显示记忆检索相关 prompt。默认关闭
+- **`enable_reply_effect_tracking`** — 是否开启回复效果评分追踪。默认关闭
+- **`record_reply_request`** — 是否记录 Replyer 请求体。默认关闭
+- **`record_planner_request`** — 是否记录 Planner 完整请求体和完整回复体。默认关闭
+- **`enable_llm_cache_stats`** — 是否记录 LLM prompt cache 调试统计。默认关闭
 
 ## 消息服务 [maim_message]
 
 `[maim_message]` 同时包含旧版 WebSocket 服务和额外新版 API Server 的配置。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `ws_server_host` | `str` | `127.0.0.1` | 旧版 WebSocket 服务器主机地址 |
-| `ws_server_port` | `int` | `8000` | 旧版 WebSocket 服务器端口 |
-| `auth_token` | `list[str]` | `[]` | 旧版 API 验证令牌，为空则不启用验证 |
-| `enable_api_server` | `bool` | 见默认配置 | 是否启用额外新版 API Server |
-| `api_server_host` | `str` | 见默认配置 | 新版 API Server 主机地址 |
-| `api_server_port` | `int` | 见默认配置 | 新版 API Server 端口 |
-| `api_server_use_wss` | `bool` | 见默认配置 | 新版 API Server 是否启用 WSS |
-| `api_server_cert_file` | `str` | `""` | SSL 证书文件路径 |
-| `api_server_key_file` | `str` | `""` | SSL 密钥文件路径 |
-| `api_server_allowed_api_keys` | `list[str]` | `[]` | 允许的 API Key 列表，为空则允许所有连接 |
+- **`ws_server_host`** — 旧版 WebSocket 服务器主机地址。默认 `127.0.0.1`
+- **`ws_server_port`** — 旧版 WebSocket 服务器端口。默认 8000
+- **`auth_token`** — 旧版 API 验证令牌，为空则不启用验证。默认为空
+- **`enable_api_server`** — 是否启用额外新版 API Server。见默认配置
+- **`api_server_host`** — 新版 API Server 主机地址。见默认配置
+- **`api_server_port`** — 新版 API Server 端口。见默认配置
+- **`api_server_use_wss`** — 新版 API Server 是否启用 WSS。见默认配置
+- **`api_server_cert_file`** — SSL 证书文件路径。默认为空
+- **`api_server_key_file`** — SSL 密钥文件路径。默认为空
+- **`api_server_allowed_api_keys`** — 允许的 API Key 列表，为空则允许所有连接。默认为空
 
 ## WebUI [webui]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `enabled` | `bool` | `true` | 是否启用 WebUI |
-| `host` | `str` | `127.0.0.1` | WebUI 绑定主机地址 |
-| `port` | `int` | `8001` | WebUI 绑定端口 |
-| `mode` | `"development" \| "production"` | `"production"` | WebUI 运行模式 |
-| `anti_crawler_mode` | `"false" \| "strict" \| "loose" \| "basic"` | `"basic"` | 防爬虫模式 |
-| `allowed_ips` | `str` | `127.0.0.1` | IP 白名单，逗号分隔，支持精确 IP、CIDR 和通配符 |
-| `trusted_proxies` | `str` | `""` | 信任的代理 IP 列表 |
-| `trust_xff` | `bool` | `false` | 是否启用 `X-Forwarded-For` 代理解析 |
-| `secure_cookie` | `bool` | `false` | 是否启用安全 Cookie，仅 HTTPS 传输 |
-| `enforce_public_outbound_url` | `bool` | `true` | 是否要求 WebUI 出站 URL 解析到公网地址；关闭后允许内网、本机或 TUN 代理地址，用于内网 LLM、反向代理等场景 |
-| `enable_paragraph_content` | `bool` | `false` | 是否在知识图谱中加载段落完整内容，会占用额外内存 |
+- **`enabled`** — 是否启用 WebUI。默认开启
+- **`host`** — WebUI 绑定主机地址。默认 `127.0.0.1`
+- **`port`** — WebUI 绑定端口。默认 8001
+- **`mode`** — WebUI 运行模式，可选 development 或 production。默认 `production`
+- **`anti_crawler_mode`** — 防爬虫模式，可选 false、strict、loose 或 basic。默认 `basic`
+- **`allowed_ips`** — IP 白名单，逗号分隔，支持精确 IP、CIDR 和通配符。默认 `127.0.0.1`
+- **`trusted_proxies`** — 信任的代理 IP 列表。默认为空
+- **`trust_xff`** — 是否启用 X-Forwarded-For 代理解析。默认关闭
+- **`secure_cookie`** — 是否启用安全 Cookie，仅 HTTPS 传输。默认关闭
+- **`enforce_public_outbound_url`** — 是否要求 WebUI 出站 URL 解析到公网地址；关闭后允许内网、本机或 TUN 代理地址，用于内网 LLM、反向代理等场景。默认开启
+- **`enable_paragraph_content`** — 是否在知识图谱中加载段落完整内容，会占用额外内存。默认关闭
 
 ## 数据库 [database]
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `save_binary_data` | `bool` | `false` | 是否将语音等二进制数据保存为独立文件；只影响新存储的消息 |
+- **`save_binary_data`** — 是否将语音等二进制数据保存为独立文件；只影响新存储的消息。默认关闭
 
 ## MCP [mcp]
 
@@ -456,11 +410,9 @@ library_log_levels = { aiohttp = "WARNING" }
 
 详细的 MCP 配置指南请移步 → [MCP 配置详解](./mcp-config.md)
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enable` | `bool` | 是否启用 MCP |
-| `client` | `MCPClientConfig` | MCP 客户端宿主能力配置 |
-| `servers` | `list[MCPServerItemConfig]` | MCP 服务器配置列表 |
+- **`enable`** — 是否启用 MCP
+- **`client`** — MCP 客户端宿主能力配置
+- **`servers`** — MCP 服务器配置列表
 
 ### 快速示例
 
@@ -507,39 +459,33 @@ url = "https://mcp.example.com/sse"
 
 `[plugin]` 控制插件管理权限。
 
-| 配置项 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| `permission` | `list[str]` | `[]` | 允许使用内置插件管理命令的用户 ID 列表，格式为 `platform:id`，例如 `qq:123456789` |
+- **`permission`** — 允许使用内置插件管理命令的用户 ID 列表，格式为 `platform:id`，例如 `qq:123456789`。默认为空
 
 ## 插件运行时 [plugin_runtime]
 
 `[plugin_runtime]` 控制插件 Runner 和插件运行时浏览器渲染能力。
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enabled` | `bool` | 是否启用插件系统 |
-| `health_check_interval_sec` | `float` | 健康检查间隔 |
-| `max_restart_attempts` | `int` | Runner 崩溃后最大自动重启次数 |
-| `runner_spawn_timeout_sec` | `float` | 等待 Runner 子进程启动并注册的超时时间 |
-| `hook_blocking_timeout_sec` | `float` | Hook 阻塞步骤的全局超时上限 |
-| `ipc_socket_path` | `str` | 自定义 IPC Socket 路径，仅 Linux/macOS 生效；留空自动生成 |
+- **`enabled`** — 是否启用插件系统
+- **`health_check_interval_sec`** — 健康检查间隔
+- **`max_restart_attempts`** — Runner 崩溃后最大自动重启次数
+- **`runner_spawn_timeout_sec`** — 等待 Runner 子进程启动并注册的超时时间
+- **`hook_blocking_timeout_sec`** — Hook 阻塞步骤的全局超时上限
+- **`ipc_socket_path`** — 自定义 IPC Socket 路径，仅 Linux/macOS 生效；留空自动生成
 
 ### plugin_runtime.render
 
-| 配置项 | 类型 | 说明 |
-|--------|------|------|
-| `enabled` | `bool` | 是否启用插件运行时浏览器渲染能力 |
-| `browser_ws_endpoint` | `str` | 优先复用的现有 Chromium CDP 地址 |
-| `executable_path` | `str` | 浏览器可执行文件路径，留空自动探测 |
-| `browser_install_root` | `str` | Playwright 托管浏览器目录 |
-| `headless` | `bool` | 是否以无头模式启动浏览器 |
-| `launch_args` | `list[str]` | 浏览器启动参数 |
-| `concurrency_limit` | `int` | 同时允许进行的最大渲染任务数 |
-| `startup_timeout_sec` | `float` | 浏览器连接或启动超时时间 |
-| `render_timeout_sec` | `float` | 单次渲染默认超时时间 |
-| `auto_download_chromium` | `bool` | 未检测到可用浏览器时是否自动下载 Playwright Chromium |
-| `download_connection_timeout_sec` | `float` | 自动下载 Chromium 时的连接超时时间 |
-| `restart_after_render_count` | `int` | 累计渲染指定次数后自动重建浏览器，`0` 表示关闭 |
+- **`enabled`** — 是否启用插件运行时浏览器渲染能力
+- **`browser_ws_endpoint`** — 优先复用的现有 Chromium CDP 地址
+- **`executable_path`** — 浏览器可执行文件路径，留空自动探测
+- **`browser_install_root`** — Playwright 托管浏览器目录
+- **`headless`** — 是否以无头模式启动浏览器
+- **`launch_args`** — 浏览器启动参数
+- **`concurrency_limit`** — 同时允许进行的最大渲染任务数
+- **`startup_timeout_sec`** — 浏览器连接或启动超时时间
+- **`render_timeout_sec`** — 单次渲染默认超时时间
+- **`auto_download_chromium`** — 未检测到可用浏览器时是否自动下载 Playwright Chromium
+- **`download_connection_timeout_sec`** — 自动下载 Chromium 时的连接超时时间
+- **`restart_after_render_count`** — 累计渲染指定次数后自动重建浏览器，0 表示关闭
 
 ## 常用配置示例
 

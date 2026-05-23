@@ -113,11 +113,9 @@ ws_server_port = 8080           # Port number, default 8080
 auth_token = []                 # Auth token, leave empty
 ```
 
-| Setting | Meaning | How to fill |
-| ------- | ------- | ----------- |
-| `ws_server_host` | Server address | Use `127.0.0.1` locally, or the actual IP on a server |
-| `ws_server_port` | Port number | Default `8080`; remember the number if you change it |
-| `auth_token` | Password verification | Leave it empty |
+- **`ws_server_host`** — Server address. Use `127.0.0.1` locally, or the actual IP on a server
+- **`ws_server_port`** — Port number. Default `8080`; remember the number if you change it
+- **`auth_token`** — Password verification. Leave it empty
 
 > **Note**: `maim_message` configures the legacy WebSocket service, usually on port 8080. The adapter connects to MaiBot through the MMC protocol and uses the `ws_server_port` configured under `[maim_message]` in MaiBot's `config/bot_config.toml`. Make sure `maibot_server.port` in the adapter's `config.toml` matches MaiBot's `ws_server_port`.
 

@@ -22,12 +22,10 @@ from maibot_sdk import Command
 
 ### Parameter Description
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `name` | `str` | Command name, must be unique within the plugin |
-| `description` | `str` | Command description |
-| `pattern` | `str` | Regex matching pattern string. When a user message matches this pattern, the command is triggered |
-| `aliases` | `list[str] \| None` | Command alias list, providing additional trigger methods |
+- **`name`** `str` — Command name, must be unique within the plugin
+- **`description`** `str` — Command description
+- **`pattern`** `str` — Regex matching pattern string. When a user message matches this pattern, the command is triggered
+- **`aliases`** `list[str] | None` — Command alias list, providing additional trigger methods
 
 ## Basic Usage
 
@@ -71,12 +69,10 @@ async def handle_echo(self, **kwargs):
 
 Command handler functions receive `**kwargs`, which contains the following parameters:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `stream_id` | `str` | Current chat stream ID, used for sending messages |
-| `matched_groups` | `dict` | Regex named capture group matching results |
-| `raw_message` | `str` | Raw message text sent by the user |
-| `message` | `dict` | Complete message object |
+- **`stream_id`** `str` — Current chat stream ID, used for sending messages
+- **`matched_groups`** `dict` — Regex named capture group matching results
+- **`raw_message`** `str` — Raw message text sent by the user
+- **`message`** `dict` — Complete message object
 
 ### Return Value
 
@@ -86,11 +82,9 @@ Command handler functions must return a triple:
 return success, response, weight
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `success` | `bool` | Whether the command executed successfully |
-| `response` | `str` | Text description of the command execution result |
-| `weight` | `int` | Command priority weight, higher values mean higher priority |
+- **`success`** `bool` — Whether the command executed successfully
+- **`response`** `str` — Text description of the command execution result
+- **`weight`** `int` — Command priority weight, higher values mean higher priority
 
 ```python
 # Command executed successfully

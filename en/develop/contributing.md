@@ -54,15 +54,13 @@ def process_message(message, timeout=5.0):
 
 The following behaviors are **strictly prohibited** in the project:
 
-| Anti-pattern | Description |
-|--------------|-------------|
-| Modify any content under `dashboard/` | Frontend built by independent repository |
-| Directly edit `bot_config.toml` / `model_config.toml` | Should modify template + version number |
-| Type suppression like `as any`, `@ts-ignore` | Must properly handle types |
-| Empty catch block `catch(e) {}` | At least log the error |
-| Delete failing tests to "pass" | Must fix the problem itself |
-| Hard-coded API key / password / token | Use configuration system management |
-| `eval()` / `exec()` / `__import__` | Security risks exist |
+- **Modify any content under `dashboard/`** — Frontend built by independent repository
+- **Directly edit `bot_config.toml` / `model_config.toml`** — Should modify template + version number
+- **Type suppression like `as any`, `@ts-ignore`** — Must properly handle types
+- **Empty catch block `catch(e) {}`** — At least log the error
+- **Delete failing tests to "pass"** — Must fix the problem itself
+- **Hard-coded API key / password / token** — Use configuration system management
+- **`eval()` / `exec()` / `__import__`** — Security risks exist
 
 ## Variable and Attribute Specifications
 

@@ -116,11 +116,9 @@ ws_server_port = 8000           # 端口号（默认 8000）
 auth_token = []                 # 认证令牌，空着就行
 ```
 
-| 配置项             | 什么意思   | 怎么填                                |
-| ------------------ | ---------- | ------------------------------------- |
-| `ws_server_host` | 服务器地址 | 本地用 `127.0.0.1`，服务器用实际 IP |
-| `ws_server_port` | 端口号     | 默认 `8000`，改了就记住这个数字     |
-| `auth_token`     | 密码验证   | 空着就行，不用管                      |
+- **`ws_server_host`** — 服务器地址，本地用 `127.0.0.1`，服务器用实际 IP
+- **`ws_server_port`** — 端口号，默认 `8000`，改了就记住这个数字
+- **`auth_token`** — 密码验证，空着就行，不用管
 
 > 💡 **注意**：`maim_message` 配置的是 legacy WebSocket 服务（端口 8000）。适配器通过 MMC 协议连接 MaiBot，默认连接 MaiBot 的 `config/bot_config.toml` 中 `[maim_message]` 设置的 `ws_server_port`（默认 8000）。确保适配器的 `config.toml` 中 `maibot_server.port` 与 MaiBot 的 `ws_server_port` 设置一致。
 

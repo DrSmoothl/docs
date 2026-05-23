@@ -33,27 +33,21 @@ First startup will automatically generate configuration files, then stop and wai
 
 Docker will start several services at once, like a team:
 
-| Service | Purpose | Simple Explanation |
-|------|------|----------|
-| `core` | MaiBot core | The robot's brain 🧠 |
-| `napcat` | QQ connector | Lets the robot get on QQ 📱 |
-| `sqlite-web` | Database tool | View what the robot remembers 📊 |
+- **`core`** — MaiBot core, the robot's brain 🧠
+- **`napcat`** — QQ connector, lets the robot get on QQ 📱
+- **`sqlite-web`** — Database tool, view what the robot remembers 📊
 
 ## ⚙️ Environment Variables (Advanced Usage)
 
 ### Core Service Settings
 
-| Variable | Purpose | Example |
-|------|------|------|
-| `TZ` | Timezone | `Asia/Shanghai` |
-| `EULA_AGREE` | Skip agreement confirmation | Advanced usage, usually don't worry about it |
+- **`TZ`** — Timezone, e.g. `Asia/Shanghai`
+- **`EULA_AGREE`** — Skip agreement confirmation (advanced, usually don't worry about it)
 
 ### QQ Service Settings
 
-| Variable | Purpose |
-|------|------|
-| `NAPCAT_UID` | User ID (usually use default) |
-| `NAPCAT_GID` | User group ID (usually use default) |
+- **`NAPCAT_UID`** — User ID (usually use default)
+- **`NAPCAT_GID`** — User group ID (usually use default)
 
 ## 💾 Where is Data Saved?
 
@@ -71,11 +65,9 @@ Docker will save important data in these locations on your computer:
 
 ## 🔌 Port Information
 
-| Service | Port | Purpose |
-|------|------|------|
-| Web interface | 18001 | Open http://localhost:18001 in browser |
-| NapCat Web UI | 6099 | NapCat web configuration panel |
-| Database tool | 8120 | Used to view robot data |
+- **Web interface** — Port 18001, open http://localhost:18001 in browser
+- **NapCat Web UI** — Port 6099, NapCat web configuration panel
+- **Database tool** — Port 8120, used to view robot data
 
 ## 📋 Complete Steps (Step by Step)
 

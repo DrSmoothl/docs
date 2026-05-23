@@ -35,16 +35,12 @@ class PlatformIODriver(ABC):
 
 ### Required Methods
 
-| Method | Description |
-|--------|-------------|
-| `send_message(message, route_key, metadata)` | Send messages through specific driver, return `DeliveryReceipt`. This is the only abstract method that must be implemented |
+- **`send_message(message, route_key, metadata)`** — Send messages through specific driver, return `DeliveryReceipt`. This is the only abstract method that must be implemented
 
 ### Optional Override Hooks
 
-| Method | Description |
-|--------|-------------|
-| `start()` | Start driver lifecycle (default empty implementation) |
-| `stop()` | Stop driver lifecycle (default empty implementation) |
+- **`start()`** — Start driver lifecycle (default empty implementation)
+- **`stop()`** — Stop driver lifecycle (default empty implementation)
 
 ### Inbound Message Reporting
 
@@ -121,12 +117,10 @@ class DeliveryReceipt:
 
 `DeliveryStatus` enumeration values:
 
-| Status | Description |
-|--------|-------------|
-| `PENDING` | Pending sending |
-| `SENT` | Sent |
-| `FAILED` | Sending failed |
-| `DROPPED` | Dropped |
+- **`PENDING`** — Pending sending
+- **`SENT`** — Sent
+- **`FAILED`** — Sending failed
+- **`DROPPED`** — Dropped
 
 ### DriverDescriptor — Driver Description
 

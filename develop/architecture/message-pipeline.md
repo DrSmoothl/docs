@@ -71,33 +71,29 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 `SessionMessage` 继承自 `MaiMessage`，是管线中流转的核心消息对象：
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `message_id` | `str` | 消息唯一 ID |
-| `platform` | `str` | 来源平台标识 |
-| `session_id` | `str` | 会话 ID（由 `SessionUtils.calculate_session_id()` 计算） |
-| `processed_plain_text` | `str` | 经过预处理的纯文本 |
-| `message_info` | `MessageInfo` | 包含 `user_info`、`group_info`、`additional_config` |
-| `raw_message` | `MessageSequence` | 原始消息组件序列 |
-| `is_at` | `bool` | 是否 @ 了 bot |
-| `is_mentioned` | `bool` | 是否提及了 bot |
-| `is_command` | `bool` | 是否命中命令 |
-| `is_notify` | `bool` | 是否为通知消息 |
-| `timestamp` | `datetime` | 消息时间戳 |
+- **`message_id`** `str` — 消息唯一 ID
+- **`platform`** `str` — 来源平台标识
+- **`session_id`** `str` — 会话 ID（由 `SessionUtils.calculate_session_id()` 计算）
+- **`processed_plain_text`** `str` — 经过预处理的纯文本
+- **`message_info`** `MessageInfo` — 包含 `user_info`、`group_info`、`additional_config`
+- **`raw_message`** `MessageSequence` — 原始消息组件序列
+- **`is_at`** `bool` — 是否 @ 了 bot
+- **`is_mentioned`** `bool` — 是否提及了 bot
+- **`is_command`** `bool` — 是否命中命令
+- **`is_notify`** `bool` — 是否为通知消息
+- **`timestamp`** `datetime` — 消息时间戳
 
 ### `SessionMessage.process()` 预处理
 
 将原始消息组件转化为纯文本，支持以下组件类型：
 
-| 组件 | 处理方式 |
-|------|----------|
-| `TextComponent` | 直接返回文本 |
-| `ImageComponent` | 调用 `image_manager.get_image_description()` 生成 `[图片：描述]` |
-| `EmojiComponent` | 调用 `emoji_manager.get_emoji_description()` 生成 `[表情包：描述]` |
-| `AtComponent` | 解析目标用户名，生成 `@昵称` |
-| `VoiceComponent` | 调用 `get_voice_text()` 转写为 `[语音：转录文本]` |
-| `ReplyComponent` | 查找原消息内容，生成 `[回复了XXX的消息：内容]` |
-| `ForwardNodeComponent` | 递归处理转发节点，生成 `【合并转发消息：...】` |
+- **`TextComponent`** — 直接返回文本
+- **`ImageComponent`** — 调用 `image_manager.get_image_description()` 生成 `[图片：描述]`
+- **`EmojiComponent`** — 调用 `emoji_manager.get_emoji_description()` 生成 `[表情包：描述]`
+- **`AtComponent`** — 解析目标用户名，生成 `@昵称`
+- **`VoiceComponent`** — 调用 `get_voice_text()` 转写为 `[语音：转录文本]`
+- **`ReplyComponent`** — 查找原消息内容，生成 `[回复了XXX的消息：内容]`
+- **`ForwardNodeComponent`** — 递归处理转发节点，生成 `【合并转发消息：...】`
 
 入站主链调用时使用轻量模式（`enable_heavy_media_analysis=False, enable_voice_transcription=False`），图片/表情包的二进制数据延迟到 Maisaka 需要时按需回填。
 
@@ -107,12 +103,10 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 在 `SessionMessage.process()` 之前触发，可拦截或改写原始消息。
 
-| 属性 | 值 |
-|------|-----|
-| 注册位置 | `src/chat/message_receive/bot.py` `register_chat_hook_specs()` |
-| 默认超时 | 8000ms |
-| 允许中止 | 是 |
-| 允许改写 | 是 |
+- **注册位置**：`src/chat/message_receive/bot.py` `register_chat_hook_specs()`
+- **默认超时**：8000ms
+- **允许中止**：是
+- **允许改写**：是
 
 参数 Schema：
 ```json
@@ -125,21 +119,17 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 在消息完成预处理后触发，可改写文本、消息体或中止后续链路。
 
-| 属性 | 值 |
-|------|-----|
-| 默认超时 | 8000ms |
-| 允许中止 | 是 |
-| 允许改写 | 是 |
+- **默认超时**：8000ms
+- **允许中止**：是
+- **允许改写**：是
 
 ### chat.command.before_execute
 
 在命令匹配成功、实际执行前触发。
 
-| 属性 | 值 |
-|------|-----|
-| 默认超时 | 5000ms |
-| 允许中止 | 是 |
-| 允许改写 | 是 |
+- **默认超时**：5000ms
+- **允许中止**：是
+- **允许改写**：是
 
 参数包含：`message`、`command_name`、`plugin_id`、`matched_groups`
 
@@ -147,11 +137,9 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 在命令执行结束后触发，可调整返回文本和是否继续主链处理。
 
-| 属性 | 值 |
-|------|-----|
-| 默认超时 | 5000ms |
-| 允许中止 | 否 |
-| 允许改写 | 是 |
+- **默认超时**：5000ms
+- **允许中止**：否
+- **允许改写**：是
 
 参数包含：`message`、`command_name`、`plugin_id`、`matched_groups`、`success`、`response`、`intercept_message_level`、`continue_process`
 
@@ -159,20 +147,16 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 在出站 `SessionMessage` 构建完成后触发，可改写消息体或取消发送。
 
-| 属性 | 值 |
-|------|-----|
-| 注册位置 | `src/services/send_service.py` `register_send_service_hook_specs()` |
-| 默认超时 | 5000ms |
-| 允许中止 | 是 |
+- **注册位置**：`src/services/send_service.py` `register_send_service_hook_specs()`
+- **默认超时**：5000ms
+- **允许中止**：是
 
 ### send_service.before_send
 
 在真正调用 Platform IO 发送前触发，最终拦截点。
 
-| 属性 | 值 |
-|------|-----|
-| 默认超时 | 5000ms |
-| 允许中止 | 是 |
+- **默认超时**：5000ms
+- **允许中止**：是
 
 ### send_service.after_send
 
@@ -217,16 +201,12 @@ class ChatManager:
 
 继承自 `MaiChatSession`，扩展了：
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `context` | `SessionContext` | 会话上下文（含最近消息、模板名） |
-| `accept_format` | `List[str]` | 可接受的消息格式列表 |
+- **`context`** `SessionContext` — 会话上下文（含最近消息、模板名）
+- **`accept_format`** `List[str]` — 可接受的消息格式列表
 
-| 方法 | 说明 |
-|------|------|
-| `update_active_time()` | 更新最后活跃时间 |
-| `set_context(message)` | 设置会话上下文 |
-| `check_types(types)` | 检查消息是否符合可接受类型 |
+- **`update_active_time()`** — 更新最后活跃时间
+- **`set_context(message)`** — 设置会话上下文
+- **`check_types(types)`** — 检查消息是否符合可接受类型
 
 ## 命令处理
 
@@ -297,17 +277,15 @@ class HeartflowManager:
 
 所有内置 Hook 由 `hook_catalog.py` 统一注册：
 
-| Hook 名称 | 注册模块 | 触发时机 | 可中止 |
-|-----------|---------|---------|--------|
-| `chat.receive.before_process` | `chat/message_receive/bot.py` | 消息预处理前 | ✓ |
-| `chat.receive.after_process` | `chat/message_receive/bot.py` | 消息预处理后 | ✓ |
-| `chat.command.before_execute` | `chat/message_receive/bot.py` | 命令执行前 | ✓ |
-| `chat.command.after_execute` | `chat/message_receive/bot.py` | 命令执行后 | ✗ |
-| `maisaka.planner.before_request` | `maisaka/chat_loop_service.py` | LLM 请求前 | ✗ |
-| `maisaka.planner.after_response` | `maisaka/chat_loop_service.py` | LLM 响应后 | ✗ |
-| `send_service.after_build_message` | `services/send_service.py` | 出站消息构建后 | ✓ |
-| `send_service.before_send` | `services/send_service.py` | 发送前 | ✓ |
-| `send_service.after_send` | `services/send_service.py` | 发送后 | ✗ |
+- **`chat.receive.before_process`** — 注册模块 `chat/message_receive/bot.py` · 消息预处理前 · 可中止 ✓
+- **`chat.receive.after_process`** — 注册模块 `chat/message_receive/bot.py` · 消息预处理后 · 可中止 ✓
+- **`chat.command.before_execute`** — 注册模块 `chat/message_receive/bot.py` · 命令执行前 · 可中止 ✓
+- **`chat.command.after_execute`** — 注册模块 `chat/message_receive/bot.py` · 命令执行后 · 可中止 ✗
+- **`maisaka.planner.before_request`** — 注册模块 `maisaka/chat_loop_service.py` · LLM 请求前 · 可中止 ✗
+- **`maisaka.planner.after_response`** — 注册模块 `maisaka/chat_loop_service.py` · LLM 响应后 · 可中止 ✗
+- **`send_service.after_build_message`** — 注册模块 `services/send_service.py` · 出站消息构建后 · 可中止 ✓
+- **`send_service.before_send`** — 注册模块 `services/send_service.py` · 发送前 · 可中止 ✓
+- **`send_service.after_send`** — 注册模块 `services/send_service.py` · 发送后 · 可中止 ✗
 
 ## 数据流图
 
