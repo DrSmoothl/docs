@@ -82,6 +82,8 @@ result = await self.ctx.llm.generate_with_tools(
     model="gpt-4",
 )
 
+When `temperature` or `max_tokens` is omitted or set to `None`, the Host uses the values configured for the selected model/task in model management. Pass concrete values only when the plugin needs to override that configuration.
+
 # Generate an embedding vector for one text. Uses model_task_config.embedding by default.
 embedding = await self.ctx.llm.embed(text="Text to vectorize")
 
