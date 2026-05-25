@@ -121,6 +121,7 @@ class AMemorixHostService:
 - **`memory_source_admin`** — `kernel.memory_source_admin()`
 - **`memory_episode_admin`** — `kernel.memory_episode_admin()`
 - **`memory_profile_admin`** — `kernel.memory_profile_admin()`
+- **`memory_feedback_admin`** — `kernel.memory_feedback_admin()`
 - **`memory_runtime_admin`** — `kernel.memory_runtime_admin()`
 - **`memory_import_admin`** — `kernel.memory_import_admin()`
 - **`memory_tuning_admin`** — `kernel.memory_tuning_admin()`
@@ -129,7 +130,8 @@ class AMemorixHostService:
 
 ### Configuration Management
 
-- Config file path: `config/a_memorix.toml`
+- Main config path: `[a_memorix]` in `config/bot_config.toml`
+- Legacy compatibility config: `config/a_memorix.toml` (can be used as a migration source)
 - Schema file: `src/A_memorix/config_schema.json`
 - `get_config()` / `update_config()` / `get_raw_config()` / `update_raw_config()` for config read/write
 - After updating config, automatically `reload()`, rebuild kernel instance
@@ -335,6 +337,7 @@ Maintain long-term memory relationship state.
 - **`memory_source_admin`** — `list` / `delete` / `batch_delete`
 - **`memory_episode_admin`** — `query` / `list` / `get` / `status` / `rebuild` / `process_pending`
 - **`memory_profile_admin`** — `query` / `list` / `set_override` / `delete_override`
+- **`memory_feedback_admin`** — `list` / `get` / `rollback`
 - **`memory_runtime_admin`** — `save` / `get_config` / `self_check` / `refresh_self_check` / `set_auto_save`
 - **`memory_import_admin`** — `settings` / `get_guide` / `create_upload` / `create_paste` / `list` / `get` / `chunks` / `cancel` / `retry_failed`
 - **`memory_tuning_admin`** — `settings` / `get_profile` / `apply_profile` / `rollback_profile` / `create_task` / `list_tasks` / `get_task` / `cancel` / `apply_best` / `get_report`
@@ -355,18 +358,21 @@ Current MaiBot mainline is directly integrated via `AMemorixHostService`, no lon
 
 ### Configuration
 
-- Default config file: `config/a_memorix.toml`
+- Main config file: `[a_memorix]` in `config/bot_config.toml`
+- Legacy compatibility config: `config/a_memorix.toml`
 - Runtime data directory: `data/a-memorix` (controlled by `storage.data_dir`)
 - Config Schema: `config_schema.json` for WebUI long-term memory console
 - WebUI interface: `/api/webui/memory/*`
 
 ## Metadata Version
 
-Current metadata schema version is **v9**, supporting:
+Current metadata schema version is **v12**, supporting:
 
 - External references (`external_memory_refs`)
 - Operations records (`memory_v5_operations`)
 - Delete operations (`delete_operations`)
+
+Runtime auto-migration is supported from versioned schema v9 and above. Older databases, or databases without a schema version table, should be migrated with the offline migration script first.
 
 ## Delete Semantics (source mode)
 

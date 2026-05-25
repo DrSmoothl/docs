@@ -17,7 +17,7 @@ title: Bot 配置
 - **`[visual]`** — 图片理解模式和识图提示词
 - **`[chat]`** — 回复频率、上下文、聊天提示词
 - **`[message_receive]`** — 图片解析阈值、消息过滤
-- **`[A_memorix]`** — 长期记忆系统（存储、向量化、检索、画像、演化等）→ [详见 A_Memorix 配置](./amemorix-config.md)
+- **`[a_memorix]`** — 长期记忆系统（存储、向量化、检索、画像、演化等）→ [详见 A_Memorix 配置](./amemorix-config.md)
 - **`[expression]`** — 表达学习、表达检查、互通组
 - **`[jargon]`** — 黑话学习、黑话互通组
 - **`[voice]`** — 语音识别
@@ -215,7 +215,7 @@ ban_msgs_regex = []
 
 ---
 
-## 长期记忆 [A_memorix]
+## 记忆 [a_memorix]
 
 **说明**：A_Memorix 是 MaiBot 的长期记忆系统，负责记忆存储、向量化、检索、人物画像、记忆演化和 Web 运维。它替代了旧版 `[memory]` 配置段落，提供了更细粒度的控制。
 
@@ -228,9 +228,9 @@ A_Memorix 配置包含 12 个子段落（integration、plugin、storage、embedd
 最简单的配置——仅启用记忆系统并使用全部默认值：
 
 ```toml
-[A_memorix]
+[a_memorix]
 
-[A_memorix.plugin]
+[a_memorix.plugin]
 enabled = true
 ```
 
@@ -649,12 +649,12 @@ talk_value = 0.7
 inevitable_at_reply = true
 max_context_size = 40
 
-[A_memorix]
+[a_memorix]
 
-[A_memorix.plugin]
+[a_memorix.plugin]
 enabled = true
 
-[A_memorix.integration]
+[a_memorix.integration]
 enable_memory_query_tool = true
 person_fact_writeback_enabled = true
 chat_summary_writeback_enabled = true
