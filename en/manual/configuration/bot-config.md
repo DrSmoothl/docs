@@ -17,7 +17,7 @@ This document is organized according to `src/config/official_configs.py` and `sr
 - **`[visual]`** — Image understanding mode and visual prompt
 - **`[chat]`** — Reply frequency, context, chat prompts
 - **`[message_receive]`** — Image parsing threshold and message filtering
-- **`[memory]`** — Memory retrieval, writeback, feedback correction
+- **`[a_memorix]`** — Long-term memory system: storage, vectorization, retrieval, profiles, evolution, and Web operations
 - **`[expression]`** — Expression learning, jargon learning, expression checking
 - **`[voice]`** — Speech recognition
 - **`[emoji]`** — Emoji collection, filtering, sending
@@ -177,55 +177,28 @@ prompt = "Speak more briefly in this group."
 - **`ban_words`** — Filter word list. Default: empty
 - **`ban_msgs_regex`** — Filter regex list. Invalid regex causes configuration validation failure. Default: empty
 
-## Memory [memory]
+## Memory [a_memorix]
 
-`[memory]` controls long-term memory retrieval, person fact writeback, chat summary writeback, and feedback correction.
+A_Memorix is MaiBot's long-term memory system. It handles memory storage, vectorization, retrieval, person profiles, memory evolution, and WebUI operations. It replaces the old `[memory]` section with finer-grained controls.
 
-### Common Memory Fields
-
-- **`global_memory`** — Whether memory retrieval can ignore the current chat flow restriction. Default: disabled
-- **`global_memory_blacklist`** — Global memory blacklist, used to exclude specific chat flows. Default: empty
-- **`enable_memory_query_tool`** — Whether to enable Maisaka's built-in long-term memory tool query_memory. Default: enabled
-- **`memory_query_default_limit`** — Default return count for query_memory, range 1-20. Default: 5
-- **`person_fact_writeback_enabled`** — Whether to extract and write person facts after replies. Default: enabled
-- **`chat_summary_writeback_enabled`** — Whether to write chat summaries by message window. Default: enabled
-- **`chat_summary_writeback_message_threshold`** — Message window threshold for chat summary writeback. Default: 12
-- **`chat_summary_writeback_context_length`** — Number of messages to look back for summary writeback, range 1-500. Default: 50
-
-### global_memory_blacklist
+Use lowercase `[a_memorix]` in `bot_config.toml`; TOML section names are case-sensitive.
 
 ```toml
-[[memory.global_memory_blacklist]]
-platform = "qq"
-item_id = "123456"
-rule_type = "group"
+[a_memorix]
+
+[a_memorix.plugin]
+enabled = true
+
+[a_memorix.integration]
+enable_memory_query_tool = true
+memory_query_default_limit = 5
+person_fact_writeback_enabled = true
+chat_summary_writeback_enabled = true
 ```
 
-Common TargetItem fields:
+Main subsections include `integration`, `plugin`, `storage`, `embedding`, `retrieval`, `threshold`, `filter`, `episode`, `person_profile`, `memory`, `advanced`, and `web`.
 
-- **`platform`** — Platform. Empty together with item_id means global
-- **`item_id`** — User/group ID. Empty together with platform means global
-- **`rule_type`** — Chat flow type, group or private
-
-### Feedback Correction Fields
-
-Feedback correction is disabled by default and is an advanced feature. It uses user feedback after query_memory to try correcting stale memories.
-
-- **`feedback_correction_enabled`** — Whether to enable feedback-driven delayed memory correction. Default: disabled
-- **`feedback_correction_window_hours`** — Feedback window duration in hours. Default: 12.0
-- **`feedback_correction_check_interval_minutes`** — Polling interval in minutes. Default: 30
-- **`feedback_correction_batch_size`** — Maximum tasks per round, range 1-200. Default: 20
-- **`feedback_correction_auto_apply_threshold`** — Minimum confidence for automatically applying correction, range 0-1. Default: 0.85
-- **`feedback_correction_max_feedback_messages`** — Maximum feedback messages used per correction task. Default: 30
-- **`feedback_correction_prefilter_enabled`** — Whether to enable prefiltering. Default: enabled
-- **`feedback_correction_paragraph_mark_enabled`** — Whether to mark affected paragraphs with corrected-old-fact metadata. Default: enabled
-- **`feedback_correction_paragraph_hard_filter_enabled`** — Whether to hard-filter paragraphs with stale marks in user queries. Default: enabled
-- **`feedback_correction_profile_refresh_enabled`** — Whether to enqueue affected person profiles for refresh. Default: enabled
-- **`feedback_correction_profile_force_refresh_on_read`** — Whether to force-refresh dirty profiles on read. Default: enabled
-- **`feedback_correction_episode_rebuild_enabled`** — Whether to enqueue affected sources for episode rebuild. Default: enabled
-- **`feedback_correction_episode_query_block_enabled`** — Whether to block user queries while episode sources are rebuilding. Default: enabled
-- **`feedback_correction_reconcile_interval_minutes`** — Second-stage consistency polling interval. Default: 5
-- **`feedback_correction_reconcile_batch_size`** — Queue batch size for second-stage consistency. Default: 20
+Legacy `[memory]` fields migrate into `[a_memorix.integration]` and `[a_memorix.filter]`. For example, old `global_memory_blacklist` is now represented by `filter.mode = "blacklist"` and `filter.chats`.
 
 ## Expression Learning [expression]
 
@@ -492,8 +465,12 @@ talk_value = 0.7
 inevitable_at_reply = true
 max_context_size = 40
 
-[memory]
-global_memory = false
+[a_memorix]
+
+[a_memorix.plugin]
+enabled = true
+
+[a_memorix.integration]
 enable_memory_query_tool = true
 person_fact_writeback_enabled = true
 chat_summary_writeback_enabled = true

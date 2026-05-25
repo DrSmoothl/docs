@@ -4,7 +4,7 @@ title: How MaiBot Remembers You
 
 # How MaiBot Remembers You 🧠
 
-Have you noticed that the more you chat with MaiBot, the better it understands you? It's not an illusion! MaiBot really has "memory" — it remembers everything about you, just like a real friend.
+Have you noticed that the more you chat with MaiBot, the better it understands you? It's not an illusion! When long-term memory is enabled, MaiBot can save important conversations, person facts, and chat summaries according to your configuration, making future replies better match your shared context.
 
 ## Just Like Human Memory
 
@@ -31,10 +31,11 @@ Have you noticed that the more you chat with MaiBot, the better it understands y
 ### 🎯 How does it remember?
 
 **Automatic memory**
-After each chat, MaiBot automatically:
-- Extracts key information from the conversation
-- Updates its "profile" of you
-- Stores important content in long-term memory
+When the corresponding switches are enabled, MaiBot can:
+- Extract stable person facts after sending replies
+- Summarize chats by message windows
+- Update profiles for relevant people
+- Store important content in long-term memory
 
 **Smart organization**
 It doesn't remember everything — it:
@@ -47,6 +48,10 @@ As your preferences change, it changes too:
 - Old, inaccurate information gets updated
 - New important information gets added
 - It adjusts its understanding of you based on new situations
+
+::: tip
+The memory system does not unconditionally remember every message. Memory query, profile injection, person fact writeback, chat summary writeback, and feedback correction are controlled by `[a_memorix.integration]`.
+:::
 
 ## Building a "Profile" for Everyone 👤
 
@@ -124,7 +129,7 @@ During each chat:
 - Records important details
 
 ### 2️⃣ Extracting Key Points
-After the chat ends:
+After writeback conditions are met:
 - Extracts key information
 - Identifies important changes
 - Updates related memories
@@ -144,18 +149,18 @@ When needed:
 ## Privacy and Security 🔒
 
 ### Your data is safe
-- All memories are encrypted
-- Only MaiBot itself can access
-- Won't share with third parties
+- Memory data is stored in the local data directory by default
+- WebUI can view and manage long-term memory
+- Summaries, profiles, correction, and vectorization may call the model services you configured
 
 ### You have control
 - Can view what it remembers
 - Can delete content you don't want remembered
-- Can set how long memories are kept
+- Can adjust retention behavior with memory evolution, reinforcement, freezing, and protection
 
 ### Transparency
-- Will tell you what it remembers
-- Won't secretly record sensitive information
+- You can view long-term memory, person profiles, and sources in WebUI
+- You can disable memory query, profile injection, or automatic writeback
 - You can view and manage anytime
 
 ## Effects of Memory
@@ -176,12 +181,12 @@ After chatting: Like a real friend
 
 Through WebUI you can:
 - View what it remembers about you
-- Edit inaccurate memories
+- Correct inaccurate person profiles or graph relations
 - Delete content you don't want to keep
-- Export your memory data
+- Import data, manage recycle bins, and tune retrieval quality
 
 [Go to WebUI Memory Management page →](../webui/memory-management.md)
 
 ---
 
-MaiBot's memory system makes it not just "remember" you, but truly "understand" you. It gets to know you better and better, becoming more like a real friend. But remember, you always have control — you can view, edit, or delete any memory.
+MaiBot's memory system lets it build a more stable understanding across long-term conversations. You can always control what it can read and write through configuration and WebUI.
