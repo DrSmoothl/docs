@@ -59,6 +59,14 @@ nickname = "麦麦"
 alias_names = []
 ```
 
+### 选项说明
+
+- **`platform`** — 平台标识。默认为空字符串。填写平台名称，如 `qq`、`wechat` 等。
+- **`qq_account`** — QQ 账号。默认为空字符串。填写机器人登录的 QQ 号（字符串格式），用于识别 @ 消息和自身发送的消息。
+- **`platforms`** — 其他平台列表。默认为空列表。多平台部署场景下填写其他平台标识。
+- **`nickname`** — 机器人昵称。默认为 `麦麦`。自由填写，用于聊天中显示的名称。
+- **`alias_names`** — 别名列表。默认为空列表。填写多个别名，当用户提及这些别名时麦麦会参与回复判断。
+
 
 ## 人格 [personality]
 
@@ -82,6 +90,17 @@ multiple_reply_style = [
 multiple_probability = 0
 ```
 
+### 选项说明
+
+**`personality`** — 人格设定。默认值：`"你是一个大二女大学生，现在正在上网和群友聊天。"`。建议 200 字以内，使用第二人称描述麦麦的人格特质和身份特征。
+
+**`reply_style`** — 默认表达风格。默认值：`"你的风格平淡简短。可以参考贴吧，知乎和微博的回复风格。不浮夸不长篇大论，不要过分修辞和复杂句。尽量回复的简短一些，平淡一些"`。描述麦麦说话的表达风格和习惯，建议 1-2 行。
+
+**`multiple_reply_style`** — 备用表达风格列表。默认包含 5 种风格。当配置不为空时，系统会按 `multiple_probability` 的概率从此列表中随机选择一种风格临时替换 `reply_style`。
+
+**`multiple_probability`** — 风格替换概率。默认值：`0`。取值范围：`0.0-1.0`。每次构建回复时，从 `multiple_reply_style` 中随机替换 `reply_style` 的概率。设为 0 时不替换，设为 1 时每次都替换。
+
+
 ## 视觉 [visual]
 
 **说明**：控制图片消息进入规划器和回复器时的处理模式配置。
@@ -96,11 +115,34 @@ replyer_mode = "auto"
 wait_image_recognize_max_time = 10
 # 是否检查并处理过大图片
 handle_oversized_images = true
-# 图片超过该大小(MB)视为过大，0 不限制
+# 图片超过该大小 (MB) 视为过大，0 不限制
 max_image_size_mb = 30.0
 # 过大图片处理方法：compress(压缩) / discard(丢弃)
 oversized_image_handle_method = "compress"
 ```
+
+### 选项说明
+
+**`planner_mode`** — 规划器视觉模式。默认值：`"auto"`。可选值：
+- `"auto"` — 根据模型信息自动选择文本或多模态模式
+- `"text"` — 纯文本模式，不向模型发送视觉输入
+- `"multimodal"` — 多模态模式，会向模型发送视觉输入
+
+**`replyer_mode`** — 回复器视觉模式。默认值：`"auto"`。可选值：
+- `"auto"` — 根据模型信息自动选择文本或多模态模式
+- `"text"` — 纯文本模式，不向模型发送视觉输入
+- `"multimodal"` — 多模态模式，会向模型发送视觉输入
+
+**`wait_image_recognize_max_time`** — 识图最长等待时间。默认值：`10`。取值范围：`≥0`。非视觉 planner 请求前等待图片识别完成的最长秒数；设为 0 时不等待，保持占位请求。
+
+**`handle_oversized_images`** — 处理过大图片。默认值：`true`。开启后，接收图片会检查大小并按配置处理过大图片；关闭后跳过检查和处理。
+
+**`max_image_size_mb`** — 最大图片大小 (MB)。默认值：`30.0`。取值范围：`≥0`。接收图片超过该大小时视为过大图片；设为 0 时不限制图片大小。
+
+**`oversized_image_handle_method`** — 过大图片处理方法。默认值：`"compress"`。可选值：
+- `"compress"` — 压缩图片并继续处理
+- `"discard"` — 丢弃超过最大大小的图片组件
+
 
 ## 聊天 [chat]
 
@@ -132,14 +174,14 @@ enable_independent_timing_gate = true
 enable_at = true
 # 是否启用回复时附带引用回复
 enable_reply_quote = true
-# 模拟打字时间倍乘：0=不等待, 1=默认, 2=两倍, 范围 0-2
+# 模拟打字时间倍乘：0=不等待，1=默认，2=两倍，范围 0-2
 typing_speed = 1.0
 # Planner 连续被打断的最大次数，0 表示不启用打断
 planner_interrupt_max_consecutive_count = 0
 # Timing Gate 判断频率平滑值，越大判断越平滑但反应可能变慢
 timing_gate_non_continue_cooldown_seconds = 8
 # 群聊通用注意事项
-group_chat_prompt = "你正在qq群里聊天，下面是群里正在聊的内容，其中包含聊天记录和聊天中的图片和表情包。\n回复尽量简短一些。最好一次对一个话题进行回复，但必须考虑不同群友发言之间的交互，免得啰嗦或者回复内容太乱。请注意把握聊天内容。\n不要总是提及自己的身份背景，根据聊天内容自由发挥，但是要日常不浮夸，不要刻意找话题，。\n不用刻意回复其他人发送的表情包，只要关注表情包表达的含义。你可以适当发送表情包表达情绪。控制回复的频率，不要每个人的消息都回复，优先回复你感兴趣的或者主动提及你的，适当回复其他话题。\n"
+group_chat_prompt = "你正在 qq 群里聊天，下面是群里正在聊的内容，其中包含聊天记录和聊天中的图片和表情包。\n回复尽量简短一些。最好一次对一个话题进行回复，但必须考虑不同群友发言之间的交互，免得啰嗦或者回复内容太乱。请注意把握聊天内容。\n不要总是提及自己的身份背景，根据聊天内容自由发挥，但是要日常不浮夸，不要刻意找话题，。\n不用刻意回复其他人发送的表情包，只要关注表情包表达的含义。你可以适当发送表情包表达情绪。控制回复的频率，不要每个人的消息都回复，优先回复你感兴趣的或者主动提及你的，适当回复其他话题。\n"
 # 私聊通用注意事项
 private_chat_prompts = "你正在聊天，下面是正在聊的内容，其中包含聊天记录和聊天中的图片。\n回复尽量简短一些。请注意把握聊天内容。\n请考虑对方的发言频率，想法，思考自己何时回复以及回复内容。\n"
 # 按平台/聊天流附加的额外提示词列表
@@ -148,7 +190,27 @@ chat_prompts = []
 enable_talk_value_rules = true
 ```
 
-> 以上为默认配置。`group_chat_prompt` 和 `private_chat_prompts` 有较长的默认文本，生成配置文件时会自动填充完整内容。
+### 选项说明
+
+- **`talk_value`** — 群聊频率。默认为 `1`。范围 `0-1`。越小越沉默。
+- **`private_talk_value`** — 私聊频率。默认为 `1`。范围 `0-1`。越小越沉默。
+- **`mentioned_bot_reply`** — 提及必回复开关。默认为 `false`。开启后，当用户提及麦麦时必定回复。
+- **`inevitable_at_reply`** — @ 必回复开关。默认为 `true`。开启后，当用户 @ 麦麦时必定回复。
+- **`max_context_size`** — 群聊上下文长度。默认为 `40` 条消息。
+- **`max_private_context_size`** — 私聊上下文长度。默认为 `60` 条消息。
+- **`enable_context_optimization`** — 优化上下文开关。默认为 `true`。开启后优化 50% 左右的 Planner 上下文消耗，但可能影响缓存，轻微影响性能表现。
+- **`mid_term_memory`** — 中期聊天摘要开关。默认为 `true`。开启后，上下文裁切时使用 utils 模型生成中期聊天摘要，并以可展开复杂消息保留在历史中。
+- **`mid_term_memory_lenth`** — 中期摘要保留数。默认为 `10` 条。范围 `≥0`。最多保留多少条中期聊天摘要消息，超出后移除最早的摘要。
+- **`enable_independent_timing_gate`** — 独立时间感知开关。默认为 `true`。开启后启用独立 Timing Gate；关闭后不再单独运行 Timing Gate，并将节奏控制工具合并到 Planner。
+- **`enable_at`** — 允许发送 @ 开关。默认为 `true`。是否允许 replyer 使用 `at[msg_id]` 标记来发送真正的 @ 消息。
+- **`enable_reply_quote`** — 启用引用回复开关。默认为 `true`。是否启用回复时附带引用回复。
+- **`typing_speed`** — 聊天速度。默认为 `1.0`。范围 `0-2`。模拟打字时间倍乘，`0` 表示不等待，`1` 保持默认等待时间，`2` 表示等待时间变为默认的两倍。
+- **`planner_interrupt_max_consecutive_count`** — Planner 连续打断上限。默认为 `0`。范围 `≥0`。Planner 连续被新消息打断的最大次数，`0` 表示不启用打断。
+- **`timing_gate_non_continue_cooldown_seconds`** — Timing Gate 平滑值。默认为 `8` 秒。范围 `≥0`。这个值决定了 timing gate 判断的频率，值越大，timing gate 的判断越平滑，但也可能导致反应变慢。
+- **`group_chat_prompt`** — 群聊提示词。默认为较长的默认文本。群聊通用注意事项，指导麦麦如何在群聊中回复。
+- **`private_chat_prompts`** — 私聊提示词。默认为较长的默认文本。私聊通用注意事项，指导麦麦如何在私聊中回复。
+- **`chat_prompts`** — 额外提示词列表。默认为空列表。按平台/聊天流附加的额外提示词，用于针对特定群或私聊对象定制回复风格。
+- **`enable_talk_value_rules`** — 启用动态发言频率规则开关。默认为 `true`。是否启用按聊天流/按日内时段配置发言频率的规则。
 
 ### talk_value_rules
 
@@ -175,6 +237,14 @@ time = "09:00-18:59"
 value = 1.0
 ```
 
+#### 选项说明
+
+- **`platform`** — 平台。默认为空字符串。与 `item_id` 一起留空表示全局规则。
+- **`item_id`** — 用户/群 ID。默认为空字符串。与 `platform` 一起留空表示全局规则。
+- **`rule_type`** — 聊天流类型。默认为 `"group"`。可选：`"group"`（群聊聊天流，`item_id` 填群号或群聊 ID） / `"private"`（私聊聊天流，`item_id` 填用户 ID）。
+- **`time`** — 时间段。默认为空字符串。格式为 `"HH:MM-HH:MM"`，支持跨夜区间。
+- **`value`** — 发言频率。默认为 `0.5`。范围 `0-1`。该时间段的聊天频率值，越小越沉默。
+
 ### chat_prompts
 
 ```toml
@@ -186,6 +256,13 @@ prompt = "这个群里说话要更简短。"
 ```
 
 `platform`、`item_id` 和 `prompt` 都需要填写，否则该条额外提示词无效。
+
+#### 选项说明
+
+- **`platform`** — 平台。必须填写。指定该提示词适用的平台。
+- **`item_id`** — 用户/群 ID。必须填写。指定该提示词适用的具体群号或用户 ID。
+- **`rule_type`** — 聊天流类型。必须填写。可选：`"group"` / `"private"`。
+- **`prompt`** — 提示词内容。必须填写。针对该聊天流的额外注意事项。
 
 
 ## 消息接收 [message_receive]
@@ -201,6 +278,12 @@ ban_words = []
 # 过滤正则表达式集合（正则非法会导致配置校验失败）
 ban_msgs_regex = []
 ```
+
+### 选项说明
+
+- **`image_parse_threshold`** — 图片解析阈值。默认为 `5`。当消息中图片数量不超过此阈值时，启用图片解析功能，将图片内容解析为文本后再进行处理；当消息中图片数量超过此阈值时，为了避免过度解析导致的性能问题，将跳过图片解析，直接进行处理。
+- **`ban_words`** — 过滤词列表。默认为空集合。填写需要过滤的词汇，包含这些词汇的消息会被过滤。
+- **`ban_msgs_regex`** — 过滤正则表达式列表。默认为空集合。填写正则表达式，匹配这些正则的消息会被过滤。正则表达式非法会导致配置校验失败。
 
 
 ## 记忆 [a_memorix]
@@ -246,6 +329,15 @@ learning_list = []
 expression_groups = []
 ```
 
+### 选项说明
+
+- **`expression_checked_only`** — 仅选择已人工检查的表达方式开关。默认为 `true`。开启后，只有经过用户人工检查的表达方式会被选择。
+- **`expression_self_reflect`** — 表达学习 AI 审核开关。默认为 `true`。开启后，在表达学习写入前进行 AI 审核；开启后只有审核通过的表达方式会被写入。
+- **`enable_precise_expression_selection`** — 精细表达选择开关。默认为 `false`。开启后，replyer 会使用子代理从候选表达中挑选更贴合当前语境的表达方式。
+- **`max_expression_learner`** — 表达学习批次数上限。默认为 `3`。所有聊天流合计允许同时运行的表达学习批次数；同一聊天流始终只允许一个批次。
+- **`learning_list`** — 表达学习配置列表。默认为空列表。支持按聊天流配置表达学习规则。
+- **`expression_groups`** — 表达学习互通组。默认为空列表。配置互通组后，组内的表达学习结果可以共享。
+
 ### learning_list
 
 ```toml
@@ -262,6 +354,14 @@ use = true
 learn = true
 ```
 
+#### 选项说明
+
+- **`platform`** — 平台。默认为空字符串。与 `item_id` 一起留空表示全局规则。
+- **`item_id`** — 用户/群 ID。默认为空字符串。与 `platform` 一起留空表示全局规则。
+- **`type`** — 聊天流类型。默认为 `"group"`。可选：`"group"`（群聊） / `"private"`（私聊）。
+- **`use`** — 是否使用表达学习结果。默认为 `true`。开启后使用表达学习结果。
+- **`learn`** — 是否启用表达优化学习。默认为 `true`。开启后启用表达优化学习。
+
 
 ## 黑话 [jargon]
 
@@ -274,6 +374,11 @@ learning_list = []
 # 黑话学习互通组，默认不互通
 jargon_groups = []
 ```
+
+### 选项说明
+
+- **`learning_list`** — 黑话学习配置列表。默认为空列表。支持按聊天流配置黑话学习规则，`platform` 或 `item_id` 可使用 `*` 通配。
+- **`jargon_groups`** — 黑话学习互通组。默认为空列表。配置互通组后，组内的黑话学习结果可以共享；默认不互通；`platform` 或 `item_id` 可使用 `*` 通配。
 
 ### learning_list
 
@@ -299,6 +404,10 @@ learn = true
 enable_asr = false
 ```
 
+### 选项说明
+
+- **`enable_asr`** — 语音识别开关。默认为 `false`。开启后启用语音识别，麦麦可以识别语音消息。
+
 
 ## 表情包 [emoji]
 
@@ -320,6 +429,15 @@ steal_emoji = true
 content_filtration = false
 ```
 
+### 选项说明
+
+- **`emoji_send_num`** — 表情包发送选择数。默认为 `25`。范围 `1-64`。一次从多少个表情包中选择发送。
+- **`max_reg_num`** — 表情包最大注册数量。默认为 `64`。表情包的最大注册数量上限。
+- **`do_replace`** — 替换旧表情包开关。默认为 `true`。达到最大注册数量时替换旧表情包，关闭则达到最大数量时不会继续收集表情包。
+- **`check_interval`** — 表情包检查间隔。默认为 `10` 分钟。定期检查表情包的间隔时间。
+- **`steal_emoji`** — 偷取表情包开关。默认为 `true`。开启后麦麦可以将聊天中的表情包据为己有。
+- **`content_filtration`** — 表情包过滤开关。默认为 `false`。开启后只有符合要求的表情包才会被保存。
+
 
 ## 关键词反应 [keyword_reaction]
 
@@ -337,9 +455,14 @@ regex = ["^正则.*"]
 reaction = "触发后的反应"
 ```
 
-- **`keywords`** — 关键词列表。默认为空列表
-- **`regex`** — 正则表达式列表。默认为空列表
-- **`reaction`** — 触发后的反应内容。默认为空字符串
+### 选项说明
+
+- **`keyword_rules`** — 关键词规则列表。默认为空列表。每个规则包含：
+  - `keywords` — 关键词列表。默认为空列表。填写触发反应的关键词。
+  - `reaction` — 触发后的反应内容。默认为空字符串。自由填写触发后的回复内容。
+- **`regex_rules`** — 正则规则列表。默认为空列表。每个规则包含：
+  - `regex` — 正则表达式列表。默认为空列表。填写触发反应的正则表达式。
+  - `reaction` — 触发后的反应内容。默认为空字符串。
 
 
 ## 回复后处理 [response_post_process]
@@ -351,6 +474,12 @@ reaction = "触发后的反应"
 # 是否启用回复后处理（包括错别字生成器和回复分割器）
 enable_response_post_process = true
 ```
+
+### 选项说明
+
+- **`enable_response_post_process`** — 启用回复后处理。默认为 `true`。布尔类型：
+  - `true` — 启用回复后处理，包括错别字生成器和回复分割器
+  - `false` — 不启用回复后处理
 
 
 ## 中文错别字 [chinese_typo]
@@ -371,42 +500,15 @@ tone_error_rate = 0.1
 word_replace_rate = 0.006
 ```
 
+### 选项说明
 
-## 日志 [log]
-
-**说明**：日志输出格式、级别和文件管理配置。
-
-```toml
-[log]
-# 日志日期格式
-date_style = "m-d H:i:s"
-# 日志等级显示样式：lite / compact / full
-log_level_style = "lite"
-# 控制台日志颜色模式：none / title / full
-color_text = "full"
-# 全局日志级别：DEBUG / INFO / WARNING / ERROR / CRITICAL
-log_level = "INFO"
-# 控制台日志级别
-console_log_level = "INFO"
-# 文件日志级别
-file_log_level = "DEBUG"
-# 单个日志文件最大字节数，默认 5MB
-log_file_max_bytes = 5242880
-# 最多保留的主日志文件数量
-max_log_files = 30
-# 主日志文件保留天数
-log_cleanup_days = 30
-# 失败请求快照最多保留数量
-llm_request_snapshot_limit = 128
-# 每个会话最多保留的 Maisaka Prompt 预览组数
-maisaka_prompt_preview_limit = 256
-# 每个会话最多保留的 Maisaka 回复效果记录数
-maisaka_reply_effect_limit = 256
-# 完全屏蔽日志的第三方库列表
-suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "httpcore", "requests", "sqlalchemy", "openai", "uvicorn", "jieba"]
-# 特定第三方库的日志级别
-library_log_levels = { aiohttp = "WARNING" }
-```
+- **`enable`** — 启用中文错别字生成器。默认为 `true`。布尔类型：
+  - `true` — 启用中文错别字生成器
+  - `false` — 不启用
+- **`error_rate`** — 单字替换概率。默认为 `0.01`。取值范围 `0-1`。单个汉字被替换为错别字的概率。
+- **`min_freq`** — 最小字频阈值。默认为 `9`。自由填写整数。只有字频高于该阈值的字才会被替换。
+- **`tone_error_rate`** — 声调错误概率。默认为 `0.1`。取值范围 `0-1`。生成声调错误的概率。
+- **`word_replace_rate`** — 整词替换概率。默认为 `0.006`。取值范围 `0-1`。整个词语被替换为错别字的概率。
 
 
 ## 回复分割 [response_splitter]
@@ -427,6 +529,18 @@ enable_kaomoji_protection = false
 enable_overflow_return_all = false
 ```
 
+### 选项说明
+
+**`enable`** — 启用回复分割器。默认为 `true`。是否启用回复分割器。
+
+**`max_length`** — 回复允许的最大长度。默认为 `512`。单条回复的最大字符数。
+
+**`max_sentence_num`** — 回复允许的最大句子数。默认为 `8`。单条回复的最大句子数量。
+
+**`enable_kaomoji_protection`** — 启用颜文字保护。默认为 `false`。开启后分割时会保护颜文字不被拆分。
+
+**`enable_overflow_return_all`** — 句子数量超出上限时一次性返回全部。默认为 `false`。开启后当句子数量超出上限时一次性返回全部内容，不进行分割。
+
 
 ## 遥测 [telemetry]
 
@@ -437,6 +551,10 @@ enable_overflow_return_all = false
 # 是否启用遥测
 enable = true
 ```
+
+### 选项说明
+
+**`enable`** — 启用遥测。默认为 `true`。是否启用遥测功能，用于收集使用统计数据。
 
 
 ## 调试 [debug]
@@ -462,6 +580,24 @@ record_planner_request = false
 # 是否记录 LLM prompt cache 调试统计
 enable_llm_cache_stats = false
 ```
+
+### 选项说明
+
+**`show_maisaka_thinking`** — 显示回复器推理。默认为 `true`。是否在 WebUI 中显示 Maisaka 回复器的推理过程。
+
+**`fold_maisaka_thinking`** — 折叠 Maisaka prompt 展示入口。默认为 `true`。是否折叠 Maisaka prompt 的展示入口。
+
+**`show_jargon_prompt`** — 显示 jargon 相关提示词。默认为 `false`。是否显示黑话相关的提示词。
+
+**`show_memory_prompt`** — 显示记忆检索相关 prompt。默认为 `false`。是否显示记忆检索相关的 prompt。
+
+**`enable_reply_effect_tracking`** — 开启回复效果评分追踪。默认为 `false`。是否开启回复效果评分追踪，默认关闭，需要手动打开。
+
+**`record_reply_request`** — 记录 Replyer 请求体。默认为 `false`。是否记录 Replyer 请求体，默认关闭。
+
+**`record_planner_request`** — 记录 Planner 完整请求体和回复体。默认为 `false`。是否记录 Planner 完整请求体和完整回复体，默认关闭。
+
+**`enable_llm_cache_stats`** — 记录 LLM prompt cache 调试统计。默认为 `false`。是否记录 LLM prompt cache 调试统计，默认关闭。
 
 
 ## 消息服务 [maim_message]
@@ -491,6 +627,28 @@ api_server_key_file = ""
 # 新版 API Server 允许的 API Key 列表，为空则允许所有连接
 api_server_allowed_api_keys = []
 ```
+
+### 选项说明
+
+**`ws_server_host`** — 旧版基于 WS 的服务器主机地址。默认为 `"127.0.0.1"`。
+
+**`ws_server_port`** — 旧版基于 WS 的服务器端口号。默认为 `8000`。
+
+**`auth_token`** — 认证令牌列表。默认为空列表。用于旧版 API 验证，为空则不启用验证。
+
+**`enable_api_server`** — 启用额外的新版 API Server。默认为 `false`。是否启用额外的新版 API Server。
+
+**`api_server_host`** — 新版 API Server 主机地址。默认为 `"0.0.0.0"`。
+
+**`api_server_port`** — 新版 API Server 端口号。默认为 `8090`。
+
+**`api_server_use_wss`** — 新版 API Server 是否启用 WSS。默认为 `false`。
+
+**`api_server_cert_file`** — 新版 API Server SSL 证书文件路径。默认为空字符串。
+
+**`api_server_key_file`** — 新版 API Server SSL 密钥文件路径。默认为空字符串。
+
+**`api_server_allowed_api_keys`** — 新版 API Server 允许的 API Key 列表。默认为空列表。为空则允许所有连接。
 
 
 ## WebUI [webui]
@@ -523,6 +681,37 @@ enforce_public_outbound_url = true
 enable_paragraph_content = false
 ```
 
+### 选项说明
+
+- **`enabled`** — 启用 WebUI。默认为 `true`。布尔类型：
+  - `true` — 启用 WebUI
+  - `false` — 不启用
+- **`host`** — WebUI 绑定主机地址。默认为 `127.0.0.1`。自由填写 IP 地址。
+- **`port`** — WebUI 绑定端口。默认为 `8001`。自由填写整数。
+- **`mode`** — 运行模式。默认为 `production`。可选值：
+  - `development` — 开发模式
+  - `production` — 生产模式
+- **`anti_crawler_mode`** — 防爬虫模式。默认为 `basic`。可选值：
+  - `false` — 禁用防爬虫
+  - `strict` — 严格模式
+  - `loose` — 宽松模式
+  - `basic` — 基础模式（只记录不阻止）
+- **`allowed_ips`** — IP 白名单。默认为 `127.0.0.1`。逗号分隔的字符串，支持精确 IP、CIDR 格式和通配符。
+- **`trusted_proxies`** — 信任的代理 IP 列表。默认为空字符串。逗号分隔的字符串，只有来自这些 IP 的 X-Forwarded-For 才被信任。
+- **`trust_xff`** — 启用 X-Forwarded-For 代理解析。默认为 `false`。布尔类型：
+  - `true` — 启用 X-Forwarded-For 代理解析（默认 false）
+  - `false` — 不启用
+- **`secure_cookie`** — 启用安全 Cookie。默认为 `false`。布尔类型：
+  - `true` — 启用安全 Cookie（仅通过 HTTPS 传输，默认 false）
+  - `false` — 不启用
+- **`enforce_public_outbound_url`** — 强制公网出站 URL 校验。默认为 `true`。布尔类型：
+  - `true` — 要求 WebUI 出站 URL 解析到公网地址；关闭后允许内网、本机或 TUN 代理地址，用于内网 LLM、反向代理等场景
+  - `false` — 不强制校验
+- **`enable_paragraph_content`** — 加载段落完整内容。默认为 `false`。布尔类型：
+  - `true` — 在知识图谱中加载段落完整内容（需要加载 embedding store，会占用额外内存）
+  - `false` — 不加载
+
+
 ## 数据库 [database]
 
 **说明**：消息二进制数据保存策略配置。
@@ -532,6 +721,12 @@ enable_paragraph_content = false
 # 是否将消息中的二进制数据保存为独立文件（只影响新存储的消息）
 save_binary_data = false
 ```
+
+### 选项说明
+
+- **`save_binary_data`** — 保存二进制数据。默认为 `false`。布尔类型：
+  - `true` — 将消息中的二进制数据保存为独立文件。若启用，消息中的语音等二进制数据将会保存为独立文件，并在消息中以特殊标记替代。启用会导致数据文件夹体积增大，但可以实现二次识别等功能。
+  - `false` — 消息中的二进制将会在识别后删除，并在消息中使用识别结果替代，无法二次识别。该配置项仅影响新存储的消息，已有消息不会受到影响。
 
 
 ## MCP [mcp]
@@ -546,30 +741,11 @@ save_binary_data = false
 enable = true
 ```
 
-### 快速示例
+### 选项说明
 
-连接一个 Playwright MCP 服务：
-
-```toml
-[[mcp.servers]]
-name = "playwright"
-transport = "stdio"
-command = "uvx"
-args = ["@playwright/mcp"]
-```
-
-连接远程 HTTP 服务（带 Bearer 认证）：
-
-```toml
-[[mcp.servers]]
-name = "remote-api"
-transport = "streamable_http"
-url = "https://mcp.example.com/api"
-
-[mcp.servers.authorization]
-mode = "bearer"
-bearer_token = "sk-your-token"
-```
+- **`enable`** — 启用 MCP。默认为 `true`。布尔类型：
+  - `true` — 启用 MCP（Model Context Protocol）
+  - `false` — 不启用
 
 ::: tip 🛠️ 更多配置方式
 详细的字段说明、传输方式对比、Sampling/Roots/Elicitation 高级配置、常见问题解答，请参阅 [MCP 配置详解](./mcp-config.md)。
@@ -585,6 +761,10 @@ bearer_token = "sk-your-token"
 # 允许使用内置插件管理命令的用户 ID 列表，格式 platform:id，例如 qq:123456789
 permission = []
 ```
+
+### 选项说明
+
+- **`permission`** — 插件管理权限列表。默认为空列表。允许使用内置插件管理命令的用户 ID 列表，格式为 `platform:id`，例如 `qq:123456789`。
 
 
 ## 插件运行时 [plugin_runtime]
@@ -607,35 +787,16 @@ hook_blocking_timeout_sec = 30
 ipc_socket_path = ""
 ```
 
-### plugin_runtime.render
+### 选项说明
 
-```toml
-[plugin_runtime.render]
-# 是否启用浏览器渲染能力
-enabled = true
-# 优先复用的现有 Chromium CDP 地址
-browser_ws_endpoint = ""
-# 浏览器可执行文件路径，留空自动探测
-executable_path = ""
-# Playwright 托管浏览器目录
-browser_install_root = "data/playwright-browsers"
-# 是否以无头模式启动浏览器
-headless = true
-# 浏览器启动参数
-launch_args = ["--disable-gpu", "--disable-dev-shm-usage", "--disable-setuid-sandbox", "--no-sandbox", "--no-zygote"]
-# 同时允许进行的最大渲染任务数
-concurrency_limit = 2
-# 浏览器连接或启动超时时间，单位秒
-startup_timeout_sec = 20.0
-# 单次渲染默认超时时间，单位秒
-render_timeout_sec = 15.0
-# 未检测到可用浏览器时是否自动下载 Playwright Chromium
-auto_download_chromium = true
-# 自动下载 Chromium 时的连接超时时间，单位秒
-download_connection_timeout_sec = 120.0
-# 累计渲染指定次数后自动重建浏览器，0 表示关闭
-restart_after_render_count = 200
-```
+- **`enabled`** — 启用插件系统。默认为 `true`。布尔类型：
+  - `true` — 启用插件系统
+  - `false` — 不启用
+- **`health_check_interval_sec`** — 健康检查间隔。默认为 `30.0` 秒。自由填写浮点数。
+- **`max_restart_attempts`** — Runner 崩溃后最大自动重启次数。默认为 `3`。自由填写整数。
+- **`runner_spawn_timeout_sec`** — 等待 Runner 子进程启动并注册的超时时间。默认为 `30.0` 秒。自由填写浮点数。
+- **`hook_blocking_timeout_sec`** — Hook 阻塞步骤的全局超时上限。默认为 `30` 秒。自由填写整数。
+- **`ipc_socket_path`** — 自定义 IPC Socket 路径。默认为空字符串。仅 Linux/macOS 生效，留空自动生成。
 
 
 ## 常用配置示例
