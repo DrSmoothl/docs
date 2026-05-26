@@ -183,7 +183,11 @@ Gemini 2.5 使用 token 数量间接控制强度，`-1` 为自动分配。Gemini
 
 - **`headers`** — 添加 HTTP 请求头，如 `{headers = {"X-Custom" = "value"}}`
 - **`query`** — 添加 URL 查询参数，如 `{query = {"key" = "value"}}`
-- **`body`** — 覆盖请求体字段，如 `{body = {"field" = "value"}}`
+- **`body`** — 其中的字段与其他普通键一起进入请求体，仅用于在配置中按用途分组
+
+::: warning 注意
+`body` 并不创建独立的请求通道。`body` 内的字段和 `headers`/`query` 之外的**所有普通键**会合并后一起发送到请求体中。
+:::
 
 例如：
 
@@ -196,19 +200,20 @@ visual = false
 extra_params = {
   headers = {"X-API-Version" = "2024-06", "X-Priority" = "high"},
   query = {version = "2024-01-01"},
-  body = {metadata = {source = "maibot"}}
+  body = {metadata = {source = "maibot"}},
+  enable_thinking = false
 }
 ```
 
-会被转换为近似下面的请求附加参数：
+客户端拆分后的实际效果：
 
-```python
-extra_headers = {"X-API-Version": "2024-06", "X-Priority": "high"}
-extra_query = {"version": "2024-01-01"}
-extra_body = {"metadata": {"source": "maibot"}}
-```
+| 来源 | 目标 | 内容 |
+|------|------|------|
+| `headers` | HTTP 请求头 | `X-API-Version: 2024-06`, `X-Priority: high` |
+| `query` | URL 查询参数 | `?version=2024-01-01` |
+| `body` 内字段 + 其他普通键 | 请求体 JSON | `{"metadata": {"source": "maibot"}, "enable_thinking": false}` |
 
-常见的 `extra_params = {enable_thinking = "false"}` 会把 `enable_thinking` 作为请求体字段传给服务商，而不是发送嵌套的 `{"extra_params": {"enable_thinking": "false"}}`。
+所以 `extra_params = {enable_thinking = "false"}` 等价于 `extra_params = {body = {enable_thinking = "false"}}`，都会把 `enable_thinking` 作为请求体 JSON 字段发给服务商，而不是发送嵌套的 `{"extra_params": {"enable_thinking": "false"}}`。
 
 # 高级鉴权配置
 
