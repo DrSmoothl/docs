@@ -121,6 +121,7 @@ class AMemorixHostService:
 - **`memory_source_admin`** — `kernel.memory_source_admin()`
 - **`memory_episode_admin`** — `kernel.memory_episode_admin()`
 - **`memory_profile_admin`** — `kernel.memory_profile_admin()`
+- **`memory_feedback_admin`** — `kernel.memory_feedback_admin()`
 - **`memory_runtime_admin`** — `kernel.memory_runtime_admin()`
 - **`memory_import_admin`** — `kernel.memory_import_admin()`
 - **`memory_tuning_admin`** — `kernel.memory_tuning_admin()`
@@ -129,7 +130,8 @@ class AMemorixHostService:
 
 ### 配置管理
 
-- 配置文件路径：`config/a_memorix.toml`
+- 主配置路径：`config/bot_config.toml` 的 `[a_memorix]` 段
+- 旧版兼容配置：`config/a_memorix.toml`（可作为迁移来源）
 - Schema 文件：`src/A_memorix/config_schema.json`
 - `get_config()` / `update_config()` / `get_raw_config()` / `update_raw_config()` 读写配置
 - 更新配置后自动 `reload()`，重建内核实例
@@ -335,6 +337,7 @@ Web 导入任务管理器：
 - **`memory_source_admin`** — `list` / `delete` / `batch_delete`
 - **`memory_episode_admin`** — `query` / `list` / `get` / `status` / `rebuild` / `process_pending`
 - **`memory_profile_admin`** — `query` / `list` / `set_override` / `delete_override`
+- **`memory_feedback_admin`** — `list` / `get` / `rollback`
 - **`memory_runtime_admin`** — `save` / `get_config` / `self_check` / `refresh_self_check` / `set_auto_save`
 - **`memory_import_admin`** — `settings` / `get_guide` / `create_upload` / `create_paste` / `list` / `get` / `chunks` / `cancel` / `retry_failed`
 - **`memory_tuning_admin`** — `settings` / `get_profile` / `apply_profile` / `rollback_profile` / `create_task` / `list_tasks` / `get_task` / `cancel` / `apply_best` / `get_report`
@@ -355,18 +358,21 @@ Web 导入任务管理器：
 
 ### 配置
 
-- 默认配置文件：`config/a_memorix.toml`
+- 主配置文件：`config/bot_config.toml` 的 `[a_memorix]` 段
+- 旧版兼容配置：`config/a_memorix.toml`
 - 运行时数据目录：`data/a-memorix`（由 `storage.data_dir` 控制）
 - 配置 Schema：`config_schema.json` 供 WebUI 长期记忆控制台使用
 - WebUI 接口：`/api/webui/memory/*`
 
 ## 元数据版本
 
-当前元数据 schema 版本为 **v9**，支持：
+当前元数据 schema 版本为 **v12**，支持：
 
 - 外部引用（`external_memory_refs`）
 - 运维操作记录（`memory_v5_operations`）
 - 删除操作记录（`delete_operations`）
+
+运行时可从 v9 及以上的版本化 schema 自动迁移到当前版本；更早或缺少版本表的旧库需要先执行离线迁移脚本。
 
 ## 删除语义（source 模式）
 
