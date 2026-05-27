@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { MermaidPlugin, MermaidMarkdown } from "vitepress-plugin-mermaid"
 import { tabsMarkdownPlugin } from "vitepress-plugin-tabs"
 import { InlineLinkPreviewElementTransform } from '@nolebase/vitepress-plugin-inline-link-preview/markdown-it'
+import llmstxt from 'vitepress-plugin-llms'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -346,7 +347,7 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [MermaidPlugin()],
+    plugins: [MermaidPlugin(), llmstxt({ ignoreFiles: ['en/**'] })],
     optimizeDeps: {
       include: ['mermaid'],
       exclude: [

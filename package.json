@@ -12,6 +12,7 @@
     "@nolebase/vitepress-plugin-inline-link-preview": "^2.18.2",
     "mermaid": "^11.12.3",
     "vitepress": "^1.6.4",
+    "vitepress-plugin-llms": "^1.13.0",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.8.0"
   },
