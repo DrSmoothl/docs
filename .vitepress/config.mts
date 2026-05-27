@@ -105,6 +105,7 @@ export default defineConfig({
               collapsed: false,
               items: [
                 { text: 'FAQ', link: '/manual/faq/' },
+                { text: 'EULA', link: '/manual/faq/EULA' },
               ]
             },
           ],
