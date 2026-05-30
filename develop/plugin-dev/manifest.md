@@ -44,6 +44,13 @@ title: Manifest
     "max_version": "2.99.99"
   },
   "dependencies": [],
+  "plugin_type": "tool",
+  "display": {
+    "icon": {
+      "type": "lucide",
+      "value": "wrench"
+    }
+  },
   "capabilities": ["send_message"],
   "i18n": {
     "default_locale": "zh-CN",
@@ -69,6 +76,47 @@ title: Manifest
 - **`i18n`** `object` — 国际化配置（见下文）
 
 ## 可选字段
+
+### plugin_type 插件类型
+
+`plugin_type` 用于声明插件的主要角色，供 WebUI 展示、筛选和默认图标选择使用。该字段为可选字段，不需要升级 `manifest_version`；缺省时按 `extension` 处理。
+
+可选值：
+
+- `adapter` — 消息平台或协议适配器
+- `tool` — 工具、命令或模型可调用能力
+- `provider` — LLM、TTS、API 等服务提供方
+- `management` — 管理、权限、群管或后台类插件
+- `data` — 统计、记忆、知识库、导入导出等数据类插件
+- `media` — 图片、语音、视频、表情等媒体处理
+- `game` — 游戏或娱乐互动
+- `integration` — 外部平台、搜索、Webhook 等集成
+- `extension` — 通用扩展
+- `other` — 其他
+
+### display 展示元信息
+
+`display.icon` 用于声明插件图标。该字段只影响 WebUI 展示，不参与插件运行时行为。
+
+```json
+{
+  "display": {
+    "icon": {
+      "type": "local",
+      "value": "assets/icon.png",
+      "fallback": "package",
+      "background": "#1f2937"
+    }
+  }
+}
+```
+
+- `type`: `lucide`、`emoji` 或 `local`
+- `value`: 图标值。`lucide` 使用图标名，`emoji` 使用单个表情或短文本，`local` 使用插件目录内相对路径
+- `fallback`: 可选，图标加载失败时使用的 lucide 图标名
+- `background`: 可选，图标背景色，格式为 `#RRGGBB`
+
+不允许使用在线 URL 作为插件图标。本地图标仅支持 `.png`、`.jpg`、`.jpeg`、`.webp`、`.svg`，路径必须位于插件目录内，不能使用绝对路径、`..` 或符号链接。
 
 ### urls 链接集合
 

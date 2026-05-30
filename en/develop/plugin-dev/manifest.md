@@ -37,6 +37,13 @@ Here is a complete Manifest example:
     "max_version": "2.99.99"
   },
   "dependencies": [],
+  "plugin_type": "tool",
+  "display": {
+    "icon": {
+      "type": "lucide",
+      "value": "wrench"
+    }
+  },
   "capabilities": ["send_message"],
   "i18n": {
     "default_locale": "zh-CN",
@@ -62,6 +69,47 @@ Here is a complete Manifest example:
 - **`i18n`** `object` — Internationalization configuration (see below)
 
 ## Optional Fields
+
+### plugin_type Plugin Type
+
+`plugin_type` declares the plugin's primary role. WebUI uses it for display, filtering, and default icon selection. This field is optional and does not require a `manifest_version` upgrade; missing values are treated as `extension`.
+
+Allowed values:
+
+- `adapter` — message platform or protocol adapters
+- `tool` — tools, commands, or model-callable capabilities
+- `provider` — LLM, TTS, API, or other service providers
+- `management` — management, permission, group moderation, or admin plugins
+- `data` — statistics, memory, knowledge base, import/export, or other data plugins
+- `media` — image, audio, video, emoji, or other media processing
+- `game` — games or entertainment interactions
+- `integration` — external platforms, search, Webhooks, or integrations
+- `extension` — general extensions
+- `other` — other plugins
+
+### display Metadata
+
+`display.icon` declares the plugin icon. It only affects WebUI display and does not change runtime behavior.
+
+```json
+{
+  "display": {
+    "icon": {
+      "type": "local",
+      "value": "assets/icon.png",
+      "fallback": "package",
+      "background": "#1f2937"
+    }
+  }
+}
+```
+
+- `type`: `lucide`, `emoji`, or `local`
+- `value`: icon value. `lucide` uses an icon name, `emoji` uses an emoji or short text, and `local` uses a relative path inside the plugin directory
+- `fallback`: optional lucide icon name used when the icon fails to load
+- `background`: optional icon background color in `#RRGGBB` format
+
+Online URL icons are not allowed. Local icons only support `.png`, `.jpg`, `.jpeg`, `.webp`, and `.svg`. The path must stay inside the plugin directory and cannot use absolute paths, `..`, or symlinks.
 
 ### urls Link Collection
 
