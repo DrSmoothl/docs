@@ -1,652 +1,87 @@
 /**
- * MaiBot Docs - WebUI future-retro theme.
- * Keeps VitePress layout while matching the dashboard visual language.
+ * MaiBot Docs - Custom Theme Styles
+ * Based on VitePress default theme with MaiBot brand colors.
  */
 
 :root {
-  --maibot-retro-paper: #f3e3cc;
-  --maibot-retro-paper-deep: #dec5a5;
-  --maibot-retro-paper-soft: #f6e8d3;
-  --maibot-retro-ink: #0a4550;
-  --maibot-retro-ink-soft: rgb(13 70 80 / 0.68);
-  --maibot-retro-rust: #c24d24;
-  --maibot-retro-rust-dark: #913a1d;
-  --maibot-retro-gold: #c99a3e;
-  --maibot-retro-line: rgb(13 70 80 / 0.82);
-  --maibot-retro-recessed: rgb(73 48 22 / 0.055);
-  --maibot-retro-recessed-strong: rgb(73 48 22 / 0.085);
-  --maibot-retro-paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .18 0 0 0 0 .11 0 0 0 0 .04 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23noise)'/%3E%3Cg opacity='.12' fill='%23c24d24'%3E%3Ccircle cx='12' cy='21' r='.7'/%3E%3Ccircle cx='67' cy='43' r='.55'/%3E%3Ccircle cx='139' cy='16' r='.65'/%3E%3Ccircle cx='158' cy='107' r='.6'/%3E%3Ccircle cx='41' cy='151' r='.55'/%3E%3C/g%3E%3C/svg%3E");
-  --maibot-retro-stroke: 2px;
-  --maibot-retro-radius: 4px;
-  --maibot-retro-font:
-    "Bahnschrift Condensed", "Agency FB", "Arial Narrow", "Microsoft YaHei UI", system-ui,
-    sans-serif;
-  --maibot-retro-code-font: "Agency FB", "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+  --vp-c-default-1: var(--vp-c-gray-1);
+  --vp-c-default-2: var(--vp-c-gray-2);
+  --vp-c-default-3: var(--vp-c-gray-3);
+  --vp-c-default-soft: var(--vp-c-gray-soft);
 
-  --vp-c-bg: var(--maibot-retro-paper);
-  --vp-c-bg-alt: var(--maibot-retro-paper-deep);
-  --vp-c-bg-elv: var(--maibot-retro-paper-soft);
-  --vp-c-bg-soft: var(--maibot-retro-recessed);
-  --vp-c-text-1: var(--maibot-retro-ink);
-  --vp-c-text-2: var(--maibot-retro-ink-soft);
-  --vp-c-text-3: color-mix(in srgb, var(--maibot-retro-ink) 50%, transparent);
-  --vp-c-divider: var(--maibot-retro-line);
-  --vp-c-border: var(--maibot-retro-line);
-  --vp-c-gutter: var(--maibot-retro-line);
+  --vp-c-brand-1: #d2691e;
+  --vp-c-brand-2: #ff8c00;
+  --vp-c-brand-3: #ff8c00;
+  --vp-c-brand-soft: rgba(210, 105, 30, 0.1);
 
-  --vp-c-default-1: var(--maibot-retro-ink);
-  --vp-c-default-2: var(--maibot-retro-line);
-  --vp-c-default-3: var(--maibot-retro-recessed-strong);
-  --vp-c-default-soft: var(--maibot-retro-recessed);
+  --vp-c-tip-1: var(--vp-c-brand-1);
+  --vp-c-tip-2: var(--vp-c-brand-2);
+  --vp-c-tip-3: var(--vp-c-brand-3);
+  --vp-c-tip-soft: var(--vp-c-brand-soft);
 
-  --vp-c-brand-1: var(--maibot-retro-rust);
-  --vp-c-brand-2: var(--maibot-retro-rust-dark);
-  --vp-c-brand-3: var(--maibot-retro-rust);
-  --vp-c-brand-soft: color-mix(in srgb, var(--maibot-retro-rust) 16%, transparent);
+  --vp-c-warning-1: var(--vp-c-yellow-1);
+  --vp-c-warning-2: var(--vp-c-yellow-2);
+  --vp-c-warning-3: var(--vp-c-yellow-3);
+  --vp-c-warning-soft: var(--vp-c-yellow-soft);
 
-  --vp-c-tip-1: var(--maibot-retro-rust);
-  --vp-c-tip-2: var(--maibot-retro-rust-dark);
-  --vp-c-tip-3: var(--maibot-retro-rust);
-  --vp-c-tip-soft: color-mix(in srgb, var(--maibot-retro-rust) 16%, transparent);
-
-  --vp-c-warning-1: var(--maibot-retro-gold);
-  --vp-c-warning-2: var(--maibot-retro-gold);
-  --vp-c-warning-3: var(--maibot-retro-gold);
-  --vp-c-warning-soft: color-mix(in srgb, var(--maibot-retro-gold) 20%, transparent);
-
-  --vp-c-danger-1: #b4332c;
-  --vp-c-danger-2: #91342f;
-  --vp-c-danger-3: #b4332c;
-  --vp-c-danger-soft: rgb(180 51 44 / 0.16);
-
-  --vp-font-family-base: var(--maibot-retro-font);
-  --vp-font-family-mono: var(--maibot-retro-code-font);
-  --vp-shadow-1: none;
-  --vp-shadow-2: none;
-  --vp-shadow-3: none;
-  --vp-shadow-4: none;
-  --vp-layout-max-width: 1440px;
-  --vp-sidebar-width: 288px;
-  --vp-nav-height: 64px;
-
-  --vp-button-brand-border: var(--maibot-retro-line);
-  --vp-button-brand-text: var(--maibot-retro-paper);
-  --vp-button-brand-bg: var(--maibot-retro-rust);
-  --vp-button-brand-hover-border: var(--maibot-retro-line);
-  --vp-button-brand-hover-text: var(--maibot-retro-paper);
-  --vp-button-brand-hover-bg: var(--maibot-retro-rust-dark);
-  --vp-button-brand-active-border: var(--maibot-retro-line);
-  --vp-button-brand-active-text: var(--maibot-retro-paper);
-  --vp-button-brand-active-bg: var(--maibot-retro-rust-dark);
-
-  --vp-button-alt-border: var(--maibot-retro-line);
-  --vp-button-alt-text: var(--maibot-retro-ink);
-  --vp-button-alt-bg: var(--maibot-retro-recessed);
-  --vp-button-alt-hover-border: var(--maibot-retro-line);
-  --vp-button-alt-hover-text: var(--maibot-retro-ink);
-  --vp-button-alt-hover-bg: var(--maibot-retro-gold);
-  --vp-button-alt-active-border: var(--maibot-retro-line);
-  --vp-button-alt-active-text: var(--maibot-retro-ink);
-  --vp-button-alt-active-bg: var(--maibot-retro-paper-deep);
-
-  --vp-home-hero-name-color: var(--maibot-retro-rust);
-  --vp-home-hero-name-background: none;
-  --vp-home-hero-image-background-image: none;
-  --vp-home-hero-image-filter: none;
-  color-scheme: light;
+  --vp-c-danger-1: var(--vp-c-red-1);
+  --vp-c-danger-2: var(--vp-c-red-2);
+  --vp-c-danger-3: var(--vp-c-red-3);
+  --vp-c-danger-soft: var(--vp-c-red-soft);
 }
 
-.dark {
-  --maibot-retro-paper: #1b3c42;
-  --maibot-retro-paper-deep: #132f34;
-  --maibot-retro-paper-soft: #24484d;
-  --maibot-retro-ink: #f3e4c8;
-  --maibot-retro-ink-soft: rgb(243 228 200 / 0.66);
-  --maibot-retro-rust: #d16837;
-  --maibot-retro-rust-dark: #f08a55;
-  --maibot-retro-gold: #d2a44e;
-  --maibot-retro-line: rgb(243 228 200 / 0.78);
-  --maibot-retro-recessed: rgb(243 228 200 / 0.055);
-  --maibot-retro-recessed-strong: rgb(243 228 200 / 0.085);
-  --maibot-retro-paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 .95 0 0 0 0 .84 0 0 0 0 .60 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23noise)'/%3E%3C/svg%3E");
-  --maibot-retro-stroke: 1.25px;
-  color-scheme: dark;
+/**
+ * Component: Button
+ */
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-white);
+  --vp-button-brand-bg: var(--vp-c-brand-3);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--vp-c-white);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
 }
 
-html,
-body {
-  background-color: var(--maibot-retro-paper);
-  background-image: var(--maibot-retro-paper-texture);
-  background-size: 180px 180px;
-  color: var(--maibot-retro-ink);
-  font-family: var(--maibot-retro-font);
-  letter-spacing: 0;
-}
-
-::selection {
-  background: var(--maibot-retro-rust);
-  color: var(--maibot-retro-paper);
-}
-
-*:focus-visible {
-  outline: 2px solid var(--maibot-retro-gold);
-  outline-offset: 2px;
-  box-shadow: none !important;
-}
-
-* {
-  scrollbar-color: var(--maibot-retro-rust) transparent;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--maibot-retro-paper-deep);
-  border-left: 1px solid var(--maibot-retro-line);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--maibot-retro-rust);
-  border: 2px solid var(--maibot-retro-paper-deep);
-  border-radius: 0;
-}
-
-.Layout {
-  background: transparent;
-}
-
-.VPNav {
-  background-color: var(--maibot-retro-paper) !important;
-  background-image: var(--maibot-retro-paper-texture);
-  background-size: 180px 180px;
-  border-bottom: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-}
-
-.VPNavBar,
-.VPNavBar.has-sidebar .content,
-.VPNavBar.has-sidebar .content-body {
-  background: transparent !important;
-  border-bottom: 0 !important;
-  backdrop-filter: none !important;
-}
-
-.VPNavBarTitle .title {
-  color: var(--maibot-retro-ink);
-  font-size: 1.32rem;
-  font-weight: 900;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.VPNavBarMenuLink,
-.VPNavBarMenuGroup .button,
-.VPLocalNavOutlineDropdown .button,
-.VPFlyout .button {
-  border-radius: 2px;
-  color: var(--maibot-retro-ink-soft);
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.VPNavBarMenuLink:hover,
-.VPNavBarMenuLink.active,
-.VPNavBarMenuGroup .button:hover,
-.VPFlyout .button:hover {
-  color: var(--maibot-retro-ink);
-}
-
-.VPNavBarSearch .DocSearch-Button,
-.VPNavBarSearch .local-search-button,
-.VPNavBarTranslations .button,
-.VPNavBarAppearance .button,
-.VPSocialLinks .VPSocialLink {
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  border-radius: 2px !important;
-  background: var(--maibot-retro-recessed);
-  color: var(--maibot-retro-ink) !important;
-  box-shadow: none;
-}
-
-.VPMenu {
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  border-radius: var(--maibot-retro-radius);
-  background-color: var(--maibot-retro-paper) !important;
-  background-image: var(--maibot-retro-paper-texture);
-  background-size: 165px 165px;
-  box-shadow: none;
-}
-
-.VPMenu .items {
-  border-color: var(--maibot-retro-line);
-}
-
-.VPMenu .VPMenuLink,
-.VPMenu .VPLink,
-.VPMenu .VPMenuGroup .title {
-  color: var(--maibot-retro-ink);
-  font-weight: 700;
-}
-
-.VPMenu .VPMenuLink:hover,
-.VPMenu .VPLink:hover {
-  background: var(--maibot-retro-gold);
-  color: var(--maibot-retro-ink);
-}
-
-.VPSidebar {
-  background-color: var(--maibot-retro-paper) !important;
-  background-image: var(--maibot-retro-paper-texture);
-  background-size: 180px 180px;
-  border-right: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  box-shadow: none;
-}
-
-.VPSidebar .curtain {
-  background: transparent;
-}
-
-.VPSidebarItem.level-0 > .item > .text {
-  color: var(--maibot-retro-rust);
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.VPSidebarItem .link {
-  border-radius: 2px;
-  color: var(--maibot-retro-ink-soft);
-  font-weight: 700;
-}
-
-.VPSidebarItem .link:hover {
-  background: var(--maibot-retro-recessed-strong);
-  color: var(--maibot-retro-ink);
-}
-
-.VPSidebarItem.is-active > .item .link > .text,
-.VPSidebarItem .link.active {
-  color: var(--maibot-retro-paper);
-}
-
-.VPSidebarItem.is-active > .item .link {
-  background: var(--maibot-retro-rust);
-}
-
-.VPContent,
-.VPDoc,
-.VPHome {
-  background: transparent;
-}
-
-.VPDoc.has-aside .content-container {
-  max-width: 860px;
-}
-
-.VPDocAsideOutline .content {
-  border-left: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-}
-
-.VPDocAsideOutline .outline-link {
-  color: var(--maibot-retro-ink-soft);
-  font-weight: 700;
-}
-
-.VPDocAsideOutline .outline-link:hover,
-.VPDocAsideOutline .outline-link.active {
-  color: var(--maibot-retro-rust);
-}
-
-.VPHome::after {
-  content: "";
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-  width: 270px;
-  height: 118px;
-  pointer-events: none;
-  background: linear-gradient(
-    135deg,
-    transparent 0 26%,
-    var(--maibot-retro-ink) 26% 42%,
-    transparent 42% 47%,
-    var(--maibot-retro-gold) 47% 58%,
-    transparent 58% 63%,
-    var(--maibot-retro-rust) 63% 76%,
-    transparent 76%
+/**
+ * Component: Home Hero
+ */
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(
+    120deg,
+    #ff8c00 30%,
+    #32cd32
   );
-  opacity: 0.92;
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    -45deg,
+    #ff8c00 50%,
+    #32cd32 50%
+  );
+  --vp-home-hero-image-filter: blur(44px);
 }
 
-.VPHomeHero {
-  padding-top: clamp(56px, 8vw, 96px);
-}
-
-.VPHomeHero .name,
-.VPHomeHero .text {
-  max-width: 780px;
-  color: var(--maibot-retro-ink);
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.98;
-}
-
-.VPHomeHero .name {
-  color: var(--maibot-retro-rust);
-}
-
-.VPHomeHero .tagline {
-  max-width: 680px;
-  color: var(--maibot-retro-ink-soft);
-  font-size: 1.18rem;
-  font-weight: 700;
-  letter-spacing: 0;
-}
-
-.VPHomeHero .image-bg {
-  display: none;
-}
-
-.VPHomeHero .image-container {
-  transform: none;
-}
-
-.VPHomeHero .image-src {
-  filter: drop-shadow(10px 10px 0 color-mix(in srgb, var(--maibot-retro-line) 18%, transparent));
-}
-
-.VPButton {
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line) !important;
-  border-radius: 2px !important;
-  box-shadow: none !important;
-  font-weight: 900;
-  letter-spacing: 0;
-  transition:
-    color 150ms ease,
-    background-color 150ms ease,
-    transform 150ms ease;
-}
-
-.VPButton:hover {
-  transform: translateY(-1px);
-}
-
-.VPFeature {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  border-radius: var(--maibot-retro-radius);
-  background: transparent;
-  box-shadow: none;
-  color: var(--maibot-retro-ink);
-}
-
-.VPFeature::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 0;
-  width: 8px;
-  background: var(--maibot-retro-ink);
-}
-
-.VPFeature::after {
-  content: "";
-  position: absolute;
-  right: -1px;
-  bottom: -1px;
-  z-index: 0;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 0 22px 22px;
-  border-color: transparent transparent var(--maibot-retro-ink) transparent;
-  pointer-events: none;
-}
-
-.VPFeature .title,
-.VPFeature .details {
-  position: relative;
-  z-index: 1;
-}
-
-.VPFeature .title {
-  color: var(--maibot-retro-ink);
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.VPFeature .details {
-  color: var(--maibot-retro-ink-soft);
-  font-weight: 700;
-}
-
-.vp-doc {
-  color: var(--maibot-retro-ink);
-  font-weight: 650;
-}
-
-.vp-doc h1,
-.vp-doc h2,
-.vp-doc h3,
-.vp-doc h4,
-.vp-doc h5,
-.vp-doc h6 {
-  color: var(--maibot-retro-ink);
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.vp-doc h1 {
-  font-size: clamp(2.35rem, 4vw, 3.2rem);
-  line-height: 0.98;
-}
-
-.vp-doc h2 {
-  border-top: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-}
-
-.vp-doc p,
-.vp-doc li {
-  color: var(--maibot-retro-ink);
-}
-
-.vp-doc a {
-  color: var(--maibot-retro-rust);
-  font-weight: 800;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-
-.vp-doc a:hover {
-  color: var(--maibot-retro-rust-dark);
-}
-
-.vp-doc blockquote {
-  border-left: 8px solid var(--maibot-retro-rust);
-  background: var(--maibot-retro-recessed);
-  color: var(--maibot-retro-ink);
-  font-weight: 700;
-}
-
-.vp-doc hr {
-  border-color: var(--maibot-retro-line);
-}
-
-.vp-doc table {
-  display: table;
-  width: 100%;
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-}
-
-.vp-doc tr {
-  border-top: 1px solid var(--maibot-retro-line);
-}
-
-.vp-doc th,
-.vp-doc td {
-  border: 1px solid var(--maibot-retro-line);
-}
-
-.vp-doc th {
-  background: var(--maibot-retro-recessed-strong);
-  color: var(--maibot-retro-rust);
-  font-weight: 900;
-}
-
-.vp-doc tr:nth-child(2n) {
-  background: var(--maibot-retro-recessed);
-}
-
-.vp-doc div[class*="language-"],
-.vp-doc .vp-code-group,
-.vp-doc .tabs,
-.vp-doc .custom-block {
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  border-radius: var(--maibot-retro-radius);
-  background: var(--maibot-retro-recessed) !important;
-  box-shadow: none;
-}
-
-.vp-doc div[class*="language-"]::before {
-  color: var(--maibot-retro-rust);
-  font-weight: 900;
-}
-
-.vp-doc div[class*="language-"] pre,
-.vp-doc div[class*="language-"] code {
-  background: transparent;
-  color: var(--maibot-retro-ink);
-  font-family: var(--maibot-retro-code-font);
-  font-weight: 700;
-}
-
-.vp-doc :not(pre) > code {
-  border: 1px solid var(--maibot-retro-line);
-  border-radius: 2px;
-  background: var(--maibot-retro-recessed-strong);
-  color: var(--maibot-retro-rust);
-  font-family: var(--maibot-retro-code-font);
-  font-weight: 800;
-}
-
-.vp-doc .custom-block {
-  color: var(--maibot-retro-ink);
-}
-
-.vp-doc .custom-block-title {
-  color: var(--maibot-retro-rust);
-  font-weight: 900;
-  letter-spacing: 0;
-}
-
-.vp-doc .custom-block.tip,
-.vp-doc .custom-block.info,
-.vp-doc .custom-block.details {
-  border-color: var(--maibot-retro-line);
-}
-
-.vp-doc .custom-block.warning {
-  border-color: var(--maibot-retro-gold);
-}
-
-.vp-doc .custom-block.danger {
-  border-color: var(--vp-c-danger-1);
-}
-
-.VPDocFooter,
-.VPDocFooter .prev-next {
-  border-color: var(--maibot-retro-line);
-}
-
-.pager-link {
-  border: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  border-radius: var(--maibot-retro-radius);
-  background: transparent;
-  box-shadow: none;
-}
-
-.pager-link:hover {
-  border-color: var(--maibot-retro-line);
-  background: var(--maibot-retro-recessed-strong);
-}
-
-.pager-link .title {
-  color: var(--maibot-retro-rust);
-  font-weight: 900;
-}
-
-.edit-info,
-.last-updated,
-.VPLastUpdated {
-  color: var(--maibot-retro-ink-soft);
-  font-weight: 700;
-}
-
-.DocSearch-Modal,
-.DocSearch-Container,
-.VPLocalSearchBox .shell {
-  --docsearch-primary-color: var(--maibot-retro-rust);
-  --docsearch-text-color: var(--maibot-retro-ink);
-  --docsearch-muted-color: var(--maibot-retro-ink-soft);
-  --docsearch-container-background: rgb(10 69 80 / 0.36);
-  --docsearch-modal-background: var(--maibot-retro-paper);
-  --docsearch-searchbox-background: var(--maibot-retro-recessed);
-  --docsearch-hit-background: var(--maibot-retro-recessed);
-  --docsearch-hit-color: var(--maibot-retro-ink);
-  --docsearch-footer-background: var(--maibot-retro-paper);
-  --docsearch-key-gradient: none;
-  --docsearch-key-shadow: none;
-}
-
-.VPLocalSearchBox .shell,
-.VPLocalSearchBox .search-bar,
-.VPLocalSearchBox .results,
-.VPLocalSearchBox .result {
-  border-color: var(--maibot-retro-line) !important;
-  border-radius: var(--maibot-retro-radius) !important;
-  background-color: var(--maibot-retro-paper) !important;
-  background-image: var(--maibot-retro-paper-texture);
-  box-shadow: none !important;
-}
-
-.VPLocalSearchBox .result:hover,
-.VPLocalSearchBox .result.selected {
-  background: var(--maibot-retro-gold) !important;
-}
-
-#star-canvas {
-  display: none;
-}
-
-@media (max-width: 959px) {
-  .VPNavBar {
-    background-color: var(--maibot-retro-paper) !important;
-    background-image: var(--maibot-retro-paper-texture);
-    border-bottom: var(--maibot-retro-stroke) solid var(--maibot-retro-line);
-  }
-
-  .VPNavScreen {
-    background-color: var(--maibot-retro-paper) !important;
-    background-image: var(--maibot-retro-paper-texture);
-    background-size: 180px 180px;
-  }
-
-  .VPHomeHero .image {
-    margin-top: 32px;
+@media (min-width: 640px) {
+  :root {
+    --vp-home-hero-image-filter: blur(56px);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+@media (min-width: 960px) {
+  :root {
+    --vp-home-hero-image-filter: blur(68px);
   }
+}
+
+/**
+ * Component: Custom Block
+ */
+:root {
+  --vp-custom-block-tip-border: transparent;
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
+  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
 }
