@@ -199,7 +199,7 @@ enable_talk_value_rules = true
 - **`max_context_size`** — 群聊上下文长度。默认为 `40` 条消息。
 - **`max_private_context_size`** — 私聊上下文长度。默认为 `60` 条消息。
 - **`enable_context_optimization`** — 优化上下文开关。默认为 `true`。开启后优化 50% 左右的 Planner 上下文消耗，但可能影响缓存，轻微影响性能表现。
-- **`mid_term_memory`** — 中期聊天摘要开关。默认为 `true`。开启后，上下文裁切时使用 utils 模型生成中期聊天摘要，并以可展开复杂消息保留在历史中。
+- **`mid_term_memory`** — 中期聊天摘要开关。默认为 `true`。开启后，上下文裁切时使用 `mid_memory` 任务配置的模型生成中期聊天摘要，并以可展开复杂消息保留在历史中。`mid_memory` 任务默认回退到 `planner` 模型。
 - **`mid_term_memory_lenth`** — 中期摘要保留数。默认为 `10` 条。范围 `≥0`。最多保留多少条中期聊天摘要消息，超出后移除最早的摘要。
 - **`enable_independent_timing_gate`** — 独立时间感知开关。默认为 `true`。开启后启用独立 Timing Gate；关闭后不再单独运行 Timing Gate，并将节奏控制工具合并到 Planner。
 - **`enable_at`** — 允许发送 @ 开关。默认为 `true`。是否允许 replyer 使用 `at[msg_id]` 标记来发送真正的 @ 消息。
