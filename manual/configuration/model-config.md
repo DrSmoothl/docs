@@ -14,28 +14,30 @@ title: 模型配置
 
 ```toml
 [inner]
-version = "1.17.0"
+version = "1.17.2"
 
 [[api_providers]]
 name = "deepseek"
-base_url = "https://api.deepseek.com/v1"
+base_url = "https://api.deepseek.com"
 api_key = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
 auth_type = "bearer"                    # bearer/header/query/none
 
 [[models]]
-name = "deepseek-chat"
-model_identifier = "deepseek-chat"
+name = "deepseek-v4-flash"
+model_identifier = "deepseek-v4-flash"
 api_provider = "deepseek"               # 对应 api_providers 的 name
 visual = false
-price_in = 0.1
-price_out = 0.2
+price_in = 1.0
+price_out = 2.0
+extra_params = {thinking = {type = "disabled"}}
 
 [model_task_config.replyer]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"          # balance/random/sequential
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 1.0
+slow_threshold = 120.0
+selection_strategy = "random"           # balance/random/sequential
+hard_timeout = 240.0
 ```
 
 
@@ -294,17 +296,35 @@ price_out = 0.2
 
 ### 任务类型说明
 
-MaiBot 将模型用于 9 种不同的任务类型：
+MaiBot 将模型用于 **11 种**不同的任务类型，分为「快模型」和「智能模型」两类：
 
-- **`replyer`** — 回复器：生成实际回复。推荐质量好的模型
-- **`planner`** — 规划器：决定行动逻辑，搜集信息，何时回复等。需要支持 tool 调用
-- **`memory`** — 记忆任务：长期记忆总结、抽取、写回等。留空时由调用方按需回退
-- **`utils`** — 工具类：表情包、学习分析、取名、关系模块、情绪变化等，是麦麦必须的模型。推荐便宜实用的模型
+#### 🔷 智能模型（追求回复质量，用高价/推理模型）
+
+- **`replyer`** — 回复器：生成实际回复。**推荐质量最好的模型**，开启思考模式效果更佳。是唯一使用智能模型的任务
+
+#### 🟢 快模型（追求响应速度，用低价模型）
+
+- **`planner`** — 规划器：决定行动逻辑、搜集信息、何时回复、调用哪些工具。需要支持 tool 调用。**推荐便宜快速的模型**
+- **`timing_gate`** — 节奏控制：独立判断是否该在此时说话。留空时自动继用 planner 模型
+- **`utils`** — 组件模型：表情包分析、学习分析、取名、关系模块、情绪变化等。麦麦必须的模型。**推荐便宜实用的模型**
+- **`mid_memory`** — 中期摘要：当上下文超出限制时，将被裁切的历史聊天记录压缩为摘要。留空时自动继用 planner 模型
 - **`learner`** — 学习模型：表达方式学习和黑话学习。留空时自动继用 utils 模型
-- **`emoji`** — 表情包发送模型。留空时保持原有 planner/vlm 选择逻辑
-- **`vlm`** — 看图说话：理解图片。推荐视觉模型
-- **`voice`** — 语音识别：语音转文字。推荐语音模型
-- **`embedding`** — 生成向量：用于记忆搜索。推荐嵌入模型
+- **`emoji`** — 表情包选择：从候选表情包中选出合适的一张。留空时按 planner 视觉能力自动选择 planner 或 vlm
+- **`vlm`** — 看图说话：理解图片内容。需要 visual=true 的多模态模型
+- **`voice`** — 语音识别：语音转文字
+- **`embedding`** — 生成向量：用于长期记忆的向量搜索。推荐嵌入模型
+
+#### 回退链
+
+当某个任务的 `model_list` 为空时，系统会自动复用其他任务的配置：
+
+```
+learner     →  utils
+mid_memory  →  planner
+timing_gate →  planner
+```
+
+其他任务（`memory`、`emoji`、`vlm`、`voice`、`embedding`）的 `model_list` 为空时不自动回退，调用方会跳过该功能或报错。
 
 ### 任务配置参数
 
@@ -316,7 +336,7 @@ MaiBot 将模型用于 9 种不同的任务类型：
 model_list = []
 # 任务最大输出 token 数
 max_tokens = 1024
-# 模型温度，范围 0-2：0.3 保守，0.7 有创意
+# 模型温度，范围 0-2：0.3 保守，1.0 有创意
 temperature = 0.3
 # 慢请求阈值（秒），超过此值会输出警告日志
 slow_threshold = 15.0
@@ -325,6 +345,8 @@ selection_strategy = "balance"
 # 任务硬超时（秒），到点未返回则取消请求并切换下一个模型
 hard_timeout = 240.0
 ```
+
+> **⚠️ 注意**：上方是 `TaskConfig` 的类默认值，实际各任务的默认值差异很大。例如 replyer 默认 `temperature=1.0`、`slow_threshold=120s`；planner 默认 `temperature=0.7`、`max_tokens=8000`、`slow_threshold=12s`。具体见下方默认值速查表。
 
 ### 任务配置选项详解
 
@@ -346,50 +368,89 @@ hard_timeout = 240.0
 
 **`hard_timeout`** — 任务硬超时。**类型**：`float`。**默认值**：`240.0`。**取值范围**：`>= 1.0`。**单位**：秒。**说明**：到点未返回则取消请求并尝试切换下一个模型；防止上游代理静默排队导致主循环饥饿。
 
-### 9 种任务类型详解
+### 11 种任务类型详解
 
-**`replyer`** — 回复器。**用途**：生成实际回复。**推荐**：质量好的模型，温度可调高（`0.7`）更有创意。**必需**：是。
+#### 各任务默认参数速查
 
-**`planner`** — 规划器。**用途**：决定行动逻辑，搜集信息，何时回复等。**推荐**：支持 tool 调用的模型，质量好。**必需**：是。
+| 任务 | 默认 model_list | max_tokens | temperature | slow_threshold | selection_strategy | hard_timeout |
+|------|----------------|------------|-------------|----------------|-------------------|--------------|
+| **replyer** | `deepseek-v4-pro-think`, `deepseek-v4-pro-nonthink` | 4096 | **1.0** | **120.0s** | random | **240.0s** |
+| **planner** | `deepseek-v4-flash` | **8000** | 0.7 | **12.0s** | random | 180.0s |
+| **timing_gate** | 空（→回退 planner）| 1024 | 0.3 | **12.0s** | random | 120.0s |
+| **memory** | 空 | **8192** | 0.5 | 30.0s | random | 240.0s |
+| **mid_memory** | 空（→回退 planner）| **8000** | 0.7 | 12.0s | random | 180.0s |
+| **utils** | `deepseek-v4-flash` | 4096 | 0.5 | 15.0s | random | 120.0s |
+| **learner** | 空（→回退 utils）| 1024 | 0.3 | 15.0s | balance | 120.0s |
+| **emoji** | 空 | 1024 | 0.3 | 15.0s | balance | 120.0s |
+| **vlm** | 空 | 1024 | 0.3 | 15.0s | balance | 240.0s |
+| **voice** | 空 | 1024 | 0.3 | 15.0s | balance | 120.0s |
+| **embedding** | 空 | 1024 | 0.3 | 15.0s | balance | 60.0s |
 
-**`memory`** — 记忆任务。**用途**：长期记忆总结、抽取、写回等高质量记忆任务。**推荐**：质量好的模型。**必需**：否（留空时由调用方按需回退）。
+> 上方为系统默认值（从 `default_model_config.py` 生成）。当 `model_list` 为空时，标注了「→回退 xxx」的任务会自动复用对应任务的配置；未标注回退的任务不自动回退（调用方会跳过或报错）。
 
-**`utils`** — 工具类。**用途**：表情包、学习分析、取名、关系模块、情绪变化等。**推荐**：便宜实用的模型。**必需**：是（麦麦必须的模型）。
+#### 设计理念：快模型 vs 智能模型
 
-**`learner`** — 学习模型。**用途**：表达方式学习和黑话学习。**推荐**：可继用 `utils` 模型。**必需**：否（留空时自动继用 `utils` 模型）。
+麦麦将模型调用分为两类：
 
-**`emoji`** — 表情包发送模型。**用途**：发送表情包。**推荐**：可继用 `planner`/`vlm` 模型。**必需**：否（留空时保持原有 `planner`/`vlm` 选择逻辑）。
+- **快模型（追求速度）**：用于 `planner`、`timing_gate`、`utils`、`mid_memory`、`learner` 等决策和辅助任务。使用低价 flash 模型（如 deepseek-v4-flash，¥1/M token），`slow_threshold` 低至 12s，`hard_timeout` 短至 120s
+- **智能模型（追求质量）**：仅 `replyer` 使用。使用高价 pro 模型（如 deepseek-v4-pro-think，¥12/M token），开启思考模式、高温度、高创造性，`slow_threshold` 高达 120s，「故意」允许模型慢慢思考
 
-**`vlm`** — 看图说话。**用途**：理解图片。**推荐**：视觉模型（`visual = true`）。**必需**：是（用于视觉任务）。
+一次典型的「收到消息→发出回复」流程中，会触发 3~6 次 LLM 调用，**其中只有 replyer 使用智能模型**，其余全部用快模型。
 
-**`voice`** — 语音识别。**用途**：语音转文字。**推荐**：语音模型。**必需**：否（按需配置）。
+#### 各任务详细说明
 
-**`embedding`** — 嵌入模型。**用途**：生成向量，用于记忆搜索。**推荐**：嵌入模型。**必需**：是（用于记忆搜索）。
+**`replyer`** — 回复器。**用途**：生成最终发送给用户的实际回复文本。**推荐**：质量最好的模型，开启思考模式（`thinking.type=enabled`）效果更佳。温度可调高（默认 1.0）增加创造性。**默认**：使用 deepseek-v4-pro-think（思考）和 deepseek-v4-pro-nonthink（非思考）做负载均衡。
 
-> `replyer`、`planner`、`memory`、`utils`、`learner`、`emoji`、`vlm`、`voice`、`embedding` 全部使用相同的参数结构，只需替换 `model_list` 中的模型名即可。
+**`planner`** — 规划器。**用途**：决定行动逻辑——是否回复、回复谁、搜集什么信息、调用哪些工具。需要支持 tool 调用。**推荐**：便宜快速的模型，支持 tool 调用即可。**默认**：使用 deepseek-v4-flash。
+
+**`timing_gate`** — 节奏控制。**用途**：独立判断麦麦是否该在此刻说话（仅当 `chat.enable_independent_timing_gate=true` 时启用）。可选输出：`continue`（继续规划）、`no_action`（沉默）、`wait`（等待一会再判断）。**推荐**：可继用 planner 模型。**默认**：空（回退到 planner 配置）。
+
+**`utils`** — 组件模型。**用途**：表情包分析、学习分析、取名、关系模块、情绪变化等组件调用。麦麦必须的模型。**推荐**：便宜实用的模型。**默认**：使用 deepseek-v4-flash。
+
+**`mid_memory`** — 中期聊天摘要。**用途**：当上下文消息超出 `max_context_size` 限制时，将被裁切掉的历史聊天记录压缩为一句话摘要，作为可展开的复杂消息保留在历史中。**触发条件**：`chat.mid_term_memory=true` 且上下文溢出。**默认**：空（回退到 planner 配置）。
+
+**`memory`** — 长期记忆。**用途**：长期记忆的总结、抽取、写回等高质量记忆任务（A_Memorix 子系统）。**推荐**：质量好的模型。**默认**：空（调用方按需处理，未配置时记忆系统使用自己的优先级规则选择其他可用任务）。
+
+**`learner`** — 学习模型。**用途**：表达方式学习和黑话学习。**推荐**：可继用 utils 模型。**默认**：空（回退到 utils 配置）。
+
+**`emoji`** — 表情包选择。**用途**：从候选表情包拼图中选出合适的一张发送。**默认**：空。系统会按以下优先级自动选择：如果 `emoji` 配置了模型→使用；否则如果 planner 的所有模型都是视觉模型→使用 planner；否则→使用 vlm。
+
+**`vlm`** — 视觉模型。**用途**：理解图片内容（看图说话）。**推荐**：多模态模型（`visual=true`）。**默认**：空，未配置时图片相关功能不可用。
+
+**`voice`** — 语音识别。**用途**：语音转文字（ASR）。**推荐**：支持语音的模型。**默认**：空，未配置时语音识别不可用。
+
+**`embedding`** — 嵌入模型。**用途**：生成文本向量，用于长期记忆的语义搜索。**推荐**：专门的嵌入模型（如 text-embedding-3-small）。**默认**：空，未配置时记忆搜索不可用。
 
 ### 任务配置示例
 
 ```toml
 # 工具类，用便宜实用的模型
 [model_task_config.utils]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 0.5
 slow_threshold = 15.0
-selection_strategy = "balance"
+selection_strategy = "random"
 
-# 回复器，用好一点的模型，温度高一点更有创意
-[model_task_config.replyer]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
+# 规划器，用低价 flash 模型追求速度
+[model_task_config.planner]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 8000
 temperature = 0.7
-slow_threshold = 15.0
-selection_strategy = "balance"
+slow_threshold = 12.0
+selection_strategy = "random"
 
-# 视觉模型，需要 visual=true 的模型
+# 回复器，用高质量思考模型，温度高更有创意
+[model_task_config.replyer]
+model_list = ["deepseek-v4-pro-think", "deepseek-v4-pro-nonthink"]
+max_tokens = 4096
+temperature = 1.0
+slow_threshold = 120.0
+selection_strategy = "random"
+
+# 视觉模型，需要 visual=true 的多模态模型
 [model_task_config.vlm]
-model_list = ["qwen3.5-flash"]
+model_list = ["qwen3-vl-flash"]
 max_tokens = 1024
 temperature = 0.3
 slow_threshold = 15.0
@@ -397,7 +458,7 @@ selection_strategy = "balance"
 
 # 嵌入模型，用于记忆搜索
 [model_task_config.embedding]
-model_list = ["qwen3-embedding"]
+model_list = ["text-embedding-3-small"]
 max_tokens = 1024
 temperature = 0.3
 slow_threshold = 15.0
@@ -407,51 +468,94 @@ selection_strategy = "balance"
 
 ## 🎯 推荐配置（新手专用）
 
-下面是一个**单模型配置**，所有任务都用同一个模型，适合快速上手：
+### 方案一：单模型配置（最快上手）
+
+所有任务共用一个模型，适合只有一个 API key 的场景：
 
 ```toml
 [[api_providers]]
 name = "deepseek"
-base_url = "https://api.deepseek.com/v1"
+base_url = "https://api.deepseek.com"
 api_key = "your-api-key"
 auth_type = "bearer"
 
 [[models]]
-name = "deepseek-chat"
-model_identifier = "deepseek-chat"
+name = "deepseek-v4-flash"
+model_identifier = "deepseek-v4-flash"
 api_provider = "deepseek"
 visual = false
-
-[model_task_config.utils]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
+price_in = 1.0
+price_out = 2.0
+extra_params = {thinking = {type = "disabled"}}
 
 [model_task_config.planner]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
+model_list = ["deepseek-v4-flash"]
+max_tokens = 8000
+temperature = 0.7
 
 [model_task_config.replyer]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.7                    # 回复任务可以调高温度，更有创意
-slow_threshold = 15.0
-selection_strategy = "balance"
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 0.7
 
-[model_task_config.voice]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
+[model_task_config.utils]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 0.5
 ```
 
-> 💡 **进阶用法**：等你有多个模型后，可以把不同的任务分配给不同模型。比如 `utils` 用便宜模型，`planner` 和 `replyer` 用质量好的模型（planner 负责决策逻辑，不建议用太差的）。只需修改对应任务的 `model_list` 即可，配置结构完全相同。
+::: tip 💡 不需要填满所有 11 个任务
+上述只配置了 `planner`、`replyer`、`utils` 三个核心任务。其余 8 个任务（`timing_gate`、`mid_memory`、`learner` 等）的 `model_list` 留空即可——系统会自动回退到已配置的任务。
+:::
+
+### 方案二：快慢分离（推荐生产使用）
+
+规划器用 flash 快模型，回复器用 pro 思考模型：
+
+```toml
+[[api_providers]]
+name = "deepseek"
+base_url = "https://api.deepseek.com"
+api_key = "your-api-key"
+auth_type = "bearer"
+
+# 快模型：用于 planner、utils 等决策任务
+[[models]]
+name = "deepseek-v4-flash"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+visual = false
+price_in = 1.0
+price_out = 2.0
+extra_params = {thinking = {type = "disabled"}}
+
+# 智能模型（思考模式）：用于 replyer 回复
+[[models]]
+name = "deepseek-v4-pro-think"
+model_identifier = "deepseek-v4-pro"
+api_provider = "deepseek"
+visual = false
+price_in = 12.0
+price_out = 24.0
+extra_params = {thinking = {type = "enabled"}, reasoning_effort = "high"}
+
+[model_task_config.planner]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 8000
+temperature = 0.7
+
+[model_task_config.replyer]
+model_list = ["deepseek-v4-pro-think"]
+max_tokens = 4096
+temperature = 1.0
+
+[model_task_config.utils]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 0.5
+```
+
+> 💡 **进阶用法**：有更多模型后，可以为 `vlm` 配置视觉模型（看图）、为 `embedding` 配置嵌入模型（记忆搜索），只需在对应任务下填写 `model_list` 即可。
 
 
 ## 下一步
