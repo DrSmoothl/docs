@@ -431,7 +431,7 @@ env = {}
 - **`health_check_interval_sec`** — Health check interval
 - **`max_restart_attempts`** — Maximum auto-restarts after runner crash
 - **`runner_spawn_timeout_sec`** — Timeout waiting for runner subprocess startup and registration
-- **`hook_blocking_timeout_sec`** — Global timeout for blocking hook steps
+- **`hook_blocking_timeout_sec`** — Global timeout for blocking hook steps. Defaults to `60` seconds
 - **`ipc_socket_path`** — Custom IPC socket path, Linux/macOS only; empty means auto-generated
 
 ### plugin_runtime.render

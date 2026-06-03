@@ -782,7 +782,7 @@ max_restart_attempts = 3
 # 等待 Runner 子进程启动并注册的超时时间，单位秒
 runner_spawn_timeout_sec = 30.0
 # Hook 阻塞步骤的全局超时上限，单位秒
-hook_blocking_timeout_sec = 30
+hook_blocking_timeout_sec = 60
 # 自定义 IPC Socket 路径，仅 Linux/macOS 生效，留空自动生成
 ipc_socket_path = ""
 ```
@@ -795,7 +795,7 @@ ipc_socket_path = ""
 - **`health_check_interval_sec`** — 健康检查间隔。默认为 `30.0` 秒。自由填写浮点数。
 - **`max_restart_attempts`** — Runner 崩溃后最大自动重启次数。默认为 `3`。自由填写整数。
 - **`runner_spawn_timeout_sec`** — 等待 Runner 子进程启动并注册的超时时间。默认为 `30.0` 秒。自由填写浮点数。
-- **`hook_blocking_timeout_sec`** — Hook 阻塞步骤的全局超时上限。默认为 `30` 秒。自由填写整数。
+- **`hook_blocking_timeout_sec`** — Hook 阻塞步骤的全局超时上限。默认为 `60` 秒。自由填写整数。
 - **`ipc_socket_path`** — 自定义 IPC Socket 路径。默认为空字符串。仅 Linux/macOS 生效，留空自动生成。
 
 
