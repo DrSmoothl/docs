@@ -48,6 +48,7 @@ export default defineConfig({
               items: [
                 { text: '部署概览', link: '/manual/deployment/' },
                 { text: '源码安装', link: '/manual/deployment/installation' },
+                //{ text: 'Agent 安装指南', link: '/manual/deployment/installation-agent' },
                 { text: '一键包安装', link: '/manual/deployment/one_key' },
                 { text: 'Docker安装', link: '/manual/deployment/docker' },
               ]
