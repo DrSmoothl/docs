@@ -337,7 +337,6 @@ library_log_levels = { aiohttp = "WARNING" }
 
 - **`enable_maisaka_stage_board`** — Whether to enable the Maisaka stage board
 - **`show_maisaka_thinking`** — Whether to show replyer reasoning
-- **`fold_maisaka_thinking`** — Whether to fold the Maisaka prompt display entry
 - **`show_jargon_prompt`** — Whether to show jargon-related prompts
 - **`show_memory_prompt`** — Whether to show memory retrieval prompts
 - **`enable_reply_effect_tracking`** — Whether to enable reply effect score tracking

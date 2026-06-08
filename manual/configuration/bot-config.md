@@ -565,8 +565,6 @@ enable = true
 [debug]
 # 是否显示回复器推理
 show_maisaka_thinking = true
-# 是否折叠 Maisaka prompt 展示入口
-fold_maisaka_thinking = true
 # 是否显示黑话相关提示词
 show_jargon_prompt = false
 # 是否显示记忆检索相关 prompt
@@ -584,8 +582,6 @@ enable_llm_cache_stats = false
 ### 选项说明
 
 **`show_maisaka_thinking`** — 显示回复器推理。默认为 `true`。是否在 WebUI 中显示 Maisaka 回复器的推理过程。
-
-**`fold_maisaka_thinking`** — 折叠 Maisaka prompt 展示入口。默认为 `true`。是否折叠 Maisaka prompt 的展示入口。
 
 **`show_jargon_prompt`** — 显示 jargon 相关提示词。默认为 `false`。是否显示黑话相关的提示词。
 

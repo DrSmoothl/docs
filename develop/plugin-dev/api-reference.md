@@ -127,6 +127,7 @@ llm = self.ctx.llm
 - `await llm.generate(prompt, model="", temperature=None, max_tokens=None)` — 文本生成，`prompt` 支持字符串或消息列表
 - `await llm.generate_with_tools(prompt, tools, model="", temperature=None, max_tokens=None)` — 带工具调用的生成
 - `await llm.embed(text=..., texts=...)` — 生成文本嵌入向量
+- `await llm.transcribe_audio(audio=..., audio_base64=...)` — 调用 Host 当前 `voice` 任务进行 ASR 语音识别，`audio` 支持音频字节或 Base64/Data URL 字符串
 - `await llm.get_available_models()` — 获取可用模型列表，返回 `list[str]`
 
 `temperature` 和 `max_tokens` 省略或传入 `None` 时，会使用模型管理页中当前模型/任务配置的值；只有显式传入具体值时才会覆盖配置。
@@ -188,6 +189,12 @@ embeddings = await self.ctx.llm.embed(
     task_name="embedding",
     max_concurrent=4,
 )
+
+# ASR 语音识别
+with open("voice.mp3", "rb") as audio_file:
+    asr_result = await self.ctx.llm.transcribe_audio(audio_file.read())
+if asr_result["success"]:
+    text = asr_result["text"]
 
 # 获取可用模型列表
 models = await self.ctx.llm.get_available_models()

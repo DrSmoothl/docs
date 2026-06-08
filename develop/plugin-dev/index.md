@@ -217,7 +217,7 @@ self.ctx.api          # 插件 API 查询、调用与动态同步
 self.ctx.gateway      # 消息网关路由与运行时状态上报
 self.ctx.send         # 发送文本、图片、表情、转发、混合消息
 self.ctx.db           # 数据库增删改查计数
-self.ctx.llm          # LLM 文本生成、工具调用与嵌入向量
+self.ctx.llm          # LLM 文本生成、工具调用、嵌入向量与 ASR 语音识别
 self.ctx.config       # 插件配置读取
 self.ctx.emoji        # 表情包管理
 self.ctx.message      # 历史消息查询
