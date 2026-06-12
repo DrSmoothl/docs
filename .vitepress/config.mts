@@ -32,6 +32,7 @@ export default defineConfig({
           { text: '功能介绍', link: '/features/' },
           { text: '用户手册', link: '/manual/deployment/' },
           { text: '开发文档', link: '/develop/' },
+          { text: '更新日志', link: '/changelog/' },
           {
             text: 'GitHub',
             items: [
@@ -110,6 +111,16 @@ export default defineConfig({
               ]
             },
           ],
+          '/changelog/': [
+            {
+              text: '更新日志',
+              collapsed: false,
+              items: [
+                { text: '版本总览', link: '/changelog/' },
+                { text: '1.0.0 更新专题', link: '/changelog/v1-0-0' },
+              ]
+            },
+          ],
           '/develop/': [
             {
               text: '架构详解',
@@ -185,6 +196,7 @@ export default defineConfig({
           { text: 'Features', link: '/en/features/' },
           { text: 'Manual', link: '/en/manual/deployment/' },
           { text: 'Development', link: '/en/develop/' },
+          { text: 'Changelog', link: '/en/changelog/' },
           {
             text: 'GitHub',
             items: [
