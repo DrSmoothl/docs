@@ -118,6 +118,29 @@ class PluginSection(PluginConfigBase):
     enabled: bool = Field(default=True, description="是否启用插件")
 ```
 
+### __ui_icon__
+
+`PluginConfigBase` 子类可通过 `__ui_icon__` 类属性设置在 WebUI 中显示的分组图标，接受 [Material Icons](https://fonts.google.com/icons) 图标名称：
+
+```python
+class PluginSection(PluginConfigBase):
+    __ui_label__ = "基础设置"
+    __ui_icon__ = "settings"  # WebUI 中显示的 Material Icons 图标名
+    enabled: bool = Field(default=True, description="是否启用插件")
+```
+
+### __ui_order__
+
+`PluginConfigBase` 子类可通过 `__ui_order__` 类属性设置分组在 WebUI 中的显示顺序，数值越小越靠前：
+
+```python
+class PluginSection(PluginConfigBase):
+    __ui_label__ = "基础设置"
+    __ui_icon__ = "settings"
+    __ui_order__ = 0  # WebUI 中分组的排序权重，数字越小越靠前
+    enabled: bool = Field(default=True, description="是否启用插件")
+```
+
 ### json_schema_extra
 
 `json_schema_extra` 用于传递额外元数据给 WebUI Schema 生成器，常用场景包括：

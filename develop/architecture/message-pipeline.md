@@ -275,17 +275,9 @@ class HeartflowManager:
 
 ## 内置 Hook 汇总
 
-所有内置 Hook 由 `hook_catalog.py` 统一注册：
+所有内置 Hook 由 `hook_catalog.py` 统一注册。
 
-- **`chat.receive.before_process`** — 注册模块 `chat/message_receive/bot.py` · 消息预处理前 · 可中止 ✓
-- **`chat.receive.after_process`** — 注册模块 `chat/message_receive/bot.py` · 消息预处理后 · 可中止 ✓
-- **`chat.command.before_execute`** — 注册模块 `chat/message_receive/bot.py` · 命令执行前 · 可中止 ✓
-- **`chat.command.after_execute`** — 注册模块 `chat/message_receive/bot.py` · 命令执行后 · 可中止 ✗
-- **`maisaka.planner.before_request`** — 注册模块 `maisaka/chat_loop_service.py` · LLM 请求前 · 可中止 ✗
-- **`maisaka.planner.after_response`** — 注册模块 `maisaka/chat_loop_service.py` · LLM 响应后 · 可中止 ✗
-- **`send_service.after_build_message`** — 注册模块 `services/send_service.py` · 出站消息构建后 · 可中止 ✓
-- **`send_service.before_send`** — 注册模块 `services/send_service.py` · 发送前 · 可中止 ✓
-- **`send_service.after_send`** — 注册模块 `services/send_service.py` · 发送后 · 可中止 ✗
+> 完整的 Hook 目录及其参数说明请参阅 [Hook 处理器](../plugin-dev/hooks)。本文仅介绍管线中 Hook 的位置和作用。
 
 ## 数据流图
 

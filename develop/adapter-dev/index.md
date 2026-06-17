@@ -29,6 +29,22 @@ MaiBot 的平台 IO 层（`src/platform_io/`）采用**驱动抽象 + 路由表 
 - **RouteTable**：路由绑定表，维护 RouteKey 到驱动的映射
 - **DriverRegistry**：驱动注册表，管理已注册的驱动实例
 
+## 选择适配器开发模式
+
+MaiBot 提供两种适配器开发方式：
+
+**@MessageGateway（插件式）**
+  : 通过 `@MessageGateway` 组件装饰器注册，以插件形式运行在插件运行时（Plugin Runtime）中
+  : 适用场景：独立部署的适配器插件、需要跨平台复用、不需要修改 MaiBot 源码
+  : import: `from maibot.src.plugin_runtime.components import MessageGateway`
+  : 详见 [MessageGateway 开发指南](../plugin-dev/message-gateway)
+
+**PlatformIODriver（驱动式）**
+  : 直接实现 `PlatformIODriver` 接口，注册到 MaiBot 的 Platform IO 系统中
+  : 适用场景：内置适配器、需要深度集成、随 MaiBot 一起发布
+  : import: `from maibot.src.platform_io.types import PlatformIODriver`
+  : 详见 [Platform IO 开发指南](platform-io)
+
 ## maim-message 集成
 
 MaiBot 使用 [maim-message](https://github.com/Mai-with-u/maim_message) 作为统一消息格式标准。`MessageServer` 是 maim-message 提供的消息中间件，负责在平台适配器与 MaiBot 之间传递消息。

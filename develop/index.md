@@ -110,10 +110,32 @@ uv run ruff format .
 
 深入了解各子系统的内部架构和实现原理：
 
+### 基础域（Wave 1）—— 底层基础设施
+
+底层基础设施，提供通信、工具抽象和系统运行底座。
+
+- [事件总线架构](./architecture/event-bus.md)：MaiBot 全系统事件通信中枢，提供发布/订阅模型和拦截型、非拦截型两类事件处理器
+- [工具系统架构](./architecture/tool-system.md)：四类工具来源的统一抽象层，通过 ToolProvider 接入插件、旧 Action、MaiSaka 内置工具和 MCP 工具
+
+### 核心功能域（Wave 2）—— 主要业务链路
+
+消息处理、推理、记忆、WebUI 和服务封装构成 MaiBot 的主要业务链路。
+
 - [消息管线](./architecture/message-pipeline.md)：入站消息的完整处理流程——从平台适配器到 Hook 拦截、过滤、命令分发、HeartFlow 和出站发送
 - [Maisaka 推理引擎](./architecture/maisaka-reasoning.md)：对话推理的核心——Timing Gate 节奏控制、Planner 规划循环、工具调用和打断机制
 - [记忆系统](./architecture/memory-system.md)：A-Memorix 长期记忆引擎——双路检索、存储层、记忆策略和人物画像
 - [WebUI 内部机制](./architecture/webui-internals.md)：FastAPI 后端架构——认证安全、WebSocket 通信、插件管理和配置热重载
+- [服务层架构](./architecture/service-layer.md)：封装 LLM 调用、记忆操作、发送消息、数据库访问和统计聚合等业务服务，供上层模块复用
+
+### 辅助功能域（Wave 3）—— 增强能力模块
+
+增强能力模块，可按部署需求启用、替换或扩展。
+
+- [表达学习架构](./architecture/expression-learning.md)：从对话中学习行为模式、俚语和表达偏好，为个性化回复提供持续更新的风格素材
+- [表情系统内部架构](./architecture/emoji-internals.md)：管理表情包加载、匹配和生成，为消息理解与回复生成提供视觉表达素材
+- [MCP 集成架构](./architecture/mcp-integration.md)：连接外部 MCP Server，将远程工具能力接入统一 Tool System
+- [Prompt 模板系统](./architecture/prompt-templates.md)：管理 Prompt 模板加载、参数化和运行时更新，支撑推理引擎的上下文组织
+- [全局管理器架构](./architecture/global-managers.md)：集中管理跨模块异步任务、配置状态和运行时服务，减少入口编排复杂度
 
 ## 下一步
 

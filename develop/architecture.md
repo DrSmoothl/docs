@@ -4,7 +4,19 @@ title: 架构设计
 
 # 架构设计
 
-本文介绍 MaiBot 的核心架构，包括进程模型、系统初始化流程、消息处理管线和关键组件。
+本文基于 code-map 快照编写，作为架构文档的导航中心。它把 MaiBot 的架构拆成 12 篇专题文档，并用 Runner/Worker 进程模型与 MainSystem 初始化流程串起主入口。
+
+## 快速入口
+
+**消息处理管线** ：从平台消息入站到出站发送的完整链路，详见 [消息管线](architecture/message-pipeline.md)。
+
+**插件运行时架构** ：插件生命周期、Host/Runner 双进程通信、组件注册和 Hook 分发，详见 [插件开发文档](./plugin-dev/)、[生命周期](./plugin-dev/lifecycle.md)、[工具](./plugin-dev/tools.md)、[Hook](./plugin-dev/hooks.md)。
+
+**Platform IO 架构** ：MaiBot 与适配器之间的发送、接收、路由、去重和出站跟踪，详见 [PlatformIO 驱动开发](./adapter-dev/platform-io.md)。
+
+**事件总线（EventBus）** ：事件总线（EventBus）是 MaiBot 全系统通信中枢，提供发布/订阅模型，支持拦截型（同步顺序）和非拦截型（异步并发）两种事件处理器。详见 [事件总线架构](architecture/event-bus.md)。
+
+**工具抽象层（Tool System）** ：工具抽象层（Tool System）统一管理四类工具来源：插件 @Tool、旧 @Action（自动转换）、MaiSaka 内置 Tool、MCP Tool，提供统一的 ToolProvider 接口。详见 [工具系统架构](architecture/tool-system.md)。
 
 ## Runner/Worker 进程模型
 
@@ -61,134 +73,52 @@ graph LR
 
 `schedule_tasks()` 随后启动持续运行的服务：表情定期维护、消息 API 服务器、消息服务器。
 
+## 新增架构入口
+
+**[事件总线架构](architecture/event-bus.md)** ：事件总线（EventBus）是 MaiBot 全系统通信中枢，提供发布/订阅模型，支持拦截型（同步顺序）和非拦截型（异步并发）两种事件处理器。详见 [事件总线架构](architecture/event-bus.md)。
+
+**[工具系统架构](architecture/tool-system.md)** ：工具抽象层统一管理插件 @Tool、旧 @Action（自动转换）、MaiSaka 内置 Tool、MCP Tool 四类工具来源，并通过 ToolProvider 接口接入推理与执行链路。详见 [工具系统架构](architecture/tool-system.md)。
+
+**[服务层架构](architecture/service-layer.md)** ：服务层把 LLM 调用、记忆操作、发送消息、数据库访问和统计聚合等业务能力封装成可复用服务，避免上层模块直接耦合底层实现。详见 [服务层架构](architecture/service-layer.md)。
+
+**[表达学习架构](architecture/expression-learning.md)** ：表达学习从对话中沉淀行为模式、俚语和表达偏好，让 MaiBot 的回复风格随时间适配用户语境。详见 [表达学习架构](architecture/expression-learning.md)。
+
+**[表情系统内部架构](architecture/emoji-internals.md)** ：表情系统管理表情包的加载、匹配和生成，是消息语义理解与个性化回复的重要素材来源。详见 [表情系统内部架构](architecture/emoji-internals.md)。
+
+**[MCP 集成架构](architecture/mcp-integration.md)** ：MCP 集成连接外部 MCP Server，把远程工具能力纳入统一 Tool System，扩展模型可调用的工具边界。详见 [MCP 集成架构](architecture/mcp-integration.md)。
+
+**[Prompt 模板系统](architecture/prompt-templates.md)** ：Prompt 模板系统负责系统提示词、任务模板和运行参数的加载管理，影响推理引擎的上下文组织方式。详见 [Prompt 模板系统](architecture/prompt-templates.md)。
+
+**[全局管理器架构](architecture/global-managers.md)** ：全局管理器集中维护跨模块共享的异步任务、配置状态和运行时服务，降低入口编排复杂度。详见 [全局管理器架构](architecture/global-managers.md)。
+
 ## 消息处理管线
 
-MaiBot 的消息处理是从入站接收到出站发送的完整管线：
-
-```mermaid
-flowchart TD
-    A[平台消息到达] --> B[maim-message MessageServer]
-    B --> C[ChatBot.message_process]
-    C --> D[Hook: chat.receive.before_process]
-    D -->|未被中止| E[SessionMessage.process 预处理]
-    E --> F[Hook: chat.receive.after_process]
-    F -->|未被中止| G[过滤器：ban_words / ban_regex]
-    G --> H[会话管理：查找或创建会话]
-    H --> I{是否命中命令?}
-    I -->|是| J[Hook: chat.command.before_execute]
-    J -->|未被中止| K[命令执行 RPC]
-    K --> L[Hook: chat.command.after_execute]
-    L --> M{是否继续处理?}
-    M -->|是| N[HeartFlow 心流消息处理器]
-    M -->|否| O[返回命令结果]
-    I -->|否| N
-    N --> P[MaisakaChatLoopService 推理引擎]
-    P --> Q[Hook: maisaka.planner.before_request]
-    Q --> R[LLM 请求与工具调用循环]
-    R --> S[Hook: maisaka.planner.after_response]
-    S --> T[回复生成]
-    T --> U[SendService]
-    U --> V[Hook: send_service.after_build_message]
-    V -->|未被中止| W[Hook: send_service.before_send]
-    W -->|未被中止| X[PlatformIOManager.send_message]
-    X --> Y[适配器驱动发送]
-    Y --> Z[Hook: send_service.after_send]
-```
-
-### 管线各阶段详解
-
-#### 1. 消息入站
-
-消息通过 maim-message `MessageServer` 到达，已注册的 `ChatBot.message_process` 处理函数被调用。
-
-#### 2. Hook 拦截链
-
-- **chat.receive.before_process**：在 `SessionMessage.process()` 之前触发，可拦截或改写原始消息。
-- **chat.receive.after_process**：在消息完成预处理后触发，可改写文本、消息体或中止后续链路。
-
-#### 3. 消息过滤
-
-通过配置中的 `ban_words`（屏蔽词）和 `ban_regex`（屏蔽正则）过滤不当内容。
-
-#### 4. 会话管理
-
-`ChatManager` 查找或创建对应会话，维护会话上下文与状态。
-
-#### 5. 命令处理
-
-`ComponentQueryService.find_command_by_text()` 在插件组件注册表中查找匹配的命令。命令匹配后，依次触发 `chat.command.before_execute` 和 `chat.command.after_execute` Hook，然后通过 RPC 调用 Runner 子进程中的命令执行器。
-
-#### 6. HeartFlow 心流处理
-
-未被命令拦截的消息进入 `HeartFCMessageReceiver`，由心流消息处理器调度到 Maisaka 推理引擎。
-
-#### 7. Maisaka 推理引擎
-
-`ChatLoopService` 构建上下文消息窗口、候选工具列表，向 LLM 发起请求：
-- **maisaka.planner.before_request**：可改写消息窗口与工具定义
-- LLM 请求与工具调用循环
-- **maisaka.planner.after_response**：可调整文本结果与工具调用列表
-- **maisaka.replyer.before_request**：replyer 构建模型请求前，可改写任务、模型、额外提示和 `reply_tool_args`
-- **maisaka.replyer.before_model_request**：replyer 构造完最终 `messages` 后、请求模型前，可改写实际发送给模型的消息列表
-- **maisaka.replyer.after_response**：replyer 收到模型响应后，可改写回复或要求重生成
-
-#### 8. 出站发送
-
-`SendService` 构建出站消息，经多级 Hook 后通过 `PlatformIOManager` 路由到具体的平台驱动：
-- **send_service.after_build_message**：可改写消息体或取消发送
-- **send_service.before_send**：最终发送前的拦截点
-- Platform IO 路由决策与驱动发送
-- **send_service.after_send**：观察最终发送结果
+消息处理管线是 MaiBot 从平台入站到最终发送的主链路，覆盖消息预处理、会话管理、命令执行、心流调度、Maisaka 推理、回复生成和 Platform IO 发送。详细阶段、数据结构、Hook 拦截点和出站流程请阅读 [消息管线](architecture/message-pipeline.md)。
 
 ## 插件运行时架构
 
-```mermaid
-graph TD
-    subgraph Host 主进程
-        A[PluginRuntimeManager] --> B[HookSpecRegistry]
-        A --> C[HookDispatcher]
-        A --> D[Builtin Supervisor]
-        A --> E[Third-party Supervisor]
-        D --> F[ComponentRegistry]
-        E --> G[ComponentRegistry]
-        D --> H[RPCServer]
-        E --> I[RPCServer]
-    end
-    subgraph Runner 子进程 1
-        J[内置插件 Runner] --> K[Plugin A]
-        J --> L[Plugin B]
-    end
-    subgraph Runner 子进程 2
-        M[第三方插件 Runner] --> N[Plugin C]
-        M --> O[Plugin D]
-    end
-    H <-->|msgpack IPC| J
-    I <-->|msgpack IPC| M
-```
-
-- **PluginRuntimeManager**：单例管理器，管理两个 `PluginSupervisor`（内置插件 + 第三方插件）。
-- **PluginSupervisor**：每个 Supervisor 管理一个 Runner 子进程，负责生命周期、RPC 通信、健康检查和插件重载。
-- **Runner 子进程**：独立进程加载并运行插件代码，通过 msgpack 编解码的 IPC 与 Host 通信。
-- **ComponentRegistry**：组件注册表，管理 Action、Command、Tool、Event Handler、Hook Handler、Message Gateway 六类组件的注册信息。
+插件运行时采用 Host 主进程加两个 Runner 子进程的双子进程隔离模型，通过 msgpack IPC 和 RPC 管理内置插件、第三方插件、组件注册和 Hook 分发。完整设计、开发约束和组件 API 请转至 [插件开发文档](./plugin-dev/)，重点阅读 [生命周期](./plugin-dev/lifecycle.md)、[工具](./plugin-dev/tools.md)、[命令](./plugin-dev/commands.md)、[Hook](./plugin-dev/hooks.md)、[事件处理器](./plugin-dev/event-handlers.md) 和 [消息网关](./plugin-dev/message-gateway.md)。
 
 ## Platform IO 架构
 
-```mermaid
-graph TD
-    subgraph Platform IO 中间层
-        A[PlatformIOManager] --> B[DriverRegistry]
-        A --> C[SendRouteTable]
-        A --> D[ReceiveRouteTable]
-        A --> E[MessageDeduplicator]
-        A --> F[OutboundTracker]
-    end
-    G[LegacyPlatformDriver] --> A
-    H[PluginPlatformDriver] --> A
-    I[自定义 PlatformIODriver] --> A
-    A -->|路由决策| J[RouteKey 解析]
-    J -->|匹配驱动| K[驱动发送消息]
-```
+Platform IO 是 MaiBot 与平台适配器之间的中间层，负责 RouteKey 解析、发送和接收路由、驱动注册、入站去重和出站追踪。适配器实现与驱动接口请阅读 [PlatformIO 驱动开发](./adapter-dev/platform-io.md)。
 
-- **PlatformIOManager**：Broker 管理器，维护发送/接收路由表、驱动注册表、入站去重和出站跟踪。
-- **RouteKey**：路由键，由 `platform`（平台）、`account_id`（账号）、`scope`（作用域）组成，支持从最具体到最宽泛的回退匹配。
-- **PlatformIODriver**：驱动抽象基类，定义 `send_message()`、`start()`、`stop()`、`emit_inbound()` 等接口。
+## 本节文档索引
+
+**基础域（Wave 1）** ：底层基础设施，提供通信、工具抽象和系统运行底座。
+  : [事件总线架构](architecture/event-bus.md) ：MaiBot 全系统事件通信中枢，提供发布/订阅模型和拦截型、非拦截型两类处理器。
+  : [工具系统架构](architecture/tool-system.md) ：四类工具来源的统一抽象层，通过 ToolProvider 接入插件、旧 Action、MaiSaka 内置工具和 MCP 工具。
+
+**核心功能域（Wave 2）** ：消息处理、推理、记忆、WebUI 和服务封装构成 MaiBot 的主要业务链路。
+  : [消息管线](architecture/message-pipeline.md) ：从平台消息入站到出站发送的完整链路，包含预处理、会话、命令、心流、推理和发送 Hook。
+  : [Maisaka 推理引擎](architecture/maisaka-reasoning.md) ：MaiBot 的核心 AI 运行时，负责对话推理、节奏控制、LLM 请求和工具调用循环。
+  : [记忆系统（A-Memorix）](architecture/memory-system.md) ：MaiBot 的长期记忆子系统，负责持久化、嵌入、图谱检索、人物画像和记忆策略。
+  : [WebUI 内部机制](architecture/webui-internals.md) ：基于 FastAPI 的 Web 管理后端，覆盖认证、路由、WebSocket、插件运行时 IPC 和安全机制。
+  : [服务层架构](architecture/service-layer.md) ：封装 LLM 调用、记忆操作、发送消息、数据库访问和统计聚合等业务服务，供上层模块复用。
+
+**辅助功能域（Wave 3）** ：增强能力模块，可按部署需求启用、替换或扩展。
+  : [表达学习架构](architecture/expression-learning.md) ：从对话中学习行为模式、俚语和表达偏好，为个性化回复提供持续更新的风格素材。
+  : [表情系统内部架构](architecture/emoji-internals.md) ：管理表情包加载、匹配和生成，为消息理解与回复生成提供视觉表达素材。
+  : [MCP 集成架构](architecture/mcp-integration.md) ：连接外部 MCP Server，将远程工具能力接入统一 Tool System。
+  : [Prompt 模板系统](architecture/prompt-templates.md) ：管理 Prompt 模板加载、参数化和运行时更新，支撑推理引擎的上下文组织。
+  : [全局管理器架构](architecture/global-managers.md) ：集中管理跨模块异步任务、配置状态和运行时服务，减少入口编排复杂度。

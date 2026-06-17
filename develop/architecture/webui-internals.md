@@ -426,3 +426,21 @@ flowchart LR
 ::: warning
 生产环境部署必须使用反向代理（如 Nginx），配置 HTTPS，并设置适当的 CORS 和安全头。
 :::
+
+### 缓解建议
+
+针对上述安全审计要点，建议采取以下缓解措施：
+
+**文件上传无验证** ：添加上传文件类型白名单（仅允许图片/文档等必要格式）及大小上限（如 10MB），并使用 `python-magic` 校验真实 MIME 类型
+
+**WebSocket 无 Origin 校验** ：在 `authenticate_websocket_connection()` 中检查 `Origin` 头，仅允许已配置的来源
+
+**Config API 泄露 API Key** ：在配置 Schema 输出时对敏感字段（如 `api_key`、`token`、`secret`）进行脱敏处理，仅在前端呈现掩码值
+
+**无 CSRF 保护** ：建议在表单类请求中添加 CSRF Token 校验，或对写操作检查 `Referer`/`Origin` 头是否为允许的来源
+
+**无 CSP 头** ：在响应中添加 `Content-Security-Policy` 头，限制脚本、样式、字体等资源的加载来源
+
+**系统重启无确认** ：在 `/system/restart` 端点要求用户二次确认（如重新输入 Token 或发送确认参数）
+
+**限流器不共享** ：多实例部署时应改用 Redis 等外部存储实现分布式限流

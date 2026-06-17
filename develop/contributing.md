@@ -37,7 +37,7 @@ from src.config.config import config_manager
 ## 类型注解规范
 
 1. 重构时保留原类型注解；无注解的复杂函数/多参数函数应添加
-2. 参数化泛型使用 `typing` 模块（如 `Dict`、`List`、`Optional`）
+2. 参数化泛型使用 Python 3.10+ 内置语法（如 `dict[K, V]`、`list[T]`、`T | None`），避免使用旧式 typing 模块写法
 3. 变量类型确定后不必使用 `or` 回退
 
 ```python

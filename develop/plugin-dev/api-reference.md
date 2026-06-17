@@ -23,8 +23,9 @@ self.ctx.tool       # 工具定义
 self.ctx.render     # HTML 渲染
 self.ctx.knowledge  # 知识库搜索
 self.ctx.maisaka    # Maisaka 上下文与主动任务
-self.ctx.logger     # 日志记录（标准 logging.Logger）
 ```
+
+此外，`self.ctx.logger` 提供标准 `logging.Logger` 实例，不属于能力代理体系。详见下方的 [logger](#logger) 章节。
 
 ## send — 消息发送
 

@@ -112,6 +112,15 @@ export default defineConfig({
           ],
           '/develop/': [
             {
+              text: '总览',
+              collapsed: false,
+              items: [
+                { text: '开发指南', link: '/develop/' },
+                { text: '架构设计', link: '/develop/architecture' },
+                { text: '贡献指南', link: '/develop/contributing' },
+              ]
+            },
+            {
               text: '架构详解',
               collapsed: false,
               items: [
@@ -119,35 +128,52 @@ export default defineConfig({
                 { text: 'Maisaka 推理引擎', link: '/develop/architecture/maisaka-reasoning' },
                 { text: '记忆系统', link: '/develop/architecture/memory-system' },
                 { text: 'WebUI 内部机制', link: '/develop/architecture/webui-internals' },
-              ]
-            },
-            {
-              text: '开发文档',
-              collapsed: false,
-              items: [
-                { text: '架构概览', link: '/develop/' },
-                { text: '架构设计', link: '/develop/architecture' },
-                { text: '贡献指南', link: '/develop/contributing' },
+                { text: '事件总线 (EventBus)', link: '/develop/architecture/event-bus' },
+                { text: '工具系统 (Tool System)', link: '/develop/architecture/tool-system' },
+                { text: '服务层', link: '/develop/architecture/service-layer' },
+                { text: '表达学习', link: '/develop/architecture/expression-learning' },
+                { text: '表情系统内部', link: '/develop/architecture/emoji-internals' },
+                { text: 'MCP 集成', link: '/develop/architecture/mcp-integration' },
+                { text: 'Prompt 模板', link: '/develop/architecture/prompt-templates' },
+                { text: '全局管理器', link: '/develop/architecture/global-managers' },
               ]
             },
             {
               text: '插件开发',
               collapsed: false,
               items: [
-                { text: '开发指南', link: '/develop/plugin-dev/' },
-                { text: 'Vibe Coding 指南', link: '/develop/plugin-dev/vibe-coding' },
-                { text: 'Manifest', link: '/develop/plugin-dev/manifest' },
-                { text: '生命周期', link: '/develop/plugin-dev/lifecycle' },
-                { text: 'Tool', link: '/develop/plugin-dev/tools' },
-                { text: 'Command', link: '/develop/plugin-dev/commands' },
-                { text: 'Hook 处理器', link: '/develop/plugin-dev/hooks' },
-                { text: '事件处理器', link: '/develop/plugin-dev/event-handlers' },
-                { text: 'API 组件', link: '/develop/plugin-dev/api-components' },
-                { text: '消息网关', link: '/develop/plugin-dev/message-gateway' },
-                { text: 'LLMProvider 组件', link: '/develop/plugin-dev/llmprovider' },
-                { text: 'Action (Legacy)', link: '/develop/plugin-dev/actions' },
-                { text: '配置管理', link: '/develop/plugin-dev/config' },
-                { text: 'API 参考', link: '/develop/plugin-dev/api-reference' },
+                {
+                  text: '入门',
+                  collapsed: false,
+                  items: [
+                    { text: '开发指南', link: '/develop/plugin-dev/' },
+                    { text: 'Vibe Coding 指南', link: '/develop/plugin-dev/vibe-coding' },
+                    { text: 'Manifest', link: '/develop/plugin-dev/manifest' },
+                    { text: '生命周期', link: '/develop/plugin-dev/lifecycle' },
+                    { text: '配置管理', link: '/develop/plugin-dev/config' },
+                  ]
+                },
+                {
+                  text: '组件开发',
+                  collapsed: false,
+                  items: [
+                    { text: 'Tool', link: '/develop/plugin-dev/tools' },
+                    { text: 'Command', link: '/develop/plugin-dev/commands' },
+                    { text: 'Hook 处理器', link: '/develop/plugin-dev/hooks' },
+                    { text: '事件处理器', link: '/develop/plugin-dev/event-handlers' },
+                    { text: 'API 组件', link: '/develop/plugin-dev/api-components' },
+                    { text: '消息网关', link: '/develop/plugin-dev/message-gateway' },
+                    { text: 'LLMProvider 组件', link: '/develop/plugin-dev/llmprovider' },
+                    { text: 'Action (Legacy)', link: '/develop/plugin-dev/actions' },
+                  ]
+                },
+                {
+                  text: '参考',
+                  collapsed: false,
+                  items: [
+                    { text: 'API 参考', link: '/develop/plugin-dev/api-reference' },
+                  ]
+                },
               ]
             },
             {
@@ -260,15 +286,26 @@ export default defineConfig({
                 { text: 'Discord Adapter', link: '/en/manual/adapters/discord' },
               ]
             },
-            {
-              text: 'FAQ',
-              collapsed: false,
-              items: [
-                { text: 'FAQ', link: '/en/manual/faq/' },
-              ]
-            },
+              {
+                text: 'FAQ',
+                collapsed: false,
+                items: [
+                  { text: 'FAQ', link: '/en/manual/faq/' },
+                  { text: 'Error Troubleshooting', link: '/en/manual/faq/error-troubleshooting' },
+                  { text: 'EULA', link: '/en/manual/faq/EULA' },
+                ]
+              },
           ],
           '/en/develop/': [
+            {
+              text: 'Overview',
+              collapsed: false,
+              items: [
+                { text: 'Development Guide', link: '/en/develop/' },
+                { text: 'Architecture Design', link: '/en/develop/architecture' },
+                { text: 'Contributing Guide', link: '/en/develop/contributing' },
+              ]
+            },
             {
               text: 'Architecture',
               collapsed: false,
@@ -277,35 +314,52 @@ export default defineConfig({
                 { text: 'Maisaka Reasoning Engine', link: '/en/develop/architecture/maisaka-reasoning' },
                 { text: 'Memory System', link: '/en/develop/architecture/memory-system' },
                 { text: 'WebUI Internals', link: '/en/develop/architecture/webui-internals' },
-              ]
-            },
-            {
-              text: 'Development',
-              collapsed: false,
-              items: [
-                { text: 'Architecture Overview', link: '/en/develop/' },
-                { text: 'Architecture Design', link: '/en/develop/architecture' },
-                { text: 'Contributing Guide', link: '/en/develop/contributing' },
+                { text: 'Event Bus', link: '/en/develop/architecture/event-bus' },
+                { text: 'Tool System', link: '/en/develop/architecture/tool-system' },
+                { text: 'Service Layer', link: '/en/develop/architecture/service-layer' },
+                { text: 'Expression Learning', link: '/en/develop/architecture/expression-learning' },
+                { text: 'Emoji Internals', link: '/en/develop/architecture/emoji-internals' },
+                { text: 'MCP Integration', link: '/en/develop/architecture/mcp-integration' },
+                { text: 'Prompt Templates', link: '/en/develop/architecture/prompt-templates' },
+                { text: 'Global Managers', link: '/en/develop/architecture/global-managers' },
               ]
             },
             {
               text: 'Plugin Development',
               collapsed: false,
               items: [
-                { text: 'Development Guide', link: '/en/develop/plugin-dev/' },
-                { text: 'Vibe Coding Guide', link: '/en/develop/plugin-dev/vibe-coding' },
-                { text: 'Manifest', link: '/en/develop/plugin-dev/manifest' },
-                { text: 'Lifecycle', link: '/en/develop/plugin-dev/lifecycle' },
-                { text: 'Tool', link: '/en/develop/plugin-dev/tools' },
-                { text: 'Command', link: '/en/develop/plugin-dev/commands' },
-                { text: 'Hook Handler', link: '/en/develop/plugin-dev/hooks' },
-                { text: 'Event Handler', link: '/en/develop/plugin-dev/event-handlers' },
-                { text: 'API Component', link: '/en/develop/plugin-dev/api-components' },
-                { text: 'Message Gateway', link: '/en/develop/plugin-dev/message-gateway' },
-                { text: 'LLMProvider Component', link: '/en/develop/plugin-dev/llmprovider' },
-                { text: 'Action (Legacy)', link: '/en/develop/plugin-dev/actions' },
-                { text: 'Configuration', link: '/en/develop/plugin-dev/config' },
-                { text: 'API Reference', link: '/en/develop/plugin-dev/api-reference' },
+                {
+                  text: 'Getting Started',
+                  collapsed: false,
+                  items: [
+                    { text: 'Development Guide', link: '/en/develop/plugin-dev/' },
+                    { text: 'Vibe Coding Guide', link: '/en/develop/plugin-dev/vibe-coding' },
+                    { text: 'Manifest', link: '/en/develop/plugin-dev/manifest' },
+                    { text: 'Lifecycle', link: '/en/develop/plugin-dev/lifecycle' },
+                    { text: 'Configuration', link: '/en/develop/plugin-dev/config' },
+                  ]
+                },
+                {
+                  text: 'Components',
+                  collapsed: false,
+                  items: [
+                    { text: 'Tool', link: '/en/develop/plugin-dev/tools' },
+                    { text: 'Command', link: '/en/develop/plugin-dev/commands' },
+                    { text: 'Hook Handler', link: '/en/develop/plugin-dev/hooks' },
+                    { text: 'Event Handler', link: '/en/develop/plugin-dev/event-handlers' },
+                    { text: 'API Component', link: '/en/develop/plugin-dev/api-components' },
+                    { text: 'Message Gateway', link: '/en/develop/plugin-dev/message-gateway' },
+                    { text: 'LLMProvider Component', link: '/en/develop/plugin-dev/llmprovider' },
+                    { text: 'Action (Legacy)', link: '/en/develop/plugin-dev/actions' },
+                  ]
+                },
+                {
+                  text: 'Reference',
+                  collapsed: false,
+                  items: [
+                    { text: 'API Reference', link: '/en/develop/plugin-dev/api-reference' },
+                  ]
+                },
               ]
             },
             {

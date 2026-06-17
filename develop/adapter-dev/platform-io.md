@@ -143,8 +143,8 @@ class DriverDescriptor:
 ### 完整示例
 
 ```python
-from src.platform_io.drivers.base import PlatformIODriver
-from src.platform_io.types import (
+from maibot.src.platform_io.drivers.base import PlatformIODriver
+from maibot.src.platform_io.types import (
     DeliveryReceipt, DeliveryStatus, DriverDescriptor, DriverKind,
     InboundMessageEnvelope, RouteKey, RouteBinding,
 )
@@ -186,7 +186,7 @@ class MyDriver(PlatformIODriver):
 ### 注册与路由绑定
 
 ```python
-from src.platform_io.manager import get_platform_io_manager
+from maibot.src.platform_io.manager import get_platform_io_manager
 
 manager = get_platform_io_manager()
 
