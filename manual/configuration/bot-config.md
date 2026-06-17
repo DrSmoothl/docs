@@ -523,6 +523,8 @@ enable = true
 max_length = 512
 # 回复允许的最大句子数
 max_sentence_num = 8
+# 回复最多分割条数
+max_split_num = 3
 # 是否启用颜文字保护
 enable_kaomoji_protection = false
 # 句子数量超出上限时是否一次性返回全部内容
@@ -536,6 +538,8 @@ enable_overflow_return_all = false
 **`max_length`** — 回复允许的最大长度。默认为 `512`。单条回复的最大字符数。
 
 **`max_sentence_num`** — 回复允许的最大句子数。默认为 `8`。单条回复的最大句子数量。
+
+**`max_split_num`** — 回复最多分割条数。默认为 `3`。用于限制正常分割后最多发送多少条消息；不会替代 `max_sentence_num` 的硬上限保护。
 
 **`enable_kaomoji_protection`** — 启用颜文字保护。默认为 `false`。开启后分割时会保护颜文字不被拆分。
 
