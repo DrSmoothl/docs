@@ -202,3 +202,11 @@ docker compose down
 ```bash
 docker compose restart
 ```
+
+### 输入命令报错 `unknown shorthand flag: 'd' in -d`？
+
+说明你的服务器安装的是**独立版（Standalone）**的 Docker Compose。请将命令中间的空格替换为**短横线**执行：
+```bash
+docker-compose up -d
+```
+同理，本文档后续所有形如 docker compose <命令> 的操作，在你的服务器上都需要写成 docker-compose <命令>（例如 docker-compose restart core）
