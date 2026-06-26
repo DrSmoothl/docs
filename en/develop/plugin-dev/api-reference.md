@@ -4,9 +4,10 @@ title: API Reference
 
 # API Reference
 
-MaiBot plugins access 16 capability proxies through `self.ctx` (`PluginContext`). All calls are automatically forwarded to Host via RPC, and the SDK automatically unwraps results.
+MaiBot plugins access 17 capability proxies through `self.ctx` (`PluginContext`). Capability calls are automatically forwarded to Host via RPC, and the SDK automatically unwraps results; `ctx.paths` and `ctx.logger` are context helper objects injected by the Runner.
 
 ```python
+# Capability proxies
 self.ctx.send       # Send messages
 self.ctx.db         # Database operations
 self.ctx.llm        # LLM calls
@@ -22,7 +23,11 @@ self.ctx.gateway    # Message gateway
 self.ctx.tool       # Tool definitions
 self.ctx.render     # HTML rendering
 self.ctx.knowledge  # Knowledge base search
+self.ctx.statistics # Local statistics
 self.ctx.maisaka    # Maisaka context and proactive tasks
+
+# Context helper objects
+self.ctx.paths      # Plugin data and runtime directories
 self.ctx.logger     # Logging (standard logging.Logger)
 ```
 
@@ -81,9 +86,11 @@ result = await self.ctx.llm.generate_with_tools(
     tools=[...],
     model="gpt-4",
 )
+```
 
 When `temperature` or `max_tokens` is omitted or set to `None`, the Host uses the values configured for the selected model/task in model management. Pass concrete values only when the plugin needs to override that configuration.
 
+```python
 # Generate an embedding vector for one text. Uses model_task_config.embedding by default.
 embedding = await self.ctx.llm.embed(text="Text to vectorize")
 
@@ -94,11 +101,17 @@ embeddings = await self.ctx.llm.embed(
     max_concurrent=4,
 )
 
+# Transcribe audio with the Host's current voice task.
+with open("voice.mp3", "rb") as audio_file:
+    asr_result = await self.ctx.llm.transcribe_audio(audio_file.read())
+if asr_result["success"]:
+    text = asr_result["text"]
+
 # Get available model list
 models = await self.ctx.llm.get_available_models()
 ```
 
-Before using the embedding capability, declare `llm.embed` in the plugin `_manifest.json` `capabilities` list.
+Before using embedding or audio transcription, declare `llm.embed` or `llm.transcribe_audio` in the plugin `_manifest.json` `capabilities` list.
 
 ## config — Configuration Reading
 
@@ -341,6 +354,75 @@ result = await self.ctx.render.html2png(html="<h1>Hello</h1><p>World</p>")
 # Search LPMM knowledge base
 content = await self.ctx.knowledge.search(query="MaiBot configuration guide")
 ```
+
+## statistics — Local Statistics
+
+```python
+statistics = self.ctx.statistics
+```
+
+`statistics.local.*` reads only the current MaiBot instance's local statistics. It does not expose telemetry or uploaded client statistics. Declare the corresponding capability in `_manifest.json` before calling it.
+
+- `await statistics.local.models(days=7, limit=10)` — get model-level aggregate statistics
+- `await statistics.local.model_trend(days=7, bucket="day", top_models=10, metric="token", module_name="")` — get model usage trends
+- `await statistics.local.token_trend(days=7, bucket="day", group_by="", top_items=10)` — get token usage trends
+- `await statistics.local.token_distribution(days=7, group_by="model", top_items=10)` — get token usage distribution
+- `await statistics.local.message_trend(days=7, bucket="day", top_chats=10)` — get message-count trends by chat stream
+- `await statistics.local.tool_trend(days=7, bucket="day", top_tools=10)` — get tool-call trends
+- `await statistics.local.online_time_trend(days=7, bucket="day")` — get online-time trends
+
+Common parameters:
+
+- `days`: number of recent days to query; must be a positive integer
+- `bucket`: time bucket, either `"hour"` or `"day"`
+- `group_by`: token grouping, one of `"model"`, `"module"`, `"provider"`, or `"type"`; an empty string returns total/input/output/request-count series
+- `metric`: model trend metric, one of `"token"`, `"request"`, `"cost"`, or `"latency"`
+
+Trend methods directly return a `series` object with `timestamps`, `values_by_key`, `labels_by_key`, `total`, and `source_count`. `token_distribution()` directly returns a `distribution` object with chart-ready `pies`.
+
+```python
+models = await self.ctx.statistics.local.models(days=7, limit=5)
+token_series = await self.ctx.statistics.local.token_trend(days=7, group_by="model")
+message_series = await self.ctx.statistics.local.message_trend(days=7, top_chats=5)
+
+top_model = models[0]["model_name"] if models else "unknown"
+```
+
+Manifest example:
+
+```json
+{
+  "capabilities": [
+    "statistics.local.models",
+    "statistics.local.model_trend",
+    "statistics.local.token_trend",
+    "statistics.local.token_distribution",
+    "statistics.local.message_trend",
+    "statistics.local.tool_trend",
+    "statistics.local.online_time_trend"
+  ]
+}
+```
+
+## paths — Runtime Paths
+
+```python
+data_path = self.ctx.paths.data_dir / "records.json"
+runtime_path = self.ctx.paths.runtime_dir / "latest-card.png"
+```
+
+`ctx.paths` provides standard per-plugin directories, so plugins do not need to write runtime data into the source directory or manually construct paths under the Host root.
+
+- `data_dir`: persistent data directory, mapped to `data/plugins/<plugin_id>/` by default
+- `runtime_dir`: temporary runtime directory, mapped to `temp/plugins/<plugin_id>/` by default
+
+Use `data_dir` for plugin databases, JSON state, user-generated content, and other data that should survive restarts. Use `runtime_dir` for download caches, rendering intermediates, and rebuildable files. `runtime_dir` is not guaranteed to be retained long term, so plugins should recreate required files when it has been cleaned.
+
+Path safety notes:
+
+- Do not use the legacy `plugins/<plugin>/data` directory for new data.
+- Do not use raw user input as a filename; normalize it through an allowlist or map it to an internal plugin ID first.
+- Do not accept absolute paths or relative paths containing `..` as write targets; writes should stay under `data_dir` or `runtime_dir`.
 
 ## logger — Logging
 

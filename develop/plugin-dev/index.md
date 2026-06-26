@@ -205,11 +205,12 @@ SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
 ### 能力代理
 
-通过 `self.ctx` 访问 16 种能力代理，所有调用自动通过 RPC 转发到 Host：
+通过 `self.ctx` 访问 17 种能力代理，所有调用自动通过 RPC 转发到 Host：
 
 ```python
 # 上下文访问
 self.ctx              # PluginContext 实例
+self.ctx.paths        # 插件持久化与运行时目录
 self.ctx.logger       # logging.Logger，名称为 "plugin.<plugin_id>"
 
 # 能力代理
@@ -227,6 +228,7 @@ self.ctx.chat         # 聊天流查询、打开或创建聊天流
 self.ctx.person       # 用户信息查询
 self.ctx.render       # 将 HTML 渲染为 PNG 图片
 self.ctx.knowledge    # LPMM 知识库搜索
+self.ctx.statistics   # 本机统计与计费数据读取
 self.ctx.tool         # LLM 工具定义查询
 self.ctx.maisaka      # Maisaka 上下文追加与主动任务
 ```
@@ -271,6 +273,17 @@ my-plugin/
 │   └── en-US.json
 └── assets/              # 可选：静态资源
 ```
+
+插件运行时数据不应写入插件源码目录。SDK 2.6.0 起可以通过 `self.ctx.paths` 获取 Host 注入的插件专属目录：
+
+```python
+self.ctx.paths.data_dir     # 持久化数据，默认 data/plugins/<plugin_id>/
+self.ctx.paths.runtime_dir  # 临时数据，默认 temp/plugins/<plugin_id>/
+```
+
+- `data_dir` 适合保存插件数据库、JSON 状态、用户生成内容等需要跨重启保留的数据。
+- `runtime_dir` 适合保存下载缓存、渲染中间产物、可重建的临时文件。
+- 不要使用旧式 `plugins/<plugin>/data` 保存新数据；不要把用户输入直接拼成文件路径，避免 `..` 或绝对路径造成路径逃逸。
 
 ## 内置插件与第三方插件
 

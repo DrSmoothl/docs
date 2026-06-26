@@ -190,7 +190,7 @@ def create_plugin():
 
 ### Component Decorators
 
-The SDK provides 7 component decorators, all imported from the `maibot_sdk` top level:
+The SDK provides 8 component decorators, all imported from the `maibot_sdk` top level:
 
 | Decorator | Purpose | Description |
 |-----------|---------|-------------|
@@ -200,15 +200,17 @@ The SDK provides 7 component decorators, all imported from the `maibot_sdk` top 
 | `@EventHandler` | Message/workflow events | Listens to lifecycle events such as messages, LLM generation, etc. |
 | `@API` | Inter-plugin API | Exposes APIs that can be called by other plugins |
 | `@MessageGateway` | Platform adapter | Bridges external platforms (QQ, Discord, etc.) into MaiBot |
+| `@LLMProvider` | LLM Provider | Declares a new LLM model access point (`client_type`) to extend model services |
 | `@Action` | Legacy compatibility | Internally auto-converts to `@Tool`. New plugins should use `@Tool` directly |
 
 ### Capability Proxies
 
-Access 16 capability proxies through `self.ctx`. All calls are automatically forwarded to Host via RPC:
+Access 17 capability proxies through `self.ctx`. All calls are automatically forwarded to Host via RPC:
 
 ```python
 # Context access
 self.ctx              # PluginContext instance
+self.ctx.paths        # Plugin data and runtime directories
 self.ctx.logger       # logging.Logger, named "plugin.<plugin_id>"
 
 # Capability proxies
@@ -216,7 +218,7 @@ self.ctx.api          # Plugin API query, invocation, and dynamic sync
 self.ctx.gateway      # Message gateway routing and runtime state reporting
 self.ctx.send         # Send text, image, emoji, forward, hybrid messages
 self.ctx.db           # Database CRUD and count
-self.ctx.llm          # LLM text generation, tool calls, and embeddings
+self.ctx.llm          # LLM text generation, tool calls, embeddings, and ASR voice transcription
 self.ctx.config       # Plugin config reading
 self.ctx.emoji        # Emoji management
 self.ctx.message      # Historical message queries
@@ -226,6 +228,7 @@ self.ctx.chat         # Chat stream queries, open or create chat streams
 self.ctx.person       # User information queries
 self.ctx.render       # Render HTML to PNG image
 self.ctx.knowledge    # LPMM knowledge base search
+self.ctx.statistics   # Local statistics and usage data
 self.ctx.tool         # LLM tool definition queries
 self.ctx.maisaka      # Maisaka context append and proactive tasks
 ```
@@ -271,6 +274,17 @@ my-plugin/
 └── assets/              # Optional: Static resources
 ```
 
+Runtime data should not be written into the plugin source directory. Since SDK 2.6.0, plugins can use `self.ctx.paths` to access per-plugin directories injected by the Host:
+
+```python
+self.ctx.paths.data_dir     # Persistent data, default data/plugins/<plugin_id>/
+self.ctx.paths.runtime_dir  # Temporary data, default temp/plugins/<plugin_id>/
+```
+
+- `data_dir` is suitable for plugin databases, JSON state, and user-generated data that should survive restarts.
+- `runtime_dir` is suitable for download caches, rendering intermediates, and rebuildable temporary files.
+- Do not use the legacy `plugins/<plugin>/data` directory for new data; do not build file paths directly from user input, to avoid `..` or absolute-path traversal.
+
 ## Built-in Plugins vs Third-party Plugins
 
 MaiBot maintains two independent Runner subprocesses:
@@ -287,6 +301,7 @@ Both use the same communication protocol and component registration mechanism. T
 - [Hook Handler](./hooks.md): Learn how to use @HookHandler to intercept and rewrite messages
 - [Tool Component](./tools.md): Learn how to develop LLM-callable tool components
 - [Command Component](./commands.md): Learn how to develop slash command components
+- [LLMProvider Component](./llmprovider.md): Learn how to develop custom LLM Providers
 - [Action Component](./actions.md): Learn about the legacy @Action decorator
 - [Configuration](./config.md): Learn how to declare and use plugin configuration
 - [API Reference](./api-reference.md): Browse the complete plugin SDK API

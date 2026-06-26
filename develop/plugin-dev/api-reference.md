@@ -4,9 +4,10 @@ title: API 参考
 
 # API 参考
 
-MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 16 种能力代理。所有调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果。
+MaiBot 插件通过 `self.ctx`（`PluginContext`）访问 17 种能力代理。所有能力调用自动通过 RPC 转发到 Host 处理，SDK 会自动解包结果；`ctx.paths` 与 `ctx.logger` 是 Runner 注入的上下文辅助对象。
 
 ```python
+# 能力代理
 self.ctx.send       # 发送消息
 self.ctx.db         # 数据库操作
 self.ctx.llm        # LLM 调用
@@ -22,10 +23,15 @@ self.ctx.gateway    # 消息网关
 self.ctx.tool       # 工具定义
 self.ctx.render     # HTML 渲染
 self.ctx.knowledge  # 知识库搜索
+self.ctx.statistics # 本机统计
 self.ctx.maisaka    # Maisaka 上下文与主动任务
+
+# 上下文辅助对象
+self.ctx.paths      # 插件持久化与运行时目录
+self.ctx.logger     # 日志记录器
 ```
 
-此外，`self.ctx.logger` 提供标准 `logging.Logger` 实例，不属于能力代理体系。详见下方的 [logger](#logger) 章节。
+`ctx.paths` 详见下方的 paths 章节；`ctx.logger` 提供标准 `logging.Logger` 实例，详见 logger 章节。
 
 ## send — 消息发送
 
@@ -512,6 +518,75 @@ content = await self.ctx.knowledge.search("Python 是什么", limit=3)
 if content:
     print(content)
 ```
+
+## statistics — 本机统计
+
+```python
+statistics = self.ctx.statistics
+```
+
+`statistics.local.*` 只读取当前 MaiBot 本机统计数据，不包含遥测或上传后的客户端统计数据。插件需要在 `_manifest.json` 的 `capabilities` 中声明对应能力后才能调用。
+
+- `await statistics.local.models(days=7, limit=10)` — 获取模型维度汇总统计
+- `await statistics.local.model_trend(days=7, bucket="day", top_models=10, metric="token", module_name="")` — 获取模型调用趋势
+- `await statistics.local.token_trend(days=7, bucket="day", group_by="", top_items=10)` — 获取 token 使用趋势
+- `await statistics.local.token_distribution(days=7, group_by="model", top_items=10)` — 获取 token 使用分布
+- `await statistics.local.message_trend(days=7, bucket="day", top_chats=10)` — 获取聊天流消息量趋势
+- `await statistics.local.tool_trend(days=7, bucket="day", top_tools=10)` — 获取工具调用趋势
+- `await statistics.local.online_time_trend(days=7, bucket="day")` — 获取在线时长趋势
+
+常用参数：
+
+- `days`：查询最近多少天的数据，必须为正整数
+- `bucket`：时间粒度，支持 `"hour"` 或 `"day"`
+- `group_by`：token 统计分组，支持 `"model"`、`"module"`、`"provider"`、`"type"`；空字符串表示返回总 token / 输入 token / 输出 token / 请求次数四条序列
+- `metric`：模型趋势指标，支持 `"token"`、`"request"`、`"cost"`、`"latency"`
+
+趋势类方法会直接返回 `series` 结构，包含 `timestamps`、`values_by_key`、`labels_by_key`、`total` 和 `source_count`。`token_distribution()` 会直接返回 `distribution` 结构，包含可用于饼图的 `pies`。
+
+```python
+models = await self.ctx.statistics.local.models(days=7, limit=5)
+token_series = await self.ctx.statistics.local.token_trend(days=7, group_by="model")
+message_series = await self.ctx.statistics.local.message_trend(days=7, top_chats=5)
+
+top_model = models[0]["model_name"] if models else "unknown"
+```
+
+Manifest 示例：
+
+```json
+{
+  "capabilities": [
+    "statistics.local.models",
+    "statistics.local.model_trend",
+    "statistics.local.token_trend",
+    "statistics.local.token_distribution",
+    "statistics.local.message_trend",
+    "statistics.local.tool_trend",
+    "statistics.local.online_time_trend"
+  ]
+}
+```
+
+## paths — 运行时路径
+
+```python
+data_path = self.ctx.paths.data_dir / "records.json"
+runtime_path = self.ctx.paths.runtime_dir / "latest-card.png"
+```
+
+`ctx.paths` 提供插件专属的标准目录，避免插件把运行数据写进源码目录或自行拼接 Host 根目录。
+
+- `data_dir`：持久化数据目录，默认对应 `data/plugins/<plugin_id>/`
+- `runtime_dir`：运行时临时目录，默认对应 `temp/plugins/<plugin_id>/`
+
+建议把用户设置、插件数据库、小型 JSON 状态等需要跨重启保留的数据写入 `data_dir`；把下载缓存、渲染中间产物、可重建文件写入 `runtime_dir`。`runtime_dir` 不承诺长期保留，插件应能在目录被清理后自动重建必要内容。
+
+路径安全注意事项：
+
+- 不要再使用旧式 `plugins/<plugin>/data` 目录保存新数据。
+- 不要把用户输入直接作为文件名；需要写文件时应先做白名单化或映射成插件内部 ID。
+- 不要接受绝对路径或包含 `..` 的相对路径作为写入目标；写入位置应始终限制在 `data_dir` 或 `runtime_dir` 下。
 
 ## logger — 日志
 
