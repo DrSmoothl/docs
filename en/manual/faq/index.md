@@ -1,282 +1,232 @@
 ---
-title: FAQ
----
+title: ❓ FAQ
+---# ❓ FAQ
 
-# FAQ
+All the most common problems beginners encounter are right here!
 
-This document summarizes common problems and solutions during MaiBot usage, organized by category, each containing symptoms, causes, and solution steps.
+## 💰 Cost Related
 
-## Startup Issues
+### Does MaiBot cost money?
+**Ans**: MaiBot itself is free, but the AI models cost money.
 
-### EULA Not Confirmed on Startup
+**Details**:
+- 💡 **MaiBot Software** - Completely free and open source
+- 💳 **AI Models** - Paid, such as DeepSeek, OpenAI, etc.
+- 📊 **Approximate Cost** - A few dollars a month is enough if you don't chat much
 
-**Symptom**: MaiBot exits immediately after startup, console outputs agreement confirmation prompt, program won't continue initialization.
+**Money-saving tips**:
+- Use cheaper models (DeepSeek is very affordable)
+- Set response frequency limits
+- Disable unnecessary features
 
-**Cause**: First use or after EULA/privacy agreement update, MaiBot requires users to explicitly agree to agreement content. System calculates MD5 hash values of `EULA.md` and `PRIVACY.md`, compares with records in `eula.confirmed` and `privacy.confirmed` files.
+### Which AI model is the best to use?
+**Recommendation**: Beginners should use DeepSeek—it's cheap and effective!
 
-**Solution**:
-1. Run `uv run python bot.py`, input `同意` or `confirmed` in console prompt to confirm agreement
-2. After confirmation, generates `eula.confirmed` and `privacy.confirmed` files in project root directory
-3. Can also skip confirmation through environment variables: set `EULA_AGREE` and `PRIVACY_AGREE` to corresponding file MD5 hash values
-4. First access through WebUI, setup wizard will also guide through EULA confirmation
+**Comparison**:
+| Model | Price | Effect | Recommendation |
+|------|------|------|--------|
+| DeepSeek | ⭐ Very Cheap | ⭐⭐⭐⭐ Great | ⭐⭐⭐⭐⭐ Highly Recommended |
+| Qwen | ⭐⭐ Cheap | ⭐⭐⭐⭐ Great | ⭐⭐⭐⭐ Recommended |
+| GPT-4o-mini | ⭐⭐⭐ Medium | ⭐⭐⭐⭐ Great | ⭐⭐⭐ Worth a try |
 
-### Configuration File Not Found / config Directory Doesn't Exist
+### Will my QQ account be banned?
+**Ans**: There is a risk, but you can use an alt account to avoid this.
 
-**Symptom**: Startup error prompts `bot_config.toml` or `model_config.toml` doesn't exist, or cannot create configuration directory.
+**Suggestions**:
+- 🔒 **Use an alt account** - Do not use your main account to reduce risk
+- ⚠️ **Mind your words** - Do not post content that violates regulations
+- 🛡️ **Diversify risk** - Rotate between multiple alt accounts
 
-**Cause**: MaiBot's configuration files are located in `config/` directory, will automatically create this directory on first startup. If directory permissions are insufficient or path is abnormal, configuration files cannot be loaded.
+## 🚀 Usage Issues
 
-**Solution**:
-1. Confirm `config/` directory exists in project root directory, MaiBot will automatically create it at startup (`CONFIG_DIR.mkdir(parents=True, exist_ok=True)`)
-2. Configuration file paths are `config/bot_config.toml` and `config/model_config.toml`
-3. MaiBot will automatically generate default configuration files on first startup
-4. If automatic generation fails, check directory write permissions
+### What to do if it won't start?
+**Common causes and solutions**:
 
-### Python Version Incompatibility
+1️⃣ **Incorrect Python version**
+```
+# 检查版本
+python --version
+# 需要 3.12 以上
+```
 
-**Symptom**: Startup error prompts syntax error (like `match` statement error), module missing or `TypeError`.
+2️⃣ **Missing configuration file**
+```
+# 第一次启动会自动创建
+# 如果没有，手动创建 config 文件夹
+```
 
-**Cause**: MaiBot requires Python 3.10 or higher (project Badge shows `Python-3.10+`), lower Python versions don't support `match-case` syntax and some type annotation features.
+3️⃣ **Port occupied**
 
-**Solution**:
-1. Use `python --version` to check current version, ensure >= 3.10
-2. Recommended to use `uv` to manage dependencies and Python version:
-   ```bash
-   uv sync
-   uv run python bot.py
-   ```
-3. If using system Python, please upgrade or use tools like `pyenv` to manage multiple versions
+Startup error example:
+```
+WebUI 服务器 启动失败: 端口 8001 已被占用 (host=127.0.0.1)
+```
 
-### Runner/Worker Process Startup Exception
+**Method 1: Change Port** — Edit `config/bot_config.toml`:
+- WebUI Port: `[webui]` → `port = 8002`
+- WebSocket Port: `[maim_message]` → `ws_server_port = 8001` (Default is 8000; change to another port if there is a conflict)
 
-**Symptom**: Program exits immediately after startup, or repeatedly restarts in Runner process.
+**Method 2: Kill Process**:
+```bash
+# Windows
+netstat -ano | findstr :8001
+taskkill /PID <PID> /F
 
-**Cause**: MaiBot uses Runner (daemon process) + Worker (work process) architecture. Runner process starts Worker through `subprocess.Popen`, if Worker startup fails it will repeatedly retry. When Worker exit code is 42 (`RESTART_EXIT_CODE`), Runner will automatically restart.
+# Linux/macOS
+lsof -i :8001
+kill -9 <PID>
+```
 
-**Solution**:
-1. View specific error information output to console
-2. If Worker exits due to configuration error, Runner will automatically restart after fixing
-3. Use `Ctrl+C` to stop Runner process
+### Bot is not replying to messages?
+**Checklist**:
 
-## Configuration Issues
+1. **Check Logs** - Are there any error messages?
+2. **Check Configuration** - Is the API Key entered correctly?
+3. **Test Connection** - Can the network access the model service?
+4. **Check Permissions** - Does it have permission to speak in the QQ group?
 
-### Model Unavailable / API Call Failed
+**Common Errors**:
+- ❌ Wrong API Key → 401 Error
+- ❌ Network failure → Connection timeout
+- ❌ Muted → Cannot send messages
 
-**Symptom**: Maimai cannot reply to messages, logs show model call errors (like connection timeout, 401, 403, etc.).
+### Configuration file format error?
+**Tips for beginners**:
+- 🖥️ **Use WebUI to change config** - No mistakes will be made
+- ✏️ **Be careful with manual editing** - Every symbol must be correct
+- 💾 **Backup before changing** - So you can restore if something goes wrong
 
-**Cause**: API configuration in `model_config.toml` is incorrect, or API service is unavailable.
+**Formatting Key Points**:
+```toml
+# 字符串要加引号
+name = "我的机器人"
 
-**Solution**:
-1. Check `[[api_providers]]` configuration in `model_config.toml`, confirm API address (`base_url`) and key (`api_key`) are correct
-2. Confirm `api_key` is valid and has sufficient call quota
-3. Check network connection, ensure model API endpoint is accessible
-4. Confirm `api_provider` name referenced in `[[models]]` configuration matches `name` in `[[api_providers]]`
-5. Model configuration loading will validate: `api_providers` cannot be empty, names cannot duplicate, each model's `api_provider` must exist
-6. Check model configuration for validation errors in WebUI configuration management page
+# 数字不要引号
+port = 8001
 
-### API Key Error
+# 布尔值小写
+enabled = true
+```
 
-**Symptom**: Logs show 401 or 403 errors.
+## 🤖 Feature Issues
 
-**Cause**: API key is invalid, expired or has insufficient permissions.
+### Can it serve multiple groups simultaneously?
+**Ans**: Of course! One MaiBot instance can serve many groups.
 
-**Solution**:
-1. Confirm API Key has no extra spaces or line breaks
-2. Check if API Key has expired or been revoked
-3. Confirm API Key has access permissions for corresponding models
-4. Note `api_key` field in `model_config.toml` is sensitive information (`repr=False`), don't leak to public network
+**Setup Method**:
+- Add multiple group numbers in the configuration
+- Each group can have a different personality
+- Unified management is very convenient
 
-### Configuration File Format Error
+### Where is data stored? Is it secure?
+**Ans**: All data is stored on your own computer.
 
-**Symptom**: Startup reports `TypeError` or `ValueError`, prompts configuration parsing failed.
+**Storage Locations**:
+- 💾 **Chat History** - Local database
+- 🧠 **Memory Content** - Local files
+- ⚙️ **Configuration Files** - Local disk
 
-**Cause**: Manual editing of TOML files introduced syntax errors, or configuration item types don't match.
+**Security Reminders**:
+- 🔒 **No network uploads** - Data stays local
+- 🏠 **Good privacy protection** - Others cannot see it
+- 💿 **Regular backups** - Prevent data loss
 
-**Solution**:
-1. MaiBot uses `tomlkit` to parse TOML files, has strict format requirements
-2. Modifying configuration through WebUI will automatically save in correct format, recommended to use WebUI modification
-3. When manually editing note: strings need quotes, numbers don't need quotes, booleans use `true/false`
-4. If configuration file version doesn't match current version, MaiBot will automatically update configuration and backup old files to `config/old/` directory
-5. Configuration files must contain `[inner]` section and `version` field
+### Does MaiBot support mobile deployment?
+**Ans**: Theoretically yes, but not recommended.
 
-### Configuration Changes Not Taking Effect
+**Reasons**:
+- 📱 **Limited mobile performance** - May run sluggishly
+- 🔋 **High power consumption** - Phone may overheat severely
+- 📶 **Unstable network** - Prone to disconnecting
 
-**Symptom**: Modified configuration but behavior hasn't changed.
+**Suggestions**:
+- 🖥️ **Use a computer** - Desktops or laptops both work
+- ☁️ **Use a cloud server** - Online 24/7
+- 🏠 **Raspberry Pi** - Small devices also work
 
-**Cause**: Some configuration modifications require restart, some support hot reload.
+### Must I use QQ? Can I use other platforms?
+**Ans**: Currently, it primarily supports QQ; other platforms are under development.
 
-**Solution**:
-1. MaiBot has built-in file watcher (`FileWatcher`), will automatically hot reload after modifying `bot_config.toml` or `model_config.toml`
-2. Hot reload has debounce mechanism (600ms), frequent modifications will wait for stability before reloading
-3. If hot reload times out (20 seconds) or continuously fails, manual restart is needed
-4. Some deep configurations (like database path, port binding) require restart to take effect
+**Current Status**:
+- ✅ **QQ** - Best support, most complete features
+- 🚧 **WeChat** - No available adapter yet; community development is welcome
+- 📋 **Others** - More platforms can be integrated via adapter plugins
 
-## Connection Issues
+## 🔧 Technical Issues
 
-### NapCat WebSocket Connection Failed
+### What to do if replies are too slow?
+**Optimization Methods**:
+1. **Switch to a faster model** - DeepSeek responds very quickly
+2. **Reduce context** - Do not provide too much history
+3. **Check network** - Slow network affects speed
+4. **Disable unnecessary features** - Too many plugins can slow it down
 
-**Symptom**: NapCat cannot connect to adapter/MaiBot, or connection frequently drops.
+### NapCat is connected, but group chats aren't receiving messages?
+**First, check the group chat list filtering of the NapCat adapter.**
 
-**Cause**: NapCat and adapter/MaiBot WebSocket configurations don't match, depending on running mode.
-
-**Solution**:
-1. Confirm `platform` in `[bot]` section of `bot_config.toml` is set to `"qq"`
-2. Confirm `qq_account` matches NapCat login QQ number
-3. **Plugin Mode**: Check adapter's `napcat_server.host` and `napcat_server.port` settings. Adapter connects to NapCat's Forward WebSocket server (typically `ws://127.0.0.1:3001`). Verify NapCat has Forward WebSocket server enabled on the correct port.
-4. **Standalone Mode**: Check adapter's `napcat_server.host` and `napcat_server.port` (default `localhost:8095`). NapCat should connect to the adapter via Reverse WebSocket at `ws://127.0.0.1:8095`. Also verify the adapter's `maibot_server.port` matches MaiBot's `[maim_message].ws_server_port` in `config/bot_config.toml` (default `8000`).
-5. Confirm firewall doesn't block WebSocket connection
-6. Check if NapCat version is compatible with current MaiBot version
-7. View NapCat, adapter, and MaiBot logs for specific connection error information
-
-### Port Occupied
-
-**Symptom**: Startup prompts port binding error (`OSError: [Errno 98] Address already in use`).
-
-**Cause**: MaiBot used ports conflict with other services in system.
-
-**Solution**:
-1. Message server port: modify `ws_server_port` in `[maim_message]` section (default 8080)
-2. WebUI port: modify `port` in `[webui]` section (default 8001)
-3. API Server port: modify `api_server_port` in `[maim_message]` section (default 8090)
-4. Find and close processes occupying ports:
-   ```bash
-   # Linux/macOS
-   lsof -i :8080
-   # Windows
-   netstat -ano | findstr :8080
-   ```
-5. MaiBot will automatically detect if ports are available at startup, and prompt corresponding configuration item locations
-
-### Message Send/Receive Exception
-
-**Symptom**: Can receive messages but cannot send, or vice versa.
-
-**Cause**: Platform IO routing configuration or NapCat permission issues.
-
-**Solution**:
-1. Check robot permissions in group chat (whether muted)
-2. Confirm NapCat login status is normal (not disconnected or frozen)
-3. View Platform IO routing parsing logs in MaiBot logs
-4. Check if multiple instances are simultaneously connecting to same QQ number
-5. Check MaiBot logs for any message sending errors
-
-## Runtime Issues
-
-### Database Error / Database Locked
-
-**Symptom**: MaiBot reports `database is locked` or other SQLite errors.
-
-**Cause**: SQLite doesn't support multi-process concurrent writes, multiple instances simultaneously accessing same database will conflict.
+NapCat adapter enables chat list filtering by default, and group chats are in whitelist mode by default. If the group number is not in `group_list`, group messages will be discarded by the adapter.
 
 **Solution**:
-1. Confirm no other MaiBot processes are running simultaneously
-2. Ensure only one instance accesses database file
-3. If lock files remain due to unexpected exit, delete `.lock` files or `-wal` files in `data/` directory
-4. Database configuration is in `[database]` section, `save_binary_data` controls whether to save voice and other binary data as separate files
+1. Open `plugins/MaiBot-Napcat-Adapter/config.toml`
+2. If using Docker deployment, open `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`
+3. Add the target group number to `group_list` in `[chat]`
+4. It is recommended to temporarily enable `show_dropped_chat_list_messages = true` to see filtered messages in the logs
+5. Save and restart MaiBot
 
-### High Memory Usage
+```toml
+[chat]
+enable_chat_list_filter = true
+show_dropped_chat_list_messages = true
+group_list_type = "whitelist"
+group_list = ["你的QQ群号"]
+```
 
-**Symptom**: MaiBot memory keeps growing after running for a while.
+### Memory usage is too high?
+**Save Memory**:
+- 📉 **Reduce memory capacity** - Remember fewer things
+- 🗑️ **Clean useless data** - Regularly delete junk
+- 🔌 **Use fewer plugins** - Plugins consume memory
+- 💻 **Upgrade hardware** - Adding RAM is the most direct way
 
-**Cause**: Chat context, long-term memory index, embedding vectors and other data will occupy memory.
+### How to change the AI model?
+**Simple Steps**:
+1. Open WebUI → Configuration Management
+2. Find Model Settings
+3. Select a new model
+4. Save, and it takes effect immediately
 
-**Solution**:
-1. Adjust `max_context_size` in `[chat]` section (default 30), reduce context length
-2. Adjust `[memory]` related configurations, reduce memory retrieval range
-3. If `[webui]`'s `enable_paragraph_content` (knowledge graph paragraph full content) is enabled, will additionally increase memory usage, recommended to enable only when needed
-4. Plugins will start subprocesses when running, each plugin has independent memory space, pay attention to controlling plugin count
+## 💡 Beginner Tips
 
-### Large Reply Delay
+### What should I pay attention to the first time?
+1. **Test with an alt account first** - Avoid risks to your main account
+2. **Start with simple configurations** - Don't enable too many features at once
+3. **Check logs often** - Logs will tell you what's wrong
+4. **Join the community group** - Ask others if you have questions
 
-**Symptom**: Message response time is too long.
+### How to make the bot smarter?
+1. **Teach it knowledge** - Use the memory management feature
+2. **Adjust personality settings** - Make the character more distinct
+3. **Install useful plugins** - Add various capabilities
+4. **Chat with it more** - It will learn and get smarter
 
-**Cause**: Model API delay, context too long, multiple tasks processed serially, etc.
+### Where can I learn more?
+- 📖 **Read the docs** - This documentation site
+- 💬 **Join groups** - Communicate with other users
+- 🔍 **Search tutorials** - Many experiences are shared online
+- 🐱 **Check GitHub** - Latest updates and discussions
 
-**Solution**:
-1. Check model API response speed, choose service providers with lower latency
-2. Appropriately reduce `max_context_size` in `[chat]` section
-3. Check if there's additional delay caused by MCP tool calls (timeout settings in `[mcp]` configuration)
-4. Adjust `planner_interrupt_max_consecutive_count` in `[chat]` section, avoid Planner being frequently interrupted
-5. View time consumption of each step in logs to locate bottlenecks
+## 🆘 Encountered an unsolvable problem?
 
-## WebUI Issues
+### Ways to get help:
+1. **Check FAQ first** - The answer might already be there
+2. **Check logs** - Error messages are very important
+3. **Search online** - Others may have encountered it
+4. **Ask around** - Join the group and ask other users
+5. **Submit an Issue** - Submit the problem on GitHub
 
-### WebUI Cannot Be Accessed
-
-**Symptom**: Browser cannot open WebUI page.
-
-**Cause**: WebUI not enabled, network configuration error or security policy restrictions.
-
-**Solution**:
-1. Confirm WebUI is enabled (`enabled = true` in `[webui]` section of `bot_config.toml`)
-2. Check if access address is correct (default `http://127.0.0.1:8001`)
-3. If binding is `0.0.0.0`, ensure firewall allows external access
-4. Check if IP whitelist is enabled (`allowed_ips` configuration, default `127.0.0.1`), confirm client IP is in whitelist
-5. If strict anti-crawler mode is enabled (`anti_crawler_mode`), confirm browser UA is not in block list
-6. WebUI's `mode` supports `development` and `production`, production environment should use `production`
-
-### Token Authentication Failed / Forgot Token
-
-**Symptom**: Cannot login to WebUI, prompts Token invalid or not found.
-
-**Cause**: Token is saved in `data/webui.json`, generated at first startup.
-
-**Solution**:
-1. Token is generated at first startup and output to console, view startup logs
-2. Token is saved in `data/webui.json` file, can directly read
-3. If still cannot obtain, delete `data/webui.json` and restart MaiBot, system will regenerate Token
-4. Note: deleting `webui.json` will reset authentication status and first setup flag
-
-### WebUI Port Binding Failed
-
-**Symptom**: WebUI startup fails, logs prompt port binding error.
-
-**Cause**: 8001 port is occupied by other services.
-
-**Solution**:
-1. Modify `port` in `[webui]` section of `bot_config.toml` to other port
-2. Find and close processes occupying 8001 port
-3. If using reverse proxy, ensure frontend configuration points to correct port
-4. WebUI default binding is `127.0.0.1:8001`, external access needs to modify `host` to `0.0.0.0`
-
-### Cookie Expired Needs Re-login
-
-**Symptom**: After using for a while, WebUI requires re-entering Token.
-
-**Cause**: Cookie validity expires, or security configuration doesn't match.
-
-**Solution**:
-1. Cookie default validity is 7 days, needs re-verification after expiration
-2. If using HTTPS, ensure `secure_cookie = true` configuration is correct
-3. Clear browser Cookie and re-login
-4. Production environment recommends configuring reverse proxy and enabling HTTPS
-
-## Plugin Issues
-
-### Plugin Installation Failed
-
-**Symptom**: Error when installing plugins through WebUI.
-
-**Cause**: Git unavailable, network issues or plugin repository format incorrect.
-
-**Solution**:
-1. Confirm Git is installed and Git command is available (`git --version`)
-2. Check network connection, ensure access to GitHub or configured mirror sources
-3. If in GitHub restricted areas, configure mirror sources (WebUI → Plugin Management → Mirror Source Management)
-4. Confirm plugin repository address is correct, and repository contains `_manifest.json` file
-5. View installation progress and error information pushed through WebSocket
-6. Plugin installation executes through `git clone`, ensure Git security configuration is correct
-
-### Plugin Loaded But No Effect
-
-**Symptom**: Plugin shows installed but doesn't produce expected effect.
-
-**Cause**: Plugin not enabled, version incompatible or configuration incorrect.
-
-**Solution**:
-1. Check if `enabled` field in plugin configuration is `true`
-2. View and modify plugin status through WebUI's plugin configuration page
-3. View if there are plugin loading errors in MaiBot logs
-4. Confirm plugin version is compatible with current MaiBot version
-5. Try resetting plugin configuration through WebUI and check effect
-6. Plugins have independent subprocesses and logs when running, check Runner and Worker health status
+### Information to provide when asking:
+- 🖥️ **System Info** - Windows/Linux/Mac?
+- 📋 **Error Logs** - Specific error messages
+- ⚙️ **Config Info** - Relevant configuration content
+- 🔢 **Version Info** - MaiBot version number
+- 🎯 **Reproduction Steps** - How to trigger the error

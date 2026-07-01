@@ -1,14 +1,12 @@
 ---
 title: Lifecycle
----
+---# Lifecycle
 
-# Lifecycle
-
-MaiBot plugins have three lifecycle methods: `on_load()`, `on_unload()`, and `on_config_update()`. The SDK requires all plugins to implement these three methods, otherwise the Runner will refuse to load.
+MaiBot plugins have three lifecycle methods: `on_load()`, `on_unload()`, and `on_config_update()`. The SDK requires all plugins to implement these three methods; otherwise, the Runner will refuse to load them.
 
 ## create_plugin() Factory Function
 
-Each plugin's `plugin.py` must export a top-level `create_plugin()` function that returns the plugin instance:
+The `plugin.py` of each plugin must export a top-level `create_plugin()` function that returns a plugin instance:
 
 ```python
 from maibot_sdk import MaiBotPlugin
@@ -32,13 +30,13 @@ def create_plugin():
 When the Runner loads a plugin:
 
 1. Imports the `plugin.py` module
-2. Calls `create_plugin()` to get the plugin instance
-3. Injects `PluginContext` (now `self.ctx` is available)
+2. Calls `create_plugin()` to obtain the plugin instance
+3. Injects `PluginContext` (at this point `self.ctx` becomes available)
 4. Calls `on_load()`
 
 ## on_load()
 
-Callback after plugin loading is complete. The Runner calls this method **after** injecting `PluginContext` and completing capability bootstrap, so you can directly use all capability proxies in `self.ctx`.
+The callback executed after the plugin has finished loading. The Runner calls this method **after** injecting `PluginContext` and completing the capability bootstrap, so all capability proxies of `self.ctx` can be used directly within `on_load()`.
 
 ```python
 async def on_load(self) -> None:
@@ -51,10 +49,10 @@ async def on_load(self) -> None:
 
 **Typical Uses:**
 
-- Initialize plugin internal state
+- Initialize internal plugin state
 - Call `self.ctx.gateway.update_state()` to report message gateway status
 - Call `self.register_dynamic_api()` to register dynamic APIs and `await self.sync_dynamic_apis()`
-- Read configuration and initialize resources
+- Read configurations and initialize resources
 
 **Example:**
 
@@ -63,21 +61,21 @@ from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
 class MyConfig(PluginConfigBase):
-    greeting: str = Field(default="Hello!", description="Default greeting message")
+    greeting: str = Field(default="你好！", description="默认问候语")
 
 
 class MyPlugin(MaiBotPlugin):
     config_model = MyConfig
 
     async def on_load(self) -> None:
-        # self.ctx has been injected and is ready to use
-        self.ctx.logger.info("Plugin loaded, current greeting: %s", self.config.greeting)
+        # self.ctx 已经注入，可以直接使用
+        self.ctx.logger.info("插件已加载，当前问候语: %s", self.config.greeting)
 
-        # Can register dynamic APIs here
+        # 可以在这里注册动态 API
         self.register_dynamic_api(
             "my_api",
             self._handle_api,
-            description="Example API",
+            description="示例 API",
             version="1",
             public=True,
         )
@@ -89,7 +87,7 @@ class MyPlugin(MaiBotPlugin):
 
 ## on_unload()
 
-Callback before plugin unloading. Release all resources held by the plugin in this method.
+The callback executed before the plugin is unloaded. Release all resources held by the plugin in this method.
 
 ```python
 async def on_unload(self) -> None:
@@ -98,7 +96,7 @@ async def on_unload(self) -> None:
 
 **Typical Uses:**
 
-- Close network connections, file handles
+- Close network connections and file handles
 - Report gateway offline status (`self.ctx.gateway.update_state(..., ready=False)`)
 - Unregister dynamic APIs
 - Save persistent data
@@ -108,26 +106,26 @@ async def on_unload(self) -> None:
 ```python
 class MyPlugin(MaiBotPlugin):
     async def on_unload(self) -> None:
-        self.ctx.logger.info("Plugin is unloading")
+        self.ctx.logger.info("插件正在卸载")
 
-        # Report message gateway offline
+        # 上报消息网关离线
         await self.ctx.gateway.update_state(
             gateway_name="my_gateway",
             ready=False,
         )
 
-        # Clear dynamic APIs
+        # 清空动态 API
         self.clear_dynamic_apis()
-        await self.sync_dynamic_apis(offline_reason="Plugin unloaded")
+        await self.sync_dynamic_apis(offline_reason="插件已卸载")
 ```
 
-::: warning Note
-`self.ctx` can still be used in `on_unload()`, but cleanup work should be completed quickly without time-consuming operations.
+::: warning 注意
+`self.ctx` can still be used in `on_unload()`, but cleanup work should be completed as quickly as possible; avoid performing time-consuming operations.
 :::
 
 ## on_config_update()
 
-Configuration hot-reload callback. When plugin configuration or subscribed global configuration changes, the Runner calls this method.
+The configuration hot-reload callback. The Runner calls this method when the plugin configuration or subscribed global configurations change.
 
 ```python
 async def on_config_update(
@@ -139,85 +137,85 @@ async def on_config_update(
     """Called when config hot-reloads.
 
     Args:
-        scope: Configuration change scope, values are "self", "bot", or "model".
-        config_data: Latest configuration data for the current scope.
-        version: Configuration version number.
+        scope: 配置变更范围，取值为 "self"、"bot" 或 "model"。
+        config_data: 当前范围对应的最新配置数据。
+        version: 配置版本号。
     """
 ```
 
 ### scope Values
 
-- **`"self"`** → `CONFIG_RELOAD_SCOPE_SELF` — Plugin's own configuration. **Always triggered** when `config.toml` in plugin directory changes, no subscription needed
-- **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — Global Bot configuration. Requires subscription through `config_reload_subscriptions`
-- **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM model configuration. Requires subscription through `config_reload_subscriptions`
+- **`"self"`** → `CONFIG_RELOAD_SCOPE_SELF` — Plugin-specific configuration. **Always triggered** when `config.toml` in the plugin directory changes, no subscription required.
+- **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — Global Bot configuration. Requires subscription via `config_reload_subscriptions`.
+- **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM model configuration. Requires subscription via `config_reload_subscriptions`.
 
 ::: important
-- `scope == "self"` callback **always triggers**, no additional subscription needed
-- `scope == "bot"` and `scope == "model"` only trigger after declaration in `config_reload_subscriptions`
+- The callback for `scope == "self"` is **always triggered** and does not require additional subscription.
+- `scope == "bot"` and `scope == "model"` are only triggered after being declared in `config_reload_subscriptions`.
 :::
 
 ### Example
 
 ```python
 from maibot_sdk import MaiBotPlugin, CONFIG_RELOAD_SCOPE_SELF, ON_BOT_CONFIG_RELOAD, ON_MODEL_CONFIG_RELOAD
-from typing import ClassVar
+from typing import ClassVar, Iterable
 
 
 class MyPlugin(MaiBotPlugin):
-    # Subscribe to hot-reload of bot and model global configurations
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    # 订阅 bot 和 model 两种全局配置的热重载
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     async def on_load(self) -> None:
-        self.ctx.logger.info("Plugin loaded")
+        self.ctx.logger.info("插件已加载")
 
     async def on_unload(self) -> None:
-        self.ctx.logger.info("Plugin unloaded")
+        self.ctx.logger.info("插件已卸载")
 
     async def on_config_update(self, scope: str, config_data: dict, version: str) -> None:
         if scope == CONFIG_RELOAD_SCOPE_SELF:
-            # Plugin's own configuration changed, self.config will auto-update
-            self.ctx.logger.info("Plugin configuration updated: version=%s", version)
+            # 插件自身配置变化，self.config 会自动更新
+            self.ctx.logger.info("插件配置已更新: version=%s", version)
         elif scope == ON_BOT_CONFIG_RELOAD:
-            # Global Bot configuration changed
-            bot_name = config_data.get("bot_name", "unknown")
-            self.ctx.logger.info("Bot configuration updated: bot_name=%s, version=%s", bot_name, version)
+            # 全局 Bot 配置变化
+            bot_name = config_data.get("bot_name", "未知")
+            self.ctx.logger.info("Bot 配置已更新: bot_name=%s, version=%s", bot_name, version)
         elif scope == ON_MODEL_CONFIG_RELOAD:
-            # LLM model configuration changed
-            model_name = config_data.get("model_name", "unknown")
-            self.ctx.logger.info("Model configuration updated: model=%s, version=%s", model_name, version)
+            # LLM 模型配置变化
+            model_name = config_data.get("model_name", "未知")
+            self.ctx.logger.info("模型配置已更新: model=%s, version=%s", model_name, version)
 ```
 
 ## config_reload_subscriptions
 
-Class variable that declares the global configuration hot-reload scopes the plugin needs to subscribe to. Only supports `"bot"` and `"model"` values:
+A class variable used to declare the global configuration hot-reload scopes the plugin needs to subscribe to. Only two values are supported: `"bot"` and `"model"`.
 
 ```python
-from typing import ClassVar
+from typing import ClassVar, Iterable
 
 
 class MyPlugin(MaiBotPlugin):
-    # Subscribe to two global configurations
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    # 订阅两种全局配置
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
-    # Subscribe only to Bot configuration
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot",)
+    # 仅订阅 Bot 配置
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot",)
 
-    # Subscribe only to Model configuration
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("model",)
+    # 仅订阅 Model 配置
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ("model",)
 
-    # Don't subscribe to any global configuration (default)
-    # config_reload_subscriptions: ClassVar[tuple[str, ...]] = ()
+    # 不订阅任何全局配置（默认值）
+    # config_reload_subscriptions: ClassVar[Iterable[str]] = ()
 ```
 
 **Rules:**
 
-- Default is empty tuple `()`, i.e., no subscription to any global configuration
-- `"self"` scope **always triggers** callback, doesn't need and can't be declared here
-- Only `"bot"` and `"model"` are valid subscription values
-- Declaring unsupported values will throw `ValueError` in `get_config_reload_subscriptions()`
-- Cannot directly pass string (e.g., `config_reload_subscriptions = "bot"`), must use iterable collection
+- The default value is an empty tuple `()`, meaning no global configurations are subscribed to.
+- The `"self"` scope **always triggers** the callback; it should not and cannot be declared here.
+- Only `"bot"` and `"model"` are valid subscription values.
+- Declaring unsupported values will throw a `ValueError` in `get_config_reload_subscriptions()`.
+- Strings cannot be passed directly (e.g., `config_reload_subscriptions = "bot"`); an iterable collection must be used.
 
-## Complete Lifecycle Example
+## Full Lifecycle Example
 
 Below is a complete plugin example containing all lifecycle methods:
 
@@ -236,47 +234,47 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 
 class GreeterPlugin(MaiBotPlugin):
-    """Greeting plugin — demonstrates complete plugin lifecycle."""
+    """问候插件 —— 演示完整的插件生命周期。"""
 
-    # Subscribe to global configuration hot-reload
-    config_reload_subscriptions: ClassVar[tuple[str, ...]] = ("bot", "model")
+    # 订阅全局配置热重载
+    config_reload_subscriptions: ClassVar[Iterable[str]] = ("bot", "model")
 
     async def on_load(self) -> None:
-        """Initialize when plugin loads."""
-        self.ctx.logger.info("GreeterPlugin loaded")
-        # self.ctx is already available here, can directly call capability proxies
+        """插件加载时初始化。"""
+        self.ctx.logger.info("GreeterPlugin 已加载")
+        # self.ctx 在此已经可用，可以直接调用能力代理
         raw_config = self.get_plugin_config_data()
-        self.ctx.logger.info("Current configuration: %s", raw_config)
+        self.ctx.logger.info("当前配置: %s", raw_config)
 
     async def on_unload(self) -> None:
-        """Cleanup resources when plugin unloads."""
-        self.ctx.logger.info("GreeterPlugin is unloading")
+        """插件卸载时清理资源。"""
+        self.ctx.logger.info("GreeterPlugin 正在卸载")
 
     async def on_config_update(self, scope: str, config_data: dict[str, Any], version: str) -> None:
-        """Handle configuration hot updates."""
+        """处理配置热更新。"""
         if scope == CONFIG_RELOAD_SCOPE_SELF:
-            self.ctx.logger.info("Plugin configuration updated: version=%s", version)
+            self.ctx.logger.info("插件配置已更新: version=%s", version)
         elif scope == ON_BOT_CONFIG_RELOAD:
-            self.ctx.logger.info("Bot configuration updated: version=%s", version)
+            self.ctx.logger.info("Bot 配置已更新: version=%s", version)
         elif scope == ON_MODEL_CONFIG_RELOAD:
-            self.ctx.logger.info("Model configuration updated: version=%s", version)
+            self.ctx.logger.info("Model 配置已更新: version=%s", version)
 
     @Tool(
         "greet",
-        brief_description="Greet the user",
-        detailed_description="Parameter description:\n- stream_id: string, required. Current chat stream ID.",
+        brief_description="向用户打招呼",
+        detailed_description="参数说明：\n- stream_id：string，必填。当前聊天流 ID。",
         parameters=[
             ToolParameterInfo(
                 name="stream_id",
                 param_type=ToolParamType.STRING,
-                description="Current chat stream ID",
+                description="当前聊天流 ID",
                 required=True,
             ),
         ],
     )
     async def handle_greet(self, stream_id: str, **kwargs):
-        await self.ctx.send.text("Hello!", stream_id)
-        return {"success": True, "message": "Replied"}
+        await self.ctx.send.text("你好！", stream_id)
+        return {"success": True, "message": "已回复"}
 
     @Command("hello", pattern=r"^/hello")
     async def handle_hello(self, **kwargs):
@@ -296,21 +294,21 @@ sequenceDiagram
     participant Plugin
 
     Runner->>Plugin: create_plugin()
-    Note over Plugin: Return plugin instance
+    Note over Plugin: 返回插件实例
     Runner->>Plugin: _set_context(ctx)
-    Note over Plugin: Inject PluginContext
+    Note over Plugin: 注入 PluginContext
     Runner->>Plugin: on_load()
-    Note over Plugin: Initialize resources, ctx available
+    Note over Plugin: 初始化资源，ctx 可用
 
-    Note over Runner,Plugin: ... Plugin running ...
+    Note over Runner,Plugin: ... 插件运行中 ...
 
-    Note over Runner: config.toml changed
+    Note over Runner: config.toml 变更
     Runner->>Plugin: on_config_update(scope="self", ...)
 
-    Note over Runner: Global configuration changed (if subscribed)
+    Note over Runner: 全局配置变更（如已订阅）
     Runner->>Plugin: on_config_update(scope="bot"/"model", ...)
 
-    Note over Runner: Unload or hot-reload
+    Note over Runner: 卸载或热重载
     Runner->>Plugin: on_unload()
-    Note over Plugin: Cleanup resources
+    Note over Plugin: 清理资源
 ```

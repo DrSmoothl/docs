@@ -1,70 +1,72 @@
 ---
 title: 🖥️ WebUI Management Panel
----
+---# 🖥️ WebUI Admin Panel
 
-# 🖥️ WebUI Management Panel
 
-Manage your bot through your browser!
+Manage your bot directly through your browser!
 
-## First Time Use
+## First-Time Use
 
-### Get Login Password
+### Obtaining the Login Password
 
-When you first start MaiBot, the console will display a password (Token):
+When you start MaiBot for the first time, a password (Token) will be displayed in the console:
 
 ```
 WebUI Access Token: a1b2c3d4...
-Please use this Token to login to WebUI
+请使用此 Token 登录 WebUI
 ```
 
-**Important**: This password only shows once, so save it!
+**Important**: This password is only displayed once; make sure to save it!
 
 ### Login Steps
 
 1. Open your browser and visit `http://localhost:8001` (default address)
-2. Enter the password shown in the console
-3. After successful login, you'll see the management panel
+2. Enter the password displayed in the console
+3. Once logged in, you will see the admin panel
 
-## What Can You Do?
+## What can it do?
 
-WebUI makes it easy to manage MaiBot:
+WebUI allows you to manage MaiBot with ease:
 
-- ⚙️ **Change Settings** - Modify settings with clicks, no file editing needed
-- 🧠 **Manage Memory** - View, edit, and delete bot memories
-- 🔌 **Install Plugins** - Install and manage various function plugins
-- 📊 **View Statistics** - Check chat records and usage data
+- ⚙️ **Modify Config** - Change settings with a few clicks instead of editing files
+- 🧠 **Manage Memory** - View, edit, and delete the bot's memories
+- 🔌 **Install Plugins** - Install and manage various functional plugins
+- 📊 **View Stats** - Check chat history and usage data
 
 ## Basic Settings
 
-You can change WebUI settings in `bot_config.toml`:
+You can change the WebUI settings in `bot_config.toml`:
 
 ```toml
 [webui]
-enabled = true      # Enable WebUI or not
-host = "127.0.0.1"  # Bind address
-port = 8001         # Port number
+enabled = true                # 是否启用 WebUI
+host = "127.0.0.1"            # 绑定地址
+port = 8001                   # 端口号
+mode = "production"           # 运行模式：development(开发) 或 production(生产)
+anti_crawler_mode = "basic"   # 防爬虫模式：false / strict / loose / basic
+allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 ```
 
-- Change `host` to `0.0.0.0` to allow access from other devices on the network
-- Change `port` to another number to avoid conflicts
+- Changing `host` to `0.0.0.0` allows other devices on the local network to access it
+- `port` can be changed to another number to avoid conflicts
 
-## Forgot Your Password?
+## What to do if you forget the password?
 
 If you forget your password:
 
-1. Stop MaiBot
+1. Close MaiBot
 2. Delete the `data/webui.json` file
 3. Restart MaiBot, and a new password will be generated
 
 ## Security Reminders
 
-- Don't share your password with others
-- Change the default port when deploying on public networks
-- Regular password changes are more secure
+- Do not share your password with others
+- It is recommended to change the default port when deploying on a public network
+- Changing your password regularly is more secure
 
 ## More Features
 
-- [Configuration Management](./config-management.md) - Change settings in browser
+- [Config Management](./config-management.md) - Modify configurations in the browser
 - [Memory Management](./memory-management.md) - View and manage memories
 - [Plugin Management](./plugin-management.md) - Install and manage plugins
-- [Chat Statistics](./chat-stats.md) - View chat statistics
+- [Chat History](./chat-stats.md) - View chat statistics

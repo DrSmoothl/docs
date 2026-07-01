@@ -1,10 +1,8 @@
 ---
-title: API Component
----
+title: API Components
+---# API Component
 
-# API Component
-
-The `@API` decorator is used to declare API interfaces for inter-plugin communication. Other plugins can call these APIs through `ctx.api.call()`, enabling functional interoperability between plugins.
+The `@API` decorator is used to declare API interfaces for inter-plugin communication. Other plugins can call these APIs via `ctx.api.call()` to achieve functional interoperability between plugins.
 
 ## Decorator Signature
 
@@ -12,11 +10,11 @@ The `@API` decorator is used to declare API interfaces for inter-plugin communic
 from maibot_sdk import API
 
 @API(
-    name: str,                  # API name (required)
-    description: str = "",      # API description
-    version: str = "1",         # API version
-    public: bool = False,       # Whether to allow other plugins to call
-    **metadata,                 # Additional metadata
+    name: str,                  # API 名称（必填）
+    description: str = "",      # API 描述
+    version: str = "1",         # API 版本
+    public: bool = False,       # 是否允许其他插件调用
+    **metadata,                 # 额外元数据
 )
 ```
 
@@ -24,16 +22,16 @@ from maibot_sdk import API
 
 ### name
 
-Unique identifier name for the API. Duplicate API names are not allowed within the same plugin. Other plugins locate and call APIs through `plugin ID + API name`.
+The unique identifier name of the API. Duplicate API names are not allowed within the same plugin. Other plugins use `插件 ID + API 名称` to locate and call it.
 
 ### public
 
-- **`False`** (default) — Only visible within the plugin, other plugins cannot call
-- **`True`** — Public API, other plugins can call through `ctx.api.call()`
+- **`False`** (Default) — Visible only within the plugin; cannot be called by other plugins.
+- **`True`** — Public API; can be called by other plugins via `ctx.api.call()`.
 
 ### version
 
-API version number, defaults to `"1"`. Used for API version management, can increment version number when incompatible updates are needed.
+The API version number, defaulting to `"1"`. Used for API version management; the version number can be incremented when incompatible updates are required.
 
 ## Static API Example
 
@@ -45,28 +43,28 @@ from maibot_sdk import MaiBotPlugin, API
 
 class RenderPlugin(MaiBotPlugin):
     async def on_load(self) -> None:
-        self.ctx.logger.info("Render plugin loaded")
+        self.ctx.logger.info("渲染插件已加载")
 
     async def on_unload(self) -> None:
-        self.ctx.logger.info("Render plugin unloaded")
+        self.ctx.logger.info("渲染插件已卸载")
 
     async def on_config_update(self, scope: str, config_data: dict, version: str) -> None:
         pass
 
     @API(
         "render_html",
-        description="Render HTML to image",
+        description="将 HTML 渲染为图片",
         version="1",
         public=True,
     )
     async def handle_render_html(self, html: str, **kwargs):
-        # Call rendering capability
+        # 调用渲染能力
         result = await self.ctx.render.html2png(html)
         return {"success": True, "image_path": result}
 
     @API(
         "get_stats",
-        description="Get rendering statistics",
+        description="获取渲染统计信息",
         version="1",
         public=True,
     )
@@ -79,14 +77,14 @@ class RenderPlugin(MaiBotPlugin):
 
 ## Dynamic API Registration
 
-In addition to using the `@API` decorator for static declaration, APIs can also be registered and unregistered dynamically at runtime. Dynamic APIs are suitable for scenarios where APIs need to be exposed based on configuration or runtime conditions.
+In addition to static declaration using the `@API` decorator, APIs can be dynamically registered and unregistered at runtime. Dynamic APIs are suitable for scenarios where the decision to expose an API depends on configurations or runtime conditions.
 
 ### Dynamic API Methods
 
-- `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` — Register dynamic API
-- `self.unregister_dynamic_api(name, *, version="1")` — Unregister dynamic API
+- `self.register_dynamic_api(name, handler, *, description, version, public, handler_name, **metadata)` — Register a dynamic API
+- `self.unregister_dynamic_api(name, *, version="1")` — Unregister a dynamic API
 - `self.clear_dynamic_apis()` — Clear all dynamic APIs
-- `await self.sync_dynamic_apis(*, offline_reason="Dynamic API offline")` — Sync dynamic APIs to main program
+- `await self.sync_dynamic_apis(*, offline_reason="动态 API 已下线")` — Synchronize dynamic APIs to the main program
 
 ### Dynamic Registration Example
 
@@ -97,17 +95,17 @@ from typing import Any
 
 class DynamicApiPlugin(MaiBotPlugin):
     class MyConfig(PluginConfigBase):
-        enable_translate: bool = Field(default=False, description="Whether to enable translation API")
+        enable_translate: bool = Field(default=False, description="是否启用翻译 API")
 
     config_model = MyConfig
 
     async def on_load(self) -> None:
-        # Dynamically register APIs based on configuration
+        # 根据配置动态注册 API
         if self.config.enable_translate:
             self.register_dynamic_api(
                 "translate",
                 self._handle_translate,
-                description="Text translation",
+                description="文本翻译",
                 version="1",
                 public=True,
                 handler_name="handle_translate",
@@ -116,29 +114,29 @@ class DynamicApiPlugin(MaiBotPlugin):
             self.register_dynamic_api(
                 "detect_language",
                 self._handle_detect_language,
-                description="Language detection",
+                description="语言检测",
                 version="1",
                 public=True,
             )
 
-        # Sync dynamic APIs to main program
+        # 同步动态 API 到主程序
         await self.sync_dynamic_apis()
-        self.ctx.logger.info("Dynamic APIs synced")
+        self.ctx.logger.info("动态 API 已同步")
 
     async def on_unload(self) -> None:
-        # Clear and sync offline
+        # 清空并同步下线
         self.clear_dynamic_apis()
-        await self.sync_dynamic_apis(offline_reason="Plugin unloaded")
+        await self.sync_dynamic_apis(offline_reason="插件已卸载")
 
     async def on_config_update(self, scope: str, config_data: dict, version: str) -> None:
         pass
 
     async def _handle_translate(self, text: str, target_lang: str = "en", **kwargs) -> dict[str, Any]:
-        # Translation logic
+        # 翻译逻辑
         return {"translated": f"[translated {text} to {target_lang}]"}
 
     async def _handle_detect_language(self, text: str, **kwargs) -> dict[str, Any]:
-        # Language detection logic
+        # 语言检测逻辑
         return {"language": "zh", "confidence": 0.95}
 ```
 
@@ -147,19 +145,19 @@ class DynamicApiPlugin(MaiBotPlugin):
 ```python
 class ManagedApiPlugin(MaiBotPlugin):
     async def on_load(self) -> None:
-        # Batch registration
+        # 批量注册
         for name, handler in [("api_a", self._a), ("api_b", self._b)]:
             self.register_dynamic_api(name, handler, public=True)
         await self.sync_dynamic_apis()
 
     async def disable_api_b(self) -> None:
-        # Unregister single API
+        # 注销单个 API
         self.unregister_dynamic_api("api_b")
-        await self.sync_dynamic_apis(offline_reason="API B disabled")
+        await self.sync_dynamic_apis(offline_reason="API B 已禁用")
 
     async def on_unload(self) -> None:
         self.clear_dynamic_apis()
-        await self.sync_dynamic_apis(offline_reason="Plugin unloaded")
+        await self.sync_dynamic_apis(offline_reason="插件已卸载")
 
     async def on_config_update(self, scope: str, config_data: dict, version: str) -> None:
         pass
@@ -171,18 +169,18 @@ class ManagedApiPlugin(MaiBotPlugin):
         return {"result": "b"}
 ```
 
-## Calling Other Plugins' APIs
+## Calling APIs of Other Plugins
 
-Query and call other plugins' public APIs through the `self.ctx.api` proxy.
+You can query and call public APIs of other plugins through the `self.ctx.api` proxy.
 
 ### ctx.api Methods
 
-- `await self.ctx.api.call(plugin_id, api_name, **kwargs)` — Call other plugin's API
-- `await self.ctx.api.get(plugin_id, api_name)` — Get API information
+- `await self.ctx.api.call(api_name, *, version="", **kwargs)` — Call an API of another plugin
+- `await self.ctx.api.get(api_name, *, version="")` — Get API information
 - `await self.ctx.api.list()` — List all available APIs
-- `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` — Replace dynamic APIs
+- `await self.ctx.api.replace_dynamic_apis(components, offline_reason="...")` — Replace a dynamic API
 
-### Calling Example
+### Call Example
 
 ```python
 from maibot_sdk import MaiBotPlugin, Tool
@@ -191,9 +189,9 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 class CallerPlugin(MaiBotPlugin):
     async def on_load(self) -> None:
-        # List all available APIs
+        # 列出所有可用 API
         apis = await self.ctx.api.list()
-        self.ctx.logger.info("Available APIs: %s", apis)
+        self.ctx.logger.info("可用 API: %s", apis)
 
     async def on_unload(self) -> None:
         pass
@@ -203,34 +201,33 @@ class CallerPlugin(MaiBotPlugin):
 
     @Tool(
         "translate_text",
-        brief_description="Translate text",
-        detailed_description="Parameter description:\n- text: string, required. Text to be translated.",
+        brief_description="翻译文本",
+        detailed_description="参数说明：\n- text：string，必填。待翻译文本。",
         parameters=[
             ToolParameterInfo(
                 name="text",
                 param_type=ToolParamType.STRING,
-                description="Text to be translated",
+                description="待翻译文本",
                 required=True,
             ),
         ],
     )
     async def handle_translate(self, text: str, **kwargs):
-        # Call other plugin's translation API
+        # 调用其他插件的翻译 API
         result = await self.ctx.api.call(
-            "com.example.translate",   # Target plugin ID
-            "translate",                # API name
+            "com.example.translate.translate",
             text=text,
             target_lang="en",
         )
         return result
 ```
 
-### Query API Information
+### Querying API Information
 
 ```python
-# Get detailed information of specific API
-api_info = await self.ctx.api.get("com.example.translate", "translate")
-self.ctx.logger.info("API info: %s", api_info)
+# 获取特定 API 的详细信息
+api_info = await self.ctx.api.get("com.example.translate.translate")
+self.ctx.logger.info("API 信息: %s", api_info)
 ```
 
 ## API Design Recommendations
@@ -238,25 +235,25 @@ self.ctx.logger.info("API info: %s", api_info)
 ### Naming Conventions
 
 - Use lowercase letters and underscores: `render_html`, `get_stats`
-- Start with verbs: `get_`, `render_`, `detect_`, `translate_`
-- Avoid overly generic names, should reflect functional meaning
+- Start with a verb: `get_`, `render_`, `detect_`, `translate_`
+- Avoid overly generic names; they should reflect the functional meaning
 
 ### Version Management
 
-- Use `"1"` for initial version
-- Increment version number for incompatible updates
-- Multiple versions of the same name API can coexist
+- Use `"1"` for the initial version
+- Increment the version number for incompatible updates
+- Multiple versions of the same API name can exist simultaneously
 
 ### Parameter Design
 
-- API processor methods receive `**kwargs`, extract parameters from it
-- Required parameters should be explicitly declared as positional parameters
+- API handler methods receive `**kwargs`, from which parameters are extracted
+- Required parameters should be explicitly declared as positional arguments
 - Return values should be serializable dictionaries
 
-## Static API vs Dynamic API Comparison
+## Comparison: Static API vs. Dynamic API
 
-- **Declaration Timing** — `@API` at class definition → `register_dynamic_api()` at runtime (usually in on_load)
-- **Conditional Exposure** — `@API` not supported → `register_dynamic_api()` can be decided dynamically based on configuration
-- **Unregistration** — `@API` not supported → `register_dynamic_api()` can be dynamically unregistered via unregister
-- **Synchronization** — `@API` automatic → `register_dynamic_api()` requires calling sync_dynamic_apis()
-- **Use Cases** — `@API` for fixed APIs → `register_dynamic_api()` for APIs that need to be enabled/disabled on demand
+- **Declaration Timing**: `@API` At class definition $\rightarrow$ `register_dynamic_api()` At runtime (usually in `on_load`)
+- **Conditional Exposure**: `@API` Not supported $\rightarrow$ `register_dynamic_api()` Can be decided dynamically based on configuration
+- **Unregistration**: `@API` Not supported $\rightarrow$ `register_dynamic_api()` Can be dynamically unregistered via `unregister`
+- **Synchronization**: `@API` Automatic $\rightarrow$ `register_dynamic_api()` Requires calling `sync_dynamic_apis()`
+- **Use Case**: `@API` Fixed and unchanging APIs $\rightarrow$ `register_dynamic_api()` APIs enabled/disabled on demand

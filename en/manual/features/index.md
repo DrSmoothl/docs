@@ -1,106 +1,104 @@
 ---
-title: What Can MaiBot Do?
----
+title: What can MaiBot do?
+---# What can MaiBot do? 🤖
 
-# What Can MaiBot Do? 🤖
+MaiBot is a conversational AI robot aimed at engaging in conversations naturally like a human, rather than simply answering questions. Here is a look at what it can do:
 
-MaiBot is an AI chatbot that aims to participate in conversations naturally like a real person, rather than simply answering questions. Let's see what it can do:
-
-## 💬 Smart Conversations
+## 💬 Intelligent Conversation
 
 **Chat like a friend**
-- Reads the chat atmosphere, speaks when appropriate, stays quiet when not
-- Can be @mentioned, or can decide when to join conversations on its own
-- Replies with natural rhythm - no instant spam, no ghosting
+- Reads the atmosphere; knows when to speak and when to stay silent
+- You can mention it with @, or let it decide for when to jump into the conversation
+- Replies with rhythm; it won't bombard you with instant replies, nor leave you on read
 
-**Multi-round dialogue understanding**
-- Remembers what you've talked about before
-- Understands context, won't give irrelevant responses
-- Can follow topic changes and chat naturally like a real person
+**Multi-turn Dialogue Understanding**
+- Remembers what you discussed previously
+- Understands context without irrelevant responses
+- Keeps up with topic shifts, chatting naturally like a person
 
 [Learn more about conversation features →](./message-pipeline.md)
 
-## 🧠 Remembers Who You Are
+## 🧠 Remember Who You Are
 
-**Long-term memory**
+**Long-term Memory**
 - Remembers your preferences, habits, and personality
 - Records important content from your conversations
-- Still remembers what you said next time you chat
+- remembers what you said the next time you chat
 
-**Person profiles**
-- Creates "profiles" for each user
-- Knows what you like and dislike
-- Understands you better the more you chat, responses become more tailored to your taste
+**User Profiling**
+- Creates a "profile" for every user
+- Knows what you like and what you hate
+- The more you chat, the more it understands you and adapts its speech accordingly
 
 [See how the memory system works →](./memory-system.md)
 
-## 📖 Learns Your Speaking Style
+## 📖 Learn Your Way of Speaking
 
-**Mimics expression styles**
-- Learns the speaking style of your group
-- If you love saying "awesome", it'll say "awesome" too
+**Imitate Expression Style**
+- Learns the speaking style of the group
+- If you love saying "Awesome," it will say "Awesome" too
 - Mimics your tone and vocabulary habits
 
-**Learns new vocabulary**
+**Learn New Vocabulary**
 - Looks up internet slang it doesn't understand
-- Uses it correctly in conversations after learning
-- Supports niche community jargon and memes
+- Uses the new terms correctly in conversation after learning
+- Supports slang and memes from various subcultures
 
-[See how MaiBot learns your speaking style →](./learning.md)
+[See how MaiBot learns how you talk →](./learning.md)
 
-## 😊 Sends Emojis
+## 😊 Post Emoji Stickers
 
-**Smart emojis**
-- Understands what emojis mean
-- Chooses appropriate emojis based on chat content
+**Smart Emoji Stickers**
+- Understands the meaning behind emoji stickers
+- Selects appropriate stickers based on the chat content
 - Supports GIFs to make conversations more fun
 
-**Auto collection**
-- Automatically collects emojis that appear in the group
-- Builds its own emoji library
-- Uses AI to tag each emoji for easy searching
+**Automatic Collection**
+- Automatically collects stickers appearing in the group
+- Builds its own sticker library
+- Uses AI to tag each sticker for easy searching
 
-[Detailed emoji features →](./emoji-system.md)
+[Detailed explanation of sticker functions →](./emoji-system.md)
 
-## 🔌 Connects External Tools
+## 🔌 Connect External Tools
 
-**Gets real-time information**
-- Can connect to search engines to look up information
-- Can get real-time info like weather, news
-- Supports various practical tools with unlimited feature expansion
+**Get Real-time Information**
+- Can connect to search engines to research information
+- Retrieves real-time info like weather, news, etc.
+- Supports various practical tools with infinite functional expansion
 
-**MCP protocol**
-- Connects to various services through MCP protocol
-- Want a feature? Just install a tool
-- Developers can create their own tools to integrate
+**MCP Protocol**
+- Connects to various services via the MCP protocol
+- Just install a tool to use the function you want
+- Developers can build and integrate their own tools
 
 [Learn about MCP tool integration →](./mcp.md)
 
 ## 🎮 More Fun Features
 
-**Personalized settings**
-- Can set the bot's personality
-- Adjust speaking style - can be sweet or salty
+**Personalized Settings**
+- Set the robot's personality
+- Adjust the speaking style to be either salty or sweet
 - Supports multiple reply modes
 
-**Group chat management**
-- Supports group management features (requires plugins)
-- Can set keyword replies
+**Group Management**
+- Supports group management functions (requires plugins)
+- Allows setting up keyword replies
 - Supports various custom rules
 
-**Data statistics**
+**Data Statistics**
 - Records chat data statistics
 - View usage and activity levels
-- Convenient management through WebUI
+- Convenient management via WebUI
 
 ---
 
-## Getting Started
+## Get Started
 
-Ready to let MaiBot join your group chat?
+Are you ready to let MaiBot join your group?
 
-1. [Check supported platforms →](../adapters/index.md)
+1. [View supported platforms →](../adapters/index.md)
 2. [Learn how to configure →](../webui/index.md)
-3. [Read common questions →](../faq/index.md)
+3. [Read FAQ →](../faq/index.md)
 
-MaiBot isn't a simple Q&A robot, but a chat partner that can think, learn, and remember. It will understand you better and better, becoming more like a member of your group!
+Mai is not a simple Q&A bot, but a partner that thinks, learns, and has memory. It will understand you better and better, becoming more like a member of your group!

@@ -1,29 +1,27 @@
 ---
-title: Vibe Coding Plugin Guide
----
+title: Vibe Coding Plugin Development Guide
+---# Vibe Coding Plugin Development Guide
 
-# Vibe Coding Plugin Guide
-
-This page is for developers who use AI assistants to write MaiBot plugins. Its goal is to turn a plugin idea into a clear, bounded task that an AI can implement and verify without accidentally changing the host application.
+This guide is for developers using AI to help write MaiBot plugins. The goal is to break down plugin requirements into units that are easy for AI to understand and verify without accidentally modifying the core program.
 
 ## AI Task Brief
 
-Use this as the first context block for an AI assistant, then add your concrete requirements:
+Use the following as the initial context for the AI, then add your specific requirements:
 
 ```text
-You are writing a third-party MaiBot plugin. The plugin must live under plugins/<plugin-name>/, and you must not modify MaiBot host code unless I explicitly approve it. Use maibot-plugin-sdk. The entry file is plugin.py and metadata lives in _manifest.json. Implement on_load, on_unload, on_config_update, and create_plugin. Prefer @Tool, @Command, @HookHandler, @EventHandler, @API, and @MessageGateway; do not use @Action for new plugins. User-facing text should default to Simplified Chinese. Keep the change boundary clear and describe how to test it.
+你正在为 MaiBot 编写第三方插件。插件必须放在 plugins/<plugin-name>/ 下，不要修改 MaiBot 主程序代码，除非我明确许可。请使用 maibot-plugin-sdk，入口文件为 plugin.py，元信息文件为 _manifest.json。必须实现 on_load、on_unload、on_config_update 和 create_plugin。优先使用 @Tool、@Command、@HookHandler、@EventHandler、@API、@MessageGateway；不要给新插件使用 @Action。所有用户可见文本优先使用简体中文。请保持改动边界清晰，并给出测试方式。
 ```
 
-## Boundaries
+## Development Boundaries
 
-- Put the plugin in `plugins/<plugin-name>/`. If the plugin needs ignore rules, add a `.gitignore` inside that plugin directory; do not edit the repository root `.gitignore`.
-- The entry file is `plugin.py`; the factory function is `create_plugin()`.
-- Plugin metadata goes in `_manifest.json`; runtime settings go in `config.toml`.
-- New plugins should not modify `src/`, `dashboard/`, `config/`, or other host directories. If host changes are truly required, explain the reason, impact, and alternatives before asking for approval.
-- Do not commit local experiments, logs, temporary scripts, personal secrets, tokens, cookies, or database files.
-- Dependencies belong in `_manifest.json` `dependencies`. Only maintain MaiBot host dependencies when you are intentionally changing the host application.
+- The plugin directory is fixed to `plugins/<plugin-name>/`; for custom ignores, add `.gitignore` within the plugin directory, do not modify the repository root `.gitignore`.
+- The plugin entry point is fixed at `plugin.py`, and the factory function is fixed at `create_plugin()`.
+- Plugin metadata is fixed in `_manifest.json`, and runtime configuration is placed in `config.toml`.
+- New plugins should not modify core program directories such as `src/`, `dashboard/`, `config/`; if core program capabilities are truly needed, explain the reason, impact, and alternatives first before requesting permission.
+- Do not commit local experimental data, logs, temporary scripts, personal keys, tokens, cookies, or database files to the plugin.
+- Dependencies follow the `dependencies` in `_manifest.json`; only sync `pyproject.toml` and `requirements.txt` when maintaining MaiBot core program dependencies.
 
-## Minimal Structure
+## Minimum Directory Structure
 
 ```text
 plugins/my-plugin/
@@ -34,7 +32,7 @@ plugins/my-plugin/
 └── .gitignore
 ```
 
-Recommended additions:
+Recommended additional additions:
 
 ```text
 plugins/my-plugin/
@@ -43,19 +41,19 @@ plugins/my-plugin/
 └── assets/
 ```
 
-## Manifest Essentials
+## Manifest Key Points
 
-`_manifest.json` lets the Host validate a plugin before loading it. When AI generates it, check these points:
+`_manifest.json` is used by the Host to validate the plugin before loading. When generating, the AI must note:
 
-- `manifest_version` is currently `2`.
-- `id` should be lowercase and namespaced, for example `com.example.my-plugin`.
-- `version` must be strict three-part semantic versioning, for example `1.0.0`.
-- `author.url`, `urls.repository`, and similar URLs must start with `http://` or `https://`.
+- `manifest_version` is currently fixed to `2`.
+- `id` uses lowercase reverse domains or author prefixes, e.g., `com.example.my-plugin`.
+- `version` uses strict three-part semantic versioning, e.g., `1.0.0`.
+- URLs `author.url` and `urls.repository` must start with `http://` or `https://`.
 - `host_application` and `sdk` must both declare `min_version` and `max_version`.
-- Python package dependencies use `dependencies` entries with type `python_package`.
-- Plugin dependencies use `dependencies` entries with type `plugin`.
-- `capabilities` should only list capabilities the plugin actually needs.
-- `i18n.default_locale` should usually be `zh-CN`.
+- Python package dependencies are written in `dependencies`, with type `python_package`.
+- Inter-plugin dependencies are written in `dependencies`, type `plugin`.
+- `capabilities` only declares strictly necessary capabilities.
+- `i18n.default_locale` recommends using `zh-CN`.
 
 ```json
 {
@@ -65,7 +63,7 @@ plugins/my-plugin/
   "name": "我的插件",
   "description": "一个 MaiBot 插件",
   "author": {
-    "name": "Developer",
+    "name": "开发者",
     "url": "https://github.com/developer"
   },
   "license": "MIT",
@@ -98,7 +96,7 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 
 class PluginSectionConfig(PluginConfigBase):
-    """Basic plugin settings."""
+    """插件基础配置。"""
 
     __ui_label__ = "插件"
     __ui_icon__ = "package"
@@ -109,33 +107,33 @@ class PluginSectionConfig(PluginConfigBase):
 
 
 class MyPluginConfig(PluginConfigBase):
-    """Plugin configuration."""
+    """插件配置。"""
 
     plugin: PluginSectionConfig = Field(default_factory=PluginSectionConfig)
 
 
 class MyPlugin(MaiBotPlugin):
-    """My plugin."""
+    """我的插件。"""
 
     config_model = MyPluginConfig
 
     async def on_load(self) -> None:
-        """Run when the plugin is loaded."""
+        """插件加载时执行。"""
         self.ctx.logger.info("插件已加载")
 
     async def on_unload(self) -> None:
-        """Run when the plugin is unloaded."""
+        """插件卸载时执行。"""
         self.ctx.logger.info("插件已卸载")
 
     async def on_config_update(self, scope: str, config_data: dict[str, Any], version: str) -> None:
-        """Run when configuration is hot-reloaded."""
+        """配置热重载时执行。"""
         del scope
         del config_data
         del version
 
     @Tool(
         "echo_text",
-        description="Repeat the provided text. Useful for testing whether the LLM can call this plugin.",
+        description="复述用户提供的文本。适合测试插件是否能被 LLM 调用。",
         parameters=[
             ToolParameterInfo(
                 name="text",
@@ -150,114 +148,113 @@ class MyPlugin(MaiBotPlugin):
         return {"content": text}
 
     @Command("ping", description="测试插件是否在线", pattern=r"^/ping$")
-    async def ping(self, stream_id: str = "", **kwargs: Any) -> tuple[bool, str, bool]:
+    async def ping(self, stream_id: str = "", **kwargs: Any) -> tuple[bool, str, int]:
         del kwargs
         await self.ctx.send.text("pong", stream_id)
-        return True, "pong", True
+        return True, "pong", 2
 
 
 def create_plugin() -> MyPlugin:
-    """Create the plugin instance."""
+    """创建插件实例。"""
     return MyPlugin()
 ```
 
-## Component Choice
+## Component Selection
 
-- **Let the LLM call a capability** → `@Tool` — Default tools enter the deferred pool and are discovered by search; use `core_tool=True` only for frequent, low-risk tools
-- **Trigger from user commands** → `@Command` — Match text with regex `pattern`, such as `/ping`
-- **Intercept or observe host flow** → `@HookHandler` — Good for message rewrite, send auditing, and flow interception
-- **Listen to messages or lifecycle events** → `@EventHandler` — Good for statistics, logging, and async helper tasks
-- **Expose capability to other plugins** → `@API` — Only make stable interfaces public
-- **Connect an external chat platform** → `@MessageGateway` — Used by adapter plugins
-- **Maintain legacy plugins** → `@Action` — Legacy only; do not use it for new plugins
+- **Let the LLM proactively call capabilities** → `@Tool` — default tools enter the deferred pool and need to be searched/discovered; only high-frequency, low-risk tools should consider `core_tool=True`.
+- **Triggered by user input commands** → `@Command` — use regex `pattern` for matching, e.g., `/ping`.
+- **Intercept or observe main flow** → `@HookHandler` — suitable for message rewriting, pre-sending audits, and process interception.
+- **Listen to messages or lifecycle events** → `@EventHandler` — suitable for statistics, logging, and asynchronous auxiliary tasks.
+- **Provide capabilities to other plugins** → `@API` — only expose stable interfaces as public.
+- **Connect to external chat platforms** → `@MessageGateway` — used for adapter-type plugins.
+- **Maintain legacy plugins** → `@Action` — only for legacy compatibility; do not use for new plugins.
 
-## Tool Rules
+## Tool Writing Key Points
 
-- `description` should explain when to use the tool, what the parameters mean, constraints, and side effects.
-- Prefer `ToolParameterInfo` for parameters, with types from `ToolParamType`.
-- Prefer returning a `dict`; put LLM-readable text in `content`.
-- For images or media, use the documented `content_items` pattern instead of embedding base64 in long text.
-- Do not set `core_tool=True` by default; too many core tools increase model selection cost.
-- Handle failures inside tools and return readable errors instead of leaking stack traces.
+- `description` must clearly state when to use, parameter meanings, constraints, and side effects.
+- Prioritize declaring using `ToolParameterInfo`, with types from `ToolParamType`.
+- Prioritize returns using `dict`, placing text for LLM reading in `content`.
+- When returning images or media, use the agreed-upon `content_items`; do not stuff base64 strings directly into long text.
+- By default, do not set `core_tool=True`; too many core tools increase model selection costs.
+- Tools must handle failures internally and return readable errors; do not let exceptions leak as cryptic stacks.
 
-## Sending Messages
+## Message Sending Key Points
 
-- When `stream_id` is available, send text with `await self.ctx.send.text(content, stream_id)`.
-- For images, emojis, forwards, and hybrid messages, prefer `self.ctx.send` and `self.ctx.emoji` capability proxies.
-- Do not calculate session IDs yourself. Use `stream_id` or SDK-provided message context.
-- User-facing text should default to Simplified Chinese.
+- When `stream_id` exists, use `await self.ctx.send.text(content, stream_id)` to send text.
+- When sending images, emojis, forwards, or mixed messages, prioritize using proxy capabilities provided by `self.ctx.send` and `self.ctx.emoji`.
+- Do not calculate session IDs manually; plugins should use the `stream_id` passed via context or SDK-provided message context.
+- User-visible text defaults to Simplified Chinese.
 
-## Configuration
+## Configuration Key Points
 
-- Config models inherit `PluginConfigBase`; fields use `Field(default=..., description="...")`.
-- Keep a `[plugin]` section with `enabled` and `config_version`.
-- Add WebUI hints with `__ui_label__`, `__ui_icon__`, and `__ui_order__` when useful.
-- Prefer `self.config.<section>.<field>` for config access; use `self.get_plugin_config_data()` only when raw dictionaries are needed.
-- Put hot-reload handling in `on_config_update()`.
+- Configuration inherits `PluginConfigBase`, fields use `Field(default=..., description="...")`.
+- Recommended to keep the `[plugin]` group, including `enabled` and `config_version`.
+- WebUI display information can be supplemented via `__ui_label__`, `__ui_icon__`, and `__ui_order__`.
+- Prioritize reading config via `self.config.<section>.<field>`; use `self.get_plugin_config_data()` only when a raw dictionary is strictly needed.
+- Put config hot reload logic in `on_config_update()`.
 
-## AI Code Review Checklist
+## AI Generated Code Checklist
 
-Ask the AI to self-check these points before finishing:
+Self-check each item after the AI completes:
 
-- `_manifest.json` is complete, with valid version and URL formats.
-- `plugin.py` imports only standard library, third-party packages, and `maibot_sdk`; import order follows project rules.
-- The plugin class inherits `MaiBotPlugin` and declares `config_model`.
-- `on_load()`, `on_unload()`, and `on_config_update()` are implemented.
-- `create_plugin()` returns a plugin instance.
-- New functionality uses `@Tool` or `@Command` where appropriate; new code does not use `@Action`.
-- No host application code or root `.gitignore` was changed.
-- No hard-coded tokens, absolute private paths, personal QQ IDs, group IDs, or private URLs.
+- `_manifest.json` field is complete, and version number/URL formats are valid.
+- `plugin.py` only imports from standard library, third-party libraries, and `maibot_sdk`; import order follows project standards.
+- Plugin class inherits `MaiBotPlugin` and declares `config_model`.
+- Implemented `on_load()`, `on_unload()`, and `on_config_update()`.
+- Implemented `create_plugin()` and returns the plugin instance.
+- New features prioritize using `@Tool` or `@Command`; no use of `@Action` for new code.
+- No modifications made to core program or the root directory `.gitignore`.
+- No hardcoded tokens, absolute paths, personal QQ numbers, group numbers, or private URLs.
 - All network requests have timeouts and exception handling.
-- Background tasks, connections, and file handles are cleaned up on unload.
-- User-facing text is Simplified Chinese.
-- README documents installation, enabling, configuration, commands, and troubleshooting.
+- All scheduled tasks, background tasks, connections, and file handles can be cleaned up upon unloading.
+- User-visible text is in Simplified Chinese.
+- README specifies installation, enabling, configuration, commands, and FAQs.
 
-## Prompt Templates
+## Recommended Prompts
 
-### Generate a New Plugin
+### Generate New Plugin
 
 ```text
-Create a MaiBot third-party plugin under plugins/<plugin-name>/ that implements <feature description>.
-Requirements:
-1. Only modify the plugin directory; do not modify MaiBot host code.
-2. Use maibot-plugin-sdk with plugin.py and _manifest.json.
-3. Implement on_load, on_unload, on_config_update, and create_plugin.
-4. Use PluginConfigBase + Field for configuration. User-facing text should be Simplified Chinese.
-5. Include README, config.toml, and a plugin-local .gitignore when needed.
-6. Explain how to enable and test it in MaiBot.
+请在 plugins/<plugin-name>/ 创建一个 MaiBot 第三方插件，实现 <功能描述>。
+要求：
+1. 只改插件目录，不改 MaiBot 主程序。
+2. 使用 maibot-plugin-sdk 和 plugin.py / _manifest.json 结构。
+3. 实现 on_load、on_unload、on_config_update、create_plugin。
+4. 配置用 PluginConfigBase + Field，用户可见文本使用简体中文。
+5. 给出 README、config.toml、必要的 .gitignore。
+6. 完成后说明如何在 MaiBot 中启用和测试。
 ```
 
-### Modify an Existing Plugin
+### Modify Existing Plugin
 
 ```text
-Only modify files inside plugins/<plugin-name>/ to add <feature description>.
-First read _manifest.json, plugin.py, config.toml, and README, then follow the existing style.
-Do not refactor unrelated code or format the whole repository.
-If host changes are required, stop and explain why first.
+请只修改 plugins/<plugin-name>/ 内的文件，为现有插件增加 <功能描述>。
+先阅读 _manifest.json、plugin.py、config.toml 和 README，沿用现有风格。
+不要重构无关代码，不要整理全仓库格式。
+如果需要主程序改动，先停止并说明原因。
 ```
 
-### Debug a Plugin
+### Troubleshoot Plugins
 
 ```text
-Debug loading or runtime issues in plugins/<plugin-name>/.
-Prioritize _manifest.json validation, dependency declarations, lifecycle methods, create_plugin, config models, and log exceptions.
-Provide the smallest fix and avoid unrelated refactors.
+请排查 plugins/<plugin-name>/ 的加载或运行问题。
+优先检查 _manifest.json 校验、依赖声明、生命周期方法、create_plugin、配置模型、日志中的异常。
+请给出最小修复，不要做无关重构。
 ```
 
 ## Testing Suggestions
 
-- Static check: verify `_manifest.json` is valid JSON and `plugin.py` can be imported by Python.
-- Local load: put the plugin in `plugins/`, start MaiBot, and inspect plugin load logs.
-- WebUI check: confirm the plugin appears, can be enabled, and has editable config.
-- Command test: use a command such as `/ping` to confirm `@Command` works.
-- Tool test: let the LLM discover and call the tool through normal chat, then inspect whether the result is readable.
-- Unload test: disable or unload the plugin and confirm background tasks, connections, and caches are cleaned up.
+- Static check: confirm `_manifest.json` is valid JSON and `plugin.py` is importable.
+- Local loading: place plugin in `plugins/`, start MaiBot, and observe loading logs.
+- WebUI check: verify plugin appears in management, can be enabled, and config is editable.
+- Command testing: use `/ping` type commands to confirm `@Command` is triggered.
+- Tool testing: let the LLM discover and call tools through normal chat; observe if tool returns are readable.
+- Uninstall testing: disable or uninstall the plugin and confirm background tasks, connections, and cache are cleared.
 
-## Before Publishing
+## Pre-release Checklist
 
-- The plugin repository root contains `_manifest.json`, `plugin.py`, `README.md`, and a sample `config.toml`.
-- README documents features, installation, configuration, commands, capabilities, and troubleshooting.
-- The license matches the `license` field in `_manifest.json`.
-- Dependencies are fully declared so users do not need manual installs.
-- `.venv/`, `__pycache__/`, logs, databases, secrets, and local configs are not committed.
-- If submitting to the plugin repository, read its contributing guide and align metadata with its requirements.
+- Plugin root contains `_manifest.json`, `plugin.py`, `README.md`, and `config.toml` examples.
+- README includes function description, installation, configuration, commands, permissions/capabilities, and troubleshooting.
+- License is consistent with `_manifest.json` in `license`.n- Dependency declarations are complete, avoiding requiring users to manually install undeclared dependencies.
+- No committed `.venv/`, `__pycache__/`, logs, databases, keys, or local configs.
+- If submitting to a plugin repository, read the repository's contribution guide and organize metadata accordingly.

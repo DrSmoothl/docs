@@ -1,24 +1,29 @@
 ---
-title: Manifest System
----
+title: Manifest
+---# Manifest System
 
-# Manifest System
+Every MaiBot plugin must include a `_manifest.json` file in its root directory to declare the plugin's metadata, version compatibility, dependencies, and capability requirements. The `ManifestValidator` on the Host side will strictly validate this file before loading.
 
-Each MaiBot plugin must include a `_manifest.json` file in its root directory to declare plugin metadata, version compatibility, dependencies, and capability requirements. The Host-side `ManifestValidator` will strictly validate this file before loading.
+::: tip _manifest.json 与 config.toml 的区别
+- `_manifest.json`: Plugin **metadata** (ID, version, dependencies, etc.), validated and managed by the Host.
+- `config.toml`: Plugin **runtime configuration** (feature toggles, parameters, etc.), read by the plugin itself.
+
+The purposes of the two are completely different; do not confuse them.
+:::
 
 ## _manifest.json Structure
 
-Here is a complete Manifest example:
+Below is a complete Manifest example:
 
 ```json
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
   "version": "1.0.0",
-  "name": "My Plugin",
-  "description": "An example plugin",
+  "name": "我的插件",
+  "description": "一个示例插件",
   "author": {
-    "name": "Developer",
+    "name": "开发者",
     "url": "https://github.com/developer"
   },
   "license": "MIT",
@@ -55,41 +60,41 @@ Here is a complete Manifest example:
 
 ## Required Fields
 
-- **`manifest_version`** `2` — Manifest protocol version, currently fixed as `2`
-- **`id`** `string` — Plugin unique identifier, format is lowercase letters/numbers, separated by dots or dashes (e.g., `com.author.plugin`)
-- **`version`** `string` — Plugin version number, must be strict three-part semantic version (e.g., `1.0.0`)
+- **`manifest_version`** `2` — Manifest protocol version, currently fixed at `2`
+- **`id`** `string` — Unique plugin identifier, formatted as lowercase letters/numbers separated by dots or hyphens (e.g., `com.author.plugin`)
+- **`version`** `string` — Plugin version number, must be a strict three-part semantic version (e.g., `1.0.0`)
 - **`name`** `string` — Plugin display name
 - **`description`** `string` — Plugin description
-- **`author`** `object` — Plugin author information, contains `name` (author name) and `url` (author homepage, must be HTTP/HTTPS URL)
+- **`author`** `object` — Plugin author information, containing `name` (author name) and `url` (author homepage, must be an HTTP/HTTPS URL)
 - **`license`** `string` — Plugin license
-- **`urls`** `object` — Plugin related links collection (see below)
+- **`urls`** `object` — Collection of plugin-related links (see below)
 - **`host_application`** `object` — Host compatibility range (see below)
 - **`sdk`** `object` — SDK compatibility range (see below)
-- **`capabilities`** `string[]` — Plugin declared capability request list, cannot contain empty values
+- **`capabilities`** `string[]` — List of capability requests declared by the plugin; null values are not allowed
 - **`i18n`** `object` — Internationalization configuration (see below)
 
 ## Optional Fields
 
 ### plugin_type Plugin Type
 
-`plugin_type` declares the plugin's primary role. WebUI uses it for display, filtering, and default icon selection. This field is optional and does not require a `manifest_version` upgrade; missing values are treated as `extension`.
+`plugin_type` is used to declare the primary role of the plugin, used by the WebUI for display, filtering, and default icon selection. This is an optional field and does not require upgrading `manifest_version`; it defaults to `extension` if omitted.
 
-Allowed values:
+Optional values:
 
-- `adapter` — message platform or protocol adapters
-- `tool` — tools, commands, or model-callable capabilities
-- `provider` — LLM, TTS, API, or other service providers
-- `management` — management, permission, group moderation, or admin plugins
-- `data` — statistics, memory, knowledge base, import/export, or other data plugins
-- `media` — image, audio, video, emoji, or other media processing
-- `game` — games or entertainment interactions
-- `integration` — external platforms, search, Webhooks, or integrations
-- `extension` — general extensions
-- `other` — other plugins
+- `adapter` — Message platform or protocol adapter
+- `tool` — Tool, command, or model-callable capability
+- `provider` — LLM, TTS, API, or other service provider
+- `management` — Management, permissions, group management, or backend-type plugin
+- `data` — Statistics, memory, knowledge base, import/export, or other data-type plugins
+- `media` — Image, voice, video, emoji, or other media processing
+- `game` — Game or entertainment interaction
+- `integration` — External platform, search, Webhook, or other integrations
+- `extension` — General extension
+- `other` — Other
 
-### display Metadata
+### display Display Metadata
 
-`display.icon` declares the plugin icon. It only affects WebUI display and does not change runtime behavior.
+`display.icon` is used to declare the plugin icon. This field only affects WebUI display and does not participate in plugin runtime behavior.
 
 ```json
 {
@@ -105,22 +110,22 @@ Allowed values:
 ```
 
 - `type`: `lucide`, `emoji`, or `local`
-- `value`: icon value. `lucide` uses an icon name, `emoji` uses an emoji or short text, and `local` uses a relative path inside the plugin directory
-- `fallback`: optional lucide icon name used when the icon fails to load
-- `background`: optional icon background color in `#RRGGBB` format
+- `value`: Icon value. `lucide` uses an icon name, `emoji` uses a single emoji or short text, `local` uses a relative path within the plugin directory
+- `fallback`: Optional, the lucide icon name used when icon loading fails
+- `background`: Optional, icon background color, formatted as `#RRGGBB`
 
-Online URL icons are not allowed. Local icons only support `.png`, `.jpg`, `.jpeg`, `.webp`, and `.svg`. The path must stay inside the plugin directory and cannot use absolute paths, `..`, or symlinks.
+Online URLs are not allowed as plugin icons. Local icons only support `.png`, `.jpg`, `.jpeg`, `.webp`, `.svg`, and the path must be within the plugin directory; absolute paths, `..`, or symbolic links cannot be used.
 
 ### urls Link Collection
 
-- **`repository`** · Required — Plugin repository address, must be HTTP/HTTPS URL
+- **`repository`** · Required — Plugin repository address, must be an HTTP/HTTPS URL
 - **`homepage`** · Optional — Plugin homepage address
 - **`documentation`** · Optional — Plugin documentation address
 - **`issues`** · Optional — Plugin issue feedback address
 
 ### host_application / sdk Version Range
 
-Both have the same structure, as closed interval declarations:
+Both have the same structure and are declared as closed intervals:
 
 ```json
 {
@@ -129,18 +134,48 @@ Both have the same structure, as closed interval declarations:
 }
 ```
 
-- `min_version`: Allowed minimum version (closed interval)
-- `max_version`: Allowed maximum version (closed interval)
+- `min_version`: Minimum allowed version (closed interval)
+- `max_version`: Maximum allowed version (closed interval)
 - Both must be strict three-part semantic version numbers (`X.Y.Z`)
 - `min_version` cannot be greater than `max_version`
 
-Host will validate whether the current version falls within the declared range during handshake. If incompatible, the plugin will be blocked from loading.
+The Host will verify during the handshake phase whether the current version falls within the declared range. If incompatible, the plugin will be blocked from loading.
 
 ### i18n Internationalization Configuration
 
 - **`default_locale`** · Required — Default language code (e.g., `zh-CN`)
-- **`locales_path`** · Optional — Language resource file directory path
-- **`supported_locales`** · Optional — Supported language list, cannot contain empty values and duplicates. If not empty, `default_locale` must exist in this list
+- **`locales_path`** · Optional — Directory path for language resource files
+- **`supported_locales`** · Optional — List of supported languages; cannot contain null values or duplicates. If not empty, `default_locale` must exist in this list
+
+### llm_providers LLM Provider Declaration
+
+Declares the LLM Provider capabilities provided by the plugin, allowing other plugins to call them via the `ctx.llm` proxy.
+
+- **`client_type`** · Required — Unique Provider identifier, must exactly match the value declared in the `@LLMProvider` decorator
+- **`name`** · Required — Provider display name
+- **`description`** · Optional — Provider functional description
+- **`version`** · Optional · Default `"1.0.0"` — Provider version number
+
+::: warning 双重声明要求
+The `llm_providers` field and the `@LLMProvider` decorator must both be declared, and the `client_type` must match exactly. If declared in only one place, or if they are inconsistent, the plugin will be blocked from loading.
+:::
+
+::: danger 冲突加载策略
+If two plugins declare the same `client_type`, **both plugins will be prohibited from loading**. Please use a unique prefix (e.g., `com.example.my-provider`) when designing Providers to avoid conflicts.
+:::
+
+```json
+{
+  "llm_providers": [
+    {
+      "client_type": "my_custom_llm",
+      "name": "My Custom LLM",
+      "description": "A custom LLM provider",
+      "version": "1.0.0"
+    }
+  ]
+}
+```
 
 ## Dependency Declaration
 
@@ -156,8 +191,8 @@ The `dependencies` array supports two types of dependencies, distinguished by th
 }
 ```
 
-- `id`: ID of the dependency plugin, follows the same format rules as plugin ID
-- `version_spec`: Version constraint expression, uses PEP 440 style (e.g., `>=1.0.0`, `~=1.0`)
+- `id`: The ID of the dependent plugin, following the same formatting rules as the plugin ID
+- `version_spec`: Version constraint expression, using PEP 440 style (e.g., `>=1.0.0`, `~=1.0`)
 - Circular dependencies or self-dependencies are not allowed
 - Duplicate declarations of the same plugin dependency are not allowed
 
@@ -171,26 +206,26 @@ The `dependencies` array supports two types of dependencies, distinguished by th
 }
 ```
 
-- `name`: Python package name, only allows letters, numbers, dots, underscores, and dashes
+- `name`: Python package name, allowing only letters, numbers, dots, underscores, and hyphens
 - `version_spec`: Version constraint expression
 
 ### Dependency Resolution Process
 
-`PluginDependencyPipeline` executes dependency analysis uniformly on the Host side:
+`PluginDependencyPipeline` performs unified dependency analysis on the Host side:
 
-1. **Scan**: Collect all plugins' `_manifest.json`
-2. **Detect Host conflicts**: If plugin's Python package dependencies have no intersection with main program's dependency constraints, block loading
-3. **Detect inter-plugin conflicts**: If multiple plugins have mutually exclusive version constraints for the same Python package, block all from loading
-4. **Auto install**: For missing Python dependencies of loadable plugins, prefer `uv pip install`, fallback to `pip install`
-5. **Topological sort**: Determine Runner startup order based on cross-Supervisor dependency relationships, circular dependencies will be rejected
+1. **Scanning**: Collects `_manifest.json` from all plugins
+2. **Host Conflict Detection**: If a plugin's Python package dependency has no intersection with the main program's dependency constraints, loading is blocked
+3. **Inter-plugin Conflict Detection**: If multiple plugins have mutually exclusive version constraints for the same Python package, all are blocked from loading
+4. **Automatic Installation**: For missing Python dependencies of loadable plugins, `uv pip install` is used preferentially, falling back to `pip install`
+5. **Topological Sorting**: Determines the Runner startup order based on cross-Supervisor dependency relationships; circular dependencies will be rejected
 
 ## Validation Rules
 
-The Manifest validator (`ManifestValidator`) uses Pydantic strict mode, with main validation rules including:
+The Manifest validator (`ManifestValidator`) uses Pydantic strict mode. The main validation rules include:
 
-- **No extra fields**: Fields not declared in `_manifest.json` are not allowed
-- **ID format**: Must match `^[a-z0-9]+(?:[.-][a-z0-9]+)+$` (e.g., `com.example.my-plugin`)
-- **Version number format**: Must be `X.Y.Z` three-part format
-- **URL format**: Must start with `http://` or `https://`
-- **No self-dependency**: Cannot depend on itself in `dependencies`
-- **No duplicate dependencies**: Same plugin/package name can only be declared once
+- **No Extra Fields**: Fields not declared in `_manifest.json` are not allowed
+- **ID Format**: Must match `^[a-z0-9]+(?:[.-][a-z0-9]+)+$` (e.g., `com.example.my-plugin`)
+- **Version Format**: Must be a `X.Y.Z` three-part version
+- **URL Format**: Must start with `http://` or `https://`
+- **No Self-dependency**: Cannot depend on itself in `dependencies`
+- **No Duplicate Dependencies**: The same plugin/package name can only be declared once

@@ -147,3 +147,4 @@ package-lock.json
 
 # OpenCode
 .sisyphus
+.omo

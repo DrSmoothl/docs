@@ -1,176 +1,119 @@
 ---
-title: Memory Management
----
+title: Viewing and Managing Memory
+---# Viewing and Managing Memories
 
-# Memory Management
+MaiBot remembers chat content, much like human memory. You can view and manage these memories within the WebUI.
 
-Memory management is the most feature-rich module in WebUI, providing complete management capabilities for MaiBot's long-term memory system. The memory API routes (`/api/webui/memory/*`) are the largest code volume module among all routes, covering complete functions including graph operations, source management, memory fragments, character profiles, V5 memory actions, import, retrieval tuning, deletion and recovery.
+## What are Memories?
 
-## Knowledge Graph Management
+Imagine MaiBot has a "brain" that records:
 
-MaiBot's long-term memory is stored in the form of a knowledge graph, consisting of nodes (Node) and edges (Edge).
+- 💬 **What was discussed** - Conversation content, important information
+- 👥 **Who it knows** - User personalities, preferences
+- 🔗 **Knowledge Graph** - Relationships between entities
+- 📚 **Learning Materials** - Knowledge you have taught it
 
-### Graph Reading
+## Viewing Memories
 
-- **`GET /memory/graph`** — Get graph data (can limit quantity, default 200, maximum 5000)
-- **`GET /memory/graph/search`** — Search graph (keywords + quantity limit)
-- **`GET /memory/graph/node-detail`** — Get node detailed information (including relationships, paragraphs, evidence nodes)
-- **`GET /memory/graph/edge-detail`** — Get edge detailed information (including paragraphs, evidence nodes)
+### Memory Overview
+Open the "Memory Management" page to see:
+- Total amount of stored information
+- Recently remembered items
+- Memory category statistics
 
-The node detail interface supports controlling the amount of returned data through `relation_limit`, `paragraph_limit`, `evidence_node_limit` parameters.
+### Searching Memories
+Looking for specific content? Use the search function:
+- Enter keywords, such as "games" or "food"
+- Filter by time to view memories from a specific period
+- Filter by user to view chat memories with a specific person
 
-### Node Operations
+### Knowledge Graph
+Similar to a mind map, this displays relationships between concepts:
+- Each circle represents a concept (e.g., "Genshin Impact")
+- Lines represent relationships (e.g., "Genshin Impact - Game")
+- Click a circle to view detailed information
 
-- **`POST /memory/graph/node`** — Create node (need to provide `name`)
-- **`DELETE /memory/graph/node`** — Delete node (need to provide `name`)
-- **`POST /memory/graph/node/rename`** — Rename node (need to provide `old_name` and `new_name`)
+## Managing Memories
 
-### Edge Operations
+### Adding Memories
+You can manually teach MaiBot new knowledge:
+1. Click "Import Memory"
+2. Paste text or upload a file
+3. Select the processing method
+4. Start importing
 
-- **`POST /memory/graph/edge`** — Create edge (need to provide `subject`, `predicate`, `object`, optional `confidence`)
-- **`DELETE /memory/graph/edge`** — Delete edge (can locate through `hash` or `subject`+`object`)
-- **`POST /memory/graph/edge/weight`** — Modify edge weight (need to provide `weight`)
+### Correcting Memories
+When you find that a persona or relationship is inaccurate, you can correct it through the corresponding management entry:
+1. Set or delete manual overrides in the User Persona
+2. Adjust nodes, relationships, or weights in the Knowledge Graph
+3. Use feedback correction, delete/restore, or re-import to handle outdated content
 
-## Source Management
+Currently, there is no arbitrary text editing entry for general paragraph body text; if a correction is needed, it is recommended to delete the erroneous source and re-import, or handle it via the feedback correction mechanism.
 
-Sources record the origin information of memory data, used for traceability and batch management.
+### Deleting Memories
+Don't want to remember certain things?
+- Single deletion: Find the memory and click "Delete"
+- Batch deletion: Select multiple items and delete them together
+- Delete by source: Delete all memories from a specific group chat
 
-- **`GET /memory/sources`** — List all sources
-- **`POST /memory/sources/delete`** — Delete specified source
-- **`POST /memory/sources/batch-delete`** — Batch delete multiple sources
+⚠️ **Note**: Deleted items go to the Recycle Bin and can still be restored
 
-## Memory Query
+## User Personas
 
-- **`GET /memory/query/aggregate`** — Aggregate query memory
+MaiBot creates a "persona" for every user:
+- Personality traits (cheerful, introverted, etc.)
+- Interests and hobbies (games, anime, etc.)
+- Chatting habits (fondness for emojis, speaking style, etc.)
 
-Aggregate query supports the following optional filter conditions:
-- `query`: Search keywords
-- `limit`: Return quantity limit (1-200)
-- `chat_id`: Filter by chat ID
-- `person_id`: Filter by person ID
-- `time_start` / `time_end`: Filter by time range (Unix timestamp)
+You can:
+- View your own persona
+- Modify inaccurate descriptions
+- Add notes for friends
 
-## Memory Fragment (Episode) Management
+## Advanced Features
 
-Memory fragments are processed memory units containing structured information extracted from original conversations.
+### Memory Reinforcement
+Make certain memories more important:
+- Select important memories
+- Click "Reinforce Memory"
+- These memories will be less likely to be forgotten
 
-- **`GET /memory/episodes`** — List memory fragments (supports search, source, person, time filtering)
-- **`GET /memory/episodes/{episode_id}`** — Get single memory fragment details
-- **`POST /memory/episodes/rebuild`** — Rebuild memory fragments (by source or all)
-- **`GET /memory/episodes/status`** — Get memory fragment processing status
-- **`POST /memory/episodes/process-pending`** — Process pending memory fragments
+### Permanent Memory
+Particularly important content can be set as permanent:
+- Select "Permanent Memory"
+- This content will never be automatically cleaned up
 
-The `process-pending` interface supports `limit` (1-200) and `max_retry` (1-20) parameters to control batch processing scale and retry upper limit.
+### Memory Tuning
+If MaiBot's memory is poor, you can:
+- Adjust memory parameters
+- Reprocess memories
+- Optimize retrieval effects
 
-## Character Profile Management
+### Runtime Maintenance
+The WebUI also provides O&M entries such as runtime self-checks, auto-save switches, vector reconstruction, paragraph vector backfilling, import tasks, and deletion operation logs.
 
-Character profiles store MaiBot's understanding and cognition of each user.
+## Usage Suggestions
 
-- **`GET /memory/profiles/query`** — Query character profiles (supports search by person_id or keywords)
-- **`GET /memory/profiles`** — List all character profiles
-- **`POST /memory/profiles/override`** — Set character profile override text
-- **`DELETE /memory/profiles/override/{person_id}`** — Delete character profile override
+### Daily Maintenance
+- Regularly review memories and delete useless content
+- Correct errors promptly
+- Manually reinforce important information
 
-The profile override function allows manual modification of a user's profile description, and the override text will take precedence over automatically generated profiles.
+### Improving Performance
+- Teach the bot professional knowledge to make it smarter
+- Refine user personas to make conversations more thoughtful
+- Set memory capacity reasonably to balance performance and effect
 
-## Feedback Correction Management
+## FAQ
 
-- **`GET /memory/feedback-corrections`** — List feedback correction records (supports status and rollback status filtering)
-- **`GET /memory/feedback-corrections/{task_id}`** — Get single correction details
-- **`POST /memory/feedback-corrections/{task_id}/rollback`** — Roll back a correction operation
+**Q: How long are memories saved?**
+A: By default, they are saved long-term. Memory evolution causes the weights of old relationships to decay gradually, and low-weight content may be marked for pruning; specific behavior is controlled by the A_Memorix memory evolution configuration.
 
-## V5 Memory Actions
+**Q: Do memories take up much space?**
+A: Text memories occupy very little space; feel free to use them.
 
-The V5 memory system provides more refined memory manipulation capabilities:
+**Q: Can memories be exported?**
+A: Currently, only the export of memory tuning configurations is supported; full memory export is not yet supported.
 
-- **`GET /memory/v5/status`** — Get V5 memory status
-- **`GET /memory/v5/recycle-bin`** — Get V5 recycle bin content
-- **`POST /memory/v5/reinforce`** — Reinforce memory (increase memory strength)
-- **`POST /memory/v5/weaken`** — Weaken memory (decrease memory strength)
-- **`POST /memory/v5/remember-forever`** — Permanent memory (mark as never forget)
-- **`POST /memory/v5/forget`** — Forget memory (move to recycle bin)
-- **`POST /memory/v5/restore`** — Restore memory (restore from recycle bin)
-
-All V5 actions support `target` (target identifier), `strength` (optional strength coefficient), `reason` (operation reason) parameters.
-
-## Deletion Management
-
-Deletion operations adopt a preview-execute-restore safety mode:
-
-- **`POST /memory/delete/preview`** — Preview deletion impact (no actual deletion)
-- **`POST /memory/delete/execute`** — Execute deletion
-- **`POST /memory/delete/restore`** — Restore deleted content
-- **`GET /memory/delete/operations`** — List deletion operation history
-- **`GET /memory/delete/operations/{operation_id}`** — Get single deletion operation details
-- **`POST /memory/delete/purge`** — Completely clear deleted data (supports grace period)
-
-The `purge` interface's `grace_hours` parameter can be used to retain recently deleted data within a certain number of hours, and the `limit` parameter controls the amount cleared in a single operation (1-5000).
-
-## Memory Import
-
-Memory import functionality supports importing external data into long-term memory in multiple ways:
-
-- **`GET /memory/import/settings`** — Get import settings
-- **`GET /memory/import/path-aliases`** — Get path aliases
-- **`GET /memory/import/guide`** — Get import guide
-- **`POST /memory/import/resolve-path`** — Resolve path (supports aliases)
-- **`POST /memory/import/upload`** — Upload file import
-- **`POST /memory/import/paste`** — Paste text import
-- **`POST /memory/import/raw-scan`** — Scan whitelist directory raw text
-- **`POST /memory/import/lpmm-openie`** — LPMM OpenIE import
-- **`POST /memory/import/lpmm-convert`** — LPMM format conversion import
-- **`POST /memory/import/temporal-backfill`** — Time information backfill
-- **`POST /memory/import/maibot-migration`** — Migrate from MaiBot host database
-
-### Import Task Management
-
-- **`GET /memory/import/tasks`** — List import tasks
-- **`GET /memory/import/tasks/{task_id}`** — Get task details
-- **`GET /memory/import/tasks/{task_id}/chunks/{file_id}`** — Get task chunks
-- **`POST /memory/import/tasks/{task_id}/cancel`** — Cancel import task
-- **`POST /memory/import/tasks/{task_id}/retry`** — Retry failed import tasks
-
-When uploading files for import, files are first temporarily stored in subdirectories under the `data/memory_upload_staging/` directory and automatically cleaned up after import completion.
-
-## Retrieval Tuning
-
-Retrieval tuning functionality is used to optimize memory retrieval effects:
-
-- **`GET /memory/retrieval_tuning/settings`** — Get tuning settings
-- **`GET /memory/retrieval_tuning/profile`** — Get current tuning configuration
-- **`POST /memory/retrieval_tuning/profile/apply`** — Apply tuning configuration
-- **`POST /memory/retrieval_tuning/profile/rollback`** — Roll back tuning configuration
-- **`GET /memory/retrieval_tuning/profile/export`** — Export tuning configuration
-- **`POST /memory/retrieval_tuning/tasks`** — Create tuning tasks
-- **`GET /memory/retrieval_tuning/tasks`** — List tuning tasks
-- **`GET /memory/retrieval_tuning/tasks/{task_id}`** — Get task details
-- **`GET /memory/retrieval_tuning/tasks/{task_id}/rounds`** — Get tuning rounds
-- **`POST /memory/retrieval_tuning/tasks/{task_id}/cancel`** — Cancel tuning task
-- **`POST /memory/retrieval_tuning/tasks/{task_id}/apply-best`** — Apply best tuning results
-- **`GET /memory/retrieval_tuning/tasks/{task_id}/report`** — Get tuning report
-
-## Runtime and Maintenance
-
-- **`POST /memory/runtime/save`** — Manually save memory data
-- **`GET /memory/config/schema`** — Get memory configuration schema
-- **`GET /memory/config`** — Get memory configuration
-- **`PUT /memory/config`** — Update memory configuration (structured)
-- **`GET /memory/config/raw`** — Get raw TOML memory configuration
-- **`PUT /memory/config/raw`** — Update raw TOML memory configuration
-- **`GET /memory/runtime/config`** — Get runtime configuration
-- **`GET /memory/runtime/self-check`** — Run self-check
-- **`POST /memory/runtime/self-check/refresh`** — Refresh and run self-check
-- **`GET /memory/runtime/auto-save`** — Get auto-save status
-- **`POST /memory/runtime/auto-save`** — Set auto-save switch
-
-### Maintenance Operations
-
-- **`GET /memory/maintenance/recycle-bin`** — Get recycle bin content
-- **`POST /memory/maintenance/restore`** — Restore memory from recycle bin
-- **`POST /memory/maintenance/reinforce`** — Reinforce memory relationships
-- **`POST /memory/maintenance/freeze`** — Freeze memory (prevent automatic forgetting)
-- **`POST /memory/maintenance/protect`** — Protect memory (specify protection duration)
-
-## Compatible Routes
-
-For backward compatibility, some old interfaces are also mounted under the `/api/webui/api/*` path (`compat_router`), including graph operations, source management, and memory queries. New development should prioritize using the `/memory/*` path.
+**Q: Will memories leak privacy?**
+A: Memory data is stored in the local directory by default. When generating summaries, personas, corrections, or vectors, your configured model service may be called. Please confirm data boundaries based on your deployment method and model provider.

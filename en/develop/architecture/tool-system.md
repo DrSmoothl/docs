@@ -1,43 +1,41 @@
 ---
 title: Tool System Architecture
----
+---# Tool System Architecture
 
-# Tool System Architecture
+This article is written based on the code-map snapshot.
 
-This document is based on a code-map snapshot.
-
-MaiBot's tool system converges plugin tools, legacy `@Action`, MaiSaka built-in capabilities, and external MCP tools into a single abstraction layer. It does not teach plugin authors how to write a `@Tool`, nor does it replace the [Plugin Tool Usage](/en/develop/plugin-dev/tools.md) development tutorial. This document focuses on the internal implementation, explaining how tool declaration, tool invocation, Provider adaptation, and ToolRegistry routing work together.
+MBot's tool system converges plugin tools, legacy Actions, MaiSaka built capabilities, and external MCP tools into a single abstraction layer. It is not responsible for teaching plugin authors how to write an `@Tool`, nor does it replace the development tutorial in [Tool Usage](../plugin-dev/tools.md). This article focuses on internal implementation, explaining how tool declaration, tool invocation, Provider adaptation, and ToolRegistry routing work together.
 
 ## 1. Overview
 
-MaiBot currently unifies four types of tool sources:
+MBot currently unifies four types of tool sources:
 
-**Plugin `@Tool`**: Tool components in the plugin runtime. The plugin SDK uses `@Tool` to declare tools, the runtime writes the declarations into the component registry, and `PluginToolProvider` exposes these tools to the unified tool layer.
+**Plugin `@Tool`**: Tool components within plugin runtime. The Plugin SDK uses `@Tool` to declare tools, the runtime writes these declarations to the component registry, and `PluginToolProvider` exposes these tools to the unified tool layer.
 
-**Legacy `@Action`**: Action components in legacy plugins. SDK 2.0 automatically converts `@Action` to Tool declarations; the MaiBot runtime retains a compatibility path so legacy plugins can still be called by the LLM.
+**Legacy `@Action`**: Action components in legacy plugins. SDK 2.0 automatically converts `@Action` to Tool declarations, and the MaiBot runtime retains a compatibility path to allow legacy plugins to continue being called by the LLM.
 
-**MaiSaka Built-in Tools**: System-level capabilities built into the reasoning engine, such as `send_emoji`, memory queries, reply, wait, finish current round, etc. These tools are provided by `MaisakaBuiltinToolProvider`.
+MaiSaka Built-in Tool**: System-level capabilities built into the inference engine, such as `send_emoji`, memory query, reply, wait, end current round, etc. These tools are provided by `MaisakaBuiltinToolProvider`.
 
-**MCP Tools**: Remote tools bridged from external MCP servers via `MCPToolProvider`. The MCP manager handles connection, discovery, and invocation; the MaiBot tool layer only consumes the unified `ToolSpec` and `ToolExecutionResult`.
+**MCP Tool**: Remote tools bridged to external MCP servers via `MCPToolProvider`. The MCP manager handles connection, discovery, and invocation, while the MaiBot tool layer only consumes the unified `ToolSpec` and `ToolExecutionResult`.
 
-The goal of unification is to let the reasoning engine face only one tool model:
+The goal of unification is to let the inference engine face only one type of tool model:
 
-**Tool Declaration**: Tells the LLM what tools exist, what they do, and what their parameters are.
+**Tool Declaration**: Tells the LLM which tools exist, what they do, and what the parameters are.
 
-**Tool Invocation**: Converts the LLM's selection into an executable request, containing tool name, parameters, session and stream information.
+**Tool Invocation**: Converts LLM selections into executable requests, including tool name, parameters, session, and stream information.
 
-**Tool Execution**: Executed by the corresponding Provider, returns a unified result, which is then written back to chat history or triggers subsequent actions.
+**Tool Execution**: Executed by the corresponding Provider, returning a unified result which is then written back to the chat history or triggers subsequent actions.
 
 ## 2. Architecture Diagram
 
 ```mermaid
 flowchart TD
-    A[Plugin @Tool] -->|Component Registry| P1[PluginToolProvider]
-    B[Legacy @Action] -->|SDK Auto-conversion| P1
-    C[MaiSaka Built-in Tools<br/>send_emoji, manage_memory, etc.] --> P2[MaisakaBuiltinToolProvider]
-    D[External MCP Server] -->|MCPManager| P3[MCPToolProvider]
+    A[插件 @Tool] -->|组件注册表| P1[PluginToolProvider]
+    B[旧 @Action] -->|SDK 自动转换| P1
+    C[MaiSaka 内置 Tool<br/>send_emoji, manage_memory 等] --> P2[MaisakaBuiltinToolProvider]
+    D[外部 MCP Server] -->|MCPManager| P3[MCPToolProvider]
 
-    subgraph ToolProvider Interface
+    subgraph ToolProvider 接口
         P1
         P2
         P3
@@ -46,45 +44,45 @@ flowchart TD
     P1 --> R[ToolRegistry]
     P2 --> R
     P3 --> R
-    R -->|list_tools / get_llm_definitions| E[MaiSaka Reasoning Engine]
+    R -->|list_tools / get_llm_definitions| E[MaiSaka 推理引擎]
     E -->|ToolInvocation| R
-    R -->|Select Provider| P1
-    R -->|Select Provider| P2
-    R -->|Select Provider| P3
+    R -->|选择 Provider| P1
+    R -->|选择 Provider| P2
+    R -->|选择 Provider| P3
     P1 -->|ToolExecutionResult| E
     P2 -->|ToolExecutionResult| E
     P3 -->|ToolExecutionResult| E
 ```
 
-This diagram illustrates two layers of boundaries. The upper layer is tool sources, which can come from plugins, legacy Actions, built-in modules, or MCP servers. The lower layer is a unified protocol — all sources must become `ToolProvider`s, then be uniformly exposed to the MaiSaka reasoning engine via `ToolRegistry`.
+This diagram illustrates two layers of boundaries. The upper layer consists of tool sources, which can come from plugins, legacy Actions, built-in modules, or MCP servers. The lower layer is the unified protocol; all sources must become `ToolProvider`, then are uniformly exposed to the MaiSaka inference engine by `ToolRegistry`.
 
-At the conceptual level, the Provider interface can be understood as `get_tools()` and `execute_tool()`. The actual method names in the source code are `list_tools()` and `invoke()`, but their responsibilities are identical: the former returns tool declarations, the latter executes tool invocations.
+Conceptually layer, the Provider interface can be understood as `get_tools()` and `execute_tool()`. The actual method names in the source code are `list_tools()` and `invoke()`, with identical responsibilities: the former returns tool declarations, and the latter executes tool invocations.
 
 ## 3. Core Concepts
 
 ### 3.1 ToolCall
 
-**Definition**: The tool invocation intent produced by the LLM during reasoning.
+**Definition**: Tool call intent generated by the LLM during the reasoning process.
 
-**Internal Model**: MaiBot internally uses `ToolInvocation` for execution, rather than directly reusing the model API's raw `ToolCall`.
+**Internal Model**: MaiBot uses `ToolInvocation` during internal execution instead of directly reusing the raw `ToolCall` from the model API.
 
 **Key Fields**:
 
-**`tool_name`**: The name of the tool to execute.
+**`tool_name`**: The name of the tool to be executed.
 
 **`arguments`**: The parameter object generated by the LLM.
 
-**`call_id`**: The model tool call ID, used to place the result in the correct position.
+**`call_id`**: The model tool call ID, used to place results back in the correct position.
 
 **`session_id`**: Session ID.
 
 **`stream_id`**: Chat stream ID.
 
-**`reasoning`**: The reasoning text from the model when selecting this tool.
+**`reasoning`**: The reasoning text when the model selects this tool.
 
-**`metadata`**: Extended information, such as anchor message, source markers, or debug fields.
+**`metadata`**: Extension information, such as anchor messages, source tags, or debug fields.
 
-`ToolCall` is the reasoning result; `ToolInvocation` is the execution request. MaiBot normalizes between the two, avoiding the need for each Provider to understand different models' raw formats.
+`ToolCall` is the inference result, and `ToolInvocation` is the execution request. MaiBot standardizes between the two to avoid every Provider having to understand the raw formats of different models.
 
 ### 3.2 ToolIcon
 
@@ -100,7 +98,7 @@ At the conceptual level, the Provider interface can be understood as `get_tools(
 
 **`sizes`**: List of icon sizes.
 
-Icons are not necessary information for the LLM to select tools. They primarily serve UIs that need to display tool lists, monitoring dashboards, or debugging interfaces. The `icons` field in a tool declaration can be empty without affecting reasoning or invocation.
+Icons are not necessary information for the LLM to select tools. They primarily serve UIs that need to display tool lists, monitoring panels, or debug interfaces. `icons` in the tool declaration can be empty and does not affect inference or invocation.
 
 ### 3.3 ToolAnnotation
 
@@ -110,13 +108,13 @@ Icons are not necessary information for the LLM to select tools. They primarily 
 
 **Key Fields**:
 
-**`audience`**: The user or model set the tool is intended for.
+**`audience`**: The target users or set of models for the tool.
 
 **`priority`**: Tool priority.
 
 **`metadata`**: Annotation extension fields.
 
-Annotations express non-functional information about tools. They do not directly determine whether a tool can be invoked, but they provide structured metadata for future scheduling, filtering, display, or permission checks.
+Annotations are used to express non-functional information about tools. They do not directly determine if a tool is callable but can provide structured metadata for future scheduling, filtering, display, or permission judgment.
 
 ### 3.4 ToolSpec
 
@@ -126,29 +124,29 @@ Annotations express non-functional information about tools. They do not directly
 
 **Key Fields**:
 
-**`name`**: Tool name, must be unique within the unified tool view.
+**`name`**: Tool name, which must be unique within the unified tool view.
 
-**`description`**: Tool description for the LLM.
+**`description`**: Tool description for the LLM to use.
 
 **`title`**: Optional display title.
 
 **`parameters_schema`**: Parameter JSON Schema.
 
-**`output_schema`**: Output schema, for models that support structured output.
+**`output_schema`**: Output Schema for models supporting structured output.
 
-**`provider_name`**: Indicates which Provider it comes from.
+**`provider_name`**: Which Provider the declaration comes from.
 
-**`provider_type`**: Provider type, e.g., `plugin`, `builtin`, `mcp`.
+**`provider_type`**: Provider type, such as `plugin`, `builtin`, or `mcp`.
 
 **`enabled`**: Whether it is enabled.
 
-**`icons`**: List of icons.
+**`icons`**: Icon list.
 
-**`annotation`**: Tool annotation.
+**`annotation`**: Tool annotations.
 
-**`metadata`**: Extended metadata.
+**`metadata`**: Extension metadata.
 
-`ToolSpec` is the core data object of the tool system. All sources must first be converted to `ToolSpec` before entering the LLM tool definition list and invocation routing.
+`ToolSpec` is the core data object of the tool system. All sources must first become `ToolSpec` before entering the LLM tool definition list and invocation routing.
 
 ### 3.5 ToolProvider
 
@@ -158,13 +156,13 @@ Annotations express non-functional information about tools. They do not directly
 
 **Conceptual Methods**:
 
-**`get_tools()`**: Lists tool declarations the current Provider can expose. Corresponds to `list_tools(context)` in the source code.
+**`get_tools()`**: Lists the tool declarations the current Provider can expose. Corresponds to `list_tools(context)`.
 
-**`execute_tool()`**: Executes a specified tool invocation. Corresponds to `invoke(invocation, context)` in the source code.
+**`execute_tool()`**: Executes a specified tool call. Corresponds to `invoke(invocation, context)`.
 
-**Resource Cleanup**: The source also requires `close()`, used to release external connections or async resources held by the Provider.
+**Resource Release**: The source code also requires `close()` to release external connections or asynchronous resources held by the Provider.
 
-A Provider does not care about how other sources register, nor does it directly participate in LLM selection. It is only responsible for translating its own tools into unified declarations and executing requests when selected by the registry.
+P Provider does not care how other sources register, nor does it directly participate in LLM selection. It is only responsible for translating its own tools into unified declarations and executing requests when selected by the registry.
 
 ### 3.6 ToolRegistry
 
@@ -174,21 +172,21 @@ A Provider does not care about how other sources register, nor does it directly 
 
 **Responsibilities**:
 
-**Register Provider**: `register_provider()` saves a Provider. Registering a Provider with the same name replaces the previous one.
+**Register Provider**: `register_provider()` saves the Provider. A Provider with the same name registered later will replace the previously registered one.
 
-**Unregister Provider**: `unregister_provider()` removes a Provider by name.
+**Unregister Provider**: `unregister_provider()` removes by Provider name.
 
-**List Tools**: `list_tools()` collects tools in Provider order and skips duplicate names.
+**List Tools**: `list_tools()` collects tools by Provider order and skips duplicate names.
 
-**Query Tools**: `get_tool_spec()` and `has_tool()` determine whether a specific tool exists.
+**Query Tool**: `get_tool_spec()` and `has_tool()` are used to determine if a specific tool exists.
 
-**Generate LLM Definitions**: `get_llm_definitions()` converts `ToolSpec` into `ToolDefinitionInput` consumable by the model layer.
+**Generate LLM Definition**: `get_llm_definitions()` converts `ToolSpec` into an `ToolDefinitionInput` that the model layer can consume.
 
-**Execute Invocation**: `invoke()` finds the responsible Provider by tool name and returns a unified result.
+**Execute Invocation**: `invoke()` finds the responsible Provider based on the tool name and returns a unified result.
 
 **Close Resources**: `close()` closes all Providers.
 
-`ToolRegistry` is the dispatch center of the tool system. It allows the MaiSaka reasoning engine to not know whether tools come from plugins, built-in modules, or MCP.
+`ToolRegistry` is the scheduling center of the tool system. It allows the MaiSaka inference engine to operate without knowing whether tools come from plugins, built-in modules, or MCP.
 
 ### 3.7 ToolExecutionContext
 
@@ -200,7 +198,7 @@ A Provider does not care about how other sources register, nor does it directly 
 
 **`stream_id`**: Chat stream ID.
 
-**`reasoning`**: The model's reasoning text for selecting the tool.
+**`reasoning`**: Reasoning text when the model selects the tool.
 
 **`is_group_chat`**: Whether it is a group chat.
 
@@ -210,13 +208,13 @@ A Provider does not care about how other sources register, nor does it directly 
 
 **`platform`**: Platform name.
 
-**`metadata`**: Extended context.
+**`metadata`**: Extension context.
 
-The execution context passes the session state at the time of model invocation to the Provider. Plugin tools in particular depend on these fields, such as using `stream_id` to find the chat stream where messages can be sent.
+Execution context passes the session state to the Provider during model invocation. Plugin tools especially depend on these fields to find `stream_id` to send messages.
 
 ### 3.8 ToolAvailabilityContext
 
-**Definition**: Context for determining tool exposure availability.
+**Definition**: Tool availability context.
 
 **Key Fields**:
 
@@ -232,33 +230,32 @@ The execution context passes the session state at the time of model invocation t
 
 **`platform`**: Platform name.
 
-The availability context is used to decide whether a tool should be exposed to the LLM in the current chat. Built-in tools filter based on group chat, private chat, and configuration; plugin tools can also make visibility judgments based on runtime state.
+Availability context determines whether a tool should be exposed in the current chat. Built-in tools are filtered based on group or private chat; plugin tools can also determine visibility based on runtime state.
 
 ### 3.9 ToolExecutionResult
 
-**Definition**: Unified tool execution result.
+**Definition**: Tool execution result.
 
 **Key Fields**:
 
-**`tool_name`**: The name of the executed tool.
+**`tool_name`**: The name of the tool being executed.
 
-**`success`**: Whether it succeeded.
+**`success`**: Whether it was successful.
 
 **`content`**: Text result.
 
-**`error_message`**: Error message.
+**`error_message`**: Error information.
 
-**`structured_content`**: Structured result, typically a dict or list.
+**`structured_content`**: Structured result, usually a dict or list.
 
-**`content_items`**: May contain multimedia result items such as images, audio, and resource links.
+**`content_items`**: Media items including images, audio, and resource links.
 
-**`post_history_messages`**: Messages to append to history after execution.
+**`post_history_messages`**: Messages appended after execution.
 
-**`metadata`**: Extended metadata.
+**`metadata`**: Metadata.
 
-`ToolExecutionResult.get_history_content()` converts the result into text suitable for writing to history messages. If `content_items` exists, it preferentially constructs a readable summary to avoid putting media binaries directly into the LLM context.
-
-## 4. Detailed Explanation of Four Tool Source Types
+`ToolExecutionResult.get_history_content()` converts results into text for history. If `content_items` exists, a summary is prioritized.
+## 4. Detailed breakdown of four tool sources
 
 ### 4.1 Plugin `@Tool`
 
@@ -270,49 +267,35 @@ The availability context is used to decide whether a tool should be exposed to t
 
 **provider_type**: `plugin`.
 
-Plugin `@Tool` is registered as a plugin component via the SDK. After the plugin runtime starts, the Host-side `ComponentRegistry` stores Tool entries, and `ComponentQueryService` provides a read-only query view. `PluginToolProvider` does not hold plugin objects directly, but reads currently available tool declarations through `component_query_service`.
+Plugin `@Tool` is registered as a component. After the plugin starts, the Host-side `ComponentRegistry` saves Tool entries, and MaiSaka reads the available tool declarations directly.
 
-Declaration phase:
+**Declaration Phase**:
+The Runner process loads the plugin and registers the component.
+**Component Registration**: The Host-side `ComponentRegistry` records tool name, plugin method, parameter schema, visibility, and enabled status.
+**Query View**: `ComponentQueryService` converts to unified declarations.
+**Provider Exposure**: `PluginToolProvider.list_tools()` returns the list.
 
-**Plugin Loading**: The Runner child process loads the plugin and registers Tool components.
-
-**Component Registry**: The Host-side `ComponentRegistry` records the tool name, plugin ID, invocation method, parameter schema, visibility, and enabled status.
-
-**Query View**: `ComponentQueryService` converts registry entries into `ToolSpec`.
-
-**Provider Exposure**: `PluginToolProvider.list_tools()` returns a unified tool list.
-
-Execution phase:
-
-**Tool Name Matching**: `PluginToolProvider.invoke()` finds the Tool entry by `ToolInvocation.tool_name`.
-
-**IPC Invocation**: The Host calls the plugin method in the Runner child process via plugin runtime RPC.
-
-**Result Normalization**: The plugin return value is converted to `ToolExecutionResult`.
-
-**Legacy Compatibility**: Tools converted from legacy `@Action` also go through the same execution path.
+**Execution Phase**:
+**Tool Name Matching**: `PluginToolProvider.invoke()` finds Tool entries based on name.
+**IPC Invocation**: Host calls plugin methods in the Runner process.
+**Result Normalization**: Plugin return values are converted to `ToolExecutionResult`.
+**History Compatibility**: Legacy `@Action` follow the same execution path.
 
 ### 4.2 Legacy `@Action`
 
-**Source Entry**: Plugin SDK conversion layer and `plugin_runtime/tool_provider.py`.
+**Source Entry**: Plugin SDK and `plugin_runtime/tool_provider.py`.
 
 **Provider**: Still exposed by `PluginToolProvider`.
 
-**Compatibility Approach**: The SDK internally converts `@Action` to `@Tool` declarations.
+**Compatibility Method**: SDK converts `@Action` to `@Tool` declarations. Legacy Actions gain tool name, description, and invocation entry after conversion. The focus of legacy Action compatibility is not to let the LLM know it was an Action, but to let it enter the system with Tool semantics.
 
-The focus of legacy Action compatibility is not to let the LLM know it was once an Action, but to make it enter the unified system with Tool semantics. After conversion, legacy Actions acquire a tool name, description, parameter schema, and invocation entry point. The runtime retains necessary metadata to distinguish them as originating from legacy components.
+**Compatibility Boundary**:
+**Not encouraging new plugins**: New plugins should use `@Tool`.
+**Legacy Execution Path**: MaiBot runtime still calls tools converted from legacy Actions.
+**No Duplicate Tutorial**: Action to Tool conversion belongs to plugin development; this article only explains the architecture.
+**Unified Result**: Still returns `ToolExecutionResult` after execution; MaiSaka does not care if it comes from a legacy Action or a new Tool.
 
-Compatibility boundaries:
-
-**Not recommended for new plugins**: New plugins should use `@Tool` directly.
-
-**Execution path preserved**: The MaiBot runtime can still invoke tools converted from legacy Actions.
-
-**No API tutorial duplication**: The details of Action-to-Tool conversion belong to the plugin development documentation boundary; this document only explains the architectural position.
-
-**Unified result model**: After execution, `ToolExecutionResult` is still returned; MaiSaka does not care whether it came from a legacy Action or a new Tool.
-
-### 4.3 MaiSaka Built-in Tools
+### 4.3 MaiSaka Built-in Tool
 
 **Source Entry**: `maibot/src/maisaka/builtin_tool/`.
 
@@ -321,24 +304,16 @@ Compatibility boundaries:
 **provider_name**: `maisaka_builtin`.
 
 **provider_type**: `builtin`.
+Built-in tools are part of the MaiSaka inference engine used to complete core actions the model cannot perform directly. For example, `send_emoji` sends emojis, memory query tools read long-term memory or personas, `reply` sends replies, and `finish` ends the current thought round.
 
-Built-in tools are part of the MaiSaka reasoning engine, used to perform core actions that the model itself cannot directly complete. For example, `send_emoji` sends emoji stickers, memory query tools read long-term memory or character profiles, `reply` sends a reply, `finish` ends the current thinking round.
-
-Built-in tool characteristics:
-
-**Tightly bound to reasoning flow**: Built-in tools serve the Planner, Timing Gate, and Action Loop.
-
-**Centralized declaration**: `BUILTIN_TOOL_ENTRIES` centrally declares tool names, spec constructors, and handlers.
-
-**Phase control**: Tools can be marked as `timing`, `action`, or `both`.
-
-**Visibility control**: Tools can be marked as `visible`, `deferred`, or `hidden`.
-
-**Configuration filtering**: Some tools are enabled or disabled based on global configuration.
-
-**Chat scope filtering**: Some tools are exposed only in group chats or private chats.
-
-`MaisakaBuiltinToolProvider.list_tools()` calls the built-in tool aggregation function, filtering tools by the current availability context. `invoke()` finds the corresponding handler by tool name and executes it.
+**Built-in tool features**:
+**Tightly coupled reasoning process**: Serve the Planner, Timing Gate, and Action Loop.
+**Centralized Declaration**: `BUILTIN_TOOL_ENTRIES` declares tool names, spec constructors, and handlers.
+**Stage Control**: Tools can be marked as `timing`, `action`, or `both`.
+**Visibility Control**: Tools can be marked as `visible`, `deferred`, or `hidden`.
+**Configuration Filtering**: Some tools are enabled or disabled based on global configuration.
+**Chat Scope Filtering**: Some tools are only exposed in group or private chats.
+`MaisakaBuiltinToolProvider`'s `list_tools()` calls built-in tool aggregation functions, filtering tools by current availability context. `invoke()` then finds the corresponding handler by tool name and executes it.
 
 ### 4.4 MCP Tool
 
@@ -348,147 +323,12 @@ Built-in tool characteristics:
 
 **provider_name**: `mcp`.
 
-**provider_type**: `mcp`.
+**provider_type**: `mcp`.nMTools come from external MCP servers. MaiBot uses `MCPManager` to connect to servers, discover tools, invoke tools, and close connections. `MCPToolProvider` is the adapter for this capability.
 
-MCP tools come from external MCP servers. MaiBot connects to servers, discovers tools, invokes tools, and closes connections via `MCPManager`. `MCPToolProvider` is the adapter for this capability.
-
-MCP tool characteristics:
-
-**External capability**: Tool implementations reside outside the MaiBot process.
-
-**Runtime connection**: MaiBot initializes the manager based on MCP configuration at startup.
-
-**Tool discovery**: `MCPManager.get_tool_specs()` returns a unified `ToolSpec` list.
-
-**Tool invocation**: `MCPManager.call_tool_invocation()` executes remote calls.
-
-**Resource cleanup**: `MCPToolProvider.close()` closes MCP connections.
-
-MCP tools extend MaiBot's capability boundaries, but the call chain remains unified. MaiSaka only sees `ToolSpec`, only submits `ToolInvocation` during execution, and only receives `ToolExecutionResult` in return.
-
-## 5. Key Flows
-
-### 5.1 Tool Registration
-
-```mermaid
-sequenceDiagram
-    participant B as Built-in Tool Catalog
-    participant P as PluginRuntime
-    participant M as MCPManager
-    participant R as ToolRegistry
-
-    B->>R: register_provider(MaisakaBuiltinToolProvider)
-    P->>R: register_provider(PluginToolProvider)
-    M->>R: register_provider(MCPToolProvider)
-```
-
-Registration occurs during the MaiSaka runtime initialization phase. The built-in Provider and plugin Provider are registered by default. The MCP Provider is only registered when MCP is enabled and tools are successfully discovered.
-
-Registration rules:
-
-**Same-name replacement**: `ToolRegistry.register_provider()` removes an existing Provider with the same name before adding the new one.
-
-**Order preserved**: When listing tools, Providers are traversed in registration order.
-
-**Deduplication protection**: If multiple Providers expose tools with the same name, the first registered one is kept, subsequent ones are skipped with a warning logged.
-
-**Enabled filter**: Tools with `ToolSpec.enabled` set to false do not enter the unified list.
-
-### 5.2 Tool Discovery
-
-```mermaid
-flowchart LR
-    A[ToolRegistry.list_tools] --> B[Traverse Providers]
-    B --> C[Provider.list_tools]
-    C --> D[ToolSpec List]
-    D --> E{enabled?}
-    E -->|No| F[Skip]
-    E -->|Yes| G{Tool name exists?}
-    G -->|Yes| H[Keep first registered]
-    G -->|No| I[Add to unified tool list]
-```
-
-Tool discovery is not a one-time static snapshot. Each time MaiSaka needs to prepare tool definitions for the model, it collects currently available tools through `ToolRegistry.list_tools()`.
-
-The discovery phase handles three types of differences:
-
-**Source differences**: Plugins, built-in, and MCP have different declaration sources, but they all end up as `ToolSpec`.
-
-**Context differences**: Different chat streams, group chats, or private chats may expose different tools.
-
-**Visibility differences**: Hidden tools do not enter the LLM tool list, and deferred discovery tools may also be temporarily unavailable.
-
-### 5.3 Reasoning Engine Selection
-
-MaiSaka sets the unified `ToolRegistry` through `ChatLoopService`. When the Planner needs tool definitions, `ToolRegistry.get_llm_definitions()` converts `ToolSpec` into model-layer tool definitions.
-
-Selection process:
-
-**Model sees the tool list**: The LLM decides whether to invoke a tool based on the prompt, context, and tool descriptions.
-
-**Model returns ToolCall**: The model returns the tool name and arguments.
-
-**MaiBot constructs ToolInvocation**: Normalizes the model call into an internal request.
-
-**Registry looks up Provider**: Traverses Providers by tool name, finds the first one that declares and has the tool enabled.
-
-**Execute the corresponding Provider**: Calls `provider.invoke()`.
-
-### 5.4 Tool Invocation
-
-```mermaid
-sequenceDiagram
-    participant E as MaiSaka Reasoning Engine
-    participant R as ToolRegistry
-    participant P as ToolProvider
-    participant H as Tool Handler
-
-    E->>R: invoke(ToolInvocation, ToolExecutionContext)
-    R->>P: list_tools(ToolAvailabilityContext)
-    P-->>R: ToolSpec List
-    R->>P: invoke(ToolInvocation, ToolExecutionContext)
-    P->>H: Execute Tool
-    H-->>P: Raw Result
-    P-->>R: ToolExecutionResult
-    R-->>E: ToolExecutionResult
-```
-
-The key aspect of the invocation phase is locating the Provider. `ToolRegistry.invoke()` converts `ToolExecutionContext` to `ToolAvailabilityContext` to match tool declarations in the current chat environment. Once the Provider is found, it executes the tool and returns a unified result.
-
-Exception handling:
-
-**Provider throws exception**: The Registry catches the exception and returns a failed `ToolExecutionResult`.
-
-**Provider tool not found**: Returns `Tool not found: {tool_name}`.
-
-**Tool itself fails**: The Provider should return `success=False` and populate `error_message`.
-
-**Resource cleanup**: When the runtime shuts down, `ToolRegistry.close()` is called, and each Provider releases its own resources.
-
-### 5.5 Result Return
-
-After a tool result enters MaiSaka, it is written into the chat history or triggers subsequent actions. The result may contain:
-
-**Plain text result**: Written to `content`, suitable for simple query tools.
-
-**Structured result**: Written to `structured_content`, suitable for data the model can continue to analyze.
-
-**Media content items**: Written to `content_items`, such as images, audio, or resource links.
-
-**Subsequent messages**: Written to `post_history_messages`, used to supplement context after tool execution.
-
-`ToolExecutionResult.get_history_content()` is responsible for generating a history summary. It prefers text content first, then content item summaries, then structured content JSON, and finally error messages.
-
-## 6. Relationship with Plugin Development
-
-The plugin development documentation [Tool Component](/en/develop/plugin-dev/tools.md) focuses on how plugin authors use `@Tool`, how to declare parameters, how to return values, and how to handle images and media. This document does not repeat those API usages, only explaining their positions in the internal architecture.
-
-For plugin authors, three boundaries need to be understood:
-
-**Declaration boundary**: The plugin uses `@Tool` to declare capabilities; the runtime converts them into Tool components.
-
-**Discovery boundary**: MaiSaka discovers plugin tools through `PluginToolProvider` and `ToolRegistry`.
-
-**Execution boundary**: Plugin methods execute in the Runner child process; the Host receives results through the unified tool protocol.
-
-For MaiBot's internal implementation, plugin tools are just one source of `ToolProvider`. Regardless of whether a tool comes from a plugin, legacy Action, built-in module, or MCP, MaiSaka ultimately faces the same `ToolSpec`, `ToolInvocation`, and `ToolExecutionResult`.
+**MCP tool features**:
+**External Capability**: Tool implementation resides outside the MaiBot process.
+**Runtime Connection**: The manager initializes based on MCP configuration when MaiBot starts.
+**Tool Discovery**: `MCPManager.get_tool_specs()` returns a unified `ToolSpec` list.
+**Tool Invocation**: `MCPManager.call_tool_invocation()` executes remote calls.
+**Resource Release**: `MCPToolProvider.close()` closes the MCP connection.
+MCP tools extend MaiBot's capability boundary, but the call chain remains unified. MaiSaka only sees `ToolSpec`, and only submits `ToolInvocation` during execution.

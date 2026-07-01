@@ -1,63 +1,63 @@
 # MaiBot Documentation
 
-This repository contains the official documentation for MaiBot. MaiBot is an intelligent chatbot designed for QQ groups, featuring LLM-based conversational capabilities, a memory system, and emotional expression.
+This repository is the official documentation for MaiBot. MaiBot is an intelligent chatbot specifically designed for QQ groups, featuring LLM-based conversation capabilities, a memory system, and emotional expression functions.
 
 ## About the Documentation
 
-This documentation site is built with [VitePress](https://vitepress.dev/), covering everything you need to install, deploy, configure, and develop (in progress) MaiBot.
+This documentation site is built using [VitePress](https://vitepress.dev/), covering everything needed for the installation, deployment, configuration, and development (incomplete) development of MaiBot.
 
 ## Documentation Sections
 
 ### Table of Contents
 
 - **Installation Guide**
-    Provides standard and beginner-friendly installation steps to help users get started quickly.
+    Provides installation steps for both the standard version and a beginner-friendly version to help users get started quickly.
 
-- **API Reference (in progress)**
-    Detailed description of the API interfaces provided by MaiBot and how to use them.
+- **API Reference (Incomplete)**
+    Detailed introduction to the API interfaces provided by MaiBot and how to use them.
 
 - **Deployment Methods**
-    Covers multiple deployment options, including Docker, Linux, Windows, and Synology NAS.
+    Covers various deployment methods, including Docker, Linux, Windows, and Synology NAS.
 
 - **FAQ and Troubleshooting**
-    A collection of common questions and their solutions to help users diagnose and resolve issues.
+    Collects common issues and their solutions to help users troubleshoot and resolve problems.
 
 - **File Structure and Configuration**
-    Explains the project file structure and configuration methods, allowing users to customize and extend.
+    Explains the project's file structure and configuration methods to facilitate user customization and extension.
 
 ## Local Development
 
 ### Local Deployment Requirements
-Use Node.js to install the corresponding dependencies
+Use Nodejs to install the corresponding dependencies
 
 ```bash
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Start the development server
+# 启动开发服务器
 pnpm docs:dev
 
-# Build for production
+# 构建生产版本
 pnpm docs:build
 
-# Preview the production build
+# 预览生产版本
 pnpm docs:preview
 ```
 
-## Contributing
+## Contribution
 
-### Full Workflow
+### Full Method
 If you want to modify the documentation, first fork the repository, make your changes, and then submit a PR.
 
-If you want to add a file, fork the repository, add your document to the appropriate directory (or create a new one), and update the `index.md` files at each level to include your document.
+If you want to add files, after forking, add the documentation you wrote and place it in the corresponding directory (or create a new directory), and modify the `index.md` at each level to include your documentation.
 
-Then locate the `.vitepress/config.mts` file and modify the navigation so it correctly points to your file.
+Then, find the `config.mts` file under `.vitepress` and modify the navigation within it so that it can correctly navigate to your file.
 
-After that, submit a PR.
+After that, you can initiate a PR.
 
-### Lazy Workflow
+### Lazy Method
 If you want to modify the documentation, first fork the repository, make your changes, and then submit a PR.
 
-If you want to add a file, fork the repository, add your document to the root directory, submit a PR, and specify where you would like the file to be placed.
+If you want to add files, after forking, add the documentation you wrote and place it in the root directory, then initiate a PR and specify the directory location where you want it placed.
 
-If the PR is approved, we will manually configure the directories for you.
+If the PR is approved, we will manually help you configure the various directories.

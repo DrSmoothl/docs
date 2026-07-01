@@ -1,209 +1,207 @@
 ---
-title: Emoji Features
----
+title: Sticker Feature
+---# Meme Functionality 😊
 
-# Emoji Features 😊
+MaiBot can do more than just send text; it can send memes too! And it doesn't just send them randomly—it intelligently selects the most appropriate meme based on the chat content to make conversations more interesting and vivid.
 
-MaiBot doesn't just send text messages - it sends emojis too! And not randomly - it intelligently chooses the perfect emojis based on your conversation, making chats more fun and lively.
+## MaiBot's Meme Superpowers
 
-## MaiBot's Emoji Superpowers
+### 🎯 Intelligent Selection
+**Choosing by Emotion**
+- When you're happy, it sends a happy meme
+- When you're sad, it sends a comforting meme
+- When you're angry, it sends a meme to ease the tension
 
-### 🎯 Smart Selection
-**Matches Emotions to Emojis**
-- When you're happy, it sends happy emojis
-- When you're sad, it sends comforting emojis  
-- When you're angry, it sends emojis to ease the tension
+**Choosing by Content**
+- Talking about food? It sends a foodie meme
+- Talking about games? It sends gaming-related memes
+- Talking about work? It sends "corporate slave" memes
 
-**Matches Content to Emojis**
-- Talking about food? It sends foodie emojis
-- Talking about games? It sends gaming emojis
-- Talking about work? It sends working-person emojis
+**Choosing by Occasion**
+- Polite memes for formal occasions
+- Funny memes for relaxed occasions
+- Gentle memes for late-night chats
 
-**Matches Occasion to Emojis**
-- Formal situations get polite emojis
-- Casual chats get funny emojis
-- Late-night talks get gentle emojis
+### 📸 Automatic Collection
+**Collects Great Memes on Sight**
+- When someone sends a meme in the group, it secretly collects it
+- Automatically recognizes the content and emotion of the meme
+- Tags every meme
 
-### 📸 Auto Collection
-**Spots Good Emojis and Saves Them**
-- When someone sends an emoji in group chat, it secretly saves it
-- Automatically recognizes the emoji's content and emotion
-- Tags each emoji for easy finding
+**Building Its Own Meme Library**
+- Collects memes of various styles
+- Categorizes them by emotion and scenario
+- The more it collects, the better it understands your group's taste
 
-**Builds Its Own Emoji Library**
-- Collects emojis of various styles
-- Sorts them by emotion and situation
-- The more it collects, the more it understands your group's taste
+### 🧠 Understanding Memes
+**Deciphering Memes**
+- Can recognize the emotions expressed in a meme
+- Understands the memes' tropes and meanings
+- Knows exactly when it's appropriate to use them
 
-### 🧠 Understands Emojis
-**Reads Emoji Messages**
-- Can identify the emotion an emoji expresses
-- Understands the meme and meaning behind emojis
-- Knows when it's appropriate to use them
-
-**More Than Just Collecting**
-- Really understands how to use each emoji
-- Won't use them in wrong situations
+**More Than Just Collection**
+- Truly understands how to use each meme
+- Won't use them in the wrong context
 - Uses them just right
 
-## How Do Emojis Work?
+## How Do Memes Work?
 
 ### 1️⃣ Collection Phase
-**Auto Discovery**
+**Automatic Discovery**
 ```
-Group member: [sends a funny emoji]
-MaiBot: (This emoji is interesting, saved!)
-      (Tags: funny, cat, happy)
+群友：[发了一个搞笑表情包]
+MaiBot：（这个表情好有趣，收藏了！）
+     （标签：搞笑、猫、开心）
 ```
 
-**Smart Recognition**
-- Uses AI to identify emoji content
+**Intelligent Recognition**
+- Uses AI to recognize meme content
 - Analyzes the expressed emotion
-- Auto-generates tags
+- Automatically generates tags
 
-### 2️⃣ Sorting and Organizing
-**Sort by Emotion**
-- Happy, sad, angry, surprised
-- Funny, warm, inspiring, complaining
-- Formal, casual, friendly, humorous
+### 2️⃣ Categorization & Organization
+**Categorized by Emotion**
+- Happy, Sad, Angry, Surprised
+- Funny, Warm, Inspirational, Ranting
+- Formal, Casual, Friendly, Humorous
 
-**Sort by Situation**
-- Daily chat, work discussion
-- Gaming sessions, late-night talks
-- Holiday wishes, comfort and encouragement
+**Categorized by Scenario**
+- Daily chat, Work discussion
+- Gaming sessions, Late-night heart-to-hearts
+- Holiday greetings, Comfort and encouragement
 
-### 3️⃣ Smart Selection
-**Match by Emotion**
+### 3️⃣ Intelligent Selection
+**Emotion Matching**
 ```
-User: Work is so tiring today 😭
-MaiBot: [sends a "working person keep going" emoji]
-```
-
-**Match by Content**
-```
-User: Hot pot tonight!
-MaiBot: [sends a "foodie happy" emoji]
+用户：今天工作好累啊 😭
+MaiBot：[发一个"打工人加油"的表情包]
 ```
 
-**Match by Relationship**
-- Uses funny emojis with familiar people
-- Uses polite emojis with strangers
-- Uses affectionate emojis with good friends
+**Content Matching**
+```
+用户：今晚吃火锅！
+MaiBot：[发一个"吃货开心"的表情包]
+```
 
-## Real Examples 🌰
+**Relationship Matching**
+- Funny memes for close acquaintances
+- Polite memes for strangers
+- Intimate memes for best friends
+
+## Practical Examples 🌰
 
 ### Emotion Matching
-**When You're Happy**:
+**When you're happy**:
 ```
-You: I passed my exam! So happy!
-MaiBot: Awesome! Congratulations! 🎉
-      [sends a "celebration" emoji]
+你：考试过了！好开心！
+MaiBot：太棒了！恭喜你！🎉
+     [发一个"庆祝"的表情包]
 ```
 
-**When You're Sad**:
+**When you're sad**:
 ```
-You: Got scolded by boss today, feeling down
-MaiBot: Hugs, working people all understand this pain 😢
-      [sends a "comfort" emoji]
+你：今天被老板骂了，好难受
+MaiBot：抱抱你，打工人都不容易 😢
+     [发一个"安慰"的表情包]
 ```
 
 ### Content Matching
-**Talking About Food**:
+**Talking about food**:
 ```
-Group: BBQ tonight?
-MaiBot: Let's go! BBQ is the best! 😋
-      [sends a "foodie excited" emoji]
-```
-
-**Talking About Games**:
-```
-Group: Gaming tonight?
-MaiBot: Let's do it! I'm great at support 🎮
-      [sends a "game start" emoji]
+群友：今晚去吃烧烤？
+MaiBot：冲！烧烤yyds！😋
+     [发一个"吃货兴奋"的表情包]
 ```
 
-### Situation Matching
-**Work Occasion**:
+**Talking about games**:
 ```
-Colleague: What do you all think of this plan?
-MaiBot: I think it's quite complete, details can be optimized 👍
-      [sends a "professional nod" emoji]
-```
-
-**Friends Chatting**:
-```
-Friend: So bored today
-MaiBot: Here, let me show you something funny 😄
-      [sends a "silly" emoji]
+群友：今晚开黑？
+MaiBot：走起！我辅助贼6 🎮
+     [发一个"游戏开始"的表情包]
 ```
 
-## Emoji Management
+### Scenario Matching
+**Work context**:
+```
+同事：这个方案大家觉得怎么样？
+MaiBot：我觉得挺完整的，细节可以再优化 👍
+     [发一个"专业点头"的表情包]
+```
 
-### 📁 Auto Organization
-**Smart Categorization**
-- Auto-sorts by emotion and situation
-- Regularly cleans duplicate emojis
-- Keeps the most popular ones
+**Casual chat with friends**:
+```
+好友：今天好无聊啊
+MaiBot：来，给你看个搞笑的 😄
+     [发一个"沙雕"的表情包]
+```
+
+## Meme Management
+
+### 📁 Automatic Organization
+**Intelligent Classification**
+- Automatically categorizes by emotion and scenario
+- Regularly cleans up duplicate memes
+- Keeps the most popular memes
 
 **Capacity Management**
-- When emoji library is full, intelligently removes less used ones
-- Keeps frequently used ones, deletes rarely used ones
-- Uses AI to decide what stays and what goes
+- Intelligently prunes when the meme library is full
+- Keeps frequently used ones, deletes unused ones
+- Uses AI to decide what to keep and what to delete
 
 ### 🔍 Quick Search
 **Tag Search**
-- Each emoji has multiple tags
-- Find whatever type you want quickly
-- Supports multi-dimensional search by emotion, situation, content
+- Every meme has multiple tags
+- Quickly find the type of meme you're looking for
+- Supports multi-dimensional search by emotion, scenario, and content
 
-**Smart Recommendations**
-- Recommends suitable emojis based on chat content
-- The more you use it, the more it understands your group's taste
-- Recommendation accuracy keeps improving
+**Intelligent Recommendation**
+- Recommends suitable memes based on chat content
+- Gets better at understanding your group's taste over time
+- Recommendation accuracy continuously improves
 
 ## What Can You Do?
 
-### 👀 View Emoji Library
-Through WebUI you can:
-- See what emojis MaiBot has collected
-- View tags for each emoji
+### 👀 View Meme Library
+Through the WebUI, you can:
+- See which memes MaiBot has collected
+- View the tags for each meme
 - See usage frequency and last used time
-- Filter by emoji status: Known, Unknown, Adopted, or Discarded
+- Filter meme status by "Recognized / Unrecognized / Appropriated / Discarded"
 
-### 🛠️ Manage Emojis
-- Delete inappropriate emojis
-- Add custom tags to emojis
-- Set usage preferences for certain emojis
-- Deleting an unregistered emoji removes both the database record and local file; deleting a registered emoji also unloads it from the usable emoji library first
+### 🛠️ Manage Memes
+- Delete inappropriate memes
+- Add custom tags to memes
+- Set usage preferences for certain memes
+- Deleting unregistered memes will synchronously delete database records and local files; deleting registered memes will first uninstall them from the available meme library
 
-### 📤 Upload Emojis
-- Manually upload emojis you like
-- Fill in a tag list during upload; tags are merged into the emoji description
-- Enrich its emoji library
-- Emojis uploaded from WebUI are registered immediately as Adopted
+### 📤 Upload Memes
+- Manually upload memes you like
+- Fill in a tag list during upload, which the system will merge into a meme description
+- Enrich its meme library
+- Memes uploaded via WebUI will be directly marked as "Appropriated"
 
 ### ⚙️ Set Preferences
-- Set emoji usage frequency
-- Choose preferred emoji styles
-- Control auto-collection on/off
+- Set the frequency of meme usage
+- Choose preferred meme styles
+- Control the automatic collection toggle
 
-## Emoji Tips
+## Meme Tips
 
 ### 💡 Usage Suggestions
-- Use emojis in moderation, don't fill the screen
-- Choose appropriate emojis for the occasion
-- Good emojis make conversations more interesting
+- Use memes in moderation; don't fill the whole screen
+- Choose the right meme based on the occasion
+- A good meme can make a conversation much more interesting
 
 ### 🎨 Diverse Styles
-- Collect emojis of different styles
-- Have cute, funny, and serious ones
+- Collect memes of different styles
+- Have a mix of cute, funny, and serious ones
 - Adapt to different chat scenarios
 
 ### 🔄 Regular Updates
-- Emojis have trends too
-- Regularly add new emojis
-- Remove outdated ones
+- Memes have trends
+- Regularly add new memes
+- Phase out outdated memes
 
 ---
 
-MaiBot's emoji feature isn't just simple "image sending" - it truly understands emoji meanings and uses them just right. It will make your conversations more lively, more fun, and more "human"!
+MaiBot's meme functionality isn't just about "sending images"; it's about truly understanding the meaning of memes and using them perfectly. It will make your conversations more vivid, more interesting, and more "human"!

@@ -1,231 +1,146 @@
 ---
-title: Chat and Statistics
----
+title: Chat History and Statistics
+---# Chat History and Statistics
 
-# Chat and Statistics
+See how active MaiBot is and what it has been chatting about!
 
-WebUI's chat and statistics module includes built-in chat rooms, chat history, statistics dashboard, and data management functions for character information, expression methods, jargon, and emojis. These functions are distributed across multiple route modules.
+## Chat Statistics
 
-## Built-in Chat Room
+### 📊 Data Overview
+Open the "Chat Statistics" page to see:
+- **Total Messages** - How many messages the bot received
+- **Replies** - How many messages the bot replied to
+- **Uptime** - How long the bot has been running
+- **Average Response** - How fast the response speed is
 
-WebUI provides an independent chat room where you can directly chat with MaiMai on the web page. The chat room uses independent platform identifiers (`WEBUI_CHAT_PLATFORM`) and group ID (`WEBUI_CHAT_GROUP_ID`), isolated from external platform messages.
+### 💰 Cost Statistics
+Track your spending:
+- **Total Cost** - Total amount spent
+- **Hourly Cost** - Average cost per hour
+- **Token Usage** - How much text the AI processed
+- **Cost per Model** - Spending breakdown for different AI models
 
-- **`GET /api/chat/history`** — Get chat history records
-- **`GET /api/chat/platforms`** — Get available platform list
-- **`GET /api/chat/persons`** — Get user list for specified platform
-- **`DELETE /api/chat/history`** — Clear chat history records
-- **`GET /api/chat/info`** — Get chat room information
+### 📈 Trend Charts
+Intuitive charts showing:
+- **24 Hours** - Activity over the last day
+- **7 Days** - Trends over the last week
+- **Peak Hours** - When the bot is most active
 
-### Chat History
+## Chat History
 
-`GET /api/chat/history` supports the following parameters:
-- `limit`: Number of messages to return (1-200, default 50)
-- `group_id`: Specify group ID (defaults to WebUI chat room group)
+### View Records
+View detailed chat history:
+- Who said what
+- How the bot replied
+- When the conversation happened
+- Which group chat it occurred in
 
-### Chat Room Information
+### Search Records
+Looking for specific content?
+- Filter by user
+- Search by time range
+- Filter by group chat
 
-`GET /api/chat/info` returns basic information about the current chat room:
-- `bot_name`: Robot nickname
-- `platform`: WebUI platform identifier
-- `group_id`: Chat room group ID
-- `active_sessions`: Number of currently active WebSocket connections
+### Record Management
+- **Clear Records** - Delete old records
+- **Backup Important Chats** - Save interesting conversations
 
-## Statistics Dashboard
+## User Management
 
-The statistics module provides visual statistics for model usage, costs, Token consumption, and other data.
+### User List
+Displays all users who have chatted:
+- User nicknames and avatars
+- Duration of acquaintance
+- Chat frequency
+- Which platform they were met on
 
-- **`GET /statistics/dashboard`** — Get complete dashboard data
-- **`GET /statistics/summary`** — Get statistics summary
-- **`GET /statistics/models`** — Get model dimension statistics
+### User Personas
+Click a user to see:
+- Personality traits
+- Interests and hobbies
+- Chatting habits
+- Interaction history
 
-### Dashboard Data
+### User Statistics
+- **Total Users** - How many users are known
+- **Active Users** - How many chat frequently
+- **Platform Distribution** - Breakdown by QQ, WeChat, etc.
 
-`GET /statistics/dashboard` accepts `hours` parameter (default 24) and returns the following data:
+## Expression Styles
 
-**Summary Statistics (StatisticsSummary)**:
+### Speaking Style
+MaiBot learns different ways of expressing itself:
+- Formal/Casual
+- Lively/Steady
+- Humorous/Serious
+- Various internet slang
 
-- **`total_requests`** — Total number of requests
-- **`total_cost`** — Total cost
-- **`total_tokens`** — Total number of tokens
-- **`online_time`** — Online time (seconds)
-- **`total_messages`** — Total number of messages
-- **`total_replies`** — Total number of replies
-- **`avg_response_time`** — Average response time
-- **`cost_per_hour`** — Cost per hour
-- **`tokens_per_hour`** — Tokens per hour
+### Slang Management
+Internet slang learned by the bot:
+- New and trending words
+- Memes and jokes
+- Niche community terminology
+- Can be manually confirmed or rejected
 
-**Model Statistics**: Aggregate requests, costs, tokens, and average response time by model, returning up to the top 10 models.
+### Stickers/Emojis
+Collected stickers:
+- Usage frequency statistics
+- Popular stickers
+- Ability to upload new ones
+- Ban inappropriate ones
 
-**Time Series**:
-- `hourly_data`: Hourly data (within specified time range)
-- `daily_data`: Daily data (last 7 days)
+Stickers are displayed in the WebUI in four states:
+- **Known**: Has a description, but is not registered or banned
+- **Unknown**: No description, and not registered or banned
+- **Claimed**: Registered and can be used by MaiBot
+- **Discarded**: Banned and no longer used
 
-Each time point contains three metrics: `requests`, `cost`, `tokens`, and missing time periods will be filled with zeros.
+Stickers manually uploaded from the WebUI are directly marked as "Claimed". The tag list filled during upload will be merged into the sticker description; if the image already exists in the database, the original record will be reused, the description updated, the ban lifted, and it will be marked as registered. Deleting an unregistered sticker will synchronously delete the database record and local file; deleting a registered sticker will first uninstall it from the available sticker library, then delete the database record and file.
 
-**Recent Activity**: The last 10 model call records, including time, model, request type, token count, cost, and response time.
+## Usage Suggestions
 
-## Character Information Management
+### Daily Review
+- Check statistics daily to understand activity levels
+- Monitor cost changes to avoid overspending
+- Review user feedback to improve the bot
 
-The character information module manages all user data that MaiBot knows.
+### Data Analysis
+- Analyze peak hours to schedule maintenance reasonably
+- Observe user preferences to adjust the bot's personality
+- Track popular topics to add relevant content
 
-- **`GET /person/list`** — Get character list (pagination, search, filtering)
-- **`GET /person/{person_id}`** — Get character details
-- **`PATCH /person/{person_id}`** — Incrementally update character information
-- **`DELETE /person/{person_id}`** — Delete character
-- **`GET /person/stats/summary`** — Get character statistics summary
-- **`POST /person/batch/delete`** — Batch delete characters
+### Optimization Tips
+- Response too slow? Check the configuration
+- Cost too high? Switch to a cheaper model
+- Too few users? Increase promotion
 
-### List Query Parameters
+## FAQ
 
-`GET /person/list` supports the following filter conditions:
-- `page` / `page_size`: Pagination (1-100 items per page)
-- `search`: Search keywords (match name, nickname, user ID)
-- `is_known`: Filter by whether known
-- `platform`: Filter by platform
+**Q: How often are statistics updated?**
+A: Updated in real-time; you can see the latest data at any time.
 
-### Character Information Fields
+**Q: How long are records saved?**
+A: Saved long-term by default; automatic cleaning can be configured.
 
-- **`person_id`** — Character unique ID
-- **`person_name`** — Name
-- **`nickname`** — Nickname
-- **`platform`** — Belonging platform
-- **`user_id`** — Platform user ID
-- **`is_known`** — Whether known
-- **`memory_points`** — Memory points
-- **`know_times`** — Number of times known
-- **`know_since`** — First known time
-- **`last_know`** — Last interaction time
-- **`group_nick_name`** — List of group nicknames
+**Q: Can data be exported?**
+A: Export functionality is not yet supported but will be added in future versions.
 
-### Statistics Summary
+**Q: How can I reduce usage costs?**
+A: Choose cheaper models, reduce unnecessary calls, and optimize prompts.
 
-`GET /person/stats/summary` returns the following data:
-- `total`: Total number of people
-- `known`: Number of known people
-- `unknown`: Number of unknown people
-- `platforms`: Distribution of people by platform
+## Useful Tips
 
-Incremental updates (`PATCH`) only update submitted fields and automatically update `last_known_time`.
+### Monitoring Bot Health
+- Response time suddenly increased? There might be an issue.
+- Costs increasing abnormally? Check if it's under attack.
+- Active users dropping? Check if the bot said something wrong.
 
-## Expression Method Management
+### Improving User Experience
+- Analyze user personas for personalized replies.
+- Track popular topics to prepare relevant content.
+- Record user feedback for continuous improvement.
 
-Expression methods record MaiBot's speaking style in different scenarios.
-
-- **`GET /expression/chats`** — Get chat list (for dropdown selection)
-- **`GET /expression/list`** — Get expression method list
-- **`GET /expression/{expression_id}`** — Get expression method details
-- **`POST /expression/`** — Create expression method
-- **`PATCH /expression/{expression_id}`** — Incrementally update expression method
-- **`DELETE /expression/{expression_id}`** — Delete expression method
-- **`POST /expression/batch/delete`** — Batch delete
-- **`GET /expression/stats/summary`** — Get statistics
-
-### Expression Method Fields
-
-- **`situation`** — Scenario description (when to use this expression)
-- **`style`** — Expression style (specific speaking style)
-- **`chat_id`** — Belonging chat session
-- **`last_active_time`** — Last active time
-- **`create_date`** — Creation time
-
-### Review Function
-
-- **`GET /expression/review/stats`** — Get review statistics
-- **`GET /expression/review/list`** — Get review list
-- **`POST /expression/review/batch`** — Batch review
-
-The review list supports filtering by `unchecked` (unchecked), `passed` (passed), `rejected` (rejected), `all` (all).
-
-## Jargon Management
-
-The jargon module manages network terms and niche circle terminology that MaiBot has learned.
-
-- **`GET /jargon/chats`** — Get chat list with jargon records
-- **`GET /jargon/list`** — Get jargon list
-- **`GET /jargon/{jargon_id}`** — Get jargon details
-- **`GET /jargon/stats/summary`** — Get statistics
-- **`POST /jargon/`** — Create jargon
-- **`PATCH /jargon/{jargon_id}`** — Incrementally update jargon
-- **`DELETE /jargon/{jargon_id}`** — Delete jargon
-- **`POST /jargon/batch/delete`** — Batch delete
-- **`POST /jargon/batch/set-jargon`** — Batch set jargon confirmation status
-
-### Jargon Fields
-
-- **`content`** — Jargon content
-- **`raw_content`** — Raw content
-- **`meaning`** — Meaning explanation
-- **`chat_id`** — Belonging chat
-- **`is_jargon`** — Whether confirmed as jargon (`true` / `false` / `null` pending confirmation)
-- **`is_complete`** — Whether information is complete
-- **`inference_with_context`** — Inference result with context
-- **`inference_content_only`** — Inference result with content only
-- **`count`** — Usage count
-
-### List Query
-
-`GET /jargon/list` supports:
-- `search`: Search keywords (match content, meaning, raw content)
-- `chat_id`: Filter by chat
-- `is_jargon`: Filter by confirmation status (`true` / `false` / not passed for all)
-
-### Statistics Summary
-
-`GET /jargon/stats/summary` returns:
-- `total`: Total count
-- `confirmed_jargon`: Confirmed as jargon
-- `confirmed_not_jargon`: Confirmed not jargon
-- `pending`: Pending confirmation
-- `complete_count`: Complete information count
-- `chat_count`: Number of chats involved
-- `top_chats`: Top 5 chats with most jargon
-
-## Emoji Management
-
-The emoji module manages emojis collected and used by MaiBot.
-
-- **`GET /emoji/list`** — Get emoji list
-- **`GET /emoji/{emoji_id}`** — Get emoji details
-- **`PATCH /emoji/{emoji_id}`** — Incrementally update emoji
-- **`DELETE /emoji/{emoji_id}`** — Delete emoji
-- **`GET /emoji/stats/summary`** — Get statistics
-- **`POST /emoji/{emoji_id}/register`** — Register emoji
-- **`POST /emoji/{emoji_id}/ban`** — Ban emoji
-- **`GET /emoji/{emoji_id}/thumbnail`** — Get thumbnail
-- **`POST /emoji/upload`** — Upload emoji
-- **`POST /emoji/batch/upload`** — Batch upload
-- **`POST /emoji/batch/delete`** — Batch delete
-
-### List Query
-
-`GET /emoji/list` supports:
-- `search`: Search keywords (match description, hash value)
-- `status`: Filter by unified emoji status (`known` / `unknown` / `adopted` / `discarded`)
-- `format`: Filter by file format (`JPEG` / `PNG` / `GIF` / `WebP`)
-- `sort_by`: Sort field (`query_count` / `register_time` / `record_time` / `last_used_time`)
-- `sort_order`: Sort direction (`asc` / `desc`)
-
-### Emoji Status
-
-Emojis have four WebUI statuses:
-- **Known** (`known`): Has a description, but is not registered or banned
-- **Unknown** (`unknown`): Has no description yet, and is not registered or banned
-- **Adopted** (`adopted`): Registered and usable by MaiBot
-- **Discarded** (`discarded`): Banned and unavailable
-
-Manual uploads from WebUI are registered immediately as **Adopted**. If the uploaded image already exists in the database, WebUI reuses the existing record, updates its description from the submitted tags, clears the ban flag, and marks it as registered. Deleting an unregistered emoji removes both the local file and database record; deleting a registered emoji unloads it first, then removes the file and record.
-
-### Thumbnail Cache
-
-- **`GET /emoji/thumbnail-cache/stats`** — Thumbnail cache statistics
-- **`POST /emoji/thumbnail-cache/cleanup`** — Clean up orphaned cache
-- **`POST /emoji/thumbnail-cache/preheat`** — Preheat cache (generate by usage frequency priority)
-- **`DELETE /emoji/thumbnail-cache/clear`** — Clear all cache
-
-Thumbnails are cached in WebP format. If cache doesn't exist when getting, it will be generated asynchronously in the background, and clients need to retry according to 202 status code + `Retry-After` header. Supported image formats: JPEG, PNG, GIF, WebP.
-
-### Upload Restrictions
-
-- Supported formats: JPEG, PNG, GIF, WebP
-- Upload will verify image validity through PIL
-- Duplicate files (MD5 hash) are not allowed to be uploaded repeatedly
+### Saving Expenses
+- Choose models with high cost-performance ratios.
+- Set reasonable call frequencies.
+- Avoid redundant calls to save Tokens.

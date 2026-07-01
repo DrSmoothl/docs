@@ -3,45 +3,43 @@ layout: home
 
 hero:
   name: MaiBot
-  text: LLM-based Interactive Agent
-  tagline: Not just a bot, but a digital life form active in conversations
+  text: 基于 LLM 的交互式智能体
+  tagline: 不仅仅是一个机器人，而是一个活跃在对话中的"生命体"
   image:
     src: /title_img/mai.png
     alt: MaiBot
   actions:
-    - theme: brand
-      text: Get Started
-      link: /en/manual/deployment/
-    - theme: alt
-      text: Features
-      link: /en/features/
-    - theme: alt
-      text: Development
-      link: /en/develop/
+  - theme: brand
+    text: 说明书
+    link: /manual/deployment/
+  - theme: alt
+    text: 功能介绍
+    link: /features/
+  - theme: alt
+    text: 开发文档
+    link: /develop/
 
 features:
-  - title: Natural Conversation
-    details: No more GPT-style walls of text - casual, varied, and human-like dialogue
-  - title: Smart Timing
-    details: Knows when to speak, reads the room, joins when appropriate, stays quiet when needed
-  - title: Continuous Learning
-    details: Imitates speech styles, learns new slang and in-group language, keeps evolving
-  - title: Deep Understanding
-    details: Inspired by personality theory, builds an understanding of your preferences and habits
-  - title: Plugin System
-    details: Powerful APIs and event system with virtually unlimited room for extension
-  - title: Long-term Memory
-    details: A-Memorix memory engine lets AI remember every interaction you've had
----
+- title: 自然对话风格
+  details: 不再是 GPT 式的长篇大论，而是贴合人类对话习惯的或长或短的闲谈
+- title: 智能发言时机
+  details: 懂得在合适的时间说话，把握聊天中的气氛，该开口时开口，该闭嘴时闭嘴
+- title: 持续学习进化
+  details: 模仿他人的说话风格，自主理解新词和黑话，不断进化
+- title: 深度了解用户
+  details: 基于心理学人格理论，不断积累对你的了解，记在心里
+- title: 插件系统
+  details: 提供强大的 API 和事件系统，拥有无限扩展可能
+- title: 长期记忆
+  details: A-Memorix 记忆引擎，让 AI 记住你们的每一次交流
+---## Get More Support
 
-## Get More Support
-
-- Visit the [GitHub repository](https://github.com/Mai-with-u/MaiBot) to report issues or contribute
-- Join our user group for help
+- Visit the [GitHub repository](https://github.com/Mai-with-u/MaiBot) to submit issues or contribute code
+- Join the user groups for help
   - QQ: 766798517
   - QQ: 571780722
   - QQ: 729957033
-  - QQ: 1022489779 (casual chat)
+  - QQ: 1022489779 (Chat group)
 
 <style scoped>
 #star-canvas {

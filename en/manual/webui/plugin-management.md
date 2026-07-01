@@ -1,110 +1,109 @@
 ---
 title: Installing and Managing Plugins
----
+---# Installing and Managing Plugins
 
-# Installing and Managing Plugins
+Plugins are like installing "Apps" for MaiBot, giving it more capabilities!
 
-Plugins are like "apps" for MaiBot - they give your bot superpowers! 🚀
+## What are Plugins?
 
-## What Are Plugins?
+Plugins are extended functionalities for MaiBot, such as:
 
-Plugins add cool features to MaiBot, like:
-
-- 🎮 **Game plugins** - Play games with users
-- 🎨 **Art plugins** - Generate images  
-- 🎵 **Music plugins** - Play music
-- 🌤️ **Weather plugins** - Check weather forecasts
-- 📚 **Learning plugins** - Teach knowledge
+- 🎮 **Game Plugins** - Can play games with users
+- 🎨 **Drawing Plugins** - Can generate images
+- 🎵 **Music Plugins** - Can play music
+- 🌤️ **Weather Plugins** - Can check weather forecasts
+- 📚 **Learning Plugins** - Can teach knowledge
 
 ## Installing Plugins
 
 ### Method 1: Online Installation (Recommended)
 
-1. Open WebUI and click "Plugin Management"
-2. Click "Install Plugin" button
-3. Enter plugin URL (GitHub link)
+1. Open the WebUI and click "Plugin Management"
+2. Click the "Install Plugin" button
+3. Enter the plugin address (GitHub link)
 4. Click "Install" and wait for completion
 
-**Example URL**:
+**Example Address**:
 ```
-https://github.com/author/plugin-name
+https://github.com/作者/插件名
 ```
 
-### Method 2: Local Installation
+### Method 2: Git URL Installation
 
-1. Download plugin code to your computer
-2. In plugin management page, click "Local Install"
-3. Select the plugin folder
-4. Confirm installation
+1. Get the Git repository address of the plugin (GitHub, etc.)
+2. Click "Install Plugin" on the plugin management page
+3. Enter the Git repository URL
+4. Click "Install" and wait for completion
+
+> Note: Currently, only installation via Git repository URL is supported; local file uploads are not supported.
 
 ## Managing Installed Plugins
 
 ### Viewing Plugins
 
-The plugin page shows:
-- 📋 **Plugin name** and description
-- 🔧 **Version** and author
-- ✅ **Status** (green=enabled, gray=disabled)
-- 📖 **Instructions** (click to view)
+The plugin page will display:
+- 📋 **Plugin Name** and description
+- 🔧 **Version Number** and author
+- ✅ **Enable Status** (Green = Enabled, Grey = Disabled)
+- 📖 **Usage Instructions** (Click to view)
 
 ### Enabling/Disabling Plugins
 
-- Switch ON → Plugin active
-- Switch OFF → Plugin inactive
-- Changes take effect immediately, no restart needed
+- Switch ON $\rightarrow$ Plugin takes effect
+- Switch OFF $\rightarrow$ Plugin is deactivated
+- Changes take effect immediately without requiring a restart
 
 ### Configuring Plugins
 
-Some plugins have custom settings:
-1. Click plugin's "Settings" button
-2. Modify configuration options
-3. Save changes (take effect immediately)
+Some plugins allow custom settings:
+1. Click the "Settings" button of the plugin
+2. Modify the configuration options
+3. Save changes to take effect immediately
 
-**Common settings**:
-- API keys (for plugins needing external services)
+**Common Configurations**:
+- API Keys (for plugins requiring external services)
 - Trigger keywords
 - Feature toggles
 
 ### Updating Plugins
 
-When new versions are available:
-1. Click "Update" button
+An update prompt will appear when a new version of a plugin is available:
+1. Click the "Update" button
 2. Wait for download and installation
-3. Automatic completion, data won't be lost
+3. Completed automatically; data will not be lost
 
 ### Uninstalling Plugins
 
-Remove unwanted plugins:
-1. Click "Uninstall" button
+Unnecessary plugins can be uninstalled:
+1. Click the "Uninstall" button
 2. Confirm uninstallation
 3. Plugin files will be deleted
 
 ⚠️ **Note**: Plugin data may be lost after uninstallation
 
-## Recommended Plugins
+## Plugin Recommendations
 
-### Essential for Beginners
-- **Welcome plugin** - Auto-welcome new users
-- **Help plugin** - Provide command help
-- **Check-in plugin** - Daily check-in feature
+### Essentials for Beginners
+- **Welcome Plugin** - Automatically welcomes new users to the group
+- **Help Plugin** - Provides command assistance
+- **Check-in Plugin** - Daily check-in functionality
 
-### For Fun
-- **Gacha plugin** - Simulate various card draws
-- **Dice plugin** - Dice rolling games
-- **Riddle plugin** - Guess riddles and brain teasers
+### Entertainment
+- **Gacha Plugin** - Simulates various card draws
+- **Dice Plugin** - Dice rolling games
+- **Riddle Plugin** - Riddles and brain teasers
 
-### Practical
-- **Translation plugin** - Multi-language translation
-- **Calculator plugin** - Math calculations
-- **Time plugin** - Time and date queries
+### Utility
+- **Translation Plugin** - Multi-language translation
+- **Calculator Plugin** - Mathematical calculations
+- **Time Plugin** - Time and date queries
 
 ## Usage Tips
 
 ### Plugin Conflicts
-If plugins have overlapping or conflicting features:
-- Only enable needed plugins
-- Adjust plugin priority
-- Contact plugin authors for updates
+If plugin functions overlap or conflict:
+- Enable only the plugins you need
+- Contact the plugin author for updates
 
 ### Performance Optimization
 Too many plugins may affect performance:
@@ -114,26 +113,26 @@ Too many plugins may affect performance:
 
 ### Security Reminders
 - Only install plugins from trusted sources
-- Check plugin permission requirements
-- Regularly update plugin versions
+- Review plugin permission requirements
+- Update plugin versions regularly
 
-## Common Questions
+## FAQ
 
-**Q: Plugin installation failed?**
-A: Check network connection, confirm plugin URL is correct, check error messages
+**Q: What should I do if the plugin installation fails?**
+A: Check your network connection, ensure the plugin address is correct, and check the error prompts.
 
-**Q: Plugin not working?**
-A: Confirm plugin is enabled, check configuration is correct, view MaiBot logs
+**Q: The plugin is not working?**
+A: Confirm the plugin is enabled, check if the configuration is correct, and view the MaiBot logs.
 
-**Q: Where to find plugins?**
-A: Search "MaiBot plugin" on GitHub, or join community for recommendations
+**Q: Where can I find plugins?**
+A: Search for "MaiBot plugins" on GitHub or join the community for recommendations.
 
 **Q: Can I develop my own plugins?**
-A: Of course! There are development docs and example code, even beginners can learn
+A: Of course! There are development documents and example code available, making it accessible even for beginners.
 
 ## Getting Help
 
-- Plugin pages have usage instructions
-- Check plugin README documentation
-- Join MaiBot community groups to ask
+- Usage instructions are available on the plugin page
+- View the plugin's README documentation
+- Join the MaiBot exchange group to ask questions
 - Submit issues on GitHub

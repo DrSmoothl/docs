@@ -1,120 +1,91 @@
 ---
-title: Config Management
----
+title: Modify configurations in the browser
+---# Modify Configuration in Browser
 
-# Config Management
+Change MaiBot settings with a few clicks—no need to edit files manually!
 
-WebUI provides complete configuration management functionality, supporting modification of `bot_config.toml` and `model_config.toml` through form interfaces or raw TOML editing. All modifications are validated by the backend to ensure correct configuration format.
+## Two Modification Methods
 
-## Configuration Files Overview
+### 1. Form Mode (Recommended)
 
-MaiBot's core configuration is divided into two files:
+Modify configurations like filling out a questionnaire; simple and intuitive:
 
-- **`bot_config.toml`** — Robot main configuration (platform, personality, features, etc.). Corresponding class: `Config`
-- **`model_config.toml`** — Model configuration (API providers, model task assignment). Corresponding class: `ModelConfig`
+- Each setting includes descriptive text
+- Dropdown menus, switches, and input boxes for easy operation
+- Automatic format validation
 
-## Configuration Architecture and Dynamic Forms
+### 2. Advanced Mode
 
-WebUI frontend uses `ConfigSchemaGenerator` to automatically generate JSON Schema based on backend Pydantic models, dynamically rendering configuration forms. Each configuration field specifies frontend control type and icon through `x-widget` and `x-icon` in `json_schema_extra`.
+Directly edit the configuration file, suitable for technical users:
 
-### Get Configuration Schema
+- View the complete configuration file
+- Freely modify any content
+- Requires knowledge of TOML format
 
-- **`GET /api/webui/config/schema/bot`** — Get complete schema for `bot_config.toml`
-- **`GET /api/webui/config/schema/model`** — Get complete schema for `model_config.toml`
-- **`GET /api/webui/config/schema/section/{name}`** — Get schema for specified configuration section
+## What Settings Can Be Changed?
 
-### Supported Configuration Sections
+### 🤖 Bot Settings
+- **Basic Profile** - Name, avatar, signature
+- **Chat Behavior** - Response speed, message length
+- **Personality Traits** - Personality, speaking style
 
-The `/schema/section/{name}` interface supports the following section names:
+### 💬 Message Settings
+- **Response Rules** - When to respond, who to respond to
+- **Emoji Usage** - Preference for using emojis/stickers
+- **Typos** - Whether to intentionally make typos
 
-- **`bot`** — Basic information (platform, account, nickname)
-- **`personality`** — Personality and expression style
-- **`chat`** — Chat behavior control
-- **`message_receive`** — Message receiving settings
-- **`emoji`** — Emoji functionality
-- **`expression`** — Expression methods
-- **`keyword_reaction`** — Keyword reactions
-- **`chinese_typo`** — Chinese typo simulation
-- **`response_post_process`** — Response post-processing
-- **`response_splitter`** — Response splitting
-- **`telemetry`** — Telemetry
-- **`maim_message`** — maim-message integration
-- **`memory`** — Memory system
-- **`debug`** — Debug options
-- **`voice`** — Speech recognition
-- **`model_task_config`** — Model task configuration
-- **`api_provider`** — API provider
-- **`model_info`** — Model information
+### 🧠 Intelligence Settings
+- **Memory System** - How much to remember, for how long
+- **Model Selection** - Which AI model to use
+- **API Configuration** - Model provider settings
 
-## Read Configuration
+## Modification Steps
 
-- **`GET /api/webui/config/bot`** — Read all content of `bot_config.toml`
-- **`GET /api/webui/config/model`** — Read all content of `model_config.toml`
-- **`GET /api/webui/config/bot/raw`** — Read raw TOML text of `bot_config.toml`
+### Form Mode
 
-The read interface returns structured data (JSON format) parsed by tomlkit, containing all configuration items and comment information in the file.
+1. Open the WebUI and click "Configuration Management" on the left
+2. Select the category you want to modify (e.g., "Bot Settings")
+3. Find the item to change and enter the new value
+4. Click "Save"; the configuration will be saved to the file (Configuration hot-reload is pending implementation; changes take effect after restart)
 
-## Update Configuration
+### Advanced Mode
 
-### Overall Update
+1. Click the "Raw Configuration" tab
+2. Edit the text content directly
+3. Click "Save"; the system will check the format
+4. Errors will be prompted; if there are no errors, the changes are applied
 
-- **`POST /api/webui/config/bot`** — Overall update of `bot_config.toml`
-- **`POST /api/webui/config/model`** — Overall update of `model_config.toml`
+## Modification Suggestions
 
-Overall update will replace the entire configuration file content. Before submission, the backend will perform complete validation through `Config.from_dict()` / `ModelConfig.from_dict()`. Validation failure will return 400 error and specific failure reasons. When saving, `save_toml_with_format` automatically preserves comments and format.
+### For Beginners
+- Start by changing the **Bot Name** and **Signature** to give the bot personality
+- Adjust the **Response Speed**; too fast or too slow is not ideal
+- Try the **Personality Settings** to make the bot more interesting
 
-### Section Update
+### Advanced Play
+- Configure **multiple AI models** to use different models for different tasks
+- Set up **keyword responses** to make the bot smarter
+- Adjust **memory parameters** to remember more chat content
 
-- **`POST /api/webui/config/bot/section/{section_name}`** — Update specified section of `bot_config.toml`
-- **`POST /api/webui/config/model/section/{section_name}`** — Update specified section of `model_config.toml`
+## Precautions
 
-Section updates adopt recursive merge strategy:
-- **Dictionary type** fields: Recursive merge, preserving unmodified keys and comments
-- **List type** fields (such as `platforms`, `api_providers`): Direct replacement
-- **Other types**: Direct replacement
+⚠️ **Important Reminder**:
+- Incorrect settings may cause the bot to behave abnormally
+- Check the documentation for options you are unsure about
+- It is recommended to back up important configurations first
 
-After merge completion, the complete configuration will be validated. For the `api_providers` section of `model_config.toml`, if a provider is deleted but models still reference it, the backend will return detailed error information listing affected model names.
+📝 **Tips**:
+- Hover your mouse over a setting to see the description
+- Remember to click save after making changes
+- You can reset to default settings if you encounter problems
 
-### Raw TOML Editing
+## FAQ
 
-- **`GET /api/webui/config/bot/raw`** — Get raw TOML text
-- **`POST /api/webui/config/bot/raw`** — Save raw TOML text
+**Q: What should I do if I break something?**
+A: You can reset to default settings or manually change the values back to the original ones
 
-Raw editing mode is suitable for advanced users to directly edit TOML files. When submitting, the backend will:
-1. Use `tomlkit.loads()` to verify TOML format correctness
-2. Use `Config.from_dict()` to validate configuration data structure
-3. Directly write to file after both validations pass
+**Q: Why did the save fail?**
+A: The format might be incorrect; please check the error prompt
 
-## Adapter Configuration Management
-
-WebUI also supports managing independent configuration files for adapters (such as NapCat adapter configuration files).
-
-### Path Management
-
-- **`GET /api/webui/config/adapter-config/path`** — Get adapter configuration file path
-- **`POST /api/webui/config/adapter-config/path`** — Save adapter configuration file path
-
-Path preferences are stored in the `adapter_config_path` field of `data/webui.json`.
-
-### Security Restrictions
-
-Adapter configuration paths must meet the following security conditions:
-- File suffix must be `.toml`
-- Path must be within allowed root directory ranges (project root directory, `MaiBot-Napcat-Adapter` directory, `/MaiMBot/adapters-config`)
-- Relative paths will be automatically converted to absolute paths of the project root directory
-
-### Configuration Read/Write
-
-- **`GET /api/webui/config/adapter-config?path=...`** — Read adapter configuration file content
-- **`POST /api/webui/config/adapter-config`** — Save adapter configuration file content
-
-When saving, it will first verify TOML format, and write to file after validation passes. If the target directory doesn't exist, it will be automatically created.
-
-## Configuration File Format Preservation
-
-All configuration write operations use the `save_toml_with_format` function, which:
-- Preserves comments in TOML files
-- Formats arrays as multi-line display
-- Maintains original indentation and whitespace style
-
-This means modifying configuration through WebUI won't destroy manually added comments, suitable for mixed use of WebUI and manual editing to manage configuration.
+**Q: How long does it take for changes to take effect?**
+A: After saving the current configuration, the bot needs to be restarted to take effect (Configuration hot-reload is pending implementation)

@@ -1,71 +1,68 @@
 ---
-title: Contributing Guide
----
+title: Contribution Guide
+---# Contribution Guide
 
-# Contributing Guide
-
-Welcome to participate in MaiBot development! Please read the following specifications carefully before submitting code.
+Welcome to the development of MaiBot! Please read the following specifications carefully before submitting code.
 
 ## Import Specifications
 
-1. Standard library and third-party libraries use `from ... import ...` form first, `import ...` form second; same group arranged alphabetically
-2. Local modules: same directory uses relative import, cross-directory uses `from src.xxx` absolute import
-3. Standard library/third-party library imports placed before local module imports, separated by blank lines between blocks
-4. Adjust import order that doesn't meet specifications during refactoring
+1. Standard libraries and third-party libraries should use the `from ... import ...` form first, followed by the `import ...` form; items within the same group should be sorted alphabetically
+2. Local modules: Use relative imports for the same directory and `from src.xxx` absolute imports for cross-directory imports
+3. Standard library/third-party library imports should be placed before local module imports, with empty lines separating the blocks
+4. Adjust import orders that do not comply with the specifications during refactoring
 
 ```python
-# Standard library
+# 标准库
 import asyncio
 import os
 from pathlib import Path
 
-# Third-party libraries
+# 第三方库
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-# Local modules
+# 本地模块
 from src.common.logger import get_logger
 from src.config.config import config_manager
 ```
 
-## Comment Specifications
+## Commenting Specifications
 
-1. Maintain good comments; retain original comments during refactoring (content can be modified)
-2. When refactoring code without comments, add comments for longer or complex functional blocks
-3. Preferred language is Simplified Chinese (comments, logs, WebUI copy)
+1. Maintain good comments; preserve original comments during refactoring (content may be modified)
+2. When refactoring code that previously had no comments, comments should be added for long or complex functional blocks
+3. The preferred language is Simplified Chinese (for comments, logs, and WebUI copy)
 
 ## Type Annotation Specifications
 
-1. Retain original type annotations during refactoring; add annotations for functions without annotations or complex functions/multiple parameters
-2. Parameterized generics use `typing` module (such as `Dict`, `List`, `Optional`)
-3. No need to use `or` fallback after variable type is determined
+1. Preserve original type annotations during refactoring; add annotations for complex functions or functions with multiple parameters that lack them
+2. Use Python 3.10+ built-in syntax for parameterized generics (e.g., `dict[K, V]`, `list[T]`, `T | None`), avoiding old-style `typing` module syntax
+3. Once a variable type is determined, there is no need to use `or` fallback
 
 ```python
-# Recommended
+# 推荐
 def process_message(message: SessionMessage, timeout: float = 5.0) -> bool:
     ...
 
-# Not recommended
+# 不推荐
 def process_message(message, timeout=5.0):
     ...
 ```
 
-## Anti-pattern List
+## Anti-Pattern List
 
 The following behaviors are **strictly prohibited** in the project:
 
-- **Modify any content under `dashboard/`** — Frontend built by independent repository
-- **Directly edit `bot_config.toml` / `model_config.toml`** — Should modify template + version number
-- **Type suppression like `as any`, `@ts-ignore`** — Must properly handle types
-- **Empty catch block `catch(e) {}`** — At least log the error
-- **Delete failing tests to "pass"** — Must fix the problem itself
-- **Hard-coded API key / password / token** — Use configuration system management
-- **`eval()` / `exec()` / `__import__`** — Security risks exist
+- **Modifying any content under `dashboard/`** — The frontend is built from a separate repository
+- **Directly editing `bot_config.toml` / `model_config.toml`** — Templates and version numbers should be modified instead
+- **Empty catch blocks `catch(e) {}`** — At least log the error
+- **Deleting failing tests to "pass"** — The issue itself must be fixed
+- **Hardcoding API keys / passwords / tokens** — Use the configuration system for management
+- **`eval()` / `exec()` / `__import__`** — These pose security risks
 
-## Variable and Attribute Specifications
+## Variable and Property Specifications
 
-- No need for `or` fallback after type is determined
-- Reduce `getattr`/`setattr`, prefer direct attribute access
+- Once the type is determined, `or` fallback is not necessary
+- Reduce the use of `getattr`/`setattr`; prioritize direct property access
 
 ## Development Commands
 
@@ -87,27 +84,27 @@ uv run python bot.py
 uv run pytest
 ```
 
-### Code Checking
+### Code Linting
 
 ```bash
 # Lint
 uv run ruff check .
 
-# Auto format
+# 自动格式化
 uv run ruff format .
 ```
 
 ## PR Process
 
 1. Fork the repository and create a feature branch from the `dev` branch
-2. Ensure code passes `uv run ruff check .` and `uv run pytest`
-3. Submit PR to the `dev` branch with clear modification description
-4. Wait for code review and merge
+2. Ensure the code passes `uv run ruff check .` and `uv run pytest`
+3. Submit a PR to the `dev` branch, accompanied by clear modification notes
+4. Wait for code review and merging
 
 ### Notes
 
-- WebUI defaults to binding `0.0.0.0:8001`, production environment needs reverse proxy
-- Tokens stored in `data/webui.json` (plain text JSON), rely on file system permissions protection
-- Rate limiter is memory-based, cannot share state in multi-instance deployment
-- Plugin installation executed through `git clone`, need to ensure Git security configuration
-- `model_config.toml` contains sensitive fields like `api_key` (`repr=False`)
+- WebUI binds to `127.0.0.1:8001` by default; a reverse proxy is required for production environments
+- Tokens are stored in `data/webui.json` (plain text JSON), relying on file system permission protection
+- The rate limiter is memory-based and cannot share state across multiple instance deployments
+- Plugin installation is executed via `git clone`; ensure Git security configurations are in place
+- `model_config.toml` contains sensitive fields such as `api_key` (`repr=False`)

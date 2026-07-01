@@ -1,10 +1,8 @@
 ---
 title: Message Gateway
----
+---# Message Gateway
 
-# Message Gateway
-
-The `@MessageGateway` decorator is used to declare message gateway components, enabling bidirectional message routing between MaiBot and external message platforms (like QQ, Discord, etc.). Message gateways are core components of platform adapters, responsible for outbound message sending and inbound message injection.
+The `@MessageGateway` decorator is used to declare a message gateway component, implementing bidirectional message routing between MaiBot and external message platforms (such as QQ, Discord, etc.). The message gateway is the core component of a platform adapter, responsible for outbound message sending and inbound message injection.
 
 ## Decorator Signature
 
@@ -12,43 +10,43 @@ The `@MessageGateway` decorator is used to declare message gateway components, e
 from maibot_sdk import MessageGateway
 
 @MessageGateway(
-    route_type: str,             # Route type: send / receive / duplex (required)
+    route_type: str,             # 路由类型：send / receive / duplex（必填）
     *,
-    name: str = "",              # Component name, uses method name if empty
-    description: str = "",       # Component description
-    platform: str = "",          # Platform name (e.g., qq, discord)
-    protocol: str = "",          # Protocol or access dialect name
-    account_id: str = "",        # Account ID / self_id
-    scope: str = "",             # Route scope
-    **metadata,                  # Additional metadata
+    name: str = "",              # 组件名，留空时使用方法名
+    description: str = "",       # 组件描述
+    platform: str = "",          # 平台名称（如 qq、discord）
+    protocol: str = "",          # 协议或接入方言名称
+    account_id: str = "",        # 账号 ID / self_id
+    scope: str = "",             # 路由作用域
+    **metadata,                  # 额外元数据
 )
 ```
 
-## Route Types
+## Routing Types
 
 - **`"send"`** → `MessageGatewayRouteType.SEND` — Outbound: Host → Plugin → External Platform
 - **`"receive"`** → `MessageGatewayRouteType.RECEIVE` — Inbound: External Platform → Plugin → Host
 - **`"duplex"`** → `MessageGatewayRouteType.DUPLEX` — Bidirectional: Supports both outbound and inbound
 
-::: tip Alias Support
-`route_type` also accepts `"recv"` as an alias for `"receive"`.
+::: tip 别名支持
+`route_type` also accepts `"recv"` and `"recive"` as aliases for `"receive"`.
 :::
 
 ## ctx.gateway Capability Proxy
 
-- `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` — Inject inbound message to Host
+- `await self.ctx.gateway.route_message(gateway_name, message_dict, route_metadata=None, ...)` — Inject inbound messages into the Host
 - `await self.ctx.gateway.update_state(gateway_name, ready, platform="", account_id="", scope="", metadata=None)` — Report gateway status
 
 ### Status Management
 
 - Only gateways with `ready=True` will be selected by the main program for message routing
-- Gateways with `route_type="send"` or `"duplex"` and `ready=True` can be selected by Platform IO to handle outbound messages
-- Gateways with `route_type="receive"` or `"duplex"` and `ready=True` can inject inbound messages through `ctx.gateway.route_message()`
-- Plugins should report `ready=True` when the link is available, and `ready=False` when disconnected or unloaded
+- Gateways that are `route_type="send"` or `"duplex"` and `ready=True` can be selected by Platform IO to handle outbound messages
+- Gateways that are `route_type="receive"` or `"duplex"` and `ready=True` can inject inbound messages via `ctx.gateway.route_message()`
+- Plugins should report `ready=True` when the link is available, and report `ready=False` when disconnected or unloaded
 
 ## Complete Adapter Example
 
-Below is a complete QQ platform adapter example, implementing bidirectional message routing based on the NapCat protocol:
+Below is a complete example of a QQ platform adapter, implementing bidirectional message routing based on the NapCat protocol:
 
 ```python
 from typing import Any
@@ -58,7 +56,7 @@ from maibot_sdk import MaiBotPlugin, MessageGateway
 
 class NapCatGatewayPlugin(MaiBotPlugin):
     async def on_load(self) -> None:
-        # Report gateway ready status
+        # 上报网关就绪状态
         await self.ctx.gateway.update_state(
             gateway_name="napcat_gateway",
             ready=True,
@@ -67,15 +65,15 @@ class NapCatGatewayPlugin(MaiBotPlugin):
             scope="primary",
             metadata={"protocol": "napcat"},
         )
-        self.ctx.logger.info("NapCat gateway ready")
+        self.ctx.logger.info("NapCat 网关已就绪")
 
     async def on_unload(self) -> None:
-        # Report gateway offline
+        # 上报网关离线
         await self.ctx.gateway.update_state(
             gateway_name="napcat_gateway",
             ready=False,
         )
-        self.ctx.logger.info("NapCat gateway offline")
+        self.ctx.logger.info("NapCat 网关已下线")
 
     async def on_config_update(self, scope: str, config_data: dict, version: str) -> None:
         pass
@@ -95,17 +93,17 @@ class NapCatGatewayPlugin(MaiBotPlugin):
         metadata: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> dict[str, Any]:
-        """Outbound: Forward Host messages to external platform."""
-        # Convert Host MessageDict to platform format and send
+        """出站：将 Host 消息转发到外部平台。"""
+        # 将 Host MessageDict 转换为平台格式并发送
         platform_msg = self._convert_to_platform_format(message)
         result = await self._send_to_napcat(platform_msg)
         return {"success": True, "external_message_id": result.get("message_id")}
 
     async def handle_inbound(self, payload: dict[str, Any]) -> None:
-        """Inbound: Inject external platform messages into Host.
+        """入站：将外部平台消息注入 Host。
 
-        This method is triggered by external platform callbacks (like WebSocket push),
-        not a component decorator method, but demonstrates the inbound message injection flow.
+        此方法由外部平台回调触发（如 WebSocket 推送），
+        不是组件装饰器方法，但演示了入站消息的注入流程。
         """
         accepted = await self.ctx.gateway.route_message(
             gateway_name="napcat_gateway",
@@ -130,13 +128,13 @@ class NapCatGatewayPlugin(MaiBotPlugin):
         )
         if not accepted:
             self.ctx.logger.warning(
-                "Host did not accept inbound message: %s", payload["message_id"]
+                "Host 未接收入站消息: %s", payload["message_id"]
             )
 
     def _convert_to_platform_format(
         self, message: dict[str, Any]
     ) -> dict[str, Any]:
-        """Convert Host message format to platform format."""
+        """将 Host 消息格式转换为平台格式。"""
         return {
             "action": "send_msg",
             "params": {
@@ -149,8 +147,8 @@ class NapCatGatewayPlugin(MaiBotPlugin):
     async def _send_to_napcat(
         self, platform_msg: dict[str, Any]
     ) -> dict[str, Any]:
-        """Send message to NapCat API."""
-        # In actual implementation, this would call NapCat's HTTP/WebSocket API
+        """发送消息到 NapCat API。"""
+        # 实际实现中这里会调用 NapCat 的 HTTP/WebSocket API
         return {"message_id": "platform-msg-1"}
 
 
@@ -158,9 +156,9 @@ def create_plugin():
     return NapCatGatewayPlugin()
 ```
 
-## Inbound-only Gateway Example
+## Inbound-Only Gateway Example
 
-If you only need to inject messages into MaiBot (like Webhook listening), you can use `route_type="receive"`:
+If you only need to inject messages into MaiBot (e.g., Webhook listening), you can use `route_type="receive"`:
 
 ```python
 from typing import Any
@@ -192,13 +190,13 @@ class WebhookReceiverPlugin(MaiBotPlugin):
         platform="webhook",
     )
     async def handle_outbound(self, message: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
-        """Inbound-only gateway, won't receive messages in outbound direction."""
-        # receive type gateways won't be selected to handle outbound messages
-        # This processor won't be called, but must be declared
+        """仅入站网关，出站方向不会收到消息。"""
+        # receive 类型网关不会被选中处理出站消息
+        # 此处理器不会被调用，但必须声明
         return {"success": True}
 
     async def inject_webhook_message(self, payload: dict[str, Any]) -> None:
-        """Receive Webhook callback and inject message."""
+        """接收 Webhook 回调并注入消息。"""
         accepted = await self.ctx.gateway.route_message(
             gateway_name="webhook_receiver",
             message_dict={
@@ -215,7 +213,7 @@ class WebhookReceiverPlugin(MaiBotPlugin):
             },
         )
         if accepted:
-            self.ctx.logger.info("Webhook message injected")
+            self.ctx.logger.info("Webhook 消息已注入")
 
 
 def create_plugin():
@@ -224,15 +222,15 @@ def create_plugin():
 
 ## Gateway Handler Parameters
 
-The handler method decorated with `@MessageGateway` receives the following parameters:
+Handler methods decorated with `@MessageGateway` receive the following parameters:
 
 - **`self`** `MaiBotPlugin` — Plugin instance
-- **`message`** `dict[str, Any]` — Message dictionary from Host (outbound direction)
-- **`route`** `dict[str, Any] | None` — Route information
-- **`metadata`** `dict[str, Any] | None` — Route metadata
+- **`message`** `dict[str, Any]` — Message dictionary sent from the Host (outbound direction)
+- **`route`** `dict[str, Any] | None` — Routing information
+- **`metadata`** `dict[str, Any] | None` — Routing metadata
 - **`**kwargs`** `Any` — Other parameters
 
-The handler return value is `dict[str, Any]`, which should at least contain a `success` field indicating whether the send was successful.
+The handler return value is `dict[str, Any]`, which should at least contain the `success` field to indicate whether the sending was successful.
 
 ## Message Routing Flow
 
@@ -240,43 +238,43 @@ The handler return value is `dict[str, Any]`, which should at least contain a `s
 
 ```mermaid
 sequenceDiagram
-    participant Host as Main Program
-    participant GW as MessageGateway Handler
-    participant Platform as External Platform
+    participant Host as 主程序
+    participant GW as MessageGateway 处理器
+    participant Platform as 外部平台
 
-    Host->>Host: Select ready=True send/duplex gateway
-    Host->>GW: Call gateway handler(message, route, metadata)
-    GW->>GW: Convert message to platform format
-    GW->>Platform: Send to external platform
-    Platform-->>GW: Return platform message ID
-    GW-->>Host: Return {success: true, external_message_id: ...}
+    Host->>Host: 选择 ready=True 的 send/duplex 网关
+    Host->>GW: 调用网关处理器(message, route, metadata)
+    GW->>GW: 转换消息为平台格式
+    GW->>Platform: 发送到外部平台
+    Platform-->>GW: 返回平台消息 ID
+    GW-->>Host: 返回 {success: true, external_message_id: ...}
 ```
 
 ### Inbound Flow (External Platform → Host)
 
 ```mermaid
 sequenceDiagram
-    participant Platform as External Platform
-    participant Plugin as Plugin
-    participant Host as Main Program
+    participant Platform as 外部平台
+    participant Plugin as 插件
+    participant Host as 主程序
 
-    Platform->>Plugin: Push message (WebSocket/HTTP callback etc.)
-    Plugin->>Plugin: Convert to Host message format
+    Platform->>Plugin: 推送消息（WebSocket/HTTP 回调等）
+    Plugin->>Plugin: 转换为 Host 消息格式
     Plugin->>Host: ctx.gateway.route_message(gateway_name, message_dict, ...)
-    Host->>Host: Validate message format and gateway status
-    Host-->>Plugin: Return whether accepted
-    Host->>Host: Deliver message to message processing chain
+    Host->>Host: 验证消息格式和网关状态
+    Host-->>Plugin: 返回是否接受
+    Host->>Host: 将消息投递到消息处理链
 ```
 
 ## Gateway Lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Offline: Plugin loaded
+    [*] --> Offline: 插件加载
     Offline --> Ready: update_state(ready=True)
     Ready --> Offline: update_state(ready=False)
-    Ready --> Offline: Plugin unload (on_unload)
-    Offline --> [*]: Plugin destroyed
+    Ready --> Offline: 插件卸载 (on_unload)
+    Offline --> [*]: 插件销毁
 ```
 
 ::: important
@@ -285,11 +283,11 @@ stateDiagram-v2
 - Only gateways with `ready=True` will participate in message routing
 :::
 
-## Platform Field Description
+## Platform Field Descriptions
 
 - **`platform`** `str` — Target platform name (e.g., `"qq"`, `"discord"`, `"webhook"`)
 - **`protocol`** `str` — Protocol or implementation name (e.g., `"napcat"`, `"go-cqhttp"`, `"discord.py"`)
 - **`account_id`** `str` — Bot account ID (e.g., `"10001"`, `"bot#1234"`)
-- **`scope`** `str` — Route scope (e.g., `"primary"`, `"default"`)
+- **`scope`** `str` — Routing scope (e.g., `"primary"`, `"default"`)
 
-`platform`, `protocol`, `account_id`, `scope` can also be dynamically reported at runtime through `ctx.gateway.update_state()`, no need to be fixed in the decorator.
+`platform`, `protocol`, `account_id`, and `scope` can also be reported dynamically at runtime via `ctx.gateway.update_state()` without being fixed in the decorator.

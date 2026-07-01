@@ -1,42 +1,40 @@
 ---
 title: MCP Configuration
----
+---# MCP Configuration 🛠️
 
-# MCP Configuration 🛠️
+MCP (Model Context Protocol) allows MaiBot to connect to external tools, transforming it from "just chatting" to "talking and doing"—checking weather, searching news, reading files, calling APIs, and more.
 
-MCP (Model Context Protocol) allows MaiBot to connect with external tools — from a "chat-only" bot to one that can check weather, search news, read files, call APIs, and more.
+This document provides a detailed guide on how to configure MCP in `bot_config.toml`.
 
-This guide explains how to configure MCP in your `bot_config.toml`.
-
-::: tip 💡 Learn the concepts first
-If you're not familiar with MCP yet, read the [MCP Feature Overview](../features/mcp.md) first to understand what it can do.
+::: tip 💡 先了解概念
+If you are not familiar with what MCP is, it is recommended to read the [MCP Feature Overview](../features/mcp.md) first to understand its capabilities.
 :::
 
 ## Configuration Structure Overview
 
-MCP configuration lives under the `[mcp]` section of `bot_config.toml`, with three layers:
+MCP configuration is located under the `[mcp]` section of `bot_config.toml`, divided into three levels:
 
 ```toml
 [mcp]
-enable = true                         # Master switch
+enable = true                         # 总开关
 
-[mcp.client]                          # Client host capabilities
+[mcp.client]                          # 客户端宿主能力
 client_name = "MaiBot"
 client_version = "1.0.0"
 
-[mcp.client.roots]                    # Roots capability (expose local paths to server)
+[mcp.client.roots]                    # Roots 能力（向服务端暴露本地路径）
 enable = false
 
-[mcp.client.sampling]                 # Sampling capability (let server use your LLM)
+[mcp.client.sampling]                 # Sampling 能力（允许服务端调用你的模型）
 enable = false
 task_name = "planner"
 
-[mcp.client.elicitation]              # Elicitation capability (let server request user input)
+[mcp.client.elicitation]              # Elicitation 能力（允许服务端请求用户填表）
 enable = false
 allow_form = true
 allow_url = false
 
-[[mcp.servers]]                       # MCP server list (multiple allowed)
+[[mcp.servers]]                       # MCP 服务器列表（可多个）
 name = "my-server"
 enabled = true
 transport = "stdio"
@@ -55,17 +53,17 @@ bearer_token = ""
 
 ---
 
-## Master Switch [mcp]
+## Global Switch [mcp]
 
-- **`enable`** — Whether to enable MCP. When `false`, no MCP servers will be connected. Default: enabled
+- **`enable`** — Whether to enable MCP. When set to `false`, no MCP servers will be connected. Enabled by default.
 
 ---
 
 ## Client Capabilities [mcp.client]
 
-This section configures what MaiBot declares to MCP servers as a **client**.
+This section configures the capabilities MaiBot declares to the server when acting as an MCP **client**.
 
-### Basic Info
+### Basic Information
 
 ```toml
 [mcp.client]
@@ -73,14 +71,14 @@ client_name = "MaiBot"
 client_version = "1.0.0"
 ```
 
-Usually you don't need to change this, unless you want MCP servers to see a different client identity.
+Generally, no changes are needed unless you want the MCP server to see a different client identifier.
 
-- **`client_name`** — Client implementation name. Default: `"MaiBot"`
-- **`client_version`** — Client implementation version. Default: `"1.0.0"`
+- **`client_name`** — The name of the client implementation. Default: `"MaiBot"`
+- **`client_version`** — The version of the client implementation. Default: `"1.0.0"`
 
 ### Roots Capability [mcp.client.roots]
 
-Roots allow you to expose local filesystem paths to MCP servers, enabling them to read and write files in those directories.
+Roots allow you to expose local file system paths to the MCP server, enabling the server to read and write files within those paths.
 
 ```toml
 [mcp.client.roots]
@@ -89,25 +87,25 @@ enable = true
 [[mcp.client.roots.items]]
 enabled = true
 uri = "file:///home/mai/data"
-name = "Mai's data directory"
+name = "麦麦的数据目录"
 ```
 
-- **`enable`** — Whether to expose Roots capability to MCP servers. Default: disabled
-- **`items`** — Roots list. Default: empty
+- **`enable`** — Whether to expose Roots capability to the MCP server. Disabled by default.
+- **`items`** — List of Roots. Empty by default.
 
 Each Root item:
 
-- **`enabled`** — Whether to enable this root. Default: enabled
-- **`uri`** — Root URI, typically a `file://` path. Required when enabled. Default: empty
-- **`name`** — Display name. Default: empty
+- **`enabled`** — Whether it is enabled. Enabled by default.
+- **`uri`** — Root URI, usually a `file://` path; required when enabled. Empty by default.
+- **`name`** — Display name. Empty by default.
 
-::: tip 💡 What are Roots good for?
-If you connect a filesystem MCP server (e.g., `@modelcontextprotocol/server-filesystem`), enabling Roots tells the server where your data directory is, so it can read and write files there.
+::: tip 💡 Roots 有什么用？
+If you connect to a file system MCP server (such as `@modelcontextprotocol/server-filesystem`), enabling Roots allows the server to know where your data directory is, enabling it to read and write files in that directory.
 :::
 
 ### Sampling Capability [mcp.client.sampling]
 
-Sampling allows MCP servers to **ask MaiBot to call its LLM** for certain tasks. This is an advanced bidirectional capability.
+Sampling allows the MCP server to **request MaiBot to call the LLM** to complete certain tasks. This is an advanced bidirectional capability.
 
 ```toml
 [mcp.client.sampling]
@@ -117,18 +115,18 @@ include_context_support = false
 tool_support = true
 ```
 
-- **`enable`** — Whether to declare Sampling capability. Default: disabled
-- **`task_name`** — Model task name used for Sampling requests. Default: `"planner"`
-- **`include_context_support`** — Whether to declare support for non-`none` `includeContext` semantics. Default: disabled
-- **`tool_support`** — Whether to declare support for continued tool use in Sampling. Default: disabled
+- **`enable`** — Whether to enable the Sampling capability declaration. Disabled by default.
+- **`task_name`** — The main program model task name used when executing Sampling requests. Default: `"planner"`
+- **`include_context_support`** — Whether to declare support for `includeContext` non- `none` semantics. Disabled by default.
+- **`tool_support`** — Whether to declare support for continuing to use tools within Sampling. Disabled by default.
 
-::: warning ⚠️ Sampling Consumes Tokens
-Enabling Sampling means MCP servers can trigger model calls, incurring additional API costs. Make sure `task_name` points to a properly configured model task.
+::: warning ⚠️ Sampling 会消耗 Tokens
+Enabling Sampling means the MCP server can trigger MaiBot's model calls, which will incur additional API costs. Ensure `task_name` points to a properly configured model task.
 :::
 
 ### Elicitation Capability [mcp.client.elicitation]
 
-Elicitation allows MCP servers to request the user to fill out a form or open a URL.
+Elicitation allows the MCP server to request the user to fill out a form or open a URL in a browser.
 
 ```toml
 [mcp.client.elicitation]
@@ -137,46 +135,46 @@ allow_form = true
 allow_url = false
 ```
 
-- **`enable`** — Whether to declare Elicitation capability. Default: disabled
-- **`allow_form`** — Whether to allow form-mode Elicitation. Default: enabled
-- **`allow_url`** — Whether to allow URL-mode Elicitation. Default: disabled
+- **`enable`** — Whether to enable the Elicitation capability declaration. Disabled by default.
+- **`allow_form`** — Whether to allow form-mode Elicitation. Enabled by default.
+- **`allow_url`** — Whether to allow URL-mode Elicitation. Disabled by default.
 
-At least one mode (`allow_form` or `allow_url`) must be enabled when Elicitation is turned on.
+When enabled, at least one mode must be allowed (`allow_form` or `allow_url`).
 
 ---
 
 ## Server Configuration [[mcp.servers]]
 
-This is the most commonly used part — configuring the MCP servers you want to connect to. **You can add multiple servers**, each `[[mcp.servers]]` section defines one.
+This is the most commonly used part—configuring the MCP servers you want to connect to. **Multiple servers can be configured**, with each `[[mcp.servers]]` block corresponding to one server.
 
-### Common Fields
+### General Fields
 
 ```toml
 [[mcp.servers]]
 name = "playwright"
 enabled = true
-transport = "stdio"           # or "streamable_http"
+transport = "stdio"           # 或 "streamable_http"、"sse"
 http_timeout_seconds = 30.0
 read_timeout_seconds = 300.0
 ```
 
-- **`name`** — **Required**. Server name, must be unique across all servers. Default: empty
-- **`enabled`** — Whether to enable this server. Default: enabled
-- **`transport`** — Transport mode, `"stdio"` (default), `"streamable_http"`, `"sse"`
+- **`name`** — **Required**. Server name; must be unique within the same configuration. Empty by default.
+- **`enabled`** — Whether to enable the current server. Enabled by default.
+- **`transport`** — Transport method: `"stdio"` (default), `"streamable_http"`, `"sse"`
 - **`http_timeout_seconds`** — HTTP request timeout (seconds). Default: 30.0
 - **`read_timeout_seconds`** — Session read timeout (seconds). Default: 300.0
 
 ### stdio Mode
 
-Launches a local subprocess to run the MCP server. Ideal for locally installed tools. Key fields:
+Runs the MCP server by starting a local subprocess, suitable for locally installed tools. Key fields:
 
-- **`command`** — Launch command, e.g. `uvx`, `npx`, `python`
-- **`args`** — Command arguments
-- **`env`** — Extra environment variables
+- **`command`** — Startup command, e.g., `uvx`, `npx`, `python`
+- **`args`** — List of command arguments
+- **`env`** — Additional environment variables
 
-#### Via uvx (Recommended)
+#### Running via uvx (Recommended)
 
-[uvx](https://docs.astral.sh/uv/) manages dependencies automatically:
+uvx is the execution tool bundled with [uv](https://docs.astral.sh/uv/), which manages dependencies automatically:
 
 ```toml
 [[mcp.servers]]
@@ -194,9 +192,9 @@ command = "uvx"
 args = ["mcp-sse-server", "--port", "8080"]
 ```
 
-#### Via npx
+#### Running via npx
 
-Requires Node.js:
+Requires Node.js to be installed first:
 
 ```toml
 [[mcp.servers]]
@@ -215,7 +213,7 @@ command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/dir"]
 ```
 
-#### Via Python
+#### Running via Python
 
 ```toml
 [[mcp.servers]]
@@ -228,13 +226,13 @@ env = { PYTHONUNBUFFERED = "1" }
 
 ### streamable_http Mode
 
-Connects to a remote MCP service via HTTP. Suitable for cloud services or tools hosted by others. Key fields:
+Connects to a remote MCP service (HTTP endpoint), suitable for cloud services or tools deployed by others. Key fields:
 
-- **`url`** — MCP endpoint URL, required
-- **`headers`** — Extra HTTP headers
-- **`authorization`** — HTTP auth configuration
+- **`url`** — MCP endpoint address; required.
+- **`headers`** — Additional HTTP request headers
+- **`authorization`** — HTTP authentication configuration
 
-#### Unauthenticated Remote Service
+#### Remote Service without Authentication
 
 ```toml
 [[mcp.servers]]
@@ -246,7 +244,7 @@ url = "https://mcp.example.com/weather"
 mode = "none"
 ```
 
-#### Bearer Token Auth
+#### Remote Service with Bearer Token
 
 ```toml
 [[mcp.servers]]
@@ -260,7 +258,7 @@ mode = "bearer"
 bearer_token = "sk-your-bearer-token"
 ```
 
-#### Custom Headers
+#### Remote Service with Custom Request Headers
 
 ```toml
 [[mcp.servers]]
@@ -277,7 +275,7 @@ headers = {
 
 ## Complete Examples
 
-### Minimal: One Server
+### Basic Configuration: Connecting to a Single Service
 
 ```toml
 [mcp]
@@ -290,9 +288,9 @@ command = "uvx"
 args = ["@playwright/mcp"]
 ```
 
-This is the simplest setup — just `enable = true` and one server. Everything else uses defaults.
+This is the simplest configuration—only one `enable = true` line adding a service, with all other settings using defaults.
 
-### Everyday Setup: Two Servers
+### Daily Use Configuration: Two Services + Basic Capabilities
 
 ```toml
 [mcp]
@@ -302,14 +300,14 @@ enable = true
 client_name = "MaiBot"
 client_version = "1.0.0"
 
-# Playwright (browser automation)
+# 连接 Playwright（浏览器自动化）
 [[mcp.servers]]
 name = "playwright"
 transport = "stdio"
 command = "uvx"
 args = ["@playwright/mcp"]
 
-# Filesystem server
+# 连接文件系统服务器
 [[mcp.servers]]
 name = "filesystem"
 transport = "stdio"
@@ -317,7 +315,7 @@ command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
 ```
 
-### Advanced: Sampling + Roots
+### Advanced Configuration: Enabling Sampling + Roots
 
 ```toml
 [mcp]
@@ -333,21 +331,21 @@ enable = true
 [[mcp.client.roots.items]]
 enabled = true
 uri = "file:///home/mai/data"
-name = "Data Directory"
+name = "数据目录"
 
 [mcp.client.sampling]
 enable = true
 task_name = "planner"
 tool_support = true
 
-# Local server
+# 本地服务
 [[mcp.servers]]
 name = "playwright"
 transport = "stdio"
 command = "uvx"
 args = ["@playwright/mcp"]
 
-# Remote server
+# 远程服务
 [[mcp.servers]]
 name = "weather-api"
 transport = "streamable_http"
@@ -358,42 +356,43 @@ url = "https://mcp.example.com/weather"
 
 ## FAQ
 
-### Q: Configuration not working after saving?
+### Q: Configuration not taking effect?
 
-MCP settings only take effect after **restarting MaiBot**. Check the startup logs for connection results:
-
-```
-✓ MCP server 'playwright' connected (Tools 12 / Prompts 0 / Resources 0 / Templates 0)
-```
-
-If connection fails, a warning will appear:
+**You must restart MaiBot** after saving the configuration for it to take effect. The connection results will be printed in the startup logs:
 
 ```
-⚠️ MCP server 'playwright' connection failed: ...
+✓ MCP 服务器 'playwright' 已连接 (工具 12 / Prompt 0 / 资源 0 / 模板 0)
 ```
 
-### Q: How many servers can I configure?
+If the connection fails, a warning log will appear:
 
-No hard limit, but each server consumes resources. Only configure what you actually need.
+```
+⚠️ MCP 服务器 'playwright' 连接失败: ...
+```
 
-### Q: Where can I find MCP servers to use?
+### Q: How many services can be configured?
 
-- Search for the `modelcontextprotocol` organization on GitHub
-- Look for `@modelcontextprotocol` packages on npm
-- The Python community also has MCP server implementations
+There is no hard limit, but each service consumes resources. It is recommended to only configure those you actually need.
 
-### Q: stdio vs streamable_http — which one should I choose?
+### Q: Where can I find MCP services online?
 
-- **stdio**: Local tools, low latency, no network needed. Good for file operations, local computation, etc.
-- **streamable_http**: Remote services, requires network. Good for cloud APIs or services hosted by others.
+- Search for projects under the `modelcontextprotocol` organization on GitHub
+- Search for `@modelcontextprotocol` packages on npm
+- The Python community has server implementations in the `mcp` ecosystem
 
-### Q: Where do I get API tokens?
+### Q: How to choose between stdio, streamable_http, and sse?
 
-It depends on the service you're connecting to. For GitHub MCP, generate a token at GitHub Settings → Developer settings → Personal access tokens. For other third-party services, check their management console.
+- **stdio**: Locally installed tools, low latency, no network required. Suitable for file operations, local computation, etc.
+- **streamable_http**: Remote HTTP services, requires network. Suitable for cloud APIs or services deployed by others.
+- **sse**: Remote SSE (Server-Sent Events) services, suitable for scenarios requiring server-side event pushing.
+
+### Q: Where do I get the API Token?
+
+It depends on the service you are connecting to. For GitHub MCP, generate one in GitHub Settings $\rightarrow$ Developer settings $\rightarrow$ Personal access tokens; for other third-party services, obtain it from the respective service's management console.
 
 ---
 
 ## Next Steps
 
-- Want to learn about MCP concepts and capabilities? → [MCP Feature Overview](../features/mcp.md)
-- View all configuration options → [Bot Configuration Reference](./bot-config.md)
+- Want to learn about MCP concepts and capabilities $\rightarrow$ [MCP Feature Overview](../features/mcp.md)
+- View all configuration items $\rightarrow$ [Bot Configuration Overview](./bot-config.md)
