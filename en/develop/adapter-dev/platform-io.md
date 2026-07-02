@@ -1,8 +1,9 @@
 ---
 title: PlatformIO Driver
----# PlatformIO Drivers
+---
+# PlatformIO Drivers
 
-PlatformIO drivers are the core abstraction of the MaiBot platform's IO layer. This document details the interface definitions, core types, and how to implement and register a custom driver.
+PlatformIO drivers are the core abstraction of the MaiBot platform I/O layer. This document details the driver interface definitions, core types, and how to implement and register a custom driver.
 
 ## PlatformIODriver Base Class
 
@@ -31,11 +32,11 @@ class PlatformIODriver(ABC):
     ) -> DeliveryReceipt: ...
 ```
 
-### Required Methods
+### Methods That Must Be Implemented
 
-- **`send_message(message, route_key, metadata)`** — Sends a message through the concrete driver, returning `DeliveryReceipt`. This is the only abstract method that must be implemented
+- **`send_message(message, route_key, metadata)`** — Sends a message via the specific driver and returns a `DeliveryReceipt`. This is the only abstract method that must be implemented.
 
-### Optional Override Hooks
+### Optional Hooks to Override
 
 - **`start()`** — Starts the driver lifecycle (default empty implementation)
 - **`stop()`** — Stops the driver lifecycle (default empty implementation)
@@ -55,11 +56,11 @@ envelope = InboundMessageEnvelope(
 accepted = await self.emit_inbound(envelope)
 ```
 
-`emit_inbound` returns `True` indicating the message was accepted by the Broker and will continue to be forwarded, and `False` indicating it was rejected (no inbound callback configured or the message was filtered by deduplication).
+`emit_inbound` returns `True` if the message is accepted by the Broker and continues to be forwarded, and `False` if it is rejected (e.g., no inbound callback is configured or the message is filtered out by deduplication).
 
 ## Core Types
 
-### RouteKey — Routing Key
+### RouteKey — Route Key
 
 `RouteKey` is the unique key for routing decisions, adopting a three-layer structure:
 
@@ -71,7 +72,7 @@ class RouteKey:
     scope: Optional[str] = None             # Additional routing scope
 ```
 
-Route resolution follows a fallback order **from most specific to broadest**: `platform + account_id + scope` → `platform + account_id` → `platform + scope` → `platform`. The complete fallback chain can be obtained via the `resolution_order()` method:
+Route resolution follows a **most-specific-to-most-general** fallback order: `platform + account_id + scope` → `platform + account_id` → `platform + scope` → `platform`. The complete fallback chain can be obtained via the `resolution_order()` method:
 
 ```python
 key = RouteKey(platform="qq", account_id="123", scope="group_456")
@@ -86,7 +87,7 @@ The `to_dedupe_scope()` method generates a deduplication scope string shared acr
 ```python
 @dataclass(slots=True)
 class InboundMessageEnvelope:
-    route_key: RouteKey                                # Inbound routing key
+    route_key: RouteKey                                # Inbound route key
     driver_id: str                                     # ID of the producing driver
     driver_kind: DriverKind                            # Driver type
     external_message_id: Optional[str] = None          # Platform-side message ID (for deduplication)
@@ -96,7 +97,7 @@ class InboundMessageEnvelope:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
-The priority of deduplication keys is: `dedupe_key` > `external_message_id` > `session_message.message_id`. The Broker will not guess the deduplication key based on `payload` content, to avoid misjudging different messages with the same content as duplicates.
+The priority for the deduplication key is: `dedupe_key` > `external_message_id` > `session_message.message_id`. The Broker will not guess the deduplication key based on `payload` content to avoid misclassifying distinct messages with identical content as duplicates.
 
 ### DeliveryReceipt — Outbound Receipt
 
@@ -104,10 +105,10 @@ The priority of deduplication keys is: `dedupe_key` > `external_message_id` > `s
 @dataclass(slots=True)
 class DeliveryReceipt:
     internal_message_id: str                    # Internal message ID
-    route_key: RouteKey                         # Delivery routing key
+    route_key: RouteKey                         # Delivery route key
     status: DeliveryStatus                      # Delivery status
-    driver_id: Optional[str] = None             # ID of the handling driver
-    driver_kind: Optional[DriverKind] = None    # Type of the handling driver
+    driver_id: Optional[str] = None             # ID of the processing driver
+    driver_kind: Optional[DriverKind] = None    # Type of the processing driver
     external_message_id: Optional[str] = None   # Platform-side message ID
     error: Optional[str] = None                 # Error message
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -115,10 +116,10 @@ class DeliveryReceipt:
 
 `DeliveryStatus` enum values:
 
-- **`PENDING`** — Pending send
+- **`PENDING`** — Pending
 - **`SENT`** — Sent
-- **`FAILED`** — Send failed
-- **`DROPPED`** — Discarded
+- **`FAILED`** — Failed
+- **`DROPPED`** — Dropped
 
 ### DriverDescriptor — Driver Descriptor
 
@@ -134,7 +135,7 @@ class DriverDescriptor:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
-The `DriverKind` enum distinguishes driver sources: `LEGACY` indicates a built-in driver, and `PLUGIN` indicates a driver provided by a plugin.
+The `DriverKind` enum distinguishes driver sources: `LEGACY` indicates a built-in driver, while `PLUGIN` indicates a driver provided by a plugin.
 
 ## Implementing and Registering a Driver
 
@@ -195,7 +196,7 @@ descriptor = DriverDescriptor(
     platform="discord",
 )
 
-# Register
+# Registration
 driver = MyDriver(descriptor)
 await manager.add_driver(driver)
 
@@ -214,4 +215,4 @@ manager.bind_receive_route(RouteBinding(
 ))
 ```
 
-When the Broker is running, use `add_driver` / `remove_driver`; when it is not running, use `register_driver` / `unregister_driver`. Route binding supports priority sorting of multiple drivers under the same route key via the `priority` field.
+Use `add_driver` / `remove_driver` when the Broker is running, and `register_driver` / `unregister_driver` when it is not running. Route binding supports priority ordering of multiple drivers under the same route key via the `priority` field.

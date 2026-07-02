@@ -1,72 +1,73 @@
 ---
-title: ❓ FAQ
----# ❓ FAQ
+title: ❓ Frequently Asked Questions
+---
+# ❓ Frequently Asked Questions
 
-All the most common problems beginners encounter are right here!
+Here are the most common problems encountered by beginners!
 
-## 💰 Cost Related
+## 💰 Cost-Related Questions
 
 ### Does MaiBot cost money?
-**Ans**: MaiBot itself is free, but the AI models cost money.
+**Answer**: MaiBot itself is free, but AI models require payment.
 
 **Details**:
-- 💡 **MaiBot Software** - Completely free and open source
-- 💳 **AI Models** - Paid, such as DeepSeek, OpenAI, etc.
-- 📊 **Approximate Cost** - A few dollars a month is enough if you don't chat much
+- 💡 **MaiBot Software** - Completely free and open-source
+- 💳 **AI Models** - Paid services, such as DeepSeek, OpenAI, etc.
+- 📊 **Estimated Cost** - A few yuan per month is sufficient for light chat usage
 
-**Money-saving tips**:
+**Money-Saving Tips**:
 - Use cheaper models (DeepSeek is very affordable)
-- Set response frequency limits
+- Set reply frequency limits
 - Disable unnecessary features
 
-### Which AI model is the best to use?
-**Recommendation**: Beginners should use DeepSeek—it's cheap and effective!
+### Which AI model is the best?
+**Recommendation**: Beginners should use DeepSeek; it is affordable and effective!
 
 **Comparison**:
-| Model | Price | Effect | Recommendation |
+| Model | Price | Performance | Recommendation |
 |------|------|------|--------|
-| DeepSeek | ⭐ Very Cheap | ⭐⭐⭐⭐ Great | ⭐⭐⭐⭐⭐ Highly Recommended |
-| Qwen | ⭐⭐ Cheap | ⭐⭐⭐⭐ Great | ⭐⭐⭐⭐ Recommended |
-| GPT-4o-mini | ⭐⭐⭐ Medium | ⭐⭐⭐⭐ Great | ⭐⭐⭐ Worth a try |
+| DeepSeek | ⭐ Very Cheap | ⭐⭐⭐⭐ Excellent | ⭐⭐⭐⭐⭐ Highly Recommended |
+| Qwen | ⭐⭐ Cheap | ⭐⭐⭐⭐ Excellent | ⭐⭐⭐⭐ Recommended |
+| GPT-4o-mini | ⭐⭐⭐ Moderate | ⭐⭐⭐⭐ Excellent | ⭐⭐⭐ Worth Trying |
 
-### Will my QQ account be banned?
-**Ans**: There is a risk, but you can use an alt account to avoid this.
+### Will my QQ number be banned?
+**Answer**: There is a risk, but you can avoid it by using a secondary account.
 
 **Suggestions**:
-- 🔒 **Use an alt account** - Do not use your main account to reduce risk
-- ⚠️ **Mind your words** - Do not post content that violates regulations
-- 🛡️ **Diversify risk** - Rotate between multiple alt accounts
+- 🔒 **Use a Secondary Account** - Do not use your main account to reduce risk
+- ⚠️ **Watch Your Words** - Do not post violating content
+- 🛡️ **Diversify Risk** - Rotate multiple secondary accounts
 
 ## 🚀 Usage Issues
 
-### What to do if it won't start?
-**Common causes and solutions**:
+### What should I do if it won't start?
+**Common Causes and Solutions**:
 
-1️⃣ **Incorrect Python version**
-```
-# 检查版本
+1️⃣ **Incorrect Python Version**
+```bash
+# Check version
 python --version
-# 需要 3.12 以上
+# Requires version 3.12 or higher
 ```
 
-2️⃣ **Missing configuration file**
-```
-# 第一次启动会自动创建
-# 如果没有，手动创建 config 文件夹
+2️⃣ **Missing Configuration File**
+```bash
+# Automatically created on first startup
+# If missing, manually create the config folder
 ```
 
-3️⃣ **Port occupied**
+3️⃣ **Port Already in Use**
 
 Startup error example:
 ```
-WebUI 服务器 启动失败: 端口 8001 已被占用 (host=127.0.0.1)
+WebUI server startup failed: Port 8001 is already in use (host=127.0.0.1)
 ```
 
-**Method 1: Change Port** — Edit `config/bot_config.toml`:
+**Method 1: Change the Port** — Edit `config/bot_config.toml`:
 - WebUI Port: `[webui]` → `port = 8002`
 - WebSocket Port: `[maim_message]` → `ws_server_port = 8001` (Default is 8000; change to another port if there is a conflict)
 
-**Method 2: Kill Process**:
+**Method 2: Terminate the Process**:
 ```bash
 # Windows
 netstat -ano | findstr :8001
@@ -77,49 +78,49 @@ lsof -i :8001
 kill -9 <PID>
 ```
 
-### Bot is not replying to messages?
+### The bot is not replying to messages?
 **Checklist**:
 
 1. **Check Logs** - Are there any error messages?
-2. **Check Configuration** - Is the API Key entered correctly?
+2. **Verify Configuration** - Is the API Key entered correctly?
 3. **Test Connection** - Can the network access the model service?
-4. **Check Permissions** - Does it have permission to speak in the QQ group?
+4. **Check Permissions** - Do you have permission to speak in the QQ group?
 
 **Common Errors**:
-- ❌ Wrong API Key → 401 Error
-- ❌ Network failure → Connection timeout
-- ❌ Muted → Cannot send messages
+- ❌ Incorrect API Key → 401 Error
+- ❌ Network Unreachable → Connection Timeout
+- ❌ Muted → Unable to send messages
 
 ### Configuration file format error?
-**Tips for beginners**:
-- 🖥️ **Use WebUI to change config** - No mistakes will be made
-- ✏️ **Be careful with manual editing** - Every symbol must be correct
-- 💾 **Backup before changing** - So you can restore if something goes wrong
+**Beginner Suggestions**:
+- 🖥️ **Use WebUI to Edit Config** - Prevents errors
+- ✏️ **Manual Editing Requires Caution** - Ensure all symbols are correct
+- 💾 **Backup Before Editing** - Allows recovery if mistakes occur
 
-**Formatting Key Points**:
+**Format Key Points**:
 ```toml
-# 字符串要加引号
-name = "我的机器人"
+# Strings must be enclosed in quotes
+name = "My Robot"
 
-# 数字不要引号
+# Numbers should not have quotes
 port = 8001
 
-# 布尔值小写
+# Boolean values must be lowercase
 enabled = true
 ```
 
 ## 🤖 Feature Issues
 
 ### Can it serve multiple groups simultaneously?
-**Ans**: Of course! One MaiBot instance can serve many groups.
+**Answer**: Of course! One MaiBot instance can serve many groups.
 
 **Setup Method**:
-- Add multiple group numbers in the configuration
+- Add multiple group IDs in the configuration
 - Each group can have a different personality
-- Unified management is very convenient
+- Unified management is convenient
 
-### Where is data stored? Is it secure?
-**Ans**: All data is stored on your own computer.
+### Where is data stored? Is it safe?
+**Answer**: All data is stored on your own computer.
 
 **Storage Locations**:
 - 💾 **Chat History** - Local database
@@ -127,50 +128,50 @@ enabled = true
 - ⚙️ **Configuration Files** - Local disk
 
 **Security Reminders**:
-- 🔒 **No network uploads** - Data stays local
-- 🏠 **Good privacy protection** - Others cannot see it
-- 💿 **Regular backups** - Prevent data loss
+- 🔒 **No Cloud Upload** - Data remains local
+- 🏠 **Privacy Protected** - Others cannot see it
+- 💿 **Regular Backups** - Prevent data loss
 
 ### Does MaiBot support mobile deployment?
-**Ans**: Theoretically yes, but not recommended.
+**Answer**: Theoretically possible, but not recommended.
 
 **Reasons**:
-- 📱 **Limited mobile performance** - May run sluggishly
-- 🔋 **High power consumption** - Phone may overheat severely
-- 📶 **Unstable network** - Prone to disconnecting
+- 📱 **Limited Mobile Performance** - May cause lag
+- 🔋 **High Power Consumption** - Significant device heating
+- 📶 **Unstable Network** - Prone to disconnection
 
 **Suggestions**:
-- 🖥️ **Use a computer** - Desktops or laptops both work
-- ☁️ **Use a cloud server** - Online 24/7
-- 🏠 **Raspberry Pi** - Small devices also work
+- 🖥️ **Use a Computer** - Desktop or laptop works fine
+- ☁️ **Use a Cloud Server** - Ensures 24/7 uptime
+- 🏠 **Raspberry Pi** - Small devices are also viable
 
 ### Must I use QQ? Can I use other platforms?
-**Ans**: Currently, it primarily supports QQ; other platforms are under development.
+**Answer**: Currently, QQ is the primary supported platform; others are under development.
 
 **Current Status**:
 - ✅ **QQ** - Best support, most complete features
-- 🚧 **WeChat** - No available adapter yet; community development is welcome
-- 📋 **Others** - More platforms can be integrated via adapter plugins
+- 🚧 **WeChat** - No usable adapter currently available; community development is welcome
+- 📋 **Others** - Additional platforms can be integrated via adapter plugins
 
 ## 🔧 Technical Issues
 
-### What to do if replies are too slow?
+### What if the reply is too slow?
 **Optimization Methods**:
-1. **Switch to a faster model** - DeepSeek responds very quickly
-2. **Reduce context** - Do not provide too much history
-3. **Check network** - Slow network affects speed
-4. **Disable unnecessary features** - Too many plugins can slow it down
+1. **Switch to a Faster Model** - DeepSeek responds quickly
+2. **Reduce Context** - Do not provide too much history
+3. **Check Network** - Slow network affects speed
+4. **Disable Unnecessary Features** - Too many plugins slow down performance
 
-### NapCat is connected, but group chats aren't receiving messages?
-**First, check the group chat list filtering of the NapCat adapter.**
+### NapCat is connected, but group messages are not received?
+**Priority Check: NapCat Adapter Group List Filtering.**
 
-NapCat adapter enables chat list filtering by default, and group chats are in whitelist mode by default. If the group number is not in `group_list`, group messages will be discarded by the adapter.
+The NapCat adapter enables chat list filtering by default. Group chats operate in whitelist mode by default. If a group ID is not in `group_list`, group messages will be directly discarded by the adapter.
 
-**Solution**:
+**Resolution Steps**:
 1. Open `plugins/MaiBot-Napcat-Adapter/config.toml`
-2. If using Docker deployment, open `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`
-3. Add the target group number to `group_list` in `[chat]`
-4. It is recommended to temporarily enable `show_dropped_chat_list_messages = true` to see filtered messages in the logs
+2. If using Docker, open `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`
+3. Add the target group ID to `group_list` under `[chat]`
+4. It is recommended to temporarily enable `show_dropped_chat_list_messages = true` to view filtered messages in the logs
 5. Save and restart MaiBot
 
 ```toml
@@ -178,55 +179,55 @@ NapCat adapter enables chat list filtering by default, and group chats are in wh
 enable_chat_list_filter = true
 show_dropped_chat_list_messages = true
 group_list_type = "whitelist"
-group_list = ["你的QQ群号"]
+group_list = ["Your QQ Group ID"]
 ```
 
 ### Memory usage is too high?
-**Save Memory**:
-- 📉 **Reduce memory capacity** - Remember fewer things
-- 🗑️ **Clean useless data** - Regularly delete junk
-- 🔌 **Use fewer plugins** - Plugins consume memory
-- 💻 **Upgrade hardware** - Adding RAM is the most direct way
+**Memory Saving Tips**:
+- 📉 **Reduce Memory Capacity** - Remember less information
+- 🗑️ **Clean Up Useless Data** - Regularly delete junk
+- 🔌 **Use Fewer Plugins** - Plugins consume memory
+- 💻 **Upgrade Hardware** - Adding RAM is the most direct solution
 
-### How to change the AI model?
+### How do I switch AI models?
 **Simple Steps**:
 1. Open WebUI → Configuration Management
-2. Find Model Settings
-3. Select a new model
-4. Save, and it takes effect immediately
+2. Locate Model Settings
+3. Select the new model
+4. Changes take effect immediately after saving
 
-## 💡 Beginner Tips
+## 💡 Beginner Suggestions
 
-### What should I pay attention to the first time?
-1. **Test with an alt account first** - Avoid risks to your main account
-2. **Start with simple configurations** - Don't enable too many features at once
-3. **Check logs often** - Logs will tell you what's wrong
-4. **Join the community group** - Ask others if you have questions
+### What should I pay attention to on the first use?
+1. **Test with a Secondary Account First** - Avoid risks to your main account
+2. **Start with Simple Configuration** - Do not enable too many features at once
+3. **Monitor Logs Frequently** - Logs will inform you of issues
+4. **Join the Discussion Group** - Ask others if you encounter problems
 
 ### How to make the bot smarter?
-1. **Teach it knowledge** - Use the memory management feature
-2. **Adjust personality settings** - Make the character more distinct
-3. **Install useful plugins** - Add various capabilities
-4. **Chat with it more** - It will learn and get smarter
+1. **Teach It Knowledge** - Use the memory management feature
+2. **Adjust Personality Settings** - Make the character more distinct
+3. **Install Useful Plugins** - Add various capabilities
+4. **Chat with It Frequently** - It will learn and become smarter over time
 
 ### Where can I learn more?
-- 📖 **Read the docs** - This documentation site
-- 💬 **Join groups** - Communicate with other users
-- 🔍 **Search tutorials** - Many experiences are shared online
+- 📖 **Read Documentation** - This documentation website
+- 💬 **Join Groups** - Communicate with other users
+- 🔍 **Search Tutorials** - Many experience-sharing posts online
 - 🐱 **Check GitHub** - Latest updates and discussions
 
-## 🆘 Encountered an unsolvable problem?
+## 🆘 Encountered an Unsolvable Problem?
 
-### Ways to get help:
-1. **Check FAQ first** - The answer might already be there
-2. **Check logs** - Error messages are very important
-3. **Search online** - Others may have encountered it
-4. **Ask around** - Join the group and ask other users
-5. **Submit an Issue** - Submit the problem on GitHub
+### Ways to Get Help:
+1. **Check the FAQ First** - The answer might already be there
+2. **Review Logs** - Error messages are crucial
+3. **Search Online** - Others may have encountered the same issue
+4. **Ask in the Group** - Ask other users in the community
+5. **Submit an Issue** - Report the problem on GitHub
 
-### Information to provide when asking:
+### Information to Provide When Asking:
 - 🖥️ **System Info** - Windows/Linux/Mac?
 - 📋 **Error Logs** - Specific error messages
-- ⚙️ **Config Info** - Relevant configuration content
+- ⚙️ **Configuration Info** - Relevant configuration content
 - 🔢 **Version Info** - MaiBot version number
 - 🎯 **Reproduction Steps** - How to trigger the error

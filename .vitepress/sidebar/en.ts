@@ -2,17 +2,11 @@ import type { DefaultTheme } from 'vitepress'
 
 export const nav: DefaultTheme.NavItem[] = [
   { text: 'Home', link: '/en/' },
-  { text: 'Features', link: '/en/features/' },
   { text: 'Manual', link: '/en/manual/deployment/' },
   { text: 'Development', link: '/en/develop/' },
+  { text: 'Plugin Dev', link: '/en/plugin/' },
   { text: 'Changelog', link: '/en/changelog/' },
-  {
-    text: 'GitHub',
-    items: [
-      { text: 'MaiBot', link: 'https://github.com/MaiM-with-u/MaiBot' },
-      { text: 'MaiBot Docs', link: 'https://github.com/MaiM-with-u/docs' },
-    ]
-  },
+  { text: 'EULA', link: '/en/legal/' },
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
@@ -47,6 +41,16 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'API Reference', link: '/en/plugin/api-reference' },
+      ]
+    },
+  ],
+  '/en/legal/': [
+    {
+      text: 'Legal Documents',
+      collapsed: false,
+      items: [
+        { text: 'Overview', link: '/en/legal/' },
+        { text: 'EULA', link: '/en/legal/EULA' },
       ]
     },
   ],
@@ -122,7 +126,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: 'FAQ', link: '/en/manual/faq/' },
         { text: 'Error Troubleshooting', link: '/en/manual/faq/error-troubleshooting' },
-        { text: 'EULA', link: '/en/manual/faq/EULA' },
+
       ]
     },
   ],

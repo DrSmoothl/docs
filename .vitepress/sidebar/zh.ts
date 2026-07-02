@@ -2,17 +2,11 @@ import type { DefaultTheme } from 'vitepress'
 
 export const nav: DefaultTheme.NavItem[] = [
   { text: '首页', link: '/' },
-  { text: '功能介绍', link: '/features/' },
   { text: '用户手册', link: '/manual/deployment/' },
   { text: '开发文档', link: '/develop/' },
+  { text: '插件开发', link: '/plugin/' },
   { text: '更新日志', link: '/changelog/' },
-  {
-    text: 'GitHub',
-    items: [
-      { text: 'MaiBot', link: 'https://github.com/MaiM-with-u/MaiBot' },
-      { text: 'MaiBot Docs', link: 'https://github.com/MaiM-with-u/docs' },
-    ]
-  },
+  { text: '用户协议', link: '/legal/' },
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
@@ -47,6 +41,16 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'API 参考', link: '/plugin/api-reference' },
+      ]
+    },
+  ],
+  '/legal/': [
+    {
+      text: '法律文档',
+      collapsed: false,
+      items: [
+        { text: '总览', link: '/legal/' },
+        { text: 'EULA', link: '/legal/EULA' },
       ]
     },
   ],
@@ -115,7 +119,6 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'FAQ', link: '/manual/faq/' },
-        { text: 'EULA', link: '/manual/faq/EULA' },
       ]
     },
   ],

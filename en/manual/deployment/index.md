@@ -1,65 +1,66 @@
 ---
 title: Deployment Overview
----# MaiBot Introduction
+---
+# MaiBot Introduction
 
-**MaiBot is a human-like intelligent agent** that can chat with you, continuously learn about you, gather information, or expand its capabilities using plugins or MCP.
+**MaiBot is a human-like agent** that can chat with you, continuously learn about you, gather information, or extend its capabilities using plugins or MCP.
 
-MaiBot can be interacted with via the local command line, or connected to different IM platforms or any client through adapter plugins.
+MaiBot can be used via local command-line conversations or connected to different IM platforms or any client through adapter plugins.
 
 ## Deployment Methods
 
-MaiBot can be deployed in multiple ways
+MaiBot can be deployed using multiple methods:
 
-| Method | Suitable For |
+| Method                               | Suitable For          |
 | -------------------------------- | ------------- |
-| [Source Code Installation](./installation.md) | Suitable for those who prefer deploying from source |
-| [One-Click Package Deployment](./one_key.md) | Suitable for those who prefer one-click packages |
-| [Docker Deployment](./docker.md) | Suitable for those who prefer Docker |
+| [Source Code Installation](./installation.md)        | Users who prefer deploying from source code |
+| [One-Click Package Deployment](./one_key.md) | Users who prefer one-click packages  |
+| [Docker Deployment](./docker.md) | Users who prefer Docker  |
 
-## How to Chat with Maimai
+## How to Chat with MaiMai
 
-First, you need to install MaiBot correctly, and then start it.
+First, you must correctly install and start MaiBot.
 
 ### WebUI Chat
 
-When you start MaiBot, you will see the WebUI start along with it. By default, you can access your deployed Maimai's WebUI via http://127.0.0.1:8001/
+When you start MaiBot, the WebUI will launch alongside it. By default, you can access the WebUI of your deployed MaiMai at http://127.0.0.1:8001/.
 
-In the WebUI, you can follow the **Configuration Wizard** for basic setup. To chat with Maimai, you need to configure the corresponding models and settings.
+In the WebUI, you can follow the **Configuration Wizard** for basic setup. To chat with MaiMai, you need to configure the appropriate models and settings.
 
-For Maimai to be active, it requires at least one LLM model. If it needs to view images, it also requires a VLM; if you want to enable memory, it requires an embedding model.
+At minimum, MaiMai requires an LLM model to function. If image viewing is needed, a VLM is also required. If memory features are to be enabled, an embedding model is additionally necessary.
 
-Once configured, you can chat via **Maimai Chat** in the top navigation.
+Once configured, you can start chatting via **MaiMai Chat** in the top navigation bar.
 
-For more help on configuration, you can read the [Configuration Guide](../configuration/index.md)
+For more help on configuration, please refer to the [Configuration Guide](../configuration/index.md).
 
-### Chatting with Maimai on QQ
+### Chatting with MaiMai on QQ
 
-To connect MaiBot to QQ, you need an **Adapter** to establish the connection between MaiBot and these messaging platforms.
+To connect MaiBot to QQ, you need an **Adapter** to establish the link between MaiBot and these messaging platforms.
 
-Here we introduce NapCat.
+This section introduces NapCat.
 
-As is well known, QQ has official bots, but the official bots provide very few interfaces and cannot proactively fetch messages, which is highly limiting.
+As is well known, QQ has an official bot, but the official bot provides very limited APIs, cannot actively retrieve messages, and has significant limitations.
 
-Therefore, we recommend using **NapCat**, which you can colloquially understand as an unofficial QQ bot application (in layman's terms).
+Therefore, we recommend using **NapCat**, which can be simply understood as an unofficial QQ bot application (for general understanding).
 
-To connect NapCat to MaiBot, you need an Adapter to bridge them, forwarding NapCat's messages to MaiBot for processing.
+To connect NapCat to MaiBot, an Adapter is needed to bridge them, forwarding messages from NapCat to MaiBot for processing.
 
-This leads to two questions: 1. How to deploy NapCat 2. How to install the adapter
+This raises two questions: 1. How to deploy NapCat  2. How to install the adapter
 
 #### How to Deploy NapCat
 
-If you installed via Docker or the one-click package, a NapCat client is often included, so no additional installation is needed.
+If you installed via Docker or a one-click package, a NapCat client is often included, so no additional installation is needed.
 
-If you deployed from source, you need to install NapCat separately. You can refer to NapCat's documentation for installation, which will not be elaborated here.
+If you deployed from source code, you need to install NapCat separately. You can refer to the NapCat documentation for installation details; further elaboration is omitted here.
 
 [NapCat Official Documentation](https://napneko.github.io/)
 
 #### How to Install the Adapter
 
-To use the NapCat adapter, you can refer to this link. [NapCat Adapter Usage](../adapters/napcat.md)
+To use the NapCat adapter, please refer to this link: [NapCat Adapter Usage](../adapters/napcat.md).
 
-### Chatting with Maimai on Other Platforms
+### Chatting with MaiMai on Other Platforms
 
-Similar to QQ, you can also chat on other platforms by installing adapter plugins.
+Similar to QQ, chatting on other platforms can also be achieved by installing adapter plugins.
 
-You can find other adapters here [Adapter Overview](../adapters/index.md).
+You can find other adapters here: [Adapter Overview](../adapters/index.md).
