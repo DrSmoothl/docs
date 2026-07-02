@@ -14,4 +14,4 @@ Copy the prompt below and send it to the AI assistant you are currently using (C
 
 :::
 
-> **Running this program indicates that you agree to the [MaiBot End User License Agreement (EULA)](../faq/EULA).**
+> **Running this program indicates that you agree to the [MaiBot End User License Agreement (EULA)](../../legal/EULA).**
