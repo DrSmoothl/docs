@@ -56,6 +56,9 @@ export default defineConfig({
       }
     }
   },
+  rewrites: {
+    'zh/:rest*': ':rest*'
+  },
   head: [
     ['link', { rel: 'icon', href: '/title_img/mai2.png' }]
   ],
@@ -84,7 +87,7 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [MermaidPlugin(), llmstxt({ ignoreFiles: ['en/**'] })],
+    plugins: [MermaidPlugin(), llmstxt({ workDir: 'zh', ignoreFiles: ['index.md'] })],
     optimizeDeps: {
       include: ['mermaid'],
       exclude: [
