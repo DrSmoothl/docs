@@ -279,7 +279,7 @@ kill -9 <PID>
 恭喜你成功部署了 MaiBot！接下来可以：
 
 - 📚 **[配置详解](../configuration/)** — 调整人格、聊天频率、记忆等参数
-- 🔌 **[插件开发](../../develop/plugin-dev/)** — 为麦麦开发新功能
+- 🔌 **[插件开发](../../plugin/)** — 为麦麦开发新功能
 - 🧠 **[了解麦麦的大脑](../../manual/features/maisaka-reasoning.md)** — 深入理解 MaiBot 的推理机制
 - 💬 **邀请麦麦进群** — 和朋友们一起玩
 

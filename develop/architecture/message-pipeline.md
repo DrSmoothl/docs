@@ -277,7 +277,7 @@ class HeartflowManager:
 
 所有内置 Hook 由 `hook_catalog.py` 统一注册。
 
-> 完整的 Hook 目录及其参数说明请参阅 [Hook 处理器](../plugin-dev/hooks)。本文仅介绍管线中 Hook 的位置和作用。
+> 完整的 Hook 目录及其参数说明请参阅 [Hook 处理器](../../plugin/hooks)。本文仅介绍管线中 Hook 的位置和作用。
 
 ## 数据流图
 

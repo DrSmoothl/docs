@@ -6,7 +6,7 @@ title: 工具系统架构
 
 本文基于 code-map 快照编写。
 
-MaiBot 的工具系统把插件工具、旧版 Action、MaiSaka 内置能力和外部 MCP 工具收敛到同一套抽象层。它不负责教插件作者如何写一个 `@Tool`，也不替代 [插件 Tool 用法](../plugin-dev/tools.md) 中的开发教程。本文聚焦内部实现，说明工具声明、工具调用、Provider 适配和 ToolRegistry 路由如何协同工作。
+MaiBot 的工具系统把插件工具、旧版 Action、MaiSaka 内置能力和外部 MCP 工具收敛到同一套抽象层。它不负责教插件作者如何写一个 `@Tool`，也不替代 [插件 Tool 用法](../../plugin/tools.md) 中的开发教程。本文聚焦内部实现，说明工具声明、工具调用、Provider 适配和 ToolRegistry 路由如何协同工作。
 
 ## 1. 概述
 
@@ -481,7 +481,7 @@ sequenceDiagram
 
 ## 6. 与插件开发的关系
 
-插件开发文档 [Tool 组件](../plugin-dev/tools.md) 关注的是插件作者如何使用 `@Tool`、如何声明参数、如何返回值、如何处理图片和媒体。本文不重复这些 API 用法，只说明它们在内部架构中的位置。
+插件开发文档 [Tool 组件](../../plugin/tools.md) 关注的是插件作者如何使用 `@Tool`、如何声明参数、如何返回值、如何处理图片和媒体。本文不重复这些 API 用法，只说明它们在内部架构中的位置。
 
 对插件作者而言，需要理解三条边界：
 

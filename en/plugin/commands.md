@@ -2,7 +2,7 @@
 title: Command Component
 ---# Command Component
 
-`@Command` is a command component based on regular expression matching. When a message sent by a user matches the regex pattern of a Command, MaiBot will schedule and execute the corresponding Command handler function.
+`@Command` is a command component based on regex matching. When a message sent by a user matches a Command's regex pattern, MaiBot will dispatch and execute the corresponding Command handler function.
 
 ## Decorator Signature
 
@@ -10,11 +10,11 @@ title: Command Component
 from maibot_sdk import Command
 
 @Command(
-    name: str,                    # 命令名称（必填）
-    description: str = "",        # 命令描述
-    pattern: str = "",            # 正则匹配模式
-    aliases: list[str] | None = None,  # 命令别名列表
-    **metadata,                   # 额外元数据
+    name: str,                    # Command name (required)
+    description: str = "",        # Command description
+    pattern: str = "",            # Regex matching pattern
+    aliases: list[str] | None = None,  # Command alias list
+    **metadata,                   # Additional metadata
 )
 ```
 
@@ -22,8 +22,8 @@ from maibot_sdk import Command
 
 - **`name`** `str` — Command name, must be unique within the plugin
 - **`description`** `str` — Command description
-- **`pattern`** `str` — Regex matching pattern string. This command is triggered when the user message matches this pattern
-- **`aliases`** `list[str] | None` — List of command aliases, providing additional trigger methods
+- **`pattern`** `str` — Regex matching pattern string. Triggers this command when a user message matches this pattern
+- **`aliases`** `list[str] | None` — Command alias list, providing additional trigger methods
 
 ## Basic Usage
 
@@ -38,18 +38,18 @@ class MyPlugin(MaiBotPlugin):
         return True, "Hello!", 2
 ```
 
-### Commands with Aliases
+### Command with Aliases
 
 ```python
 @Command("greet", pattern=r"^/greet", aliases=["/hi", "/hey"])
 async def handle_greet(self, **kwargs):
-    await self.ctx.send.text("你好！", kwargs["stream_id"])
-    return True, "你好！", 2
+    await self.ctx.send.text("Hello!", kwargs["stream_id"])
+    return True, "Hello!", 2
 ```
 
-This command can be triggered using `/greet`, `/hi`, or `/hey`.
+Using `/greet`, `/hi`, or `/hey` will all trigger this command.
 
-### Commands with Regex Capture Groups
+### Command with Regex Capture Groups
 
 ```python
 import re
@@ -65,31 +65,31 @@ async def handle_echo(self, **kwargs):
 
 ## Handler Function Parameters
 
-The Command handler function receives `**kwargs`, which contains the following parameters:
+Command handler functions receive `**kwargs`, which contains the following parameters:
 
 - **`stream_id`** `str` — Current chat stream ID, used for sending messages
-- **`matched_groups`** `dict` — Matching results of the regex named capture groups
-- **`raw_message`** `str` — The original message text sent by the user
-- **`message`** `dict` — The complete message object
+- **`matched_groups`** `dict` — Regex named capture group matching results
+- **`raw_message`** `str` — Original message text sent by the user
+- **`message`** `dict` — Complete message object
 
 ### Return Value
 
-The Command handler function must return a triple:
+Command handler functions must return a triplet:
 
 ```python
 return success, response, weight
 ```
 
-- **`success`** `bool` — Whether the command was executed successfully
+- **`success`** `bool` — Whether the command executed successfully
 - **`response`** `str` — Text description of the command execution result
 - **`weight`** `int` — Command priority weight; the higher the value, the higher the priority
 
 ```python
-# 命令成功执行
-return True, "操作成功", 2
+# Command executed successfully
+return True, "Operation successful", 2
 
-# 命令执行失败
-return False, "参数错误", 1
+# Command execution failed
+return False, "Parameter error", 1
 ```
 
 ## Regex Pattern Writing Guide
@@ -97,57 +97,57 @@ return False, "参数错误", 1
 ### Recommended Patterns
 
 ```python
-# 精确匹配 /hello
+# Exact match /hello
 pattern=r"^/hello$"
 
-# 匹配 /hello 加可选参数
+# Match /hello with optional parameters
 pattern=r"^/hello(?P<name>.+)?$"
 
-# 匹配 /echo 加必填参数
+# Match /echo with required parameters
 pattern=r"^/echo\s+(?P<text>.+)$"
 
-# 匹配 /set 加键值对
+# Match /set with key-value pairs
 pattern=r"^/set\s+(?P<key>\w+)\s+(?P<value>.+)$"
 ```
 
 ### Using Named Capture Groups
 
-It is recommended to use `(?P<name>...)` named capture groups, which allow accessing matching results by name via `kwargs["matched_groups"]`:
+It is recommended to use `(?P<name>...)` named capture groups, which allow you to access matching results by name via `kwargs["matched_groups"]`:
 
 ```python
 @Command("ban", pattern=r"^/ban\s+(?P<user>\w+)(?:\s+(?P<reason>.+))?$")
 async def handle_ban(self, **kwargs):
     matched = kwargs.get("matched_groups", {})
     user = matched.get("user", "")
-    reason = matched.get("reason", "无原因")
-    await self.ctx.send.text(f"已封禁 {user}，原因：{reason}", kwargs["stream_id"])
-    return True, f"已封禁 {user}", 2
+    reason = matched.get("reason", "No reason")
+    await self.ctx.send.text(f"Banned {user}, reason: {reason}", kwargs["stream_id"])
+    return True, f"Banned {user}", 2
 ```
 
 ## Command Execution Flow
 
 ```mermaid
 sequenceDiagram
-    participant User as 用户
-    participant Host as Host 主进程
-    participant Runner as Runner 子进程
-    participant Plugin as 插件
+    participant User as User
+    participant Host as Host Main Process
+    participant Runner as Runner Subprocess
+    participant Plugin as Plugin
 
-    User->>Host: 发送消息
-    Host->>Host: 正则匹配命令
+    User->>Host: Send message
+    Host->>Host: Regex match command
     Host->>Runner: invoke_plugin(command)
-    Runner->>Plugin: 调用 Command 处理函数
-    Plugin->>Plugin: 执行命令逻辑
-    Plugin-->>Runner: 返回 (success, response, weight)
-    Runner-->>Host: 返回结果
+    Runner->>Plugin: Call Command handler function
+    Plugin->>Plugin: Execute command logic
+    Plugin-->>Runner: Return (success, response, weight)
+    Runner-->>Host: Return result
 ```
 
-## Command Related Hooks
+## Command-Related Hooks
 
 There are built-in Hook points before and after command execution available for `@HookHandler` subscription:
 
-- `chat.command.before_execute`: Triggered before command execution; can abort or rewrite parameters
-- `chat.command.after_execute`: Triggered after command execution; can rewrite the return result
+- `chat.command.before_execute`: Triggered before command execution, can abort or modify parameters
+- `chat.command.after_execute`: Triggered after command execution, can modify the return result
 
 ## Complete Example
 
@@ -158,7 +158,7 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
 class AdminPlugin(MaiBotPlugin):
     async def on_load(self) -> None:
-        self.ctx.logger.info("管理插件已加载")
+        self.ctx.logger.info("Admin plugin loaded")
 
     async def on_unload(self) -> None:
         pass
@@ -168,14 +168,14 @@ class AdminPlugin(MaiBotPlugin):
 
     @Command("status", pattern=r"^/status$")
     async def handle_status(self, **kwargs):
-        """查看系统状态"""
+        """View system status"""
         stream_id = kwargs["stream_id"]
-        await self.ctx.send.text("系统运行正常 ✅", stream_id)
-        return True, "系统运行正常", 1
+        await self.ctx.send.text("System running normally ✅", stream_id)
+        return True, "System running normally", 1
 
     @Command("echo", pattern=r"^/echo\s+(?P<text>.+)$")
     async def handle_echo(self, **kwargs):
-        """回显消息"""
+        """Echo message"""
         matched = kwargs.get("matched_groups", {})
         text = matched.get("text", "").strip()
         stream_id = kwargs["stream_id"]
@@ -184,11 +184,11 @@ class AdminPlugin(MaiBotPlugin):
 
     @Command("help", pattern=r"^/help$", aliases=["/帮助"])
     async def handle_help(self, **kwargs):
-        """显示帮助信息"""
+        """Display help information"""
         stream_id = kwargs["stream_id"]
-        help_text = "可用命令：\n/status - 查看状态\n/echo <text> - 回显消息\n/help - 显示帮助"
+        help_text = "Available commands:\n/status - View status\n/echo <text> - Echo message\n/help - Display help"
         await self.ctx.send.text(help_text, stream_id)
-        return True, "帮助信息已发送", 1
+        return True, "Help information sent", 1
 
 
 def create_plugin():

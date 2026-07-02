@@ -311,7 +311,7 @@ flowchart TD
 
 ### Hook Specs
 
-Maisaka 相关的 Hook 参数详情请参阅 [Hook 处理器](../plugin-dev/hooks#maisaka-规划器链)。本文仅介绍推理管线中 Hook 的位置和作用。
+Maisaka 相关的 Hook 参数详情请参阅 [Hook 处理器](../../plugin/hooks#maisaka-规划器链)。本文仅介绍推理管线中 Hook 的位置和作用。
 
 ## 上下文消息类型
 

@@ -1,142 +1,140 @@
 ---
 title: How MaiBot Thinks
----
+---# How MaiBot Thinks 🧠
 
-# How MaiBot Thinks 🧠
+Have you ever wondered how MaiBot actually "thinks" when chatting with you? Is it really just a simple "you ask, I answer" mechanism?
 
-Have you ever wondered how MaiBot "thinks" when chatting with you? Is it really just simple "you ask, I answer"?
+Actually, MaiBot's thinking process is very similar to real human conversation — it first listens to what you say, then thinks about how to respond, and sometimes ponders for several rounds before giving a reply.
 
-Actually, MaiBot's thinking process is very similar to human conversation - it first listens to what you say, then thinks about how to respond, sometimes thinking through several rounds before giving a reply.
-
-## Human-like Thinking Process
+## A Thinking Process Like a Real Person
 
 ### 🎧 Step 1: Listen Carefully to What You Say
 
-Just like human conversation, MaiBot will first:
-- **Listen to your words completely** - Won't interrupt you
-- **Understand context** - Knows what topic you're discussing
-- **Remember important information** - Takes note of key content
+Just like in a real human conversation, MaiBot will first:
+- **Listen to your words** — won't interrupt you
+- **Understand the context** — knows what topic you're discussing
+- **Remember important information** — notes down key content
 
 ### 🤔 Step 2: Think About Whether to Speak
 
 This step is crucial! MaiBot will consider:
-- **Is it appropriate to join in now?** - Understands politeness like real people
-- **What should I say?** - Thinks about valuable content
-- **What tone should I use?** - Adjusts based on chat atmosphere
+- **Is it appropriate to chime in right now?** — polite like a real person
+- **What should I say?** — thinks about what valuable content to contribute
+- **What tone should I use?** — adjusts according to the chat atmosphere
 
-Sometimes it will think:
-- "Seems inappropriate to join in now, wait a bit"
+Sometimes it thinks:
+- "It doesn't seem appropriate to interject now, I'll wait a bit"
 - "I can participate in this topic"
-- "Will this be too abrupt if I say it?"
+- "Would it be too abrupt if I say this?"
 
-### 💭 Step 3: Organize Language
+### 💭 Step 3: Organize the Language
 
 After deciding to speak, it will:
-- **Recall previous conversations** - Look for relevant information
-- **Check memory bank** - Search for useful knowledge
-- **Think about speaking style** - Imitate your group's way of speaking
+- **Recall previous conversations** — see if there's any relevant information
+- **Check the memory bank** — look for useful knowledge
+- **Consider speaking style** — mimic the way your group talks
 
-### 📝 Step 4: Give Reply
+### 📝 Step 4: Give the Reply
 
-Finally, it sends out the well-thought-out words, as naturally as you typing.
+Finally, it sends out the words it has thought of, as naturally as you typing.
 
 ## A Vivid Example 🌰
 
 **Scenario**: The group is discussing what to eat
 
 ```
-Wang: What should we eat tonight?
-Li: How about hot pot?
-Zhang: Too hot, don't feel like hot pot
+Xiao Wang: What should we eat tonight?
+Xiao Li: How about hotpot?
+Xiao Zhang: It's too hot, I don't want hotpot.
 (After a few seconds)
-MaiBot: I think barbecue is great! Won't be too hot,
-       and everyone can eat what they like～
-       Want to try that new barbecue place?
+MaiBot: I think BBQ is a good choice! It won't be too hot,
+       and everyone can eat what they like~
+       How about trying that newly opened BBQ place?
 ```
 
 **MaiBot's thinking process**:
 
 1. **Listen**: Hears everyone discussing what to eat
 2. **Think**: "They're struggling with what to eat, I can give some suggestions"
-3. **Consider**: "Hot pot was rejected because of the heat. What are some non-hot options?"
-4. **Recall**: "Right, barbecue won't be too hot, and everyone can choose what they like"
-5. **Organize**: "Use suggestive tone, not too forceful"
-6. **Reply**: Give specific suggestions
+3. **Ponder**: "Hotpot was rejected because it's hot. What's a non-hot alternative?"
+4. **Recall**: "Right, BBQ isn't too hot, and everyone can choose what they like"
+5. **Organize**: "Use a suggestive tone, don't be too pushy"
+6. **Reply**: Gives a specific suggestion
 
-## Why Sometimes Replies Are Slow?
+## Why Are Replies Sometimes Slow?
 
-MaiBot replies slowly usually because:
+MaiBot's slow replies are usually because:
 
-### 🧐 Seriously thinking
-- Topic is complex, needs more thought
+### 🧐 Thinking Carefully
+- The topic is rather complex and needs more thought
 - Recalling relevant memories
-- Organizing longer responses
+- Organizing a longer reply
 
-### 📚 Looking up information
-- Searching memory for relevant information
-- Thinking about what emojis are appropriate
+### 📚 Looking Up Information
+- Searching for relevant information in its memory
+- Thinking about what emoji/sticker is appropriate to use
 - Recalling your previous conversations
 
-### ⏰ Waiting for timing
-- Feels it's inappropriate to speak now, wait a bit
-- Observing others' reactions
-- Doesn't want to interrupt too frequently
+### ⏰ Waiting for the Right Moment
+- Feels it's not the right time to speak, waiting a bit
+- Observing other people's reactions
+- Doesn't want to interject too frequently
 
-## Characteristics of Thinking
+## Characteristics of Its Thinking
 
-### 🎯 Has rhythm
-Unlike some bots that reply instantly, MaiBot will:
-- Be fast when it should be fast, slow when it should be slow
-- Leave natural gaps in conversation
-- Won't "read but not reply", but also won't reply instantly
+### 🎯 Has a Sense of Rhythm
+Unlike some bots that spam instant replies, MaiBot will:
+- Be fast when it should be fast, and slow when it should be slow
+- Leave natural intervals in the conversation
+- Won't "leave you on read", but won't reply instantly either
 
-### 🧠 Thinks repeatedly
+### 🧠 Thinks Iteratively
 Sometimes it will:
-- Think once, feel it's not good enough, rethink
+- Think once, feel it's not good enough, and rethink
 - Re-evaluate after receiving new messages
-- Continuously adjust thinking during conversation
+- Constantly adjust its train of thought during the conversation
 
-### 💡 Learns and improves
+### 💡 Learns and Improves
 After each conversation, it will:
-- Summarize experience from this conversation
+- Summarize the experience from this conversation
 - Remember what responses worked well
-- Do better next time in similar situations
+- Do better next time it encounters a similar situation
 
-## When Will It "Overthink"?
+## When Does It "Overthink"?
 
-Sometimes MaiBot falls into "overthinking" mode:
+Sometimes MaiBot falls into an "overthinking" mode:
 
-### 🤯 Topic too complex
+### 🤯 Topic Is Too Complex
 - Involves too much background knowledge
-- Too many possible response methods
+- Too many possible ways to respond
 - Worried about saying the wrong thing
 
-### 😅 Choice difficulty
+### 😅 Choice Paralysis
 - Has several good reply ideas
-- Doesn't know which to choose
-- Weighing effects of various responses
+- Doesn't know which one is better
+- Weighing the effects of various responses
 
-### 🎯 Wants perfection
+### 🎯 Striving for Perfection
 - Wants to give the best advice
 - Wants the most natural response
 - Wants the most appropriate tone
 
-## Like Real People's "Type, Delete, Retype"
+## Typing, Deleting, and Editing Like a Real Person
 
-Have you had this experience: typing, deleting, retyping? MaiBot has a similar process:
+Have you ever had this experience: when typing, you write and delete, delete and write again? MaiBot has a similar process:
 
-1. **Draft**: First thinks of a general reply direction
-2. **Revise**: Feels it's not good enough, reorganizes language
-3. **Perfect**: Adjusts tone, adds details
-4. **Final**: Finally determines what to send
+1. **First draft**: First, think of a general direction for the reply
+2. **Revision**: Feels it's not good enough, reorganizes the language
+3. **Refinement**: Adjusts the tone, adds details
+4. **Finalization**: Finally determines the content to send
 
-This is why sometimes you might see "typing" (if this feature exists), but the final content is particularly appropriate.
+This is why sometimes you see "typing..." (if that feature is available), but the final message sent is particularly fitting.
 
-## Want to Learn More?
+## Want to Dive Deeper?
 
 If you're particularly interested in MaiBot's thinking process:
 - [See how its memory system works →](./memory-system.md)
 - [Learn how it learns speaking styles →](./learning.md)
 - [See how it processes messages →](./message-pipeline.md)
 
-Remember, MaiBot's goal isn't to give "standard answers", but to participate in conversations naturally like real people. The more human-like its thinking process, the more interesting the chat becomes!
+Remember, MaiBot's goal is not to give "standard answers", but to participate in conversations naturally like a real person. The more its thinking process resembles a human's, the more interesting the chat will be!

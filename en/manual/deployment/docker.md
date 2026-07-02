@@ -1,16 +1,14 @@
 ---
 title: Docker Deployment
----
+---# 🐳 Docker Deployment Guide
 
-# 🐳 Docker Deployment Guide
+Docker is like a big box that packages MaiBot and everything it needs together, allowing it to run with just one click!
 
-Docker is like a big box that packages MaiBot and everything it needs together, ready to run with one click!
-
-## 📋 Preparation
+## 📋 Prerequisites
 
 You need to install:
-- [Docker](https://docs.docker.com/get-docker/) (like installing a virtual machine)
-- [Docker Compose](https://docs.docker.com/compose/install/) (Docker's helper)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## 🚀 5-Minute Quick Deployment
 
@@ -21,53 +19,133 @@ git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
 
-### 2. One-Click Start!
+### 2. One-click Start!
 
 ```bash
 docker compose up -d
 ```
 
-First startup will automatically generate configuration files, then stop and wait for you to configure.
+The first startup will automatically generate configuration files, and then it will stop and wait for you to configure.
 
-## 📦 What's in Docker?
+## 📦 What's inside Docker?
 
-Docker will start several services at once, like a team:
+Docker will start several services at the same time, just like a team:
 
-- **`core`** — MaiBot core, the robot's brain 🧠
-- **`napcat`** — QQ connector, lets the robot get on QQ 📱
+- **`core`** — MaiBot core, the brain of the robot 🧠
+- **`napcat`** — QQ connector, enables the robot to go on QQ 📱
 - **`sqlite-web`** — Database tool, view what the robot remembers 📊
 
 ## ⚙️ Environment Variables (Advanced Usage)
 
 ### Core Service Settings
 
-- **`TZ`** — Timezone, e.g. `Asia/Shanghai`
-- **`EULA_AGREE`** — Skip agreement confirmation (advanced, usually don't worry about it)
+- **`TZ`** — Timezone, e.g., `Asia/Shanghai`
+- **`EULA_AGREE`** — Skip protocol confirmation (advanced usage, usually no need to worry about it)
 
 ### QQ Service Settings
 
-- **`NAPCAT_UID`** — User ID (usually use default)
-- **`NAPCAT_GID`** — User group ID (usually use default)
+- **`NAPCAT_UID`** — User ID (usually use the default)
+- **`NAPCAT_GID`** — User group ID (usually use the default)
 
-## 💾 Where is Data Saved?
+## 💾 Where is the data saved?
 
-Docker will save important data in these locations on your computer:
+Docker saves important data in these locations on your computer:
 
-### Bot Data
-- **Config files**: `./docker-config/mmc/` (robot settings)
-- **Runtime data**: `./data/MaiMBot/` (chat history, memories, etc.)
+### Robot Data
+- **Configuration files**: `./docker-config/mmc/` (robot settings)
+- **Runtime data**: `./data/MaiMBot/` (chat logs, memories, etc.)
 - **Plugins**: `./data/MaiMBot/plugins/` (extra features)
-- **Logs**: `./data/MaiMBot/logs/` (operation records)
+- **Logs**: `./data/MaiMBot/logs/` (runtime records)
 
 ### QQ Data
-- **QQ config**: `./docker-config/napcat/`
-- **Login info**: `./data/qq/` (no need to log in again next startup)
+- **QQ configuration**: `./docker-config/napcat/`
+- **Login information**: `./data/qq/` (no need to log in again next time you start)
 
-## 🔌 Port Information
+## 🔌 Port Description
 
-- **Web interface** — Port 18001, open http://localhost:18001 in browser
-- **NapCat Web UI** — Port 6099, NapCat web configuration panel
-- **Database tool** — Port 8120, used to view robot data
+- **Web Interface** — Port 18001, open http://localhost:18001 in your browser
+- **NapCat Management Panel** — Port 6099, NapCat web configuration panel
+- **Database Tool** — Port 8120, used to view robot data
+
+## 🔗 Connecting to NapCat
+
+`docker compose up -d` will only start the MaiBot and NapCat containers. You still need to complete the NapCat login, WebSocket, and adapter configuration before MaiBot can actually receive QQ messages.
+
+1. Open the NapCat management panel: `http://localhost:6099`
+2. Log in to the NapCat management panel. If a token is required, check the `token` field in `./docker-config/napcat/webui.json`.
+3. Log in to your QQ alternate account in the NapCat management panel.
+4. Enable **Forward WebSocket** or **WebSocket Server** in NapCat's network configuration. The listening port is usually `3001`.
+5. Enable the **NapCat Adapter** in the MaiBot WebUI's plugin management, or edit `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml` on the host machine:
+
+```toml
+[plugin]
+enabled = true
+
+[napcat_server]
+host = "napcat"
+port = 3001
+token = ""
+```
+
+::: warning Docker 网络地址
+In Docker Compose, the MaiBot container should use the service name `napcat` when accessing the NapCat container. Therefore, `napcat_server.host` in the adapter configuration is usually filled with `napcat`, not `127.0.0.1`.
+`127.0.0.1` inside the container only refers to the container itself.
+:::
+
+### Cannot receive group messages
+
+The NapCat adapter enables chat list filtering by default, and group chats are in whitelist mode by default. If the group number is not added to the whitelist, group messages will be directly discarded by the adapter, making it look like NapCat is connected but MaiBot is not responding.
+
+Edit the `[chat]` configuration in `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`:
+
+```toml
+[chat]
+enable_chat_list_filter = true
+show_dropped_chat_list_messages = true
+group_list_type = "whitelist"
+group_list = ["Your QQ group number"]
+```
+
+If you are just testing locally, you can also temporarily disable list filtering:
+
+```toml
+[chat]
+enable_chat_list_filter = false
+```
+
+After making changes, restart the core container:
+
+```bash
+docker compose restart core
+```
+
+::: tip WebUI 配置位置
+The WebUI's enabled status, listening address, and in-container port are now all set in the `[webui]` configuration section of `./docker-config/mmc/bot_config.toml`, instead of being configured via a separate WebUI configuration file or environment variables.
+:::
+
+By default, `docker-compose.yml` will map the host's `18001` port to the container's `8001` port:
+
+```yaml
+ports:
+  - "18001:8001"
+```
+
+When deploying with Docker, it is recommended to confirm that the WebUI configuration in `./docker-config/mmc/bot_config.toml` is as follows:
+
+```toml
+[webui]
+enabled = true
+host = "0.0.0.0"
+port = 8001
+```
+
+::: warning ⚠️ host 必须改为 0.0.0.0
+The default value of WebUI's `host` is `127.0.0.1` (only listens on the local loopback address), **which inside a Docker container means only the container itself can access the WebUI, and the host machine cannot access it via port mapping**. When deploying with Docker, you must change `host` to `0.0.0.0`, otherwise the WebUI will not open in your browser.
+:::
+
+- `host` is the address the WebUI binds to inside the container. For Docker deployments, it is recommended to use `0.0.0.0`, so that the host port mapping can access the WebUI.
+- `port` is the port the WebUI listens on inside the container, which needs to match the right side of the `docker-compose.yml` port mapping. For example, `8001` in `18001:8001`.
+- If you want to change the browser access port, you usually only need to change the left side of the port mapping. For example, after changing `18001:8001` to `28001:8001`, access it via `http://localhost:28001`.
 
 ## 📋 Complete Steps (Step by Step)
 
@@ -76,38 +154,42 @@ Docker will save important data in these locations on your computer:
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 
-# 2. First startup (will generate config files)
+# 2. First startup (will generate configuration files)
 docker compose up -d
 
-# 3. Change config (important!)
-# Open ./docker-config/mmc/bot_config.toml and fill in QQ number
-# Open ./docker-config/mmc/model_config.toml and fill in API key
+# 3. Modify configuration (Important!)
+# Open ./docker-config/mmc/bot_config.toml and fill in the QQ number
+# WebUI configuration is also in the [webui] section of ./docker-config/mmc/bot_config.toml
+# Open ./docker-config/mmc/model_config.toml and fill in the API key
+# Open http://localhost:6099 to log in to NapCat, and enable Forward WebSocket
+# Enable the NapCat adapter, and set the adapter's napcat_server.host to napcat
+# For group chats, add the group number to the NapCat adapter's group_list, or disable chat list filtering
 
-# 4. Restart to apply config
+# 4. Restart to apply configuration
 docker compose restart core
 
 # 5. View logs
 docker compose logs -f core
 ```
 
-## 🔧 Common Problems
+## 🔧 Frequently Asked Questions
 
 ### Container exits immediately after starting?
 
-Check logs for the reason:
+Check the logs to find the reason:
 ```bash
 docker compose logs core
 ```
 
 90% of the time it's because:
-- Config files not filled correctly (especially API key)
-- QQ number filled wrong
+- Configuration file is not filled in correctly (especially the API key)
+- QQ number is filled in incorrectly
 
 ### Not enough memory?
 
-Docker uses quite a bit of memory, recommend at least 2GB free memory.
+Docker consumes quite a bit of memory. It is recommended to have at least 2GB of free memory.
 
-### Want to stop the bot?
+### Want to stop the robot?
 
 ```bash
 docker compose down
@@ -118,3 +200,11 @@ docker compose down
 ```bash
 docker compose restart
 ```
+
+### Getting an error `unknown shorthand flag: 'd' in -d` when entering commands?
+
+This means your server has the **Standalone** version of Docker Compose installed. Please replace the space in the middle of the command with a **hyphen** to execute:
+```bash
+docker-compose up -d
+```
+Similarly, all subsequent operations in this document in the format of `docker compose <command>` need to be written as `docker-compose <command>` on your server (e.g., `docker-compose restart core`)

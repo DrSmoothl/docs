@@ -37,7 +37,7 @@ MaiBot 提供两种适配器开发方式：
   : 通过 `@MessageGateway` 组件装饰器注册，以插件形式运行在插件运行时（Plugin Runtime）中
   : 适用场景：独立部署的适配器插件、需要跨平台复用、不需要修改 MaiBot 源码
   : import: `from maibot.src.plugin_runtime.components import MessageGateway`
-  : 详见 [MessageGateway 开发指南](../plugin-dev/message-gateway)
+  : 详见 [MessageGateway 开发指南](../../plugin/message-gateway)
 
 **PlatformIODriver（驱动式）**
   : 直接实现 `PlatformIODriver` 接口，注册到 MaiBot 的 Platform IO 系统中

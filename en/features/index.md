@@ -1,18 +1,18 @@
 ---
 title: Feature Introduction
----# Feature Introduction
+---# Features
 
-MaiBot (MaiMai) is more than just a chatbot—she is a digital life dedicated to interacting in a true human style. Below are her core capabilities.
+MaiBot (MaiMai) is more than just a chatbot—she is a digital lifeform dedicated to interacting in an authentic human style. Here are her core capabilities.
 
 <div class="feature-cards">
 
 <div class="feature-card">
 
-### 💬 Intelligent Dialogue Pipeline
+### 💬 Intelligent Message Pipeline
 
-A complete processing pipeline from message reception to final response, supporting Hook interception, command dispatching, filter checks, and flexible routing.
+A complete processing pipeline from message reception to final reply, supporting Hook interception, command dispatch, filter checks, and flexible routing.
 
-[Learn about Message Pipeline $\rightarrow$](../manual/features/message-pipeline.md)
+[Learn about the message pipeline →](../manual/features/message-pipeline.md)
 
 </div>
 
@@ -20,39 +20,39 @@ A complete processing pipeline from message reception to final response, support
 
 ### 🧠 Maisaka Reasoning Engine
 
-A multi-turn internal reasoning system based on tool calling. With Planner decision-making, Timing Gate rhythm control, and automatic interruption and retry, the conversation flow remains natural and smooth.
+A multi-turn internal reasoning system based on tool calls. Planner decision-making, Timing Gate rhythm control, automatic interruption and retry make the conversation flow naturally.
 
-[Learn about Maisaka $\rightarrow$](../manual/features/maisaka-reasoning.md)
-
-</div>
-
-<div class="feature-card">
-
-### ❤️ Long-term Memory System
-
-The A-Memorix memory engine provides knowledge graphs, conversation summaries, and persona profiles. An automatic write-back mechanism allows MaiMai to continuously accumulate knowledge about you.
-
-[Learn about Memory System $\rightarrow$](../manual/features/memory-system.md)
+[Learn about Maisaka →](../manual/features/maisaka-reasoning.md)
 
 </div>
 
 <div class="feature-card">
 
-### 📖 Expression & Slang Learning
+### ❤️ Long-Term Memory System
 
-Automatically extract expression styles and community slang from conversations. The system uses LLMs to infer meanings and refine them over time, making MaiMai feel more like someone close to you.
+The A-Memorix memory engine provides knowledge graphs, conversation summaries, and persona profiles. The automatic write-back mechanism allows MaiMai to continuously accumulate her understanding of you.
 
-[Learn about Learning System $\rightarrow$](../manual/features/learning.md)
+[Learn about the memory system →](../manual/features/memory-system.md)
 
 </div>
 
 <div class="feature-card">
 
-### 😊 Sticker System
+### 📖 Expression and Slang Learning
 
-Based on VLM for automatic sticker recognition, emotion tag generation, and intelligent selection, making conversations more vivid.
+Automatically extracts expression styles and group slang from conversations, infers meanings through LLM and gradually refines them, making MaiMai increasingly feel like someone right beside you.
 
-[Learn about Sticker System $\rightarrow$](../manual/features/emoji-system.md)
+[Learn about the learning system →](../manual/features/learning.md)
+
+</div>
+
+<div class="feature-card">
+
+### 😊 Emoji System
+
+VLM-based automatic emoji recognition, emotion tag generation, and intelligent selection make conversations more vivid.
+
+[Learn about the emoji system →](../manual/features/emoji-system.md)
 
 </div>
 
@@ -60,9 +60,9 @@ Based on VLM for automatic sticker recognition, emotion tag generation, and inte
 
 ### 🔌 MCP Integration
 
-Supports Model Context Protocol to connect to external tool servers, infinitely expanding the boundaries of MaiMai's capabilities.
+Supports Model Context Protocol to connect to external tool servers, infinitely expanding MaiMai's capability boundaries.
 
-[Learn about MCP $\rightarrow$](../manual/features/mcp.md)
+[Learn about MCP →](../manual/features/mcp.md)
 
 </div>
 

@@ -16,6 +16,40 @@ export const nav: DefaultTheme.NavItem[] = [
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
+  '/en/plugin/': [
+    {
+      text: 'Getting Started',
+      collapsed: false,
+      items: [
+        { text: 'Development Guide', link: '/en/plugin/' },
+        { text: 'Vibe Coding Guide', link: '/en/plugin/vibe-coding' },
+        { text: 'Manifest', link: '/en/plugin/manifest' },
+        { text: 'Lifecycle', link: '/en/plugin/lifecycle' },
+        { text: 'Configuration', link: '/en/plugin/config' },
+      ]
+    },
+    {
+      text: 'Components',
+      collapsed: false,
+      items: [
+        { text: 'Tool', link: '/en/plugin/tools' },
+        { text: 'Command', link: '/en/plugin/commands' },
+        { text: 'Hook Handler', link: '/en/plugin/hooks' },
+        { text: 'Event Handler', link: '/en/plugin/event-handlers' },
+        { text: 'API Component', link: '/en/plugin/api-components' },
+        { text: 'Message Gateway', link: '/en/plugin/message-gateway' },
+        { text: 'LLMProvider Component', link: '/en/plugin/llmprovider' },
+        { text: 'Action (Legacy)', link: '/en/plugin/actions' },
+      ]
+    },
+    {
+      text: 'Reference',
+      collapsed: false,
+      items: [
+        { text: 'API Reference', link: '/en/plugin/api-reference' },
+      ]
+    },
+  ],
   '/en/manual/': [
     {
       text: 'Quick Start',
@@ -118,44 +152,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'MCP Integration', link: '/en/develop/architecture/mcp-integration' },
         { text: 'Prompt Templates', link: '/en/develop/architecture/prompt-templates' },
         { text: 'Global Managers', link: '/en/develop/architecture/global-managers' },
-      ]
-    },
-    {
-      text: 'Plugin Development',
-      collapsed: false,
-      items: [
-        {
-          text: 'Getting Started',
-          collapsed: false,
-          items: [
-            { text: 'Development Guide', link: '/en/develop/plugin-dev/' },
-            { text: 'Vibe Coding Guide', link: '/en/develop/plugin-dev/vibe-coding' },
-            { text: 'Manifest', link: '/en/develop/plugin-dev/manifest' },
-            { text: 'Lifecycle', link: '/en/develop/plugin-dev/lifecycle' },
-            { text: 'Configuration', link: '/en/develop/plugin-dev/config' },
-          ]
-        },
-        {
-          text: 'Components',
-          collapsed: false,
-          items: [
-            { text: 'Tool', link: '/en/develop/plugin-dev/tools' },
-            { text: 'Command', link: '/en/develop/plugin-dev/commands' },
-            { text: 'Hook Handler', link: '/en/develop/plugin-dev/hooks' },
-            { text: 'Event Handler', link: '/en/develop/plugin-dev/event-handlers' },
-            { text: 'API Component', link: '/en/develop/plugin-dev/api-components' },
-            { text: 'Message Gateway', link: '/en/develop/plugin-dev/message-gateway' },
-            { text: 'LLMProvider Component', link: '/en/develop/plugin-dev/llmprovider' },
-            { text: 'Action (Legacy)', link: '/en/develop/plugin-dev/actions' },
-          ]
-        },
-        {
-          text: 'Reference',
-          collapsed: false,
-          items: [
-            { text: 'API Reference', link: '/en/develop/plugin-dev/api-reference' },
-          ]
-        },
       ]
     },
     {

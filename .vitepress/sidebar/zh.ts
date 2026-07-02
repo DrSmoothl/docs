@@ -16,6 +16,40 @@ export const nav: DefaultTheme.NavItem[] = [
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
+  '/plugin/': [
+    {
+      text: '入门',
+      collapsed: false,
+      items: [
+        { text: '开发指南', link: '/plugin/' },
+        { text: 'Vibe Coding 指南', link: '/plugin/vibe-coding' },
+        { text: 'Manifest', link: '/plugin/manifest' },
+        { text: '生命周期', link: '/plugin/lifecycle' },
+        { text: '配置管理', link: '/plugin/config' },
+      ]
+    },
+    {
+      text: '组件开发',
+      collapsed: false,
+      items: [
+        { text: 'Tool', link: '/plugin/tools' },
+        { text: 'Command', link: '/plugin/commands' },
+        { text: 'Hook 处理器', link: '/plugin/hooks' },
+        { text: '事件处理器', link: '/plugin/event-handlers' },
+        { text: 'API 组件', link: '/plugin/api-components' },
+        { text: '消息网关', link: '/plugin/message-gateway' },
+        { text: 'LLMProvider 组件', link: '/plugin/llmprovider' },
+        { text: 'Action (Legacy)', link: '/plugin/actions' },
+      ]
+    },
+    {
+      text: '参考',
+      collapsed: false,
+      items: [
+        { text: 'API 参考', link: '/plugin/api-reference' },
+      ]
+    },
+  ],
   '/manual/': [
     {
       text: '部署与安装',
@@ -121,44 +155,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'MCP 集成', link: '/develop/architecture/mcp-integration' },
         { text: 'Prompt 模板', link: '/develop/architecture/prompt-templates' },
         { text: '全局管理器', link: '/develop/architecture/global-managers' },
-      ]
-    },
-    {
-      text: '插件开发',
-      collapsed: false,
-      items: [
-        {
-          text: '入门',
-          collapsed: false,
-          items: [
-            { text: '开发指南', link: '/develop/plugin-dev/' },
-            { text: 'Vibe Coding 指南', link: '/develop/plugin-dev/vibe-coding' },
-            { text: 'Manifest', link: '/develop/plugin-dev/manifest' },
-            { text: '生命周期', link: '/develop/plugin-dev/lifecycle' },
-            { text: '配置管理', link: '/develop/plugin-dev/config' },
-          ]
-        },
-        {
-          text: '组件开发',
-          collapsed: false,
-          items: [
-            { text: 'Tool', link: '/develop/plugin-dev/tools' },
-            { text: 'Command', link: '/develop/plugin-dev/commands' },
-            { text: 'Hook 处理器', link: '/develop/plugin-dev/hooks' },
-            { text: '事件处理器', link: '/develop/plugin-dev/event-handlers' },
-            { text: 'API 组件', link: '/develop/plugin-dev/api-components' },
-            { text: '消息网关', link: '/develop/plugin-dev/message-gateway' },
-            { text: 'LLMProvider 组件', link: '/develop/plugin-dev/llmprovider' },
-            { text: 'Action (Legacy)', link: '/develop/plugin-dev/actions' },
-          ]
-        },
-        {
-          text: '参考',
-          collapsed: false,
-          items: [
-            { text: 'API 参考', link: '/develop/plugin-dev/api-reference' },
-          ]
-        },
       ]
     },
     {

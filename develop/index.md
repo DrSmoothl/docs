@@ -141,5 +141,5 @@ uv run ruff format .
 
 - [架构设计](./architecture.md)：了解 Runner/Worker 进程模型与消息处理管线
 - [贡献指南](./contributing.md)：了解代码规范与贡献流程
-- [插件开发](./plugin-dev/)：学习如何开发 MaiBot 插件
+- [插件开发](../plugin/)：学习如何开发 MaiBot 插件
 - [适配器开发](./adapter-dev/)：学习如何开发平台适配器

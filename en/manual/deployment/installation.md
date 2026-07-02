@@ -26,7 +26,7 @@ cd MaiBot
 :::
 
 ::: warning ⚠️ 注意
-`dev` branch has new features but may be unstable. For first-time users, it is recommended to choose the `main` branch.
+The `dev` branch has new features but may be unstable. For first-time users, the `main` branch is recommended.
 :::
 
 ## Install Dependencies
@@ -62,7 +62,7 @@ pip install -r requirements.txt
 :::
 
 
-## Startup
+## Launch
 
 ```bash
 uv run python bot.py
@@ -70,46 +70,46 @@ uv run python bot.py
 
 ## User Agreement Confirmation
 
-Upon the first startup, you will be asked to agree to the user agreement. It's very simple:
+The first launch will require you to agree to the user agreement, which is simple:
 
-**Just type "同意" (Agree) in the terminal!** 
+**Just type "agree" in the terminal!** 
 
 ## FAQ
 
-### Prompt "Model list cannot be empty" after startup?
+### Prompted "Model list cannot be empty" after launch?
 
-`model_config.toml` must contain at least one model configuration. If the automatic upgrade fails, you need to manually create a model configuration file, including:
+`model_config.toml` must contain at least one model configuration. If the automatic upgrade fails, you need to manually create the model configuration file, including:
 - At least one API provider (`[[api_providers]]`)
 - At least one text model (`[[models]]`)
 - Corresponding task assignments (`[model_task_config.xxx]`)
 
-Vision models and embedding models are optional—vision models are only configured when image recognition is needed, and embedding models are only configured when the memory feature is enabled.
+Vision models and embedding models are optional — vision models are only configured when image processing is needed, and embedding models are only configured when the memory feature is enabled.
 
-Refer to the [Model Configuration Documentation](../configuration/model-config.md) for configuration.
+Refer to the [Model Configuration Documentation](../configuration/model-config.md) for setup.
 
 ### uv command not found?
 
-After installing uv, you need to add it to your PATH environment variable:
+After installing uv, you need to add it to the PATH environment variable:
 
 ```bash
 # Linux/macOS
 source $HOME/.local/bin/env
 
-# 或者重新打开终端
+# Or reopen the terminal
 
-# 验证安装
+# Verify installation
 uv --version
 ```
 
 ### How to agree to the user agreement in a non-interactive environment?
 
-In server or headless environments where you cannot type "同意" in the terminal, you can use an environment variable to skip this step:
+In server or headless environments where you cannot type "agree" in the terminal, you can use environment variables to skip:
 
 ```bash
-# 方法一：使用程序提示的 hash 值（每次可能不同，以实际提示为准）
-export EULA_AGREE=<终端显示的hash值>
-export PRIVACY_AGREE=<终端显示的hash值>
+# Method 1: Use the hash value prompted by the program (may vary each time, subject to the actual prompt)
+export EULA_AGREE=<hash value displayed in terminal>
+export PRIVACY_AGREE=<hash value displayed in terminal>
 
-# 方法二：先运行一次看提示的 hash 值，记录后用环境变量启动
-uv run python bot.py  # 会显示需要的环境变量
+# Method 2: Run once to see the prompted hash value, note it down, and then launch with environment variables
+uv run python bot.py  # Will display the required environment variables
 ```

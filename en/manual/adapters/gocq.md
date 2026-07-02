@@ -1,59 +1,58 @@
 # MaiBot GoCQ Adapter Documentation
 
-A relatively older framework; some accounts may have a lower probability of risk control on this framework.
+A relatively older framework, some accounts may have a lower risk control probability on this framework.
 
 ## GoCQ Configuration
 
 ### Installing GoCQ
 
-
-First, you need to install GoCQ itself. Some different GoCQ versions are listed below:
+First, you need to install GoCQ itself. Below are some different GoCQ versions:
 [AstralGocq](https://github.com/ProtocolScience/AstralGocq)
 [gocq-http(New)](https://github.com/LagrangeDev/go-cqhttp)
-Download the corresponding version from the release page of these projects. Installation tutorials are provided here for the Windows version only.
+Download the corresponding version from the release pages of these projects. This tutorial only provides installation instructions for the Windows version.
 
 ### Configuring GoCQ
 
 After downloading, extract the executable file into a folder.
 
-Double-click to open the GoCQ main program. A prompt will appear asking you to generate a secure startup script; click "Confirm" to generate the script.
+Double-click to open the GoCQ application. A prompt box will appear, asking you to generate a secure startup script. Click "Confirm" to generate the startup script.
 
-Close the GoCQ main program and use the secure startup script to launch GoCQ. You will be asked to select a connection method; select `反向WebSocket`. Once the `config.yml` configuration is generated, close the window.
+Close the GoCQ application, and use the secure startup script to start GoCQ. At this point, you will be asked to choose a connection method. Select `Reverse WebSocket`. After the config.yml configuration file is generated, close the window.
 
-Open `config.yml` and modify the following configurations:
+Open `config.yml` and modify the following configuration:
 
 ```yaml
-# 连接服务列表
+# Connection service list
 servers:
-  # 添加方式，同一连接方式可添加多个，具体配置说明请查看文档
-  #- http: # http 通信
-  #- ws:   # 正向 Websocket
-  #- ws-reverse: # 反向 Websocket
-  #- pprof: #性能分析服务器
-  # 反向WS设置
+  # Adding methods, multiple can be added for the same connection method. Please refer to the documentation for specific configuration details.
+  #- http: # HTTP communication
+  #- ws:   # Forward Websocket
+  #- ws-reverse: # Reverse Websocket
+  #- pprof: # Performance analysis server
+  # Reverse WS settings
   - ws-reverse:
-      # 反向WS Universal 地址
-      # 注意 设置了此项地址后下面两项将会被忽略
+      # Reverse WS Universal address
+      # Note: After setting this address, the following two items will be ignored
       universal: ws://127.0.0.1:8095
-      # 反向WS API 地址
+      # Reverse WS API address
       api: ws://your_websocket_api.server
-      # 反向WS Event 地址
+      # Reverse WS Event address
       event: ws://your_websocket_event.server
-      # 重连间隔 单位毫秒
+      # Reconnect interval in milliseconds
       reconnect-interval: 3000
       middlewares:
-        <<: *default # 引用默认中间件
+        <<: *default # Reference default middleware
 ```
 
-Use the startup script to launch GoCQ and log in by scanning the QR code.
+Use the startup script to start GoCQ and scan the QR code to log in.
 
-If verification is required, please open the provided link in a browser, press F12, and open the Network tab. Proceed with the verification normally. After completing the verification, wait a few seconds until a success message appears. In your developer tools, click the last request, open the response, copy the value of the `ticket` field, paste it into the GoCQ input box, and press Enter to complete the verification.
+If verification is required, please open the provided link in a browser, then press F12 to open the Network tab. Proceed with the verification normally. After completing the verification, wait a few seconds, and a verification success message will pop up. At this point, look at your developer tools, click on the bottom-most request, open the response, copy the value of the `ticket` field, paste it into the GoCQ input box, and press Enter to complete the verification.
 
 ## GoCQ Adapter Configuration
 
 ### Installing GoCQ Adapter
 
-Clone the [repo](https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git) from GitHub, install the dependencies, and then start it using the corresponding environment.
+Clone the [repo](https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git) from GitHub, install the dependencies, and then start it using the appropriate environment.
 
 ```bash
 git clone https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git
@@ -63,5 +62,5 @@ python main.py
 
 ### Configuring GoCQ Adapter
 
-This Go-CQ Adapter is based on a secondary modification of the Napcat Adapter, and its configuration is similar, so it will not be detailed here.
-⚠️ Warning: Unlike the Napcat Adapter, the `Napcat_server` item here has been replaced by the `gocq_server` item following updates to the Napcat Adapter. When upgrading from an old version to a new version, be sure to modify the configuration.
+This Go-CQ Adapter is a secondary modification based on the Napcat Adapter, and its configuration is similar to it, so it will not be elaborated here.
+Warning: Unlike the Napcat Adapter, the `Napcat_server` item here has been replaced with the `gocq_server` item after following updates from the Napcat Adapter. When upgrading from an older version to a newer version, be sure to modify the configuration accordingly.

@@ -10,7 +10,7 @@ title: 架构设计
 
 **消息处理管线** ：从平台消息入站到出站发送的完整链路，详见 [消息管线](architecture/message-pipeline.md)。
 
-**插件运行时架构** ：插件生命周期、Host/Runner 双进程通信、组件注册和 Hook 分发，详见 [插件开发文档](./plugin-dev/)、[生命周期](./plugin-dev/lifecycle.md)、[工具](./plugin-dev/tools.md)、[Hook](./plugin-dev/hooks.md)。
+**插件运行时架构** ：插件生命周期、Host/Runner 双进程通信、组件注册和 Hook 分发，详见 [插件开发文档](../plugin/)、[生命周期](../plugin/lifecycle.md)、[工具](../plugin/tools.md)、[Hook](../plugin/hooks.md)。
 
 **Platform IO 架构** ：MaiBot 与适配器之间的发送、接收、路由、去重和出站跟踪，详见 [PlatformIO 驱动开发](./adapter-dev/platform-io.md)。
 
@@ -97,7 +97,7 @@ graph LR
 
 ## 插件运行时架构
 
-插件运行时采用 Host 主进程加两个 Runner 子进程的双子进程隔离模型，通过 msgpack IPC 和 RPC 管理内置插件、第三方插件、组件注册和 Hook 分发。完整设计、开发约束和组件 API 请转至 [插件开发文档](./plugin-dev/)，重点阅读 [生命周期](./plugin-dev/lifecycle.md)、[工具](./plugin-dev/tools.md)、[命令](./plugin-dev/commands.md)、[Hook](./plugin-dev/hooks.md)、[事件处理器](./plugin-dev/event-handlers.md) 和 [消息网关](./plugin-dev/message-gateway.md)。
+插件运行时采用 Host 主进程加两个 Runner 子进程的双子进程隔离模型，通过 msgpack IPC 和 RPC 管理内置插件、第三方插件、组件注册和 Hook 分发。完整设计、开发约束和组件 API 请转至 [插件开发文档](../plugin/)，重点阅读 [生命周期](../plugin/lifecycle.md)、[工具](../plugin/tools.md)、[命令](../plugin/commands.md)、[Hook](../plugin/hooks.md)、[事件处理器](../plugin/event-handlers.md) 和 [消息网关](../plugin/message-gateway.md)。
 
 ## Platform IO 架构
 

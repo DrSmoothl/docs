@@ -275,7 +275,7 @@ The flow for `SendService` to construct outbound messages:
 
 All built-in Hooks are registered uniformly by `hook_catalog.py`.
 
-> For the complete Hook directory and parameter descriptions, please refer to [Hook Processors](../plugin-dev/hooks). This document only introduces the location and role of Hooks within the pipeline.
+> For the complete Hook directory and parameter descriptions, please refer to [Hook Processors](../../plugin/hooks). This document only introduces the location and role of Hooks within the pipeline.
 
 ## Data Flow Diagram
 

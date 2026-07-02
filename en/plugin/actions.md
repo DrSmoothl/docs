@@ -1,22 +1,20 @@
 ---
 title: Action Component (Legacy)
----
+---# Action Component (Legacy)
 
-# Action Component (Legacy)
-
-::: danger Deprecated
-The `@Action` decorator is deprecated. The SDK internally auto-converts it to a `@Tool` declaration. **New plugins should use [`@Tool`](./tools.md) directly.** Using `@Action` triggers a `DeprecationWarning`.
+::: danger 已废弃
+The `@Action` decorator is deprecated. The SDK internally converts it to an `@Tool` declaration automatically. **New plugins should use [`@Tool`](./tools.md) directly**. Using `@Action` will trigger `DeprecationWarning`.
 :::
 
 ## Migrating from @Action to @Tool
 
 Core differences between `@Action` and `@Tool`:
 
-- **Parameter types** — `@Action` all `string` → `@Tool` supports 7 types: `string`, `integer`, `boolean`, `array`, `object`, etc.
-- **Parameter declaration** — `action_parameters={"key": "description"}` → `parameters=[ToolParameterInfo(...)]`
-- **Parameter Schema** — No JSON Schema generation → Automatically generates complete JSON Schema
-- **Activation method** — `activation_type` + `activation_keywords` → Always available (LLM decides when to call)
-- **Description mechanism** — Single `description` → `brief_description` + `detailed_description`
+- **Parameter types**: `@Action` are all `string` → `@Tool` supports 7 types including `string`, `integer`, `boolean`, `array`, `object`, etc.
+- **Parameter declaration**: `action_parameters={"key": "描述"}` → `parameters=[ToolParameterInfo(...)]`
+- **Parameter Schema**: No JSON Schema generation → Automatically generates complete JSON Schema
+- **Activation method**: `activation_type` + `activation_keywords` → Always available (LLM decides when to call it)
+- **Description mechanism**: Single `description` → `brief_description` + `detailed_description`
 
 ### Migration Example
 
@@ -30,7 +28,7 @@ class MyPlugin(MaiBotPlugin):
         "search",
         description="Search the internet for information",
         activation_type="always",
-        action_parameters={"query": "Search keywords"},
+        action_parameters={"query": "Search keyword"},
     )
     async def handle_search(self, query: str, **kwargs):
         results = await self._do_search(query)
@@ -51,7 +49,7 @@ class MyPlugin(MaiBotPlugin):
             ToolParameterInfo(
                 name="query",
                 param_type=ToolParamType.STRING,
-                description="Search keywords",
+                description="Search keyword",
                 required=True,
             ),
         ],
@@ -63,7 +61,7 @@ class MyPlugin(MaiBotPlugin):
 
 ## @Action Decorator Signature (Reference)
 
-Below is the complete parameter signature of `@Action`, for legacy plugin maintenance reference only:
+The following is the complete parameter signature for `@Action`, provided for legacy plugin maintenance reference only:
 
 ```python
 from maibot_sdk import Action
@@ -78,7 +76,7 @@ from maibot_sdk import Action
     action_parameters: dict[str, Any] | None = None,    # Parameter definition
     action_require: list[str] | None = None,            # Usage requirements
     associated_types: list[str] | None = None,          # Associated message types
-    parallel_action: bool = False,                      # Whether parallel execution is allowed
+    parallel_action: bool = False,                      # Whether it can be executed in parallel
     action_prompt: str = "",                            # LLM prompt
     **metadata,
 )
@@ -87,9 +85,9 @@ from maibot_sdk import Action
 ### ActivationType Enum
 
 - **`NEVER`** — Never activate
-- **`ALWAYS`** — Always as candidate tool
-- **`RANDOM`** — Randomly enable with certain probability
-- **`KEYWORD`** — Enable when message contains keywords
+- **`ALWAYS`** — Always a candidate tool
+- **`RANDOM`** — Randomly enabled with a certain probability
+- **`KEYWORD`** — Enabled when the message contains keywords
 
 ### ChatMode Enum
 
@@ -100,11 +98,11 @@ from maibot_sdk import Action
 
 ## Internal Conversion Mechanism
 
-The SDK internally converts all `@Action` parameters to `@Tool`-equivalent metadata:
+The SDK internally converts all parameters of `@Action` into `@Tool` equivalent metadata:
 
-- `action_parameters` → converted to Tool parameter Schema (all field types become `string`)
-- `activation_type` / `activation_keywords` / `activation_probability` / `chat_mode` → saved as `legacy_action` marker fields in Tool `metadata`
-- `action_require` / `associated_types` / `action_prompt` → merged into Tool's `detailed_description`
-- `invoke_method` is fixed as `"plugin.invoke_action"` (for legacy call path compatibility)
+- `action_parameters` → Converted to Tool's parameter Schema (all field types are `string`)
+- `activation_type` / `activation_keywords` / `activation_probability` / `chat_mode` → Saved as `legacy_action` marker fields in Tool `metadata`
+- `action_require` / `associated_types` / `action_prompt` → Merged into Tool's `detailed_description`
+- `invoke_method` is fixed to `"plugin.invoke_action"` (compatible with legacy call paths)
 
-After conversion, the Host side maintains only one Tool abstraction, no longer distinguishing between Action and Tool call flows.
+After conversion, the Host side maintains only a single Tool abstraction, no longer distinguishing between Action and Tool invocation flows.

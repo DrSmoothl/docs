@@ -2,16 +2,16 @@
 title: Agent Installation Guide
 ---# Agent Installation Guide (In Testing, Availability Not Guaranteed)
 
-Let AI help you install MaiBot; all you need to do is answer a few questions.
+Let AI install MaiBot for you, you just need to answer a few questions.
 
-Copy the prompt below and send it to the AI assistant you are using (Claude, GPT, Gemini, etc.), and it will guide you through the entire process of cloning, installation, configuration, and startup.
+Copy the prompt below and send it to the AI assistant you are currently using (Claude, GPT, Gemini, etc. all work), and it will guide you through the entire process of cloning, installing, configuring, and launching.
 
 ::: info 提示词
 
-> Please help me install MaiBot by following the instructions here:
+> Please help me install MaiBot, following the guide here:
 >
 > https://docs.mai-mai.org/installation-agent.md
 
 :::
 
-> **By running this program, you agree to the [MaiBot End User License Agreement (EULA)](../faq/EULA).**
+> **Running this program indicates that you agree to the [MaiBot End User License Agreement (EULA)](../faq/EULA).**

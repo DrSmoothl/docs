@@ -3,77 +3,79 @@ title: Model Configuration
 titleTemplate: :title · 模型配置
 ---# Model Configuration
 
-`model_config.toml` Configure the "AI Brain" for MaiMai—determining which LLM model different components use and how to connect to API providers.
+`model_config.toml` Configure the "AI brain" for Maimai — deciding which LLM models to use for different components, and how to connect to API providers.
 
-At minimum, only one LLM model and one API provider are required for startup (`models` and `api_providers` must both be non-empty). Full functionality also requires a VLM model (for image recognition) and an embedding models (for memory search).
+The minimum startup requires only one LLM model and one API provider (both `models` and `api_providers` must not be empty). Full functionality also requires a VLM model (for image recognition) and an embedding model (for memory search).
 
 ## API Providers
 
-Each `[[api_providers]]` block defines an API provider. A configuration file can contain multiple providers.
+Each `[[api_providers]]` block defines an API provider. A single configuration file can have multiple providers.
 
 ```toml
 [[api_providers]]
-name = "deepseek"                          # [必填] API 服务商名称，在 models 的 api_provider 中需使用这个命名
-base_url = "https://api.deepseek.com/v1"   # [必填] API 服务商的 BaseURL
-api_key = "your-api-key"                   # [必填] API 密钥。若 auth_type 为 none 则不需要
-client_type = "openai"                     # [可选] 客户端类型：openai(默认) / google
-auth_type = "bearer"                       # [可选] 鉴权方式：bearer(默认) / header / query / none
-auth_header_name = "Authorization"         # [可选] 当 auth_type 为 header 时使用的请求头名称
-auth_header_prefix = "Bearer"              # [可选] 当 auth_type 为 header 时的请求头前缀，留空表示直接发送原始密钥
-auth_query_name = "api_key"                # [可选] 当 auth_type 为 query 时使用的查询参数名称
-default_headers = {}                       # [可选] 所有请求默认附带的 HTTP Header
-default_query = {}                         # [可选] 所有请求默认附带的查询参数
-# organization = "org-xxxx"                # [可选] OpenAI 官方接口可选的 organization
-# project = "proj-xxxx"                    # [可选] OpenAI 官方接口可选的 project
-model_list_endpoint = "/models"            # [可选] 模型列表端点路径
-reasoning_parse_mode = "auto"              # [可选] 推理内容解析模式：auto(默认) / native / think_tag / none
-tool_argument_parse_mode = "auto"          # [可选] 工具参数解析模式：auto(默认) / strict / repair / double_decode
-max_retry = 3                              # [可选] 最大重试次数
-timeout = 60                               # [可选] API 调用超时，单位秒
-retry_interval = 5                         # [可选] 重试间隔，单位秒
+name = "deepseek"                          # [Required] API provider name, must be used in the api_provider field of models
+base_url = "https://api.deepseek.com/v1"   # [Required] BaseURL of the API provider
+api_key = "your-api-key"                   # [Required] API key. Not required if auth_type is none
+client_type = "openai"                     # [Optional] Client type: openai (default) / google
+auth_type = "bearer"                       # [Optional] Auth type: bearer (default) / header / query / none
+auth_header_name = "Authorization"         # [Optional] Request header name used when auth_type is header
+auth_header_prefix = "Bearer"              # [Optional] Request header prefix used when auth_type is header, leave empty to send the raw key directly
+auth_query_name = "api_key"                # [Optional] Query parameter name used when auth_type is query
+default_headers = {}                       # [Optional] Default HTTP headers attached to all requests
+default_query = {}                         # [Optional] Default query parameters attached to all requests
+# organization = "org-xxxx"                # [Optional] Optional organization for official OpenAI API
+# project = "proj-xxxx"                    # [Optional] Optional project for official OpenAI API
+model_list_endpoint = "/models"            # [Optional] Model list endpoint path
+reasoning_parse_mode = "auto"              # [Optional] Reasoning content parse mode: auto (default) / native / think_tag / none
+tool_argument_parse_mode = "auto"          # [Optional] Tool argument parse mode: auto (default) / strict / repair / double_decode
+max_retry = 3                              # [Optional] Maximum number of retries
+timeout = 60                               # [Optional] API call timeout in seconds
+retry_interval = 5                         # [Optional] Retry interval in seconds
 ```
 
 **Key Points:**
 
-- **Required**: `name` (Provider name), `base_url` (Endpoint address), `api_key` (API Key, except when `auth_type = "none"`)
-- **Authentication**: `bearer` is the default and applies to most providers. Other options include `header` / `query` / `none`
-- **Client**: Default is `openai`. Use `"google"` for Google Gemini; see [Model Extra Parameters](./model-extra-params.md#gemini-native-api)
-- **Timeout & Retries**: `timeout` defaults to 60s, `max_retry` defaults to 3 times, `retry_interval` defaults to 5s
-- For other fields, refer to the comments above; all have reasonable default values.
+- **Required**: `name` (provider name), `base_url` (endpoint URL), `api_key` (key, except when `auth_type = "none"`)
+- **Authentication**: Default `bearer` works for most providers. Other options are `header` / `query` / `none`
+- **Client**: Default is `openai`. For Google Gemini use `"google"`, see [Model Extra Params](./model-extra-params.md#gemini-原生-api)
+- **Timeout & Retry**: `timeout` defaults to 60s, `max_retry` defaults to 3 times, `retry_interval` defaults to 5s
+- See comments above for other fields, all have reasonable default values
+
 
 ## Models
 
-Each `[[models]]` block defines a specific LLM model associated with a particular API provider.
+Each `[[models]]` block defines a specific LLM model, linked to an API provider.
 
 ```toml
 [[models]]
-model_identifier = "deepseek-v4-flash"       # [必填] API 服务商提供的模型标识符
-name = "deepseek-v4-flash"                   # [必填] 模型名称，在 model_task_config 中需使用这个命名
-api_provider = "deepseek"                    # [必填] 对应 api_providers 中配置的服务商名称
-price_in = 1.0                               # [可选] 输入价格，单位：元/M token
-cache = false                                # [可选] 是否启用缓存计费
-cache_price_in = 0.0                         # [可选] 缓存命中输入价格，仅 cache=true 时使用
-price_out = 2.0                              # [可选] 输出价格，单位：元/M token
-# temperature = 0.7                          # [可选] 模型级别温度，会覆盖任务配置中的 temperature
-# max_tokens = 4096                          # [可选] 模型级别最大 token 数，会覆盖任务配置中的 max_tokens
-force_stream_mode = false                    # [可选] 强制流式输出模式，模型不支持非流式输出时设为 true
-visual = false                               # [可选] 是否为多模态模型（支持视觉输入）
-extra_params = {}                            # [可选] 额外参数，详见 模型额外参数
+model_identifier = "deepseek-v4-flash"       # [Required] Model identifier provided by the API provider
+name = "deepseek-v4-flash"                   # [Required] Model name, must be used in model_task_config
+api_provider = "deepseek"                    # [Required] Corresponds to the provider name configured in api_providers
+price_in = 1.0                               # [Optional] Input price, unit: CNY/M token
+cache = false                                # [Optional] Whether to enable cache billing
+cache_price_in = 0.0                         # [Optional] Cache hit input price, only used when cache=true
+price_out = 2.0                              # [Optional] Output price, unit: CNY/M token
+# temperature = 0.7                          # [Optional] Model-level temperature, overrides temperature in task config
+# max_tokens = 4096                          # [Optional] Model-level max token count, overrides max_tokens in task config
+force_stream_mode = false                    # [Optional] Force stream output mode, set to true if the model does not support non-streaming output
+visual = false                               # [Optional] Whether it is a multimodal model (supports visual input)
+extra_params = {}                            # [Optional] Extra parameters, see Model Extra Params
 ```
 
 **Key Points:**
 
-- **Required**: `model_identifier` (API identifier), `name` (Custom name), `api_provider` (Associated provider)
-- **Pricing**: `price_in` / `price_out` are used for statistics, in units of CNY/million tokens. After enabling `cache`, `cache_price_in` can be set separately
-- **Model-level Overrides**: `temperature` / `max_tokens` can override task configurations; if not set, the task default is used
+- **Required**: `model_identifier` (API identifier), `name` (custom name), `api_provider` (associated provider)
+- **Pricing**: `price_in` / `price_out` used for statistics, unit is CNY/million tokens. Enable `cache` to separately set `cache_price_in`
+- **Model-level Override**: `temperature` / `max_tokens` can override task config; if not set, task defaults are used
 - **Vision**: `visual = true` indicates support for image input, used for `vlm` tasks
-- **`extra_params`**: Provider-specific parameters (thinking mode, reasoning intensity, etc.), see [Model Extra Parameters](./model-extra-params.md) for details
+- **`extra_params`**: Provider-specific parameters (thinking mode, reasoning intensity, etc.), see [Model Extra Params](./model-extra-params.md)
+
 
 ## Task Configuration
 
 Assign different models to each task based on task characteristics to achieve optimal performance and efficiency.
 
-MaiMai divides model calls into three roles: the **Planner** is the strategic core, deciding when to speak and which tools to call (requires strong reasoning capabilities to schedule MCP and toolchains); the **Replyer** is responsible for transforming the information collected by the Planner into the final response text, prioritizing language quality; other auxiliary tasks use low-cost flash models for speed. A typical "Receive Message $\rightarrow$ Send Reply" trigger involves 3–6 LLM calls.
+Maimai categorizes model calls into three roles: **Planner** is the strategic core, deciding when to speak and which tools to call (requires strong reasoning ability to orchestrate MCP and toolchains); **Replyer** is responsible for converting the information gathered by the Planner into the final reply text, focusing on language quality; other auxiliary tasks use low-cost flash models to prioritize speed. A typical "receive message -> send reply" trigger involves 3~6 LLM calls.
 
 ::: code-group
 
@@ -190,36 +192,36 @@ hard_timeout = 60.0                           # [可选] 硬超时（秒）
 
 **Key Points:**
 
-- **Three Essentials**: Once `replyer`, `planner`, and `utils` are configured, it can run; others can be left blank to fall back automatically
-- **Planner as Strategic Core**: Decides when to speak and which tools (MCP/plugins) to call; requires a certain level of reasoning capability. A balanced model is recommended
-- **Replyer for Language Quality**: Converts information collected by the Planner into the final reply; a pro model + thinking mode is recommended
-- **Vision**: `vlm` requires a multimodal model from `visual = true`; `qwen-vl` is recommended
+- **Three Must-Configures**: Set up `replyer`, `planner`, `utils` to run; leave the rest empty for automatic fallback
+- **Planner is the Strategic Core**: Decides when to speak and which tools to call (MCP/plugins), requires some reasoning ability, a balanced model is recommended
+- **Replyer Focuses on Language Quality**: Converts Planner's gathered info into the final reply, pro model + thinking mode recommended
+- **Vision**: `vlm` requires a multimodal model from `visual = true`, `qwen-vl` recommended
 - **Embedding**: `embedding` recommends a dedicated embedding model (e.g., `text-embedding-3-small`); if not configured, memory search will be unavailable
-- `temperature` / `max_tokens` in the model configuration will override the settings here
+- `temperature` / `max_tokens` in model config will override settings here
 
 ### Fallback Rules
 
-When the `model_list` of certain tasks is empty, they automatically reuse other tasks:
+When `model_list` for some tasks is empty, other tasks are automatically reused:
 
 ```
          ┌──────────┐
-         │  planner │◄──── mid_memory（留空时回退）
-         │          │◄──── timing_gate（留空时回退）
+         │  planner │◄──── mid_memory (falls back when empty)
+         │          │◄──── timing_gate (falls back when empty)
          └──────────┘
               ▲
               │
          ┌──────────┐
-         │  utils   │◄──── learner（留空时回退）
+         │  utils   │◄──── learner (falls back when empty)
          └──────────┘
 
-memory · emoji · vlm · voice · embedding → 留空不自动回退，调用方会跳过或报错
+memory · emoji · vlm · voice · embedding → No automatic fallback when empty, caller will skip or throw an error
 
-emoji 特殊逻辑：emoji 有模型→用 emoji，planner 全视觉→用 planner，否则→用 vlm
+emoji special logic: emoji has model -> use emoji, planner is full visual -> use planner, otherwise -> use vlm
 ```
 
 ## Next Steps
 
-- Advanced model parameters (thinking mode, reasoning intensity): [Model Extra Parameters](./model-extra-params.md)
-- Configure the bot: See [Bot Configuration](./bot-config.md)
+- Advanced model parameters (thinking mode, reasoning intensity): [Model Extra Params](./model-extra-params.md)
+- Configure the bot: see [Bot Configuration](./bot-config.md)
 - Connect to QQ: [NapCat Adapter](../adapters/napcat.md)
 - Manage WebUI: [WebUI Configuration Management](../webui/config-management.md)

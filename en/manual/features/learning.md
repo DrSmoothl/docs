@@ -1,203 +1,203 @@
 ---
-title: How does MaiBot learn to speak like you?
----# How MaiBot Learns to Talk Like You 📚
+title: How MaiBot Learns to Speak Like You
+---# How MaiBot Learns to Speak Like You 📚
 
-Have you noticed that the longer MaiBot stays in your group, the more it starts to sound like you? It begins using your catchphrases, understands your memes, and even adopts a tone that mirrors yours. This isn't a coincidence—it's MaiBot "learning" your speaking style!
+Have you noticed that after hanging out in your group for a while, MaiBot speaks more and more like you guys? It starts using your catchphrases, gets your memes, and even its tone of voice becomes increasingly similar to yours. This isn't a coincidence—it's "learning" your speaking style!
 
 ## Just Like a Child Learning to Speak
 
-MaiBot's process of learning to speak is very similar to how a child learns:
+MaiBot's process of learning to speak is much like a child learning to talk:
 
-### 👶 Listen First, Speak Later
-- **Massive Listening** - Observing how you all speak
-- **Imitative Speaking** - Trying to respond in a similar manner
-- **Being Corrected** - Adjusting based on your reactions
-- **Further Improvement** - Becoming more similar and more natural
+### 👶 Listen First, Then Speak
+- **Listen a lot** - Observing how you speak
+- **Imitate** - Trying to respond in a similar way
+- **Get corrected** - Adjusting based on your reactions
+- **Improve again** - Becoming more and more alike, more and more natural
 
 ### 🎯 Monkey See, Monkey Do
-It learns whatever you say:
-- If you say "awesome," it will also say "awesome"
-- If you love using emojis, it will use them too
-- If you are polite, it will be polite
-- If you love joking around, it will be humorous
+Whatever you say, it learns:
+- If you say "awesome", it will say "awesome" too
+- If you love using stickers, it will use them too
+- If you speak politely, it will be polite too
+- If you love joking around, it will be humorous too
 
-## What Exactly Does It Learn?
+## What Does It Learn?
 
 ### 🗣️ Speaking Style
-**Vocabulary Habits**
-- If you love saying "incredible," it will also say "incredible"
-- If you often say "LMAO," it will also say "LMAO"
-- If you use "emmm," it will also use "emmm"
+**Word Habits**
+- If you love saying "absolutely amazing", it will say "absolutely amazing" too
+- If you often say "LMAO", it will "LMAO" too
+- If you use "emmm", it will "emmm" too
 
 **Tone and Intonation**
-- If you speak gently, it will be gentle
-- If you speak directly, it will be direct
-- If you love using exclamation marks, it will use them too!!
+- If you speak gently, it will be gentle too
+- If you speak directly, it will be direct too
+- If you love exclamation marks, it will use them too!!
 
-**Expression Methods**
-- If you love using metaphors, it will use metaphors
-- If you love giving examples, it will give examples
-- If you love rhetorical questions, it will ask them too?
+**Way of Expression**
+- If you love using metaphors, it will use metaphors too
+- If you love giving examples, it will give examples too
+- If you love asking rhetorical questions, it will ask them too?
 
 ### 🌟 Group Characteristics
 **Group Slang**
 ```
-群友：今晚开黑？
-MaiBot：走起！我辅助贼6 😎
+Group member: Play together tonight?
+MaiBot: Let's go! I'm a beast at support 😎
 
-群友：这波什么水平？
-MaiBot：天秀操作，不服不行！
+Group member: How good was that play?
+MaiBot: God-tier play, you can't deny it!
 ```
 
 **Shared Memes**
-- It remembers the emojis you use frequently
-- It uses the memes you love to post
-- It can keep up with your inside jokes
+- It will remember the stickers you often use
+- It will use the memes you love to send
+- It can catch onto your inside jokes
 
 **Topic Preferences**
-- If you love talking about games, it will talk about games
-- If you love talking about food, it will talk about food
-- If you love venting/complaining, it will vent too
+- If you love chatting about games, it will chat about games too
+- If you love chatting about food, it will chat about food too
+- If you love complaining, it will complain too
 
-## Secrets of the Learning Process
+## Uncovering the Learning Process
 
 ### 📊 Observation Phase
 **Collecting Dialogue Samples**
 - Seeing how you greet each other
- Observing how you respond
- Recording phrasing for different scenarios
+- Observing how you respond
+- Recording ways of speaking in different scenarios
 
 **Analyzing Language Patterns**
- What to say in which situation
- Which tone is most appropriate
- Which words appear frequently
+- What to say in what situation
+- What tone is more appropriate
+- Which words appear frequently
 
 ### 🧠 Understanding Phase
-**Learning Vocabulary Meaning**
-- What does "yyds" mean?
-- What emotion does "broken defense" (emotional breakdown) express?
-- What is the concept of "involution" (nei juan)?
+**Learning Word Meanings**
+- What does "GOAT" mean
+- What emotion does "triggered" express
+- What is the concept of "hustle culture"
 
 **Mastering Usage Scenarios**
-- When is it appropriate to say "incredible"
-- Is "LMAO" expressing happiness or helplessness?
-- What state is "emo" in?
+- When is it appropriate to say "absolutely amazing"
+- Does "LMAO" mean happy or helpless
+- What state does "emo" refer to
 
 ### 🎭 Imitation Phase
-**Trying Out New Words**
+**Trying to Use New Words**
 ```
-用户：今天工作好累
-MaiBot：抱抱，打工人都懂这种痛苦 😭
+User: Work was so tiring today
+MaiBot: *hugs*, us wage slaves totally get this pain 😭
 ```
 
-**Adjusting Speaking Style**
+**Adjusting the Way of Speaking**
 - Improving based on your reactions
-- Being corrected when used incorrectly
-- Being validated when used correctly
+- Getting corrected if used incorrectly
+- Getting validated if used correctly
 
 ### 🔄 Improvement Phase
 **Adjusting Based on Feedback**
-- When you say "haha," it knows it did well
-- When you say "???", it knows something might be off
-- When you continue the topic, it knows it hit the mark
+- If you say "haha", it knows it did well
+- If you say "???", it knows it might be off
+- If you continue the topic, it knows it hit the mark
 
 **Continuous Optimization**
-- Becoming more accurate
-- Becoming more natural
-- Becoming more like you
+- More and more accurate
+- More and more natural
+- More and more like you
 
-## Practical Examples 🌰
+## Real-World Examples 🌰
 
 ### Learning New Internet Slang
-**1st time hearing it**:
+**Hearing it for the 1st time**:
 ```
-群友：这个游戏画质真是绝绝子！
-MaiBot：（记录："绝绝子"=很好、很棒）
-```
-
-**2nd time using it**:
-```
-用户：你看我新买的手办怎么样？
-MaiBot：哇，这个手办做得绝绝子！细节太棒了！
+Group member: The graphics of this game are absolutely stunning!
+MaiBot: (Records: "absolutely stunning" = very good, awesome)
 ```
 
-**Nth time using it**:
+**Using it for the 2nd time**:
 ```
-群友：今天老板表扬我了！
-MaiBot：可以啊，绝绝子！继续加油 💪
+User: What do you think of my newly bought figure?
+MaiBot: Wow, this figure is absolutely stunning! The details are amazing!
+```
+
+**Using it for the Nth time**:
+```
+Group member: The boss praised me today!
+MaiBot: Nice, absolutely stunning! Keep it up 💪
 ```
 
 ### Learning Group Characteristics
-**When first joining**:
+**When it just joined**:
 ```
-群友：今晚吃鸡？
-MaiBot：好的，我可以和你们一起玩
+Group member: Play PUBG tonight?
+MaiBot: Okay, I can play with you guys
 ```
 
 **After learning**:
 ```
-群友：今晚吃鸡？
-MaiBot：冲！我苟分贼6，包鸡！😎
+Group member: Play PUBG tonight?
+MaiBot: Let's go! I'm pro at hiding for points, guaranteed chicken dinner! 😎
 ```
 
-## Learning Effects
+## The Effects of Learning
 
 ### 🎯 Becoming More Like You
-**Vocabulary Habits**
-- From "Okay" to "okk"
-- From "Not bad" to "Pretty good" (slang version)
-- From "Can do" to "Can"
+**Word Habits**
+- From "okay" to "okk"
+- From "not bad" to "zhēn bù chuō" (awesome)
+- From "fine" to "kě" (sure)
 
 **Speaking Tone**
 - From formal to casual
-- From polite to intimate
-- From standard to characteristic
+- From polite to affectionate
+- From standard to distinctive
 
-**Expression Methods**
+**Way of Expression**
 - Learning your humor
 - Understanding your sarcasm
-- Keeping up with your rhythm
+- Keeping up with your pace
 
 ### 🤝 Becoming More Natural
 **Conversation Fluency**
-- No longer appearing abrupt
-- Able to pick up where you left off
-- Speaking with the "right vibe"
+- Won't seem abrupt
+- Can catch onto your conversations
+- Speaking with "that vibe"
 
 **Sense of Group Integration**
 - Like a member of the group
-- Not an outside robot
-- Accepted by everyone
+- Not an outsider bot
+- Acceptable to everyone
 
-## Learning Boundaries
+## The Boundaries of Learning
 
-### 🚫 Not Everything is Learned
-**No Bad Habits**
-- Does not learn to swear
-- Does not learn discriminatory language
-- Does not learn malicious attacks
+### 🚫 Won't Learn Everything
+**Won't learn the bad**
+- Won't learn to swear
+- Won't learn discriminatory language
+- Won't learn malicious attacks
 
-**No Inappropriate Content**
-- Overly professional terminology
-- Overly private expressions
+**Won't learn the inappropriate**
+- Overly professional jargon
+- Overly personal expressions
 - Overly sensitive topics
 
 ### ⚖️ Maintaining Balance
-**Learning while Remaining Unique**
+**Learning while being alike**
 - Learning your style
 - Maintaining its own characteristics
-- Not imitating blindly
+- Not blindly imitating
 
 **Moderate Usage**
 - Won't fill the screen with internet slang
-- Using based on the occasion
-- Remaining natural and appropriate
+- Using it according to the context
+- Staying natural and appropriate
 
 ## What Can You Do?
 
 ### 👍 Encourage Learning
-- Praise it when it uses a term well
-- Respond to it using your own style
+- Praise it when it uses words well
+- Respond to it in your style
 - Chat with it more
 
 ### 🔄 Correct Mistakes
@@ -205,11 +205,11 @@ MaiBot：冲！我苟分贼6，包鸡！😎
 - Teach it the correct usage
 - Help it understand the context
 
-### 🎮 Proactive Teaching
+### 🎮 Active Teaching
 - Teach it new vocabulary
 - Explain your memes
-- Share the group culture
+- Share your group culture
 
 ---
 
-MaiBot's ability to learn makes it more than just a simple repeater; it is an intelligent companion that can truly integrate into your group. It will understand you more and more, sound more and more like you, and become an indispensable part of the group!
+MaiBot's learning ability makes it more than a simple parrot; it's an intelligent companion that can truly blend into your group. It will understand you more and more, become more and more like you, and become an indispensable member of the group!

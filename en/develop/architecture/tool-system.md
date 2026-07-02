@@ -4,7 +4,7 @@ title: Tool System Architecture
 
 This article is written based on the code-map snapshot.
 
-MBot's tool system converges plugin tools, legacy Actions, MaiSaka built capabilities, and external MCP tools into a single abstraction layer. It is not responsible for teaching plugin authors how to write an `@Tool`, nor does it replace the development tutorial in [Tool Usage](../plugin-dev/tools.md). This article focuses on internal implementation, explaining how tool declaration, tool invocation, Provider adaptation, and ToolRegistry routing work together.
+MBot's tool system converges plugin tools, legacy Actions, MaiSaka built capabilities, and external MCP tools into a single abstraction layer. It is not responsible for teaching plugin authors how to write an `@Tool`, nor does it replace the development tutorial in [Tool Usage](../../plugin/tools.md). This article focuses on internal implementation, explaining how tool declaration, tool invocation, Provider adaptation, and ToolRegistry routing work together.
 
 ## 1. Overview
 

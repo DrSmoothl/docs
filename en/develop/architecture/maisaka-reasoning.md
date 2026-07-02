@@ -309,7 +309,7 @@ flowchart TD
 
 ### Hook Specs
 
-For detailed Hook parameter information related to Maisaka, please refer to [Hook Processors](../plugin-dev/hooks#maisaka-planner-chain). This section only introduces the position and role of Hooks in the reasoning pipeline.
+For detailed Hook parameter information related to Maisaka, please refer to [Hook Processors](../../plugin/hooks#maisaka-planner-chain). This section only introduces the position and role of Hooks in the reasoning pipeline.
 
 ## Context Message Types
 

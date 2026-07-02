@@ -1,8 +1,8 @@
 ---
 title: Chat History and Statistics
----# Chat History and Statistics
+---# Chat Logs and Statistics
 
-See how active MaiBot is and what it has been chatting about!
+See how active MaiBot is and what it chatted about!
 
 ## Chat Statistics
 
@@ -10,68 +10,68 @@ See how active MaiBot is and what it has been chatting about!
 Open the "Chat Statistics" page to see:
 - **Total Messages** - How many messages the bot received
 - **Replies** - How many messages the bot replied to
-- **Uptime** - How long the bot has been running
-- **Average Response** - How fast the response speed is
+- **Online Duration** - How long the bot has been running
+- **Average Response** - How fast the bot replies
 
 ### 💰 Cost Statistics
-Track your spending:
+You can also see the spending details:
 - **Total Cost** - Total amount spent
 - **Hourly Cost** - Average cost per hour
 - **Token Usage** - How much text the AI processed
-- **Cost per Model** - Spending breakdown for different AI models
+- **Cost by Model** - How much was spent on different AI models
 
 ### 📈 Trend Charts
-Intuitive charts showing:
-- **24 Hours** - Activity over the last day
+Intuitive chart displays:
+- **24 Hours** - Activity in the last day
 - **7 Days** - Trends over the last week
-- **Peak Hours** - When the bot is most active
+- **Peak Hours** - When it is most active
 
-## Chat History
+## Chat Logs
 
-### View Records
-View detailed chat history:
+### View Logs
+You can view detailed chat history:
 - Who said what
 - How the bot replied
-- When the conversation happened
-- Which group chat it occurred in
+- When the chat happened
+- Which group chat it was in
 
-### Search Records
-Looking for specific content?
+### Search Logs
+Looking for something specific?
 - Filter by user
 - Search by time range
 - Filter by group chat
 
-### Record Management
-- **Clear Records** - Delete old records
-- **Backup Important Chats** - Save interesting conversations
+### Log Management
+- **Clean up logs** - Delete old records
+- **Backup important chats** - Save interesting conversations
 
 ## User Management
 
 ### User List
 Displays all users who have chatted:
-- User nicknames and avatars
-- Duration of acquaintance
+- User nickname and avatar
+- How long you've known them
 - Chat frequency
-- Which platform they were met on
+- Which platform you met them on
 
-### User Personas
-Click a user to see:
+### User Persona
+Click on a user to see:
 - Personality traits
 - Interests and hobbies
-- Chatting habits
+- Chat habits
 - Interaction history
 
 ### User Statistics
-- **Total Users** - How many users are known
-- **Active Users** - How many chat frequently
-- **Platform Distribution** - Breakdown by QQ, WeChat, etc.
+- **Total Users** - How many users the bot knows
+- **Active Users** - How many users chat frequently
+- **Platform Distribution** - How many on QQ, WeChat, etc.
 
-## Expression Styles
+## Expression Methods
 
 ### Speaking Style
-MaiBot learns different ways of expressing itself:
+MaiBot will learn different ways of expression:
 - Formal/Casual
-- Lively/Steady
+- Lively/Calm
 - Humorous/Serious
 - Various internet slang
 
@@ -79,27 +79,27 @@ MaiBot learns different ways of expressing itself:
 Internet slang learned by the bot:
 - New and trending words
 - Memes and jokes
-- Niche community terminology
+- Niche community jargon
 - Can be manually confirmed or rejected
 
-### Stickers/Emojis
+### Stickers
 Collected stickers:
 - Usage frequency statistics
 - Popular stickers
-- Ability to upload new ones
-- Ban inappropriate ones
+- Can upload new ones
+- Disable inappropriate ones
 
-Stickers are displayed in the WebUI in four states:
-- **Known**: Has a description, but is not registered or banned
-- **Unknown**: No description, and not registered or banned
-- **Claimed**: Registered and can be used by MaiBot
+Stickers are uniformly displayed in four states in the WebUI:
+- **Recognized**: Has a description, but not registered or banned
+- **Unrecognized**: No description yet, and not registered or banned
+- **Adopted**: Registered and can be used by MaiBot
 - **Discarded**: Banned and no longer used
 
-Stickers manually uploaded from the WebUI are directly marked as "Claimed". The tag list filled during upload will be merged into the sticker description; if the image already exists in the database, the original record will be reused, the description updated, the ban lifted, and it will be marked as registered. Deleting an unregistered sticker will synchronously delete the database record and local file; deleting a registered sticker will first uninstall it from the available sticker library, then delete the database record and file.
+Stickers manually uploaded from the WebUI will be directly marked as "Adopted". The tag list filled in during upload will be merged into the sticker description; if the image already exists in the database, it will reuse the original record, update the description, unban it, and mark it as registered. Deleting an unregistered sticker will simultaneously delete the database record and the local file; deleting a registered sticker will first uninstall it from the available sticker library, then delete the database record and the file.
 
-## Usage Suggestions
+## Usage Tips
 
-### Daily Review
+### Daily Check
 - Check statistics daily to understand activity levels
 - Monitor cost changes to avoid overspending
 - Review user feedback to improve the bot
@@ -107,40 +107,40 @@ Stickers manually uploaded from the WebUI are directly marked as "Claimed". The 
 ### Data Analysis
 - Analyze peak hours to schedule maintenance reasonably
 - Observe user preferences to adjust the bot's personality
-- Track popular topics to add relevant content
+- Track popular topics to add related content
 
-### Optimization Tips
-- Response too slow? Check the configuration
-- Cost too high? Switch to a cheaper model
+### Optimization Suggestions
+- Responses too slow? Check the configuration
+- Costs too high? Switch to a cheaper model
 - Too few users? Increase promotion
 
-## FAQ
+## Frequently Asked Questions
 
 **Q: How often are statistics updated?**
-A: Updated in real-time; you can see the latest data at any time.
+A: Updated in real-time, latest data is always visible
 
-**Q: How long are records saved?**
-A: Saved long-term by default; automatic cleaning can be configured.
+**Q: How long are logs kept?**
+A: Saved long-term by default, automatic cleanup can be configured
 
-**Q: Can data be exported?**
-A: Export functionality is not yet supported but will be added in future versions.
+**Q: Can I export the data?**
+A: Export is not currently supported, but will be added in future versions
 
-**Q: How can I reduce usage costs?**
-A: Choose cheaper models, reduce unnecessary calls, and optimize prompts.
+**Q: How to reduce usage costs?**
+A: Choose cheaper models, reduce unnecessary calls, optimize prompts
 
-## Useful Tips
+## Practical Tips
 
-### Monitoring Bot Health
-- Response time suddenly increased? There might be an issue.
-- Costs increasing abnormally? Check if it's under attack.
-- Active users dropping? Check if the bot said something wrong.
+### Monitor Bot Health
+- Response time suddenly increased? There might be an issue
+- Abnormal cost increase? Check if it's under attack
+- Active users declining? See if it said something wrong
 
-### Improving User Experience
-- Analyze user personas for personalized replies.
-- Track popular topics to prepare relevant content.
-- Record user feedback for continuous improvement.
+### Improve User Experience
+- Analyze user personas for personalized replies
+- Track popular topics to prepare relevant content
+- Record user feedback for continuous improvement
 
-### Saving Expenses
-- Choose models with high cost-performance ratios.
-- Set reasonable call frequencies.
-- Avoid redundant calls to save Tokens.
+### Save Expenses
+- Choose cost-effective models
+- Set reasonable call frequencies
+- Avoid repeated calls to waste Tokens
