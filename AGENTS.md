@@ -2,7 +2,6 @@
 ## 根目录文件
 | 文件 | 说明 |
 |------|------|
-| `index.md` | VitePress 首页/Hero page，展示 MaiBot 简介和导航入口 |
 | `README.md` | 项目说明，介绍文档仓库用途、本地开发方法和贡献指南 |
 | `_redirects` | 单页应用路由重定向配置（所有路径重定向到 /index.html） |
 | `.gitignore` | Git 忽略规则（node_modules, dist, .vitepress/cache 等） |
@@ -21,7 +20,21 @@
 | `theme/index.ts` | 主题入口 |
 | `theme/style.css` | 自定义样式 |
 
-### `manual/` — 用户手册（简体中文）
+### `zh/` — 中文文档（简体中文）
+
+中文文档根目录，包含以下内容：
+
+| 文件/文件夹 | 说明 |
+|-------------|------|
+| `index.md` | VitePress 首页/Hero page |
+| `manual/` | 用户手册 |
+| `develop/` | 开发文档 |
+| `features/` | 功能介绍页 |
+| `changelog/` | 更新日志 |
+| `community/` | 社区页面 |
+| `plugin/` | 插件开发文档 |
+
+### `zh/manual/` — 用户手册（简体中文）
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
@@ -34,7 +47,7 @@
 | `faq/` | 常见问题与故障排除 |
 | `getting-started/` | 快速入门指南 |
 
-### `develop/` — 开发文档（简体中文）
+### `zh/develop/` — 开发文档（简体中文）
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
@@ -45,23 +58,40 @@
 | `plugin-dev/` | 插件开发文档（Manifest、生命周期、Tool、Command、Hook、事件处理、API组件、消息网关、Action、配置、API参考） |
 | `adapter-dev/` | 适配器开发文档（PlatformIO 驱动） |
 
-### `features/` — 功能介绍页
+### `zh/features/` — 功能介绍页
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
 | 各功能页面 | 首页特性卡片展示内容 |
 
-### `changelog/` — 更新日志
+### `zh/changelog/` — 更新日志
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
 | 各版本日志 | 记录每个版本的更新内容 |
 
-### `community/` — 社区页面
+### `zh/community/` — 社区页面
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
 | 各社区页面 | QQ群、GitHub链接、社交媒体、衍生项目 |
+
+### `zh/plugin/` — 插件开发文档
+
+| 文件/文件夹 | 说明 |
+|-------------|------|
+| `index.md` | 插件开发概览 |
+| `manifest.md` | 插件清单配置 |
+| `lifecycle.md` | 插件生命周期 |
+| `tool.md` | Tool 定义与实现 |
+| `command.md` | Command 定义与实现 |
+| `hook.md` | Hook 事件系统 |
+| `event.md` | 事件处理机制 |
+| `api.md` | API 组件参考 |
+| `gateway.md` | 消息网关 |
+| `action.md` | Action 动作系统 |
+| `config.md` | 插件配置 |
+| `reference.md` | API 参考 |
 
 ### `en/` — 英文版文档
 
