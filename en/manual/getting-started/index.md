@@ -287,7 +287,7 @@ Check in order:
 You've successfully deployed MaiBot! Now you can:
 
 - 📚 **[Configuration Guide](../configuration/)** — Tweak personality, chat frequency, memory, and more
-- 🔌 **[Plugin Development](../../develop/plugin-dev/)** — Build new features for MaiBot
+- 🔌 **[Plugin Development](../../plugin/)** — Build new features for MaiBot
 - 🧠 **[Understand MaiBot's Brain](../features/maisaka-reasoning.md)** — Dive into the reasoning engine
 - 💬 **Invite MaiBot to more groups** — Share the fun with friends
 

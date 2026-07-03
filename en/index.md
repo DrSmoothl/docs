@@ -3,45 +3,44 @@ layout: home
 
 hero:
   name: MaiBot
-  text: LLM-based Interactive Agent
-  tagline: Not just a bot, but a digital life form active in conversations
+  text: 基于 LLM 的交互式智能体
+  tagline: 不仅仅是一个机器人，而是一个活跃在对话中的"生命体"
   image:
     src: /title_img/mai.png
     alt: MaiBot
   actions:
-    - theme: brand
-      text: Get Started
-      link: /en/manual/deployment/
-    - theme: alt
-      text: Features
-      link: /en/features/
-    - theme: alt
-      text: Development
-      link: /en/develop/
+  - theme: brand
+    text: 说明书
+    link: /manual/deployment/
+  - theme: alt
+    text: 功能介绍
+    link: /features/
+  - theme: alt
+    text: 开发文档
+    link: /develop/
 
 features:
-  - title: Natural Conversation
-    details: No more GPT-style walls of text - casual, varied, and human-like dialogue
-  - title: Smart Timing
-    details: Knows when to speak, reads the room, joins when appropriate, stays quiet when needed
-  - title: Continuous Learning
-    details: Imitates speech styles, learns new slang and in-group language, keeps evolving
-  - title: Deep Understanding
-    details: Inspired by personality theory, builds an understanding of your preferences and habits
-  - title: Plugin System
-    details: Powerful APIs and event system with virtually unlimited room for extension
-  - title: Long-term Memory
-    details: A-Memorix memory engine lets AI remember every interaction you've had
+- title: 自然对话风格
+  details: 不再是 GPT 式的长篇大论，而是贴合人类对话习惯的或长或短的闲谈
+- title: 智能发言时机
+  details: 懂得在合适的时间说话，把握聊天中的气氛，该开口时开口，该闭嘴时闭嘴
+- title: 持续学习进化
+  details: 模仿他人的说话风格，自主理解新词和黑话，不断进化
+- title: 深度了解用户
+  details: 基于心理学人格理论，不断积累对你的了解，记在心里
+- title: 插件系统
+  details: 提供强大的 API 和事件系统，拥有无限扩展可能
+- title: 长期记忆
+  details: A-Memorix 记忆引擎，让 AI 记住你们的每一次交流
 ---
-
 ## Get More Support
 
-- Visit the [GitHub repository](https://github.com/Mai-with-u/MaiBot) to report issues or contribute
-- Join our user group for help
+- Visit the [GitHub Repository](https://github.com/Mai-with-u/MaiBot) to submit issues or contribute code
+- Join the user community for help
   - QQ: 766798517
   - QQ: 571780722
   - QQ: 729957033
-  - QQ: 1022489779 (casual chat)
+  - QQ: 1022489779 (Casual Chat Group)
 
 <style scoped>
 #star-canvas {
@@ -65,7 +64,7 @@ features:
 <script setup>
 import { onMounted, onUnmounted, nextTick } from 'vue'
 
-// 普通封面图片列表
+// Normal cover image list
 const normalImages = [
   '/title_img/mai.png',
   '/title_img/mai2.png',
@@ -74,7 +73,7 @@ const normalImages = [
   '/title_img/emoji3.png',
 ]
 
-// 隐藏款图片（出现概率是其他图片的1/5）
+// Hidden image (appearance probability is 1/5 of other images)
 const hiddenImage = '/title_img/dis.png'
 
 let animationFrameId = null
@@ -83,17 +82,17 @@ let particles = []
 onMounted(async () => {
   await nextTick()
   
-  // 加权随机选择：dis.png 概率为其他图片的 1/5
-  // 创建一个加权数组：其他图片各出现5次，隐藏款出现1次
+  // Weighted random selection: dis.png probability is 1/5 of other images
+  // Create a weighted array: normal images appear 5 times each, hidden image appears once
   const weightedImages = [
-    ...normalImages.map(img => Array(5).fill(img)).flat(), // 每张普通图片出现5次
-    hiddenImage // 隐藏款出现1次
+    ...normalImages.map(img => Array(5).fill(img)).flat(), // Each normal image appears 5 times
+    hiddenImage // Hidden image appears once
   ]
   
-  // 随机选择一张图片
+  // Randomly select an image
   const randomImage = weightedImages[Math.floor(Math.random() * weightedImages.length)]
   
-  // 尝试多种选择器来查找 hero 图片
+  // Try multiple selectors to find the hero image
   const selectors = [
     '.VPHomeHero .VPImage img',
     '.VPHomeHero img',
@@ -107,26 +106,26 @@ onMounted(async () => {
     if (heroImage) break
   }
   
-  // 设置图片的函数
+  // Function to set the image
   const setImage = (imgElement, imageSrc) => {
     imgElement.src = imageSrc
     imgElement.alt = 'MaiBot'
-    // 如果是 emoji4.png，缩放到 1.5 倍
+    // If it's emoji4.png, scale to 1.5x
     if (imageSrc.includes('emoji4.png')) {
       imgElement.style.transform = 'scale(1.5)'
       imgElement.style.transformOrigin = 'center'
     } else {
-      // 重置其他图片的缩放
+      // Reset scale for other images
       imgElement.style.transform = ''
       imgElement.style.transformOrigin = ''
     }
   }
   
-  // 如果找到了图片元素，替换它
+  // If image element is found, replace it
   if (heroImage) {
     setImage(heroImage, randomImage)
   } else {
-    // 如果没找到，延迟再试一次（等待 VitePress 渲染完成）
+    // If not found, try again after a delay (wait for VitePress rendering to complete)
     setTimeout(() => {
       for (const selector of selectors) {
         heroImage = document.querySelector(selector)
@@ -138,7 +137,7 @@ onMounted(async () => {
     }, 100)
   }
   
-  // 初始化星星特效
+  // Initialize star effect
   initStarEffect()
 })
 
@@ -319,7 +318,7 @@ function initStarEffect() {
     
     frame++
     
-    // 获取图标位置
+    // Get icon position
     const heroImage = document.querySelector('.VPHomeHero .VPImage img') || 
                      document.querySelector('.VPHomeHero img')
     

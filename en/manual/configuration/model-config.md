@@ -1,266 +1,227 @@
 ---
 title: Model Configuration
----
+titleTemplate: :title · 模型配置
+---# Model Configuration
 
-# Set Up the AI Brain
+`model_config.toml` Configure the "AI brain" for Maimai — deciding which LLM models to use for different components, and how to connect to API providers.
 
-`model_config.toml` is the file used to configure MaiMai's "AI brain". It decides which LLM each MaiMai component uses.
+The minimum startup requires only one LLM model and one API provider (both `models` and `api_providers` must not be empty). Full functionality also requires a VLM model (for image recognition) and an embedding model (for memory search).
 
-We recommend assigning different models based on the characteristics of different tasks.
+## API Providers
 
-MaiMai's configuration must include one LLM model (or VLM), one VLM model, and one embedding model.
-
-## Configuration File Structure
+Each `[[api_providers]]` block defines an API provider. A single configuration file can have multiple providers.
 
 ```toml
-# Configuration file version
-[inner]
-version = "1.14.0"
-
-# API provider list (AI service providers)
 [[api_providers]]
-name = "deepseek"
-base_url = "https://api.deepseek.com/v1"
-api_key = "sk-xxxxxxxxxxxxxxxxxxxxxxxx"
-auth_type = "bearer"                    # Auth type: bearer/header/query/none
-
-# Model list (which specific AI to use)
-[[models]]
-name = "deepseek-chat"
-model_identifier = "deepseek-chat"
-api_provider = "deepseek"
-visual = false                          # Whether supports vision
-price_in = 0.1                          # Input price (yuan/million tokens)
-price_out = 0.2                         # Output price (yuan/million tokens)
-
-# Task assignment (different work uses different AI)
-[model_task_config.replyer]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0                   # Slow request threshold (seconds)
-selection_strategy = "balance"          # Model selection strategy: balance/random/sequential
+name = "deepseek"                          # [Required] API provider name, must be used in the api_provider field of models
+base_url = "https://api.deepseek.com/v1"   # [Required] BaseURL of the API provider
+api_key = "your-api-key"                   # [Required] API key. Not required if auth_type is none
+client_type = "openai"                     # [Optional] Client type: openai (default) / google
+auth_type = "bearer"                       # [Optional] Auth type: bearer (default) / header / query / none
+auth_header_name = "Authorization"         # [Optional] Request header name used when auth_type is header
+auth_header_prefix = "Bearer"              # [Optional] Request header prefix used when auth_type is header, leave empty to send the raw key directly
+auth_query_name = "api_key"                # [Optional] Query parameter name used when auth_type is query
+default_headers = {}                       # [Optional] Default HTTP headers attached to all requests
+default_query = {}                         # [Optional] Default query parameters attached to all requests
+# organization = "org-xxxx"                # [Optional] Optional organization for official OpenAI API
+# project = "proj-xxxx"                    # [Optional] Optional project for official OpenAI API
+model_list_endpoint = "/models"            # [Optional] Model list endpoint path
+reasoning_parse_mode = "auto"              # [Optional] Reasoning content parse mode: auto (default) / native / think_tag / none
+tool_argument_parse_mode = "auto"          # [Optional] Tool argument parse mode: auto (default) / strict / repair / double_decode
+max_retry = 3                              # [Optional] Maximum number of retries
+timeout = 60                               # [Optional] API call timeout in seconds
+retry_interval = 5                         # [Optional] Retry interval in seconds
 ```
 
-## API Providers [[api_providers]]
+**Key Points:**
 
-API providers represent the services that provide LLM capabilities.
+- **Required**: `name` (provider name), `base_url` (endpoint URL), `api_key` (key, except when `auth_type = "none"`)
+- **Authentication**: Default `bearer` works for most providers. Other options are `header` / `query` / `none`
+- **Client**: Default is `openai`. For Google Gemini use `"google"`, see [Model Extra Params](./model-extra-params.md#gemini-原生-api)
+- **Timeout & Retry**: `timeout` defaults to 60s, `max_retry` defaults to 3 times, `retry_interval` defaults to 5s
+- See comments above for other fields, all have reasonable default values
 
-### Basic Configuration (Required)
 
-- **`name`** — Provider name, choose a name yourself, such as "deepseek" or "openai"
-- **`base_url`** — API address, the URL provided by the service provider
-- **`api_key`** — Key, the key you get after registration
-- **`auth_type`** — Authentication type, `bearer` (default), `header`, `query`, `none`
+## Models
 
-### Common Provider Configuration Examples
+Each `[[models]]` block defines a specific LLM model, linked to an API provider.
+
+```toml
+[[models]]
+model_identifier = "deepseek-v4-flash"       # [Required] Model identifier provided by the API provider
+name = "deepseek-v4-flash"                   # [Required] Model name, must be used in model_task_config
+api_provider = "deepseek"                    # [Required] Corresponds to the provider name configured in api_providers
+price_in = 1.0                               # [Optional] Input price, unit: CNY/M token
+cache = false                                # [Optional] Whether to enable cache billing
+cache_price_in = 0.0                         # [Optional] Cache hit input price, only used when cache=true
+price_out = 2.0                              # [Optional] Output price, unit: CNY/M token
+# temperature = 0.7                          # [Optional] Model-level temperature, overrides temperature in task config
+# max_tokens = 4096                          # [Optional] Model-level max token count, overrides max_tokens in task config
+force_stream_mode = false                    # [Optional] Force stream output mode, set to true if the model does not support non-streaming output
+visual = false                               # [Optional] Whether it is a multimodal model (supports visual input)
+extra_params = {}                            # [Optional] Extra parameters, see Model Extra Params
+```
+
+**Key Points:**
+
+- **Required**: `model_identifier` (API identifier), `name` (custom name), `api_provider` (associated provider)
+- **Pricing**: `price_in` / `price_out` used for statistics, unit is CNY/million tokens. Enable `cache` to separately set `cache_price_in`
+- **Model-level Override**: `temperature` / `max_tokens` can override task config; if not set, task defaults are used
+- **Vision**: `visual = true` indicates support for image input, used for `vlm` tasks
+- **`extra_params`**: Provider-specific parameters (thinking mode, reasoning intensity, etc.), see [Model Extra Params](./model-extra-params.md)
+
+
+## Task Configuration
+
+Assign different models to each task based on task characteristics to achieve optimal performance and efficiency.
+
+Maimai categorizes model calls into three roles: **Planner** is the strategic core, deciding when to speak and which tools to call (requires strong reasoning ability to orchestrate MCP and toolchains); **Replyer** is responsible for converting the information gathered by the Planner into the final reply text, focusing on language quality; other auxiliary tasks use low-cost flash models to prioritize speed. A typical "receive message -> send reply" trigger involves 3~6 LLM calls.
 
 ::: code-group
 
-```toml [DeepSeek]
-[[api_providers]]
-name = "deepseek"
-base_url = "https://api.deepseek.com/v1"
-api_key = "sk-your-key"
-client_type = "openai"
-auth_type = "bearer"
+```toml [replyer（智能模型）]
+# [必填] 回复器：将 Planner 收集的信息转为最终回复文本。追求语言质量和表达风格，推荐 pro 模型 + 思考模式。
+[model_task_config.replyer]
+model_list = ["deepseek-v4-pro-think"]        # [必填] 模型名称列表
+max_tokens = 4096                             # [可选] 最大输出 token 数
+temperature = 1.0                             # [可选] 模型温度，0.3 保守 / 0.7 有创意 / 1.0 随机
+slow_threshold = 120.0                        # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略：balance / random / sequential
+hard_timeout = 240.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [OpenAI]
-[[api_providers]]
-name = "openai"
-base_url = "https://api.openai.com/v1"
-api_key = "sk-your-key"
-client_type = "openai"
-auth_type = "bearer"
+```toml [planner（快模型）]
+# [必填] 规划器：战略核心——决定何时说话、回复谁、调用哪些工具（MCP/插件）。需较强推理和 tool 调用能力。
+[model_task_config.planner]
+model_list = ["deepseek-v4-flash"]            # [必填] 模型名称列表
+max_tokens = 8000                             # [可选] 最大输出 token 数
+temperature = 0.7                             # [可选] 模型温度
+slow_threshold = 12.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略
+hard_timeout = 180.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [Alibaba Bailian]
-[[api_providers]]
-name = "aliyun"
-base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-api_key = "sk-your-key"
-client_type = "openai"
-auth_type = "bearer"
+```toml [utils（快模型）]
+# [必填] 组件模型：表情包分析、学习分析、取名、关系模块、情绪变化等。麦麦必须的模型。
+[model_task_config.utils]
+model_list = ["deepseek-v4-flash"]            # [必填] 模型名称列表
+max_tokens = 4096                             # [可选] 最大输出 token 数
+temperature = 0.5                             # [可选] 模型温度
+slow_threshold = 15.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [ByteDance Volcengine]
-[[api_providers]]
-name = "volcengine"
-base_url = "https://ark.cn-beijing.volces.com/api/v3"
-api_key = "sk-your-key"
-client_type = "openai"
-auth_type = "bearer"
+```toml [memory（长期记忆）]
+# [可选] 长期记忆：记忆总结、抽取、写回等高质量任务（A_Memorix 子系统）。
+# 默认 model_list 为空（不自动回退），未配置时调用方按需处理。
+[model_task_config.memory]
+model_list = []                               # [可选] 模型名称列表
+max_tokens = 8192                             # [可选] 最大输出 token 数
+temperature = 0.5                             # [可选] 模型温度
+slow_threshold = 30.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略
+hard_timeout = 240.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [Custom Header Auth]
-[[api_providers]]
-name = "custom"
-base_url = "https://api.example.com/v1"
-api_key = "your-api-key"
-client_type = "openai"
-auth_type = "header"
-auth_header_name = "X-API-Key"
-auth_header_prefix = ""
+```toml [mid_memory（中期摘要）]
+# [可选] 中期摘要：上下文裁切时将历史聊天压缩为摘要。留空时自动回退到 planner。
+[model_task_config.mid_memory]
+model_list = []                               # [可选] 模型名称列表（→回退 planner）
+max_tokens = 8000                             # [可选] 最大输出 token 数
+temperature = 0.7                             # [可选] 模型温度
+slow_threshold = 12.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略
+hard_timeout = 180.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [Query Parameter Auth]
-[[api_providers]]
-name = "query_auth"
-base_url = "https://api.example.com/v1"
-api_key = "your-api-key"
-client_type = "openai"
-auth_type = "query"
-auth_query_name = "key"
+```toml [timing_gate（节奏控制）]
+# [可选] 节奏控制：独立判断是否该在此时说话。留空时自动回退到 planner。
+[model_task_config.timing_gate]
+model_list = []                               # [可选] 模型名称列表（→回退 planner）
+max_tokens = 4096                             # [可选] 最大输出 token 数
+temperature = 0.3                             # [可选] 模型温度
+slow_threshold = 12.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "random"                 # [可选] 模型选择策略
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [learner（学习）]
+# [可选] 学习模型：表达方式学习和黑话学习。留空时自动回退到 utils。
+[model_task_config.learner]
+model_list = []                               # [可选] 模型名称列表（→回退 utils）
+max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [emoji（表情包选择）]
+# [可选] 表情包选择：从候选表情包中选出合适的一张发送。
+# 选择优先级：emoji 有模型→用 emoji，planner 全视觉→用 planner，否则→用 vlm
+[model_task_config.emoji]
+model_list = []                               # [可选] 模型名称列表
+max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [vlm（看图）]
+# [强烈建议] 看图说话：理解图片内容。需 visual=true 的多模态模型。
+[model_task_config.vlm]
+model_list = ["qwen-vl"]                      # [必填] 模型名称列表，需 visual=true 的多模态模型
+max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 240.0                          # [可选] 硬超时（秒）
+```
+
+```toml [voice（语音识别）]
+# [可选] 语音识别：语音转文字。
+[model_task_config.voice]
+model_list = []                               # [可选] 模型名称列表
+max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [embedding（嵌入模型）]
+# [强烈建议] 嵌入模型：生成文本向量，用于长期记忆的语义搜索。
+# 推荐专门的嵌入模型（如 text-embedding-3-small）。未配置时记忆搜索不可用。
+[model_task_config.embedding]
+model_list = ["text-embedding-3-small"]       # [必填] 模型名称列表，推荐专门的嵌入模型
+max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 60.0                           # [可选] 硬超时（秒）
 ```
 
 :::
 
-> 📖 See: [Model Advanced Parameters](./model-extra-params#api-provider-advanced-config) for advanced auth, parameters, and runtime settings.
+**Key Points:**
 
-## Model List [[models]]
+- **Three Must-Configures**: Set up `replyer`, `planner`, `utils` to run; leave the rest empty for automatic fallback
+- **Planner is the Strategic Core**: Decides when to speak and which tools to call (MCP/plugins), requires some reasoning ability, a balanced model is recommended
+- **Replyer Focuses on Language Quality**: Converts Planner's gathered info into the final reply, pro model + thinking mode recommended
+- **Vision**: `vlm` requires a multimodal model from `visual = true`, `qwen-vl` recommended
+- **Embedding**: `embedding` recommends a dedicated embedding model (e.g., `text-embedding-3-small`); if not configured, memory search will be unavailable
+- `temperature` / `max_tokens` in model config will override settings here
 
-Models are specific LLMs, such as GPT-5.4, DeepSeek V4, and so on.
+### Fallback Rules
 
-### Basic Configuration (Required)
+When `model_list` for some tasks is empty, other tasks are automatically reused:
 
-- **`name`** — Model name, choose a name yourself, such as "gpt-5" or "deepseek-v4"
-- **`model_identifier`** — Model ID, the specific model name provided by the service provider
-- **`api_provider`** — Which provider to use, fill in the `name` from `api_providers` above
-- **`visual`** — Whether to enable vision, only multimodal models can enable this option
-- **`price_in`** — Input price, yuan per million tokens. Default: 0.0
-- **`price_out`** — Output price, yuan per million tokens. Default: 0.0
+```
+         ┌──────────┐
+         │  planner │◄──── mid_memory (falls back when empty)
+         │          │◄──── timing_gate (falls back when empty)
+         └──────────┘
+              ▲
+              │
+         ┌──────────┐
+         │  utils   │◄──── learner (falls back when empty)
+         └──────────┘
 
-### Billing Configuration (Optional)
+memory · emoji · vlm · voice · embedding → No automatic fallback when empty, caller will skip or throw an error
 
-- **`price_in`** — Input price, yuan per million tokens. Default: 0.0
-- **`price_out`** — Output price, yuan per million tokens. Default: 0.0
-- **`cache`** — Enable cache billing, use cache_price_in for cache hits when enabled. Default: disabled
-- **`cache_price_in`** — Cache input price, yuan per million tokens. Default: 0.0
-
-> 📖 See: [Model Advanced Parameters](./model-extra-params#model-advanced-parameters) for model-level overrides and advanced parameters.
-
-> 📖 **See: [Model Extra Parameters (extra_params)](./model-extra-params)** — Complete guide covering thinking mode, reasoning depth, custom HTTP parameters, and more.
->
-
-### Model Configuration Example
-
-```toml
-[[models]]
-name = "deepseek-chat"                    # I call it "deepseek-chat"
-model_identifier = "deepseek-chat"        # The provider also calls it this
-api_provider = "deepseek"                 # Use the deepseek provider
-visual = false                            # Cannot see images
-price_in = 0.1                            # Input price: 0.1 yuan per million tokens
-price_out = 0.2                           # Output price: 0.2 yuan per million tokens
-
-[[models]]
-name = "qwen3.5-vl"                       # Vision model, can see images
-model_identifier = "qwen3.5-flash"
-api_provider = "aliyun"
-visual = true                             # ✅ Can see images
-price_in = 0.05                           # Input price: 0.05 yuan per million tokens
-price_out = 0.1                           # Output price: 0.1 yuan per million tokens
-
-[[models]]
-name = "gpt-4-cache"                      # Model with cache billing
-temperature = 0.7                         # Model-level temperature setting
-max_tokens = 2048                         # Model-level max tokens
-model_identifier = "gpt-4"
-api_provider = "openai"
-visual = false
-cache = true                              # Enable cache billing
-cache_price_in = 0.025                    # Cache hit price
-price_in = 0.1                            # Normal input price
-price_out = 0.2                           # Output price
+emoji special logic: emoji has model -> use emoji, planner is full visual -> use planner, otherwise -> use vlm
 ```
 
+## Next Steps
 
-## Task Configuration [model_task_config]
-
-You need to assign models to different tasks based on model characteristics to achieve the best performance and efficiency.
-
-### Task Type Description
-
-- **`utils`** — Tool tasks: emoji, learning analysis. Recommended: cheap and practical models, e.g. dsv4/qwen3.5-35A3B/gemini3.1-flash/gptmini
-- **`planner`** — Planner: decides action logic, collects information, decides when to reply, etc. Recommended: practical models (needs tool calling support), e.g. dsv4/qwen3.5-35A3B/gemini3.1
-- **`replyer`** — Replyer: generates the actual reply. Recommended: high-quality models, e.g. dsv4(thinking)/gemini3.1
-- **`vlm`** — Image understanding: talks about pictures. Recommended: vision models, e.g. qwen3.5-35A3B/gemini3.1-flash
-- **`voice`** — Speech recognition: voice to text. Recommended: speech models, e.g. whisper-1/qwen-audio
-- **`embedding`** — Generate vectors: used for memory search. Recommended: embedding models, e.g. qwen3-embbeding
-
-### Task Configuration Example
-
-```toml
-[model_task_config.utils]             # Tool tasks, use cheap and practical ones
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
-
-[model_task_config.replyer]           # Replyer, use a better model
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.7                     # Higher temperature for more creative replies
-slow_threshold = 15.0
-selection_strategy = "balance"
-```
-
-> 💡 `planner`, `vlm`, and `voice` share the exact same config structure. Just swap the model names in `model_list`. For example, use a vision model like `"qwen3.5-flash"` for `vlm`, or a speech model like `"whisper-1"` for `voice`.
-
-### Parameter Description
-
-- **`max_tokens`** — Maximum output length. Recommended: `1024`
-- **`temperature`** — Creativity (0-2), `0.3` conservative, `0.7` creative
-- **`model_list`** — Which models to use, multiple models can be written, automatically switched
-- **`slow_threshold`** — Slow request threshold (seconds), outputs warning log when exceeded. Recommended: `15.0`
-- **`selection_strategy`** — Model selection strategy, `balance` (default), `random`, `sequential`
-
-## 🎯 Recommended Configuration (For Beginners)
-
-Below is a **single-model configuration** where all tasks use the same model. Good for getting started quickly:
-
-```toml
-[[api_providers]]
-name = "deepseek"
-base_url = "https://api.deepseek.com/v1"
-api_key = "sk-your-key"
-auth_type = "bearer"
-
-[[models]]
-name = "deepseek-chat"
-model_identifier = "deepseek-chat"
-api_provider = "deepseek"
-visual = false
-
-[model_task_config.utils]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
-
-[model_task_config.planner]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
-
-[model_task_config.replyer]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.7                    # Higher temperature for more creative replies
-slow_threshold = 15.0
-selection_strategy = "balance"
-
-[model_task_config.voice]
-model_list = ["deepseek-chat"]
-max_tokens = 1024
-temperature = 0.3
-slow_threshold = 15.0
-selection_strategy = "balance"
-```
-
-> 💡 **Going further**: Once you have multiple models, you can assign different tasks to different ones. For example, use a cheap model for `utils`, and better models for `planner` and `replyer` (planner handles decision logic — don't go too cheap). Just change the `model_list` for each task. The config structure is the same.
+- Advanced model parameters (thinking mode, reasoning intensity): [Model Extra Params](./model-extra-params.md)
+- Configure the bot: see [Bot Configuration](./bot-config.md)
+- Connect to QQ: [NapCat Adapter](../adapters/napcat.md)
+- Manage WebUI: [WebUI Configuration Management](../webui/config-management.md)

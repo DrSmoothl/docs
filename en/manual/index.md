@@ -1,46 +1,45 @@
 ---
 title: User Manual
 ---
-
 # User Manual
 
-Welcome to the MaiBot user manual! Here you'll find complete guides from installation and deployment to advanced configuration.
+Welcome to the MaiBot User Manual! This covers a complete guide from installation and deployment to advanced configuration.
 
 ## Quick Navigation
 
 ### 🚀 Quick Start
 
-If you're using MaiBot for the first time, we recommend reading in this order:
+If this is your first time using MaiBot, we recommend reading in the following order:
 
-1. [Deployment Overview](/en/manual/deployment/) - Understand deployment methods and prerequisites
-2. [Installation Guide](/en/manual/deployment/installation) - Download and install MaiBot
-3. [NapCat Adapter](/en/manual/adapters/napcat) - Connect to QQ
-4. [Configuration Overview](/en/manual/configuration/) - Learn about configuration file structure
+1. [Deployment Overview](/manual/deployment/) - Understand deployment methods and prerequisites
+2. [Installation Guide](/manual/deployment/installation) - Download and install MaiBot
+3. [NapCat Adapter](/manual/adapters/napcat) - Connect to QQ
+4. [Configuration Overview](/manual/configuration/) - Understand the configuration file structure
 
 ### ⚙️ Configuration Details
 
-- [Bot Configuration](/en/manual/configuration/bot-config) - Platform, nickname, personality, chat, memory, and other bot settings
-- [Model Configuration](/en/manual/configuration/model-config) - LLM model providers and multi-model fallback
+- [Bot Configuration](/manual/configuration/bot-config) - Basic settings including platform, nickname, personality, chat, memory, etc.
+- [Model Configuration](/manual/configuration/model-config) - LLM model providers and multi-model fallback
 
 ### 🧠 Feature Details
 
-- [Message Processing Pipeline](/en/manual/features/message-pipeline) - Complete flow from message reception to reply
-- [Maisaka Reasoning Engine](/en/manual/features/maisaka-reasoning) - How AI decides when to reply, when to reply, and what to reply
-- [Memory System](/en/manual/features/memory-system) - Long-term memory, character profiles, chat summaries
-- [Expression & Terminology Learning](/en/manual/features/learning) - How AI learns speaking styles and new vocabulary
-- [Emoji System](/en/manual/features/emoji-system) - Emoji collection, management and sending
-- [MCP Integration](/en/manual/features/mcp) - Model Context Protocol tool integration
+- [Message Processing Pipeline](/manual/features/message-pipeline) - The complete flow from message reception to reply
+- [Maisaka Reasoning Engine](/manual/features/maisaka-reasoning) - How AI decides whether to reply, when to reply, and what to reply
+- [Memory System](/manual/features/memory-system) - Long-term memory, character profiles, chat summaries
+- [Expression and Terminology Learning](/manual/features/learning) - How AI learns speaking styles and new vocabulary
+- [Emoji System](/manual/features/emoji-system) - Emoji collection, management, and sending
+- [MCP Integration](/manual/features/mcp) - Model Context Protocol tool integration
 
 ### 🖥️ WebUI Management
 
-- [WebUI Overview](/en/manual/webui/) - Manage MaiBot through your browser
-- [Configuration Management](/en/manual/webui/config-management) - Edit configuration online
-- [Memory Management](/en/manual/webui/memory-management) - Visually manage memory data
-- [Plugin Management](/en/manual/webui/plugin-management) - Install and manage plugins
-- [Chat & Statistics](/en/manual/webui/chat-stats) - View chat history and usage statistics
+- [WebUI Overview](/manual/webui/) - Manage MaiBot via browser
+- [Configuration Management](/manual/webui/config-management) - Online configuration editing
+- [Memory Management](/manual/webui/memory-management) - Visual management of memory data
+- [Plugin Management](/manual/webui/plugin-management) - Install and manage plugins
+- [Chat and Statistics](/manual/webui/chat-stats) - View chat logs and usage statistics
 
 ### 🔌 Adapters
 
-- [Adapter Overview](/en/manual/adapters/) - Learn about platform adapter architecture
-- [NapCat](/en/manual/adapters/napcat) - QQ protocol adaptation
-- [GoCQ](/en/manual/adapters/gocq) - GoCQ protocol adaptation
+- [Adapter Overview](/manual/adapters/) - Understand the platform adapter architecture
+- [NapCat](/manual/adapters/napcat) - QQ protocol adaptation
+- [GoCQ](/manual/adapters/gocq) - GoCQ protocol adaptation

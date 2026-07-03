@@ -1,209 +1,207 @@
 ---
-title: Emoji Features
----
+title: Sticker Feature
+---# Sticker Feature 😊
 
-# Emoji Features 😊
+MaiBot doesn't just send text; it can also send stickers! And it doesn't send them randomly—it intelligently selects appropriate stickers based on the chat context, making conversations more interesting and lively.
 
-MaiBot doesn't just send text messages - it sends emojis too! And not randomly - it intelligently chooses the perfect emojis based on your conversation, making chats more fun and lively.
-
-## MaiBot's Emoji Superpowers
+## MaiBot's Sticker Superpowers
 
 ### 🎯 Smart Selection
-**Matches Emotions to Emojis**
-- When you're happy, it sends happy emojis
-- When you're sad, it sends comforting emojis  
-- When you're angry, it sends emojis to ease the tension
+**Choosing Stickers by Emotion**
+- When you're happy, it sends happy stickers
+- When you're sad, it sends comforting stickers
+- When you're angry, it sends stickers to ease the tension
 
-**Matches Content to Emojis**
-- Talking about food? It sends foodie emojis
-- Talking about games? It sends gaming emojis
-- Talking about work? It sends working-person emojis
+**Choosing Stickers by Content**
+- Talking about food? It sends foodie stickers
+- Talking about games? It sends game-related stickers
+- Talking about work? It sends wage-slave stickers
 
-**Matches Occasion to Emojis**
-- Formal situations get polite emojis
-- Casual chats get funny emojis
-- Late-night talks get gentle emojis
+**Choosing Stickers by Occasion**
+- Formal occasions: polite stickers
+- Casual occasions: funny stickers
+- Late-night chats: gentle stickers
 
 ### 📸 Auto Collection
-**Spots Good Emojis and Saves Them**
-- When someone sends an emoji in group chat, it secretly saves it
-- Automatically recognizes the emoji's content and emotion
-- Tags each emoji for easy finding
+**Saving Good Stickers When Spotted**
+- When someone sends a sticker in the group, it secretly saves it
+- Automatically identifies the content and emotion of the sticker
+- Tags every sticker
 
-**Builds Its Own Emoji Library**
-- Collects emojis of various styles
-- Sorts them by emotion and situation
-- The more it collects, the more it understands your group's taste
+**Building Its Own Sticker Library**
+- Collects stickers of various styles
+- Categorizes them by emotion and scenario
+- The more it collects, the better it understands your group's taste
 
-### 🧠 Understands Emojis
-**Reads Emoji Messages**
-- Can identify the emotion an emoji expresses
-- Understands the meme and meaning behind emojis
+### 🧠 Understanding Stickers
+**Reading Stickers**
+- Can identify the emotion expressed by a sticker
+- Understands the memes and meanings behind stickers
 - Knows when it's appropriate to use them
 
 **More Than Just Collecting**
-- Really understands how to use each emoji
-- Won't use them in wrong situations
-- Uses them just right
+- Truly understands the usage of each sticker
+- Won't use them in the wrong context
+- Uses them perfectly
 
-## How Do Emojis Work?
+## How Do Stickers Work?
 
 ### 1️⃣ Collection Phase
 **Auto Discovery**
 ```
-Group member: [sends a funny emoji]
-MaiBot: (This emoji is interesting, saved!)
-      (Tags: funny, cat, happy)
+Group member: [Sends a funny sticker]
+MaiBot: (This sticker is so funny, saved!)
+     (Tags: funny, cat, happy)
 ```
 
 **Smart Recognition**
-- Uses AI to identify emoji content
+- Uses AI to recognize sticker content
 - Analyzes the expressed emotion
-- Auto-generates tags
+- Automatically generates tags
 
-### 2️⃣ Sorting and Organizing
-**Sort by Emotion**
+### 2️⃣ Categorization & Organization
+**Categorize by Emotion**
 - Happy, sad, angry, surprised
-- Funny, warm, inspiring, complaining
+- Funny, heartwarming, motivational, roasting
 - Formal, casual, friendly, humorous
 
-**Sort by Situation**
+**Categorize by Scenario**
 - Daily chat, work discussion
-- Gaming sessions, late-night talks
-- Holiday wishes, comfort and encouragement
+- Gaming sessions, late-night heart-to-hearts
+- Holiday greetings, comforting & encouraging
 
 ### 3️⃣ Smart Selection
 **Match by Emotion**
 ```
-User: Work is so tiring today 😭
-MaiBot: [sends a "working person keep going" emoji]
+User: Work was so tiring today 😭
+MaiBot: [Sends a "Hang in there, worker" sticker]
 ```
 
 **Match by Content**
 ```
-User: Hot pot tonight!
-MaiBot: [sends a "foodie happy" emoji]
+User: Hotpot tonight!
+MaiBot: [Sends a "Happy foodie" sticker]
 ```
 
 **Match by Relationship**
-- Uses funny emojis with familiar people
-- Uses polite emojis with strangers
-- Uses affectionate emojis with good friends
+- Uses funny stickers with acquaintances
+- Uses polite stickers with strangers
+- Uses affectionate stickers with close friends
 
-## Real Examples 🌰
+## Real-World Examples 🌰
 
 ### Emotion Matching
 **When You're Happy**:
 ```
-You: I passed my exam! So happy!
+You: I passed the exam! So happy!
 MaiBot: Awesome! Congratulations! 🎉
-      [sends a "celebration" emoji]
+     [Sends a "Celebration" sticker]
 ```
 
 **When You're Sad**:
 ```
-You: Got scolded by boss today, feeling down
-MaiBot: Hugs, working people all understand this pain 😢
-      [sends a "comfort" emoji]
+You: I got scolded by the boss today, I feel awful
+MaiBot: Hugs, being a worker is tough 😢
+     [Sends a "Comforting" sticker]
 ```
 
 ### Content Matching
-**Talking About Food**:
+**Chatting About Food**:
 ```
-Group: BBQ tonight?
-MaiBot: Let's go! BBQ is the best! 😋
-      [sends a "foodie excited" emoji]
-```
-
-**Talking About Games**:
-```
-Group: Gaming tonight?
-MaiBot: Let's do it! I'm great at support 🎮
-      [sends a "game start" emoji]
+Group member: BBQ tonight?
+MaiBot: Let's go! BBQ is the GOAT! 😋
+     [Sends an "Excited foodie" sticker]
 ```
 
-### Situation Matching
+**Chatting About Games**:
+```
+Group member: Gaming tonight?
+MaiBot: Let's go! My support is lit 🎮
+     [Sends a "Game start" sticker]
+```
+
+### Scenario Matching
 **Work Occasion**:
 ```
-Colleague: What do you all think of this plan?
-MaiBot: I think it's quite complete, details can be optimized 👍
-      [sends a "professional nod" emoji]
+Colleague: What does everyone think of this proposal?
+MaiBot: I think it's quite complete, the details could be further optimized 👍
+     [Sends a "Professional nod" sticker]
 ```
 
-**Friends Chatting**:
+**Casual Chat with Friends**:
 ```
-Friend: So bored today
+Friend: I'm so bored today
 MaiBot: Here, let me show you something funny 😄
-      [sends a "silly" emoji]
+     [Sends a "Silly meme" sticker]
 ```
 
-## Emoji Management
+## Sticker Management
 
 ### 📁 Auto Organization
 **Smart Categorization**
-- Auto-sorts by emotion and situation
-- Regularly cleans duplicate emojis
-- Keeps the most popular ones
+- Automatically categorizes by emotion and scenario
+- Periodically cleans up duplicate stickers
+- Retains the most popular stickers
 
 **Capacity Management**
-- When emoji library is full, intelligently removes less used ones
-- Keeps frequently used ones, deletes rarely used ones
-- Uses AI to decide what stays and what goes
+- Intelligently eliminates stickers when the library is full
+- Keeps the frequently used ones, deletes the rarely used ones
+- Uses AI to decide which to keep and which to delete
 
 ### 🔍 Quick Search
 **Tag Search**
-- Each emoji has multiple tags
-- Find whatever type you want quickly
-- Supports multi-dimensional search by emotion, situation, content
+- Every sticker has multiple tags
+- Finding a specific type is very fast
+- Supports multi-dimensional search by emotion, scenario, and content
 
 **Smart Recommendations**
-- Recommends suitable emojis based on chat content
-- The more you use it, the more it understands your group's taste
-- Recommendation accuracy keeps improving
+- Recommends appropriate stickers based on chat content
+- The more it's used, the better it understands your group's taste
+- Recommendation accuracy improves over time
 
 ## What Can You Do?
 
-### 👀 View Emoji Library
-Through WebUI you can:
-- See what emojis MaiBot has collected
-- View tags for each emoji
+### 👀 View the Sticker Library
+Through the WebUI, you can:
+- See what stickers MaiBot has collected
+- View the tags for each sticker
 - See usage frequency and last used time
-- Filter by emoji status: Known, Unknown, Adopted, or Discarded
+- Filter sticker status by "Known / Unknown / Claimed / Discarded"
 
-### 🛠️ Manage Emojis
-- Delete inappropriate emojis
-- Add custom tags to emojis
-- Set usage preferences for certain emojis
-- Deleting an unregistered emoji removes both the database record and local file; deleting a registered emoji also unloads it from the usable emoji library first
+### 🛠️ Manage Stickers
+- Delete inappropriate stickers
+- Add custom tags to stickers
+- Set usage preferences for certain stickers
+- Deleting an unregistered sticker will also delete the database record and local file; deleting a registered sticker will first uninstall it from the available sticker library
 
-### 📤 Upload Emojis
-- Manually upload emojis you like
-- Fill in a tag list during upload; tags are merged into the emoji description
-- Enrich its emoji library
-- Emojis uploaded from WebUI are registered immediately as Adopted
+### 📤 Upload Stickers
+- Manually upload your favorite stickers
+- Fill in a tag list when uploading, and the system will merge them into the sticker description
+- Enrich its sticker library
+- Stickers uploaded from the WebUI will be directly marked as "Claimed"
 
 ### ⚙️ Set Preferences
-- Set emoji usage frequency
-- Choose preferred emoji styles
-- Control auto-collection on/off
+- Set sticker usage frequency
+- Choose preferred sticker styles
+- Toggle auto-collection on or off
 
-## Emoji Tips
+## Sticker Tips
 
 ### 💡 Usage Suggestions
-- Use emojis in moderation, don't fill the screen
-- Choose appropriate emojis for the occasion
-- Good emojis make conversations more interesting
+- Use stickers in moderation; don't fill the screen with them
+- Choose appropriate stickers for the occasion
+- Good stickers can make conversations more fun
 
 ### 🎨 Diverse Styles
-- Collect emojis of different styles
-- Have cute, funny, and serious ones
+- Collect stickers of different styles
+- Have cute, funny, and serious ones ready
 - Adapt to different chat scenarios
 
 ### 🔄 Regular Updates
-- Emojis have trends too
-- Regularly add new emojis
-- Remove outdated ones
+- Stickers have trends too
+- Regularly add new stickers
+- Weed out outdated stickers
 
 ---
 
-MaiBot's emoji feature isn't just simple "image sending" - it truly understands emoji meanings and uses them just right. It will make your conversations more lively, more fun, and more "human"!
+MaiBot's sticker feature isn't just simple "sending images"; it truly understands the meaning of the stickers and uses them perfectly. It will make your conversations more lively, more interesting, and more "human"!

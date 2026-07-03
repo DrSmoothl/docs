@@ -1,129 +1,128 @@
 ---
-title: How Messages Are Processed
+title: How are messages processed?
 ---
+# How Are Messages Processed? 📨
 
-# How Messages Are Processed 📨
+Have you ever wondered, when you @MaiBot or chat with it, how exactly does it process your message? Let's explain this process in simple terms.
 
-Have you ever wondered how MaiBot handles your messages when you @ it or chat with it? Let us explain this process in simple terms.
+## One-Sentence Version
 
-## One Sentence Version
-
-**You send message → Bot thinks → Bot replies**
+**You send a message → The bot thinks → It replies to you**
 
 That's it! But there are actually many interesting little steps in between.
 
-## Detailed Process (In Plain Language)
+## Detailed Process (Explained in Plain Language)
 
 ### 1️⃣ Receiving the Message
 
 When you send a message in the group:
 - If you @ the bot, it will definitely see it
-- If you don't @ it, it will still secretly check and think about whether to join in
+- If you don't @ it, it will still sneak a peek, thinking whether to chime in
 - Whether it's text, images, or emojis, it can receive them all
 
-### 2️⃣ First Check: Should I Respond?
+### 2️⃣ First, Check Whether to Respond
 
-The bot will quickly judge:
+The bot will quickly judge first:
 - Is this spam? (Filter out if there are blocked words)
-- Is this a command? (Like "!help" etc.)
-- If it's a command, handle the command first
+- Is this a command? (Like "!help")
+- If it's a command, process the command first
 
 ### 3️⃣ Enter Thinking Mode
 
 If it's not a command, the bot starts thinking seriously:
-- Look at what you were talking about before
+- Look at what you were discussing before
 - Recall your personal characteristics
-- Think about whether now is a good time to join the conversation
+- Think about whether now is the right time to chime in
 
 ### 4️⃣ Decide Whether to Reply
 
 This step is crucial! The bot will consider:
-- What's the current chat atmosphere like?
-- Will speaking up interrupt you?
-- What's appropriate to say?
+- What is the current chat atmosphere like?
+- Will my reply disturb you?
+- What would be appropriate for me to say?
 
-Sometimes it will choose:
-- **Reply immediately** - Feels it's time to speak
-- **Wait and see** - Feels the timing isn't right
-- **Stay silent** - Decides not to join in
+Sometimes it chooses to:
+- **Reply immediately** - feels it's time to speak
+- **Wait a bit** - feels the timing isn't right
+- **Stay silent** - decides not to chime in after all
 
-### 5️⃣ Organize Language
+### 5️⃣ Organize the Language
 
 If it decides to reply, the bot will:
 - Think about what tone to use
-- Recall your group's speaking style
+- Recall the speaking style of your group
 - Choose appropriate emojis (if needed)
-- Organize a natural response
+- Organize a natural reply
 
-### 6️⃣ Send Reply
+### 6️⃣ Send the Reply
 
-Finally, it sends out the well-thought-out message!
+Finally, send out the prepared message!
 
 ## A Real Example 🌰
 
-**Scenario**: The group is discussing where to go on the weekend
+**Scenario**: The group is discussing where to go this weekend
 
 ```
-Xiaoming: Want to go hiking this weekend, anyone want to join?
-Xiaohong: I want to go! But the weather forecast says it might rain
-Xiaogang: Then how about we change to the mall?
-(At this point you @MaiBot)
+Xiao Ming: Want to go hiking this weekend, anyone want to join?
+Xiao Hong: I want to! But the weather forecast says it might rain
+Xiao Gang: How about we change to the mall instead?
+(At this moment you @MaiBot)
 You: @MaiBot What do you think?
 
-[Bot receives message, starts thinking...]
+[Bot receives the message, starts thinking...]
 
-MaiBot: I think hiking is great! But depends on the weather,
-       if it rains then the mall is indeed more reliable～
-       You guys can prepare a Plan B, that would be more flexible 😊
+MaiBot: I think hiking is pretty great! But it depends on the weather,
+       if it rains, the mall is indeed safer~
+       You could prepare a Plan B, that would be more flexible 😊
 ```
 
-**Bot's thinking process**:
-1. Receive @ message → "Someone's asking for my opinion"
-2. Look at context → "They're discussing weekend activities"
-3. Look at chat atmosphere → "Pretty relaxed, I can participate"
+**Bot's Thinking Process**:
+1. Received @ message → "Someone is asking for my opinion"
+2. Check context → "They are discussing weekend activities"
+3. Check chat atmosphere → "Quite relaxed, can participate"
 4. Decide to reply → "Give some practical advice"
-5. Organize language → "Use relaxed tone, add an emoji"
+5. Organize language → "Use a relaxed tone, add an emoji"
 6. Send reply → "Done!"
 
 ## When Will It Reply to You?
 
-### Definitely will reply:
+### Situations Where It Will Definitely Reply:
 - You @ the bot
 - You speak directly to it
-- It feels your message is asking it something
+- It feels your message is asking it
 
-### Might reply:
-- Group chat is lively with good atmosphere
-- Talking about topics it's interested in
-- Feels it has useful information to share
+### Situations Where It Might Reply:
+- The group chat is lively and the atmosphere is good
+- The topic is something it's interested in
+- It feels it has useful information to share
 
-### Usually won't reply:
-- Group is discussing very private matters
-- Atmosphere is serious or tense
-- Feels it's inappropriate to join in
+### Situations Where It Usually Won't Reply:
+- The group is discussing very private matters
+- The atmosphere is quite serious or tense
+- It feels it's inappropriate to chime in
 
-## How Fast Are the Replies?
+## How Fast Is the Reply?
 
-Depends on the situation:
-- **Instant reply**: Sometimes thinks fast, replies immediately
-- **Wait a bit**: Sometimes needs time to think
-- **Reply after a long time**: Might be busy with other things, or really thinking seriously
+This depends on the situation:
+- **Instant reply**: Sometimes thinks fast and replies immediately
+- **Wait a bit**: Sometimes needs to think for a while
+- **Reply after a long time**: Might be busy with other things, or really thinking hard
 
-Just like real people, it has its own "thinking time".
+Just like a real person, it also has its own "thinking time."
 
-## Why Sometimes No Reply?
+## Why Sometimes It Doesn't Reply?
 
-Bot doesn't reply usually because:
-1. **Feels it's inappropriate to speak** - Understands politeness like real people
-2. **Still thinking** - Hasn't figured out how to respond
-3. **Network issues** - Technical reasons (rare)
-4. **Set to quiet mode** - Admin told it to speak less
+The bot doesn't reply usually because:
+1. **Feels it shouldn't speak** - understands politeness like a real person
+2. **Still thinking** - hasn't figured out how to say it yet
+3. **Network issues** - technical reasons (rare)
+4. **Set to quiet mode** - administrator asked it to speak less
 
 ## Want to Learn More?
 
 If you're interested in technical details:
 - [See how MaiBot thinks →](./maisaka-reasoning.md)
-- [Learn about its memory system →](./memory-system.md)
+- [Understand its memory system →](./memory-system.md)
 - [See how it learns speaking styles →](./learning.md)
 
-Remember, MaiBot's goal isn't the fastest reply, but the most natural participation in conversation. It wants to be a real chat companion, not a cold automatic reply machine.
+Remember, MaiBot's goal is not to reply the fastest, but to participate in the conversation most naturally. It wants to become a true chat partner, not a cold automatic reply machine.

@@ -1,17 +1,15 @@
 ---
 title: Contributing Guide
----
+---# Contribution Guidelines
 
-# Contributing Guide
+Welcome to MaiBot development! Please read the following guidelines carefully before submitting code.
 
-Welcome to participate in MaiBot development! Please read the following specifications carefully before submitting code.
+## Import Guidelines
 
-## Import Specifications
-
-1. Standard library and third-party libraries use `from ... import ...` form first, `import ...` form second; same group arranged alphabetically
-2. Local modules: same directory uses relative import, cross-directory uses `from src.xxx` absolute import
-3. Standard library/third-party library imports placed before local module imports, separated by blank lines between blocks
-4. Adjust import order that doesn't meet specifications during refactoring
+1. Standard library and third-party libraries use the `from ... import ...` format first, followed by the `import ...` format; within the same group, sort alphabetically
+2. Local modules: use relative imports within the same directory, and `from src.xxx` absolute imports across directories
+3. Standard library / third-party library imports are placed before local module imports, separated by blank lines between blocks
+4. Adjust non-compliant import order when refactoring
 
 ```python
 # Standard library
@@ -28,17 +26,17 @@ from src.common.logger import get_logger
 from src.config.config import config_manager
 ```
 
-## Comment Specifications
+## Comment Guidelines
 
-1. Maintain good comments; retain original comments during refactoring (content can be modified)
-2. When refactoring code without comments, add comments for longer or complex functional blocks
-3. Preferred language is Simplified Chinese (comments, logs, WebUI copy)
+1. Maintain good comments; preserve original comments when refactoring (content may be modified)
+2. When refactoring code without comments, add comments to longer or complex functional blocks
+3. The preferred language is Simplified Chinese (comments, logs, WebUI copy)
 
-## Type Annotation Specifications
+## Type Annotation Guidelines
 
-1. Retain original type annotations during refactoring; add annotations for functions without annotations or complex functions/multiple parameters
-2. Parameterized generics use `typing` module (such as `Dict`, `List`, `Optional`)
-3. No need to use `or` fallback after variable type is determined
+1. Preserve original type annotations when refactoring; add annotations to complex functions / multi-parameter functions that lack them
+2. Parameterized generics use Python 3.10+ built-in syntax (e.g., `dict[K, V]`, `list[T]`, `T | None`), avoid using legacy typing module syntax
+3. Once the variable type is determined, no need to use `or` fallback
 
 ```python
 # Recommended
@@ -50,22 +48,21 @@ def process_message(message, timeout=5.0):
     ...
 ```
 
-## Anti-pattern List
+## Anti-Pattern List
 
 The following behaviors are **strictly prohibited** in the project:
 
-- **Modify any content under `dashboard/`** — Frontend built by independent repository
-- **Directly edit `bot_config.toml` / `model_config.toml`** — Should modify template + version number
-- **Type suppression like `as any`, `@ts-ignore`** — Must properly handle types
-- **Empty catch block `catch(e) {}`** — At least log the error
-- **Delete failing tests to "pass"** — Must fix the problem itself
-- **Hard-coded API key / password / token** — Use configuration system management
-- **`eval()` / `exec()` / `__import__`** — Security risks exist
+- **Modifying anything under `dashboard/`** — the frontend is built from a separate repository
+- **Directly editing `bot_config.toml` / `model_config.toml`** — should modify templates + version numbers
+- **Empty catch blocks `catch(e) {}`** — at least log the exception
+- **Deleting failing tests to "pass"** — the underlying issue must be fixed
+- **Hardcoding API keys / passwords / tokens** — use the configuration system to manage them
+- **`eval()` / `exec()` / `__import__`** — pose security risks
 
-## Variable and Attribute Specifications
+## Variable and Attribute Guidelines
 
-- No need for `or` fallback after type is determined
-- Reduce `getattr`/`setattr`, prefer direct attribute access
+- Once the type is determined, no need for `or` fallback
+- Minimize `getattr`/`setattr`, prefer direct attribute access
 
 ## Development Commands
 
@@ -87,7 +84,7 @@ uv run python bot.py
 uv run pytest
 ```
 
-### Code Checking
+### Code Linting
 
 ```bash
 # Lint
@@ -99,15 +96,15 @@ uv run ruff format .
 
 ## PR Process
 
-1. Fork the repository and create a feature branch from the `dev` branch
-2. Ensure code passes `uv run ruff check .` and `uv run pytest`
-3. Submit PR to the `dev` branch with clear modification description
+1. Fork the repository and create a feature branch from `dev`
+2. Ensure the code passes `uv run ruff check .` and `uv run pytest`
+3. Submit a PR to the `dev` branch, with a clear description of the changes
 4. Wait for code review and merge
 
 ### Notes
 
-- WebUI defaults to binding `0.0.0.0:8001`, production environment needs reverse proxy
-- Tokens stored in `data/webui.json` (plain text JSON), rely on file system permissions protection
-- Rate limiter is memory-based, cannot share state in multi-instance deployment
-- Plugin installation executed through `git clone`, need to ensure Git security configuration
+- WebUI binds to `127.0.0.1:8001` by default, a reverse proxy is required for production
+- Tokens are stored in `data/webui.json` (plain text JSON), relying on file system permissions for protection
+- The rate limiter is in-memory and cannot share state in multi-instance deployments
+- Plugin installation is executed via `git clone`, ensure Git security configuration
 - `model_config.toml` contains sensitive fields like `api_key` (`repr=False`)

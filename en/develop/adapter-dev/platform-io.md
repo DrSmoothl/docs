@@ -1,14 +1,13 @@
 ---
 title: PlatformIO Driver
 ---
+# PlatformIO Drivers
 
-# PlatformIO Driver
-
-PlatformIO driver is the core abstraction of MaiBot's platform IO layer. This document details the driver interface definition, core types, and how to implement and register a custom driver.
+PlatformIO drivers are the core abstraction of the MaiBot platform I/O layer. This document details the driver interface definitions, core types, and how to implement and register a custom driver.
 
 ## PlatformIODriver Base Class
 
-`PlatformIODriver` (defined in `src/platform_io/drivers/base.py`) is the abstract base class that all platform IO drivers must inherit:
+`PlatformIODriver` (defined in `src/platform_io/drivers/base.py`) is the abstract base class that all platform IO drivers must inherit from:
 
 ```python
 class PlatformIODriver(ABC):
@@ -33,18 +32,18 @@ class PlatformIODriver(ABC):
     ) -> DeliveryReceipt: ...
 ```
 
-### Required Methods
+### Methods That Must Be Implemented
 
-- **`send_message(message, route_key, metadata)`** — Send messages through specific driver, return `DeliveryReceipt`. This is the only abstract method that must be implemented
+- **`send_message(message, route_key, metadata)`** — Sends a message via the specific driver and returns a `DeliveryReceipt`. This is the only abstract method that must be implemented.
 
-### Optional Override Hooks
+### Optional Hooks to Override
 
-- **`start()`** — Start driver lifecycle (default empty implementation)
-- **`stop()`** — Stop driver lifecycle (default empty implementation)
+- **`start()`** — Starts the driver lifecycle (default empty implementation)
+- **`stop()`** — Stops the driver lifecycle (default empty implementation)
 
 ### Inbound Message Reporting
 
-When the driver receives external platform messages, it needs to construct `InboundMessageEnvelope` and call `emit_inbound()` to report:
+After receiving an external platform message, the driver must construct an `InboundMessageEnvelope` and call `emit_inbound()` to report it:
 
 ```python
 envelope = InboundMessageEnvelope(
@@ -57,48 +56,48 @@ envelope = InboundMessageEnvelope(
 accepted = await self.emit_inbound(envelope)
 ```
 
-`emit_inbound` returns `True` indicating the message is accepted by Broker and continues forwarding, `False` indicating rejection (inbound callback not configured or message filtered by deduplication).
+`emit_inbound` returns `True` if the message is accepted by the Broker and continues to be forwarded, and `False` if it is rejected (e.g., no inbound callback is configured or the message is filtered out by deduplication).
 
 ## Core Types
 
-### RouteKey — Routing Key
+### RouteKey — Route Key
 
-`RouteKey` is the unique key for routing decisions, using a three-layer structure:
+`RouteKey` is the unique key for routing decisions, adopting a three-layer structure:
 
 ```python
 @dataclass(frozen=True, slots=True)
 class RouteKey:
-    platform: str                           # Platform name, like "qq", "discord"
-    account_id: Optional[str] = None        # Robot account ID
+    platform: str                           # Platform name, e.g., "qq", "discord"
+    account_id: Optional[str] = None        # Bot account ID
     scope: Optional[str] = None             # Additional routing scope
 ```
 
-Routing resolution follows **"from most specific to most general"** fallback order: `platform + account_id + scope` → `platform + account_id` → `platform`. You can get the complete fallback chain through the `resolution_order()` method:
+Route resolution follows a **most-specific-to-most-general** fallback order: `platform + account_id + scope` → `platform + account_id` → `platform + scope` → `platform`. The complete fallback chain can be obtained via the `resolution_order()` method:
 
 ```python
 key = RouteKey(platform="qq", account_id="123", scope="group_456")
 key.resolution_order()
-# → [RouteKey("qq", "123", "group_456"), RouteKey("qq", "123", None), RouteKey("qq", None, None)]
+# → [RouteKey("qq", "123", "group_456"), RouteKey("qq", "123", None), RouteKey("qq", None, "group_456"), RouteKey("qq", None, None)]
 ```
 
-The `to_dedupe_scope()` method generates a cross-driver shared deduplication scope string, formatted as `platform:account_id:scope`.
+The `to_dedupe_scope()` method generates a deduplication scope string shared across drivers, formatted as `platform:account_id:scope`.
 
-### InboundMessageEnvelope — Inbound Message Encapsulation
+### InboundMessageEnvelope — Inbound Message Envelope
 
 ```python
 @dataclass(slots=True)
 class InboundMessageEnvelope:
-    route_key: RouteKey                                # Inbound routing key
-    driver_id: str                                     # Producing driver ID
+    route_key: RouteKey                                # Inbound route key
+    driver_id: str                                     # ID of the producing driver
     driver_kind: DriverKind                            # Driver type
     external_message_id: Optional[str] = None          # Platform-side message ID (for deduplication)
     dedupe_key: Optional[str] = None                   # Explicit deduplication key
     session_message: Optional["SessionMessage"] = None # Normalized message
-    payload: Optional[Dict[str, Any]] = None           # Original dictionary payload
+    payload: Optional[Dict[str, Any]] = None           # Raw dictionary payload
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
-The priority of deduplication keys is: `dedupe_key` > `external_message_id` > `session_message.message_id`. Broker will not guess deduplication keys based on `payload` content to avoid misjudging different messages with the same content as duplicates.
+The priority for the deduplication key is: `dedupe_key` > `external_message_id` > `session_message.message_id`. The Broker will not guess the deduplication key based on `payload` content to avoid misclassifying distinct messages with identical content as duplicates.
 
 ### DeliveryReceipt — Outbound Receipt
 
@@ -106,23 +105,23 @@ The priority of deduplication keys is: `dedupe_key` > `external_message_id` > `s
 @dataclass(slots=True)
 class DeliveryReceipt:
     internal_message_id: str                    # Internal message ID
-    route_key: RouteKey                         # Delivery routing key
+    route_key: RouteKey                         # Delivery route key
     status: DeliveryStatus                      # Delivery status
-    driver_id: Optional[str] = None             # Processing driver ID
-    driver_kind: Optional[DriverKind] = None    # Processing driver type
+    driver_id: Optional[str] = None             # ID of the processing driver
+    driver_kind: Optional[DriverKind] = None    # Type of the processing driver
     external_message_id: Optional[str] = None   # Platform-side message ID
-    error: Optional[str] = None                 # Error information
+    error: Optional[str] = None                 # Error message
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
-`DeliveryStatus` enumeration values:
+`DeliveryStatus` enum values:
 
-- **`PENDING`** — Pending sending
+- **`PENDING`** — Pending
 - **`SENT`** — Sent
-- **`FAILED`** — Sending failed
+- **`FAILED`** — Failed
 - **`DROPPED`** — Dropped
 
-### DriverDescriptor — Driver Description
+### DriverDescriptor — Driver Descriptor
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -136,15 +135,15 @@ class DriverDescriptor:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
-`DriverKind` enumeration distinguishes driver sources: `LEGACY` indicates built-in drivers, `PLUGIN` indicates drivers provided by plugins.
+The `DriverKind` enum distinguishes driver sources: `LEGACY` indicates a built-in driver, while `PLUGIN` indicates a driver provided by a plugin.
 
-## Implement and Register Driver
+## Implementing and Registering a Driver
 
 ### Complete Example
 
 ```python
-from src.platform_io.drivers.base import PlatformIODriver
-from src.platform_io.types import (
+from maibot.src.platform_io.drivers.base import PlatformIODriver
+from maibot.src.platform_io.types import (
     DeliveryReceipt, DeliveryStatus, DriverDescriptor, DriverKind,
     InboundMessageEnvelope, RouteKey, RouteBinding,
 )
@@ -186,7 +185,7 @@ class MyDriver(PlatformIODriver):
 ### Registration and Route Binding
 
 ```python
-from src.platform_io.manager import get_platform_io_manager
+from maibot.src.platform_io.manager import get_platform_io_manager
 
 manager = get_platform_io_manager()
 
@@ -197,7 +196,7 @@ descriptor = DriverDescriptor(
     platform="discord",
 )
 
-# Register
+# Registration
 driver = MyDriver(descriptor)
 await manager.add_driver(driver)
 
@@ -216,4 +215,4 @@ manager.bind_receive_route(RouteBinding(
 ))
 ```
 
-Use `add_driver` / `remove_driver` when Broker is running, use `register_driver` / `unregister_driver` when not running. Route binding supports priority sorting of multiple drivers under the same route key through the `priority` field.
+Use `add_driver` / `remove_driver` when the Broker is running, and `register_driver` / `unregister_driver` when it is not running. Route binding supports priority ordering of multiple drivers under the same route key via the `priority` field.

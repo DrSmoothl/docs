@@ -1,41 +1,56 @@
 ---
 title: Adapter Development Guide
 ---
-
 # Adapter Development Guide
 
-MaiBot's adapter refers to the bridge component that connects external message platforms (like QQ, Discord, Telegram, etc.) with MaiBot core. This document introduces the Platform IO architecture and how to develop new platform adapters.
+MaiBot's Adapter refers to the bridging component that connects external messaging platforms (such as QQ, Discord, Telegram, etc.) with the MaiBot core. This document introduces the Platform IO architecture and how to develop new platform adapters.
 
 ## Architecture Overview
 
-MaiBot's platform IO layer (`src/platform_io/`) uses a **driver abstraction + routing table + broker manager** three-layer architecture:
+The platform IO layer of MaiBot (`src/platform_io/`) adopts a three-tier architecture consisting of **Driver Abstraction + Routing Table + Broker Manager**:
 
 ```
-External Platform Messages ──→ [Driver Driver] ──→ [Broker Manager] ──→ Core Processing Chain
-                     │                    │
-                     │  InboundMessage    │  Routing Lookup + Deduplication
-                     │  Envelope          │
-                     │                    │
-Core Processing Chain ──→ [Broker Manager] ──→ [Driver Driver] ──→ External Platform
-                     │
-                     │  RouteKey Parsing
-                     │  Multi-driver Broadcasting
+External Platform Messages ──→ [Driver] ──→ [Broker Manager] ──→ Core Processing Chain
+                                    │                    │
+                                    │  InboundMessage    │  Routing Lookup + Deduplication
+                                    │  Envelope          │
+                                    │                    │
+Core Processing Chain ──→ [Broker Manager] ──→ [Driver] ──→ External Platform
+                                    │
+                                    │  RouteKey Parsing
+                                    │  Multi-Driver Broadcasting
 ```
 
 Core Components:
 
-- **PlatformIODriver**: Driver abstract base class, defines message sending/receiving contracts
-- **PlatformIOManager**: Broker manager, uniformly coordinates routing, deduplication and state tracking
-- **RouteTable**: Route binding table, maintains RouteKey to driver mapping
-- **DriverRegistry**: Driver registry, manages registered driver instances
+- **PlatformIODriver**: Driver abstract base class, defining the contract for sending and receiving messages
+- **PlatformIOManager**: Broker manager, unifying coordination of routing, deduplication, and state tracking
+- **RouteTable**: Routing binding table, maintaining the mapping from RouteKey to drivers
+- **DriverRegistry**: Driver registry, managing registered driver instances
+
+## Choosing an Adapter Development Mode
+
+MaiBot provides two adapter development approaches:
+
+**@MessageGateway (Plugin-based)**
+  : Registered via the `@MessageGateway` component decorator, running as a plugin within the Plugin Runtime.
+  : Applicable scenarios: Independently deployed adapter plugins, cross-platform reuse, no need to modify MaiBot source code.
+  : import: `from maibot.src.plugin_runtime.components import MessageGateway`
+  : See [MessageGateway Development Guide](../../plugin/message-gateway) for details.
+
+**PlatformIODriver (Driver-based)**
+  : Directly implements the `PlatformIODriver` interface and registers with MaiBot's Platform IO system.
+  : Applicable scenarios: Built-in adapters, deep integration, released together with MaiBot.
+  : import: `from maibot.src.platform_io.types import PlatformIODriver`
+  : See [Platform IO Development Guide](platform-io) for details.
 
 ## maim-message Integration
 
-MaiBot uses [maim-message](https://github.com/Mai-with-u/maim-message) as the unified message format standard. `MessageServer` is the message middleware provided by maim-message, responsible for passing messages between platform adapters and MaiBot.
+MaiBot uses [maim-message](https://github.com/Mai-with-u/maim_message) as the unified message format standard. `MessageServer` is the message middleware provided by maim-message, responsible for relaying messages between platform adapters and MaiBot.
 
-### Message Segment (Seg)
+### Message Segments (Seg)
 
-The core message type in maim-message is `Seg` (message segment), each message consists of one or more `Seg`:
+The core message type in maim-message is `Seg` (Message Segment). Each message consists of one or more `Seg`:
 
 ```python
 from maim_message import Seg
@@ -49,13 +64,13 @@ image_seg = Seg(type="image", data={"file": "xxx.jpg"})
 
 ### Legacy Driver
 
-MaiBot has built-in `LegacyPlatformDriver`, which encapsulates communication logic with maim-message MessageServer, serving as the default platform driver. When you configure platform connection information like QQ in `bot_config.toml`, Host will automatically create and register Legacy driver.
+MaiBot includes `LegacyPlatformDriver`, which encapsulates the communication logic with the maim-message MessageServer, serving as the default platform driver. After you configure connection information for platforms like QQ in `bot_config.toml`, the Host will automatically create and register the Legacy driver.
 
-## How to Create New Adapter
+## How to Create a New Adapter
 
 ### 1. Inherit PlatformIODriver
 
-New adapters need to inherit `PlatformIODriver` abstract base class in `src/platform_io/drivers/base.py`:
+The new adapter must inherit the `PlatformIODriver` abstract base class from `src/platform_io/drivers/base.py`:
 
 ```python
 from src.platform_io.drivers.base import PlatformIODriver
@@ -82,13 +97,13 @@ async def start(self) -> None:
     await self._connect()
 
 async def stop(self) -> None:
-    # Disconnect, cleanup resources
+    # Disconnect, clean up resources
     await self._disconnect()
 ```
 
 ### 3. Report Inbound Messages
 
-When adapter receives external platform inbound messages, report to Broker through `emit_inbound` method:
+When the adapter receives an inbound message from an external platform, report it to the Broker via the `emit_inbound` method:
 
 ```python
 from src.platform_io.types import InboundMessageEnvelope, DriverKind
@@ -104,9 +119,9 @@ envelope = InboundMessageEnvelope(
 accepted = await self.emit_inbound(envelope)
 ```
 
-### 4. Register Driver
+### 4. Register the Driver
 
-Register driver and bind routes through `PlatformIOManager`:
+Register the driver and bind routes via `PlatformIOManager`:
 
 ```python
 from src.platform_io.manager import get_platform_io_manager
@@ -114,7 +129,7 @@ from src.platform_io.types import DriverDescriptor, DriverKind, RouteBinding
 
 manager = get_platform_io_manager()
 
-# Create driver description
+# Create driver descriptor
 descriptor = DriverDescriptor(
     driver_id="plugin.my_adapter.qq",
     kind=DriverKind.PLUGIN,
@@ -142,6 +157,6 @@ manager.bind_receive_route(RouteBinding(
 
 ## Plugin Message Gateway Driver
 
-For plugin developers, MaiBot provides `PluginPlatformDriver` (defined in `src/platform_io/drivers/plugin_driver.py`), which implements sending/receiving capabilities through IPC calls to plugin Runner's message gateway components, without needing to directly operate underlying driver APIs.
+For plugin developers, MaiBot provides `PluginPlatformDriver` (defined in `src/platform_io/drivers/plugin_driver.py`), which implements send and receive capabilities by invoking the message gateway component within the Plugin Runner via IPC, without requiring direct interaction with the underlying driver APIs.
 
-See [PlatformIO Driver](./platform-io.md) page for details.
+See the [PlatformIO Drivers](./platform-io.md) page for details.
