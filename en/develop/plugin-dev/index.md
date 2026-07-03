@@ -54,6 +54,23 @@ graph TD
 pip install maibot-plugin-sdk
 ```
 
+If you are also editing `maibot-plugin-sdk` locally, set an environment variable so MaiBot's plugin Runner automatically prefers the local SDK source:
+
+```powershell
+$env:MAIBOT_PLUGIN_SDK_PATH = "C:\GitHub\MaiBot-dev\maibot-plugin-sdk"
+uv run python bot.py
+```
+
+The path must point to an SDK repository that contains both `pyproject.toml` and `maibot_sdk/`. When set, the Runner prepends this path to `PYTHONPATH` and uses the local SDK `project.version` for plugin manifest compatibility checks. Do not point this variable at an untrusted directory; its Python code becomes importable by the plugin runtime.
+
+To build a local SDK distribution, run this in the SDK repository:
+
+```powershell
+uv sync --extra dev
+uv run pytest
+uv build
+```
+
 ::: tip Note
 The install package name is `maibot-plugin-sdk`, but in code you import using `maibot_sdk`:
 ```python
@@ -200,6 +217,7 @@ The SDK provides 8 component decorators, all imported from the `maibot_sdk` top 
 | `@EventHandler` | Message/workflow events | Listens to lifecycle events such as messages, LLM generation, etc. |
 | `@API` | Inter-plugin API | Exposes APIs that can be called by other plugins |
 | `@MessageGateway` | Platform adapter | Bridges external platforms (QQ, Discord, etc.) into MaiBot |
+| `@HomeCard` | WebUI home card | Shows plugin status, shortcuts, or custom content on the home page |
 | `@LLMProvider` | LLM Provider | Declares a new LLM model access point (`client_type`) to extend model services |
 | `@Action` | Legacy compatibility | Internally auto-converts to `@Tool`. New plugins should use `@Tool` directly |
 
@@ -301,6 +319,7 @@ Both use the same communication protocol and component registration mechanism. T
 - [Hook Handler](./hooks.md): Learn how to use @HookHandler to intercept and rewrite messages
 - [Tool Component](./tools.md): Learn how to develop LLM-callable tool components
 - [Command Component](./commands.md): Learn how to develop slash command components
+- [Home Cards](./home-cards.md): Learn how to add plugin cards to the WebUI home page
 - [LLMProvider Component](./llmprovider.md): Learn how to develop custom LLM Providers
 - [Action Component](./actions.md): Learn about the legacy @Action decorator
 - [Configuration](./config.md): Learn how to declare and use plugin configuration

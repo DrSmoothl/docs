@@ -54,6 +54,23 @@ graph TD
 pip install maibot-plugin-sdk
 ```
 
+如果你同时在本地修改 `maibot-plugin-sdk`，可以设置环境变量让 MaiBot 的插件 Runner 自动优先使用本地 SDK 源码：
+
+```powershell
+$env:MAIBOT_PLUGIN_SDK_PATH = "C:\GitHub\MaiBot-dev\maibot-plugin-sdk"
+uv run python bot.py
+```
+
+该路径必须指向包含 `pyproject.toml` 和 `maibot_sdk/` 的 SDK 仓库。设置后，Runner 会把该路径放到 `PYTHONPATH` 最前面，并使用本地 SDK 的 `project.version` 进行插件 manifest 兼容性检查。不要把这个环境变量指向不可信目录；它会让该目录中的 Python 代码进入插件运行时导入路径。
+
+构建本地 SDK 分发包时，在 SDK 仓库中执行：
+
+```powershell
+uv sync --extra dev
+uv run pytest
+uv build
+```
+
 ::: tip 注意
 安装包名为 `maibot-plugin-sdk`，但代码中导入时使用 `maibot_sdk`：
 ```python
@@ -200,6 +217,7 @@ SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 | `@EventHandler` | 消息/工作流事件 | 监听消息、LLM 生成等生命周期事件 |
 | `@API` | 插件间 API | 暴露可被其他插件调用的 API |
 | `@MessageGateway` | 平台适配器 | 将外部平台（QQ、Discord 等）接入 MaiBot |
+| `@HomeCard` | WebUI 首页卡片 | 在首页展示插件状态、入口或自定义内容 |
 | `@LLMProvider` | LLM Provider | 声明新LLM模型接入点（client_type），扩展模型服务 |
 | `@Action` | 兼容旧插件 | 内部自动转换为 `@Tool`，新插件应直接使用 `@Tool` |
 
@@ -301,6 +319,7 @@ MaiBot 维护两个独立的 Runner 子进程：
 - [Hook 系统](./hooks.md)：学习如何使用 @HookHandler 拦截和改写消息
 - [Tool 组件](./tools.md)：学习如何开发 LLM 可调用的工具组件
 - [Command 组件](./commands.md)：学习如何开发斜杠命令组件
+- [首页卡片](./home-cards.md)：学习如何向 WebUI 首页添加插件卡片
 - [LLMProvider 组件](./llmprovider.md)：学习如何开发自定义LLM Provider接入新模型
 - [Action 组件](./actions.md)：了解兼容旧系统的 @Action 装饰器
 - [配置管理](./config.md)：学习如何声明和使用插件配置
