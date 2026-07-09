@@ -15,12 +15,12 @@ title: 安装指南
 
 ::: code-group
 
-```bash [稳定版（包含预发布版） (推荐)]
+```bash [稳定版（包含预发布版） (推荐) ~vscode-icons:file-type-git~]
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
 
-```bash [开发版 (尝鲜)]
+```bash [开发版 (尝鲜) ~vscode-icons:file-type-git~]
 git clone -b dev https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```

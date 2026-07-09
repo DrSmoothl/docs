@@ -128,6 +128,12 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '版本总览', link: '/changelog/' },
+      ]
+    },
+    {
+      text: '更新专题',
+      collapsed: false,
+      items: [
         { text: '1.0.0 更新专题', link: '/changelog/v1-0-0' },
       ]
     },

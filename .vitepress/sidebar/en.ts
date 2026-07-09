@@ -54,6 +54,22 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
   ],
+  '/en/changelog/': [
+    {
+      text: 'Changelog',
+      collapsed: false,
+      items: [
+        { text: 'Version Overview', link: '/en/changelog/' },
+      ]
+    },
+    {
+      text: 'Feature Updates',
+      collapsed: false,
+      items: [
+        { text: '1.0.0 Feature Page', link: '/en/changelog/v1-0-0' },
+      ]
+    },
+  ],
   '/en/manual/': [
     {
       text: 'Quick Start',

@@ -1,8 +1,10 @@
 import { defineConfig } from 'vitepress'
 import { MermaidPlugin, MermaidMarkdown } from "vitepress-plugin-mermaid"
-import { tabsMarkdownPlugin } from "vitepress-plugin-tabs"
 import { InlineLinkPreviewElementTransform } from '@nolebase/vitepress-plugin-inline-link-preview/markdown-it'
 import llmstxt from 'vitepress-plugin-llms'
+import timeline from 'vitepress-markdown-timeline'
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons'
+import type { Token, Options } from 'markdown-it'
 import { nav as zhNav, sidebar as zhSidebar } from './sidebar/zh'
 import { nav as enNav, sidebar as enSidebar } from './sidebar/en'
 
@@ -11,6 +13,11 @@ export default defineConfig({
   title: "MaiBot Docs",
   description: "MaiBot Development and Usage Guide",
   ignoreDeadLinks: 'localhostLinks',
+  lastUpdated: true,
+  cleanUrls: true,
+  sitemap: {
+    hostname: 'https://docs.maimai.lol'
+  },
   locales: {
     root: {
       label: '简体中文',
@@ -81,13 +88,33 @@ export default defineConfig({
   },
   markdown: {
     config(md) {
-      md.use(tabsMarkdownPlugin);
       md.use(MermaidMarkdown);
       md.use(InlineLinkPreviewElementTransform);
+      md.use(groupIconMdPlugin);
+      md.use(timeline);
+      md.renderer.rules.heading_close = (tokens: Token[], idx: number, options: Options, env: any, slf: any) => {
+        let htmlResult = slf.renderToken(tokens, idx, options)
+        if (tokens[idx].tag === 'h1' && !env.metadataRendered) {
+          env.metadataRendered = true
+          htmlResult += '<ArticleMetadata />'
+        }
+        return htmlResult
+      }
     },
   },
+  metaChunk: true,
   vite: {
-    plugins: [MermaidPlugin(), llmstxt({ workDir: 'zh', ignoreFiles: ['index.md'] })],
+    plugins: [
+      groupIconVitePlugin({
+        customIcon: {
+          'git': 'vscode-icons:file-type-git',
+          'uv': 'vscode-icons:file-type-python',
+          'pip': 'vscode-icons:file-type-python',
+        },
+      }),
+      MermaidPlugin(),
+      llmstxt({ workDir: 'zh', ignoreFiles: ['index.md'] }),
+    ],
     optimizeDeps: {
       include: ['mermaid'],
       exclude: [

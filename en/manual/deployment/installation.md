@@ -14,12 +14,12 @@ Download the latest version from [GitHub Release](https://github.com/Mai-with-u/
 
 ::: code-group
 
-```bash [Stable Version (includes pre-release) (Recommended)]
+```bash [Stable Version (includes pre-release) (Recommended) ~vscode-icons:file-type-git~]
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
 
-```bash [Development Version (for early adopters)]
+```bash [Development Version (for early adopters) ~vscode-icons:file-type-git~]
 git clone -b dev https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
