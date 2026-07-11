@@ -3,10 +3,13 @@ import type { DefaultTheme } from 'vitepress'
 export const nav: DefaultTheme.NavItem[] = [
   { text: '首页', link: '/' },
   { text: '用户手册', link: '/manual/deployment/' },
-  { text: '开发文档', link: '/develop/' },
-  { text: '插件开发', link: '/plugin/' },
+  { text: '开发文档', items: [
+    { text: '麦麦开发', link: '/develop/' },
+    { text: '插件开发', link: '/plugin/' },
+  ]},
+  { text: '常见问题', link: '/faq/' },
   { text: '更新日志', link: '/changelog/' },
-  { text: '用户协议', link: '/legal/' },
+  { text: '关于', link: '/about/' },
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
@@ -44,13 +47,23 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
   ],
-  '/legal/': [
+  '/about/': [
     {
-      text: '法律文档',
+      text: '关于',
       collapsed: false,
       items: [
-        { text: '总览', link: '/legal/' },
-        { text: 'EULA', link: '/legal/EULA' },
+        { text: '关于 MaiBot', link: '/about/' },
+        { text: 'EULA', link: '/about/EULA' },
+      ]
+    },
+  ],
+  '/faq/': [
+    {
+      text: '常见问题',
+      collapsed: false,
+      items: [
+        { text: 'FAQ', link: '/faq/' },
+        { text: '错误排查', link: '/faq/error-troubleshooting' },
       ]
     },
   ],
@@ -95,8 +108,8 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '功能概览', link: '/manual/features/' },
-        { text: '消息是怎么处理的', link: '/manual/features/message-pipeline' },
-        { text: 'MaiBot 是怎么思考的', link: '/manual/features/maisaka-reasoning' },
+        { text: '消息处理流程', link: '/manual/features/message-pipeline' },
+        { text: 'MaiBot 思考机制', link: '/manual/features/maisaka-reasoning' },
         { text: 'MaiBot 的记忆', link: '/manual/features/memory-system' },
         { text: '学说话', link: '/manual/features/learning' },
         { text: '表情包系统', link: '/manual/features/emoji-system' },
@@ -114,13 +127,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: '聊天与统计', link: '/manual/webui/chat-stats' },
       ]
     },
-    {
-      text: '常见问题',
-      collapsed: false,
-      items: [
-        { text: 'FAQ', link: '/manual/faq/' },
-      ]
-    },
+
   ],
   '/changelog/': [
     {
@@ -156,8 +163,8 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Maisaka 推理引擎', link: '/develop/architecture/maisaka-reasoning' },
         { text: '记忆系统', link: '/develop/architecture/memory-system' },
         { text: 'WebUI 内部机制', link: '/develop/architecture/webui-internals' },
-        { text: '事件总线 (EventBus)', link: '/develop/architecture/event-bus' },
-        { text: '工具系统 (Tool System)', link: '/develop/architecture/tool-system' },
+        { text: '事件总线', link: '/develop/architecture/event-bus' },
+        { text: '工具系统', link: '/develop/architecture/tool-system' },
         { text: '服务层', link: '/develop/architecture/service-layer' },
         { text: '表达学习', link: '/develop/architecture/expression-learning' },
         { text: '表情系统内部', link: '/develop/architecture/emoji-internals' },

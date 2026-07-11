@@ -3,10 +3,13 @@ import type { DefaultTheme } from 'vitepress'
 export const nav: DefaultTheme.NavItem[] = [
   { text: 'Home', link: '/en/' },
   { text: 'Manual', link: '/en/manual/deployment/' },
-  { text: 'Development', link: '/en/develop/' },
-  { text: 'Plugin Dev', link: '/en/plugin/' },
+  { text: 'Development', items: [
+    { text: 'MaiBot Development', link: '/en/develop/' },
+    { text: 'Plugin Development', link: '/en/plugin/' },
+  ]},
+  { text: 'FAQ', link: '/en/faq/' },
   { text: 'Changelog', link: '/en/changelog/' },
-  { text: 'EULA', link: '/en/legal/' },
+  { text: 'About', link: '/en/about/' },
 ]
 
 export const sidebar: DefaultTheme.Sidebar = {
@@ -30,9 +33,9 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Command', link: '/en/plugin/commands' },
         { text: 'Hook Handler', link: '/en/plugin/hooks' },
         { text: 'Event Handler', link: '/en/plugin/event-handlers' },
-        { text: 'API Component', link: '/en/plugin/api-components' },
+        { text: 'API Components', link: '/en/plugin/api-components' },
         { text: 'Message Gateway', link: '/en/plugin/message-gateway' },
-        { text: 'LLMProvider Component', link: '/en/plugin/llmprovider' },
+        { text: 'LLMProvider', link: '/en/plugin/llmprovider' },
         { text: 'Action (Legacy)', link: '/en/plugin/actions' },
       ]
     },
@@ -41,16 +44,6 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'API Reference', link: '/en/plugin/api-reference' },
-      ]
-    },
-  ],
-  '/en/legal/': [
-    {
-      text: 'Legal Documents',
-      collapsed: false,
-      items: [
-        { text: 'Overview', link: '/en/legal/' },
-        { text: 'EULA', link: '/en/legal/EULA' },
       ]
     },
   ],
@@ -67,6 +60,16 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '1.0.0 Feature Page', link: '/en/changelog/v1-0-0' },
+      ]
+    },
+  ],
+  '/en/faq/': [
+    {
+      text: 'FAQ',
+      collapsed: false,
+      items: [
+        { text: 'FAQ', link: '/en/faq/' },
+        { text: 'Error Troubleshooting', link: '/en/faq/error-troubleshooting' },
       ]
     },
   ],
@@ -105,7 +108,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'Features Overview', link: '/en/manual/features/' },
-        { text: 'How Messages are Processed', link: '/en/manual/features/message-pipeline' },
+        { text: 'Message Processing', link: '/en/manual/features/message-pipeline' },
         { text: 'How MaiBot Thinks', link: '/en/manual/features/maisaka-reasoning' },
         { text: 'MaiBot\'s Memory', link: '/en/manual/features/memory-system' },
         { text: 'Learning to Speak', link: '/en/manual/features/learning' },
@@ -136,15 +139,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Discord Adapter', link: '/en/manual/adapters/discord' },
       ]
     },
-    {
-      text: 'FAQ',
-      collapsed: false,
-      items: [
-        { text: 'FAQ', link: '/en/manual/faq/' },
-        { text: 'Error Troubleshooting', link: '/en/manual/faq/error-troubleshooting' },
-
-      ]
-    },
   ],
   '/en/develop/': [
     {
@@ -161,7 +155,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'Message Pipeline', link: '/en/develop/architecture/message-pipeline' },
-        { text: 'Maisaka Reasoning Engine', link: '/en/develop/architecture/maisaka-reasoning' },
+        { text: 'Maisaka Reasoning', link: '/en/develop/architecture/maisaka-reasoning' },
         { text: 'Memory System', link: '/en/develop/architecture/memory-system' },
         { text: 'WebUI Internals', link: '/en/develop/architecture/webui-internals' },
         { text: 'Event Bus', link: '/en/develop/architecture/event-bus' },
@@ -180,6 +174,16 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: 'Development Guide', link: '/en/develop/adapter-dev/' },
         { text: 'PlatformIO Driver', link: '/en/develop/adapter-dev/platform-io' },
+      ]
+    },
+  ],
+  '/en/about/': [
+    {
+      text: 'About',
+      collapsed: false,
+      items: [
+        { text: 'About MaiBot', link: '/en/about/' },
+        { text: 'EULA', link: '/en/about/EULA' },
       ]
     },
   ],

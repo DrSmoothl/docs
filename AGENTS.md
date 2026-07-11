@@ -15,7 +15,7 @@
 
 | 文件/文件夹 | 说明 |
 |-------------|------|
-| `config.mts` | VitePress 核心配置：导航栏、侧边栏、多语言（中文/English）、搜索、markdown 插件（Mermaid, Tabs）、社交链接 |
+| `config.mts` | VitePress 核心配置：导航栏、侧边栏、多语言（中文/English）、搜索、markdown 插件（Mermaid, Tabs）、社交链接；顶部导航开发文档下拉菜单（麦麦开发、插件开发） |
 | `theme/` | 自定义主题目录 |
 | `theme/index.ts` | 主题入口 |
 | `theme/style.css` | 自定义样式 |
@@ -32,7 +32,9 @@
 | `features/` | 功能介绍页 |
 | `changelog/` | 更新日志 |
 | `community/` | 社区页面 |
+| `about/` | 关于MaiBot及法律文档（EULA） |
 | `plugin/` | 插件开发文档 |
+| `faq/` | 常见问题与故障排除（独立顶级目录） |
 
 ### `zh/manual/` — 用户手册（简体中文）
 
@@ -44,7 +46,6 @@
 | `configuration/` | 配置说明（Bot 配置、模型配置） |
 | `features/` | 功能详解（消息管线、Maisaka推理引擎、记忆系统、学习系统、表情包系统、MCP集成） |
 | `webui/` | WebUI 管理文档（配置管理、记忆管理、插件管理、聊天统计） |
-| `faq/` | 常见问题与故障排除 |
 | `getting-started/` | 快速入门指南 |
 
 ### `zh/develop/` — 开发文档（简体中文）
@@ -76,6 +77,20 @@
 |-------------|------|
 | 各社区页面 | QQ群、GitHub链接、社交媒体、衍生项目 |
 
+### `zh/faq/` — 常见问题
+
+| 文件/文件夹 | 说明 |
+|-------------|------|
+| `index.md` | 常见问题总览 |
+| `error-troubleshooting.md` | 错误排查 FAQ |
+
+### `zh/about/` — 关于与法律文档
+
+| 文件/文件夹 | 说明 |
+|-------------|------|
+| `index.md` | 关于 MaiBot |
+| `EULA.md` | 最终用户许可协议 |
+
 ### `zh/plugin/` — 插件开发文档
 
 | 文件/文件夹 | 说明 |
@@ -95,7 +110,7 @@
 
 ### `en/` — 英文版文档
 
-en/ 目录下的结构与中文版完全镜像，包含 manual/（用户手册）、develop/（开发文档）、features/（功能介绍）、changelog/（更新日志）、community/（社区页面）等子目录。
+en/ 目录下的结构与中文版完全镜像，包含 manual/（用户手册）、develop/（开发文档）、features/（功能介绍）、changelog/（更新日志）、community/（社区页面）、faq/（常见问题）、about/（关于与法律文档）等子目录。
 
 > ⚠️ **注意**：en/ 英文文档是通过翻译中文内容得来，应最大程度与中文内容保持同步。
 

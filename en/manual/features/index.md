@@ -99,6 +99,6 @@ Ready to let MaiBot join your group chat?
 
 1. [Check supported platforms →](../adapters/index.md)
 2. [Learn how to configure →](../webui/index.md)
-3. [Read the FAQ →](../faq/index.md)
+3. [Read the FAQ →](../../faq/index.md)
 
 MaiBot is not a simple Q&A bot, but a chat companion that can think, learn, and remember. It will understand you better and better, becoming more and more like a true member of your group!

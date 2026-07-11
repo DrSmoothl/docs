@@ -1,5 +1,5 @@
 ---
-title: '# Development Guide'
+title: Development Guide
 ---
 # Development Guide
 
