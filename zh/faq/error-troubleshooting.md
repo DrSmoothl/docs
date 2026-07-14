@@ -159,7 +159,7 @@ port = 8002             # 改为 8002 或其他空闲端口
 
 # WebSocket 端口（默认 8000）
 [maim_message]
-ws_server_port = 8001   # 改为 8001 或其他空闲端口
+ws_server_port = 18000  # 使用与 WebUI 不同的空闲端口
 ```
 
 **方法三：换个端口启动**
@@ -366,7 +366,7 @@ curl https://api.deepseek.com/v1/chat/completions \
 #### 快速自查三连
 1️⃣ 先试试重新安装插件，换个最新版本
 2️⃣ 看看日志里提示缺少什么依赖
-3️⃣ 确认 Python 版本 ≥ 3.10 且插件和 MaiBot 版本兼容
+3️⃣ 确认 Python 版本 ≥ 3.12 且插件和 MaiBot 版本兼容
 
 #### 解决方案
 
@@ -404,7 +404,7 @@ No module named 'requests'
 #### 快速自查三连
 1️⃣ 检查是否同时启动多个 MaiBot 实例连接同一数据库
 2️⃣ 查看磁盘空间是否已满（打开文件管理器看看）
-3️⃣ 确认 `data/maibot.db` 文件权限是否正确（可读写）
+3️⃣ 确认 `data/MaiBot.db` 文件权限是否正确（可读写）
 
 #### 解决方案
 
@@ -412,15 +412,15 @@ No module named 'requests'
 
 如果日志显示 `database is locked`，说明可能有多个 MaiBot 实例同时访问同一个数据库文件。关掉多余的 MaiBot 进程，只保留一个就行。
 
-如果关掉后还是锁定，可以尝试把 `data/maibot.db` 文件删掉重来（注意先备份）。
+如果关掉后还是锁定，可以尝试把 `data/MaiBot.db` 文件删掉重来（注意先备份）。
 
 **步骤 2：修复损坏的数据库**
 
 如果怀疑数据库损坏（如突然断电后）：
 
-1. 先备份：复制 `data/maibot.db` 到安全位置
+1. 先备份：复制 `data/MaiBot.db` 到安全位置
 2. 重启 MaiBot，程序会自动重建或修复数据库
-3. 如果还不行，删掉 `data/maibot.db` 让程序重新创建（之前的重要数据需要从备份恢复）
+3. 如果还不行，删掉 `data/MaiBot.db` 让程序重新创建（之前的重要数据需要从备份恢复）
 
 **步骤 3：启用 WAL 模式（减少锁定冲突）**
 
@@ -436,7 +436,7 @@ journal_mode = "wal"
 
 #### 预防建议
 - 避免同时启动多个 MaiBot 实例连接同一数据库文件
-- 定期备份 `data/maibot.db`（建议每周一次）
+- 定期备份 `data/MaiBot.db`（建议每周一次）
 - 配置日志轮转，避免日志文件占满磁盘
 - 使用 WAL 模式减少锁定冲突
 
@@ -993,14 +993,14 @@ python -m json.tool "角色名.json" > /dev/null
 **修复数据库（谨慎操作）**
 ```bash
 # 备份数据库
-cp data/maibot.db data/maibot.db.bak
+cp data/MaiBot.db data/MaiBot.db.bak
 
 # 使用 WebUI 管理用户，不要直接操作数据库
 ```
 
 #### 预防建议
 - 🖥️ **用 WebUI 管理** - 不要直接改数据库文件
-- 💾 **定期备份** - `data/persons/` 和 `data/maibot.db` 很重要
+- 💾 **定期备份** - `data/persons/` 和 `data/MaiBot.db` 很重要
 - 🔒 **避免并发访问** - 不要同时启动多个 MaiBot 连同一个数据库
 
 ---

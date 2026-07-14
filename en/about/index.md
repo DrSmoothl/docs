@@ -31,3 +31,4 @@ MaiBot is committed to the open-source community and is released under the **GPL
 | Document | Description |
 |----------|-------------|
 | [EULA](/en/about/EULA) | End User License Agreement |
+| [Privacy Policy](/en/about/PRIVACY) | Data handling, telemetry, and third-party plugin privacy boundaries |

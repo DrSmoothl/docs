@@ -159,7 +159,7 @@ port = 8002             # Change to 8002 or another available port
 
 # WebSocket port (default 8000)
 [maim_message]
-ws_server_port = 8001   # Change to 8001 or another available port
+ws_server_port = 18000  # Use a free port distinct from WebUI
 ```
 
 **Method 3: Start with a Different Port**
@@ -366,7 +366,7 @@ Covers scenarios 7–11, problems encountered relatively often during normal use
 #### Quick Self-Check Trio
 1️⃣ First try reinstalling the plugin with the latest version
 2️⃣ Check the log for what dependencies are missing
-3️⃣ Confirm Python version is ≥ 3.10 and the plugin is compatible with the MaiBot version
+3️⃣ Confirm Python version is ≥ 3.12 and the plugin is compatible with the MaiBot version
 
 #### Solutions
 
@@ -404,7 +404,7 @@ Install whatever is indicated as missing.
 #### Quick Self-Check Trio
 1️⃣ Check if multiple MaiBot instances are running simultaneously connecting to the same database
 2️⃣ Check if disk space is full (open file manager to check)
-3️⃣ Confirm `data/maibot.db` file permissions are correct (readable and writable)
+3️⃣ Confirm `data/MaiBot.db` file permissions are correct (readable and writable)
 
 #### Solutions
 
@@ -412,15 +412,15 @@ Install whatever is indicated as missing.
 
 If the log shows `database is locked`, it means multiple MaiBot instances may be accessing the same database file simultaneously. Close the extra MaiBot processes and keep only one running.
 
-If it's still locked after closing, try deleting the `data/maibot.db` file and starting fresh (remember to back up first).
+If it's still locked after closing, try deleting the `data/MaiBot.db` file and starting fresh (remember to back up first).
 
 **Step 2: Repair Corrupted Database**
 
 If you suspect database corruption (e.g., after a sudden power outage):
 
-1. First back up: copy `data/maibot.db` to a safe location
+1. First back up: copy `data/MaiBot.db` to a safe location
 2. Restart MaiBot — the program will automatically rebuild or repair the database
-3. If that doesn't work, delete `data/maibot.db` and let the program recreate it (important prior data needs to be restored from backup)
+3. If that doesn't work, delete `data/MaiBot.db` and let the program recreate it (important prior data needs to be restored from backup)
 
 **Step 3: Enable WAL Mode (Reduce Locking Conflicts)**
 
@@ -436,7 +436,7 @@ Open the `logs/` folder and delete unneeded old log files. If disk space is crit
 
 #### Prevention Tips
 - Avoid running multiple MaiBot instances simultaneously connecting to the same database file
-- Regularly back up `data/maibot.db` (recommended weekly)
+- Regularly back up `data/MaiBot.db` (recommended weekly)
 - Configure log rotation to prevent log files from filling up the disk
 - Use WAL mode to reduce locking conflicts
 
@@ -993,14 +993,14 @@ python -m json.tool "character-name.json" > /dev/null
 **Repair Database (Proceed with Caution)**
 ```bash
 # Backup database
-cp data/maibot.db data/maibot.db.bak
+cp data/MaiBot.db data/MaiBot.db.bak
 
 # Use WebUI to manage users, do not operate on the database directly
 ```
 
 #### Prevention Tips
 - 🖥️ **Use WebUI for management** — Don't modify the database file directly
-- 💾 **Back up regularly** — `data/persons/` and `data/maibot.db` are important
+- 💾 **Back up regularly** — `data/persons/` and `data/MaiBot.db` are important
 - 🔒 **Avoid concurrent access** — Don't start multiple MaiBot instances connecting to the same database
 
 ---

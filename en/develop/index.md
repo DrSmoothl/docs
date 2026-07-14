@@ -9,7 +9,7 @@ MaiBot (Mai / MaiSaka) is an interactive agent based on large language models. T
 
 | Category | Technology |
 |------|------|
-| Language | Python 3.10+ |
+| Language | Python 3.12+ |
 | Web Framework | FastAPI |
 | ORM | SQLModel |
 | ASGI Server | Uvicorn |
@@ -72,7 +72,7 @@ MaiBot/
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 or higher
 - [uv](https://github.com/astral-sh/uv) package manager
 
 ### Install Dependencies

@@ -17,19 +17,19 @@ You'll need these 3 things ready:
 
 ### 2️⃣ An AI Model API Key 🔑
 
-MaiBot needs a Large Language Model (LLM) to think and reply. **The first launch auto-generates a default config using Alibaba Cloud Bailian (Tongyi Qianwen)** — you just need to get an API key.
+MaiBot needs a Large Language Model (LLM) to think and reply. **The first launch generates a default configuration using DeepSeek**. The minimum runnable setup needs only a working DeepSeek API key; vision and embedding models can be added later.
 
 | Provider | Price | Features | How to Get |
 |----------|-------|----------|------------|
-| **Alibaba Cloud Bailian (Qwen)** 🏆 Default | Low | Pre-integrated, stable access in China; full Qwen series + third-party models, covers **text/vision/embedding** | [Bailian Console](https://bailian.console.aliyun.com/) → API-KEY |
+| **Alibaba Cloud Bailian (Qwen)** | Low | Provides Qwen and other model capabilities | [Bailian Console](https://bailian.console.aliyun.com/) → API-KEY |
 | **SiliconFlow** | Low | 200+ models aggregated (DeepSeek, Qwen, GLM, etc.), **one API key for text/vision/embedding**, Alipay/WeChat Pay | [Sign up](https://cloud.siliconflow.cn/) |
-| **DeepSeek** | Very Low | Best price-performance ratio, top-tier reasoning (V4 with 1M context), MIT open-source, self-hostable | [Sign up](https://platform.deepseek.com/) |
+| **DeepSeek** 🏆 Default | Very Low | Default text-model provider and the shortest first-time setup | [Sign up](https://platform.deepseek.com/) |
 | **Zhipu AI (GLM)** | Free+ | Tsinghua-backed, **text/vision/embedding** fully supported; **Flash series permanently free**, 20M free tokens for new users | [Zhipu Platform](https://open.bigmodel.cn/) |
 | **Kimi (Moonshot)** | Medium | **262K context window**, native multimodal (text+image+video), excellent bilingual capability | [Sign up](https://platform.moonshot.cn/) |
 
 ::: tip 💡 For Beginners
-- **Want zero hassle? Use Bailian** — the default config works out of the box, just fill in your API Key
-- **Want the best value? Use DeepSeek** — top-tier reasoning at a fraction of the cost
+- **Want to get running first? Use DeepSeek** — enter the API key and verify the text models in the WebUI wizard
+- **Need vision or related memory features? Add them later** — vision and embedding are not first-run requirements
 - **Want free? Use Zhipu GLM** — Flash models are permanently free, plus 20M welcome tokens
 - Most providers offer **free trial credits** — try before you commit
 :::
@@ -64,7 +64,7 @@ git checkout dev
 
 ### Step 2: Install Python 🐍
 
-> MaiBot requires **Python 3.10+** (Python 3.12 / 3.13 recommended).
+> MaiBot requires **Python 3.12+** (Python 3.12 / 3.13 recommended).
 
 1. Go to [python.org](https://www.python.org/downloads/) and download the Windows installer
 2. **Check "Add Python to PATH"** during installation
@@ -106,7 +106,7 @@ MaiBot's `pyproject.toml` is pre-configured with the Tsinghua mirror — `uv syn
 uv run python bot.py
 ```
 
-**On the first launch, you'll be prompted to accept the EULA and Privacy Policy. Type `同意` (or `confirmed`) and press Enter.** The system will auto-generate default configs in `config/`, then exit — **this is normal behavior**.
+**On the first launch, you'll be prompted to accept the EULA and Privacy Policy. Type `同意` (or `confirmed`) and press Enter.** The system generates default files in `config/` and continues initializing MaiBot and WebUI; a second launch is not required just to generate configuration.
 
 
 
@@ -124,13 +124,9 @@ uv run python bot.py
 ```
 :::
 
-### Step 6: Launch Again, Enter WebUI
+### Step 6: Enter WebUI
 
-```bash
-uv run python bot.py
-```
-
-This time you'll see logs like:
+As the same process continues, you'll see logs like:
 
 ```
 🌐 WebUI server starting...
@@ -144,11 +140,13 @@ This time you'll see logs like:
 1. Open your browser and go to **http://127.0.0.1:8001**
 2. You'll see a login page — **enter the Access Token** shown in the terminal
 3. After logging in, the **setup wizard** will appear automatically for first-time users
-4. Fill in your **API Key** (that's all you need — everything else has defaults)
+4. Enter your **DeepSeek API key** and verify that the text models used for reply, planning, and utility tasks are available
 5. The system marks initialization as complete, and you're in the normal dashboard
 
+You can skip vision and embedding models and configure them later when those capabilities are needed.
+
 ::: tip 💡 All configuration is done through WebUI
-You can change nickname, personality, chat frequency, models, and everything else via the WebUI **"Config Management"** page. No need to manually edit files — changes apply instantly.
+You can change nickname, personality, chat frequency, and models in **Config Management** without editing files manually. Most runtime settings hot-reload; listeners, MCP connections, and other startup settings still require a restart. See the [Configuration Overview](../configuration/).
 :::
 
 ## 📱 Connect to QQ
@@ -174,7 +172,7 @@ After installation, configure the connection address following the adapter's ins
 
 You must go to the WebUI **"Plugin Management"** page, find the NapCat Adapter, and **manually toggle the enable switch**.
 
-Or edit `plugins/MaiBot-Napcat-Adapter/config.toml` directly, changing `[plugin] enabled` to `true`, then restart MaiBot.
+Alternatively, find the plugin's actual directory and change `[plugin] enabled` to `true` in its `config.toml`. The file watcher normally loads it without restarting MaiBot; directory names can vary by installation method.
 
 > How to verify? Check the startup logs: "activated" means enabled, "disabled, skipping activation" means still disabled.
 :::
@@ -209,10 +207,7 @@ Check the logs by running:
 uv run python bot.py
 ```
 
-Common causes:
-
-- **API key not set** — `api_key` in `model_config.toml` still says `your-api-key`
-- **Config format error** — invalid TOML syntax
+MaiBot continues after generating its default files. If it exits unexpectedly, use the final log error as the source of truth and check agreement confirmation, TOML syntax, port binding, and dependency initialization.
 
 ### Port conflict?
 
@@ -235,7 +230,7 @@ port = 8002   # Change to an unused port like 8002, 8003
 
 Restart and the WebUI will be available at `http://127.0.0.1:8002`.
 
-> 💡 If the `maim_message` WebSocket port (default 8080) is also taken, change `ws_server_port` in the `[maim_message]` section as well.
+> 💡 If the legacy `maim_message` WebSocket port (default 8000) is also taken, change `ws_server_port` to a different unused port, such as `18000`. The NapCat plugin adapter does not use this service.
 
 **Solution 2: Kill the process using the port**
 

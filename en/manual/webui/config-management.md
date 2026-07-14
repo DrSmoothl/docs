@@ -48,14 +48,22 @@ Edit the configuration file directly, suitable for tech-savvy users:
 1. Open the WebUI and click "Configuration Management" on the left
 2. Select the category to modify (e.g., "Bot Settings")
 3. Find the item to change and enter the new value
-4. Click "Save", the configuration will be saved to the file (configuration reload feature is pending implementation, takes effect after restart)
+4. Click **Save**. The file is written and MaiBot's configuration watcher reloads it
 
 ### Advanced Mode
 
 1. Click the "Raw Configuration" tab
 2. Edit the text content directly
 3. Click "Save", the system will check the format
-4. Errors will be prompted; if no errors, it takes effect
+4. Errors are reported; after a successful save, the hot-reload rules below apply
+
+## When Saved Changes Take Effect
+
+**Used automatically by subsequent work** — Personality, chat policy, reply frequency, model providers, models, and task assignments.
+
+**Requires a full MaiBot restart** — WebUI enable/bind/port settings, `maim_message` listeners and authentication, MCP connections, and process-level plugin-runtime settings.
+
+A plugin's own configuration is managed by the plugin lifecycle and normally hot-reloads. See the [Configuration Overview](../configuration/) for the complete boundary.
 
 ## Modification Suggestions
 
@@ -90,4 +98,4 @@ A: You can reset to default settings, or manually change the values back
 A: The format might be incorrect, check the error message
 
 **Q: How long does it take for modifications to take effect?**
-A: Currently, saved configurations require a bot restart to take effect (configuration hot-reload feature is pending implementation)
+A: Runtime settings normally apply to the next operation or request. Listener ports, MCP connections, and other startup-only settings require a full MaiBot restart.

@@ -65,7 +65,7 @@ WebUI server startup failed: Port 8001 is already in use (host=127.0.0.1)
 
 **Method 1: Change the Port** — Edit `config/bot_config.toml`:
 - WebUI Port: `[webui]` → `port = 8002`
-- WebSocket Port: `[maim_message]` → `ws_server_port = 8001` (Default is 8000; change to another port if there is a conflict)
+- Legacy WebSocket port: `[maim_message]` → `ws_server_port = 18000` (default 8000; keep it distinct from WebUI and other services. The NapCat plugin adapter does not use it)
 
 **Method 2: Terminate the Process**:
 ```bash
@@ -120,17 +120,21 @@ enabled = true
 - Unified management is convenient
 
 ### Where is data stored? Is it safe?
-**Answer**: All data is stored on your own computer.
+**Answer**: Databases, memory, and logs are primarily stored on the deployment device, but it is inaccurate to say that no data ever leaves it.
 
-**Storage Locations**:
-- 💾 **Chat History** - Local database
-- 🧠 **Memory Content** - Local files
-- ⚙️ **Configuration Files** - Local disk
+- Input and output content is sent to the configured third-party model API to generate responses and is also governed by that provider's privacy policy.
+- When telemetry is enabled, MaiBot sends limited statistics such as client UUID, version, environment, and aggregated message/model usage. It should not include message bodies, group or user IDs, API keys, or per-message details.
+- Client UUID, platform, and model aliases can be associated with a deployment, so telemetry is not fully anonymous.
+- Third-party plugins may process or transmit data independently; review their source and privacy terms before installation.
 
-**Security Reminders**:
-- 🔒 **No Cloud Upload** - Data remains local
-- 🏠 **Privacy Protected** - Others cannot see it
-- 💿 **Regular Backups** - Prevent data loss
+Telemetry can be disabled without affecting core chat:
+
+```toml
+[telemetry]
+enable = false
+```
+
+See the [Privacy Policy](/en/about/PRIVACY) and [EULA](/en/about/EULA) for the complete boundary.
 
 ### Does MaiBot support mobile deployment?
 **Answer**: Theoretically possible, but not recommended.
@@ -146,12 +150,9 @@ enabled = true
 - 🏠 **Raspberry Pi** - Small devices are also viable
 
 ### Must I use QQ? Can I use other platforms?
-**Answer**: Currently, QQ is the primary supported platform; others are under development.
+**Answer**: No. MaiBot uses adapter plugins. NapCat Adapter is a common QQ option, while the documentation also lists Telegram, Discord, SnowLuma, and GoCQ adapters.
 
-**Current Status**:
-- ✅ **QQ** - Best support, most complete features
-- 🚧 **WeChat** - No usable adapter currently available; community development is welcome
-- 📋 **Others** - Additional platforms can be integrated via adapter plugins
+Adapters are maintained by the core team or community projects and may differ in compatibility and features. Check the adapter repository and documentation for your MaiBot version before deployment.
 
 ## 🔧 Technical Issues
 
@@ -172,7 +173,7 @@ The NapCat adapter enables chat list filtering by default. Group chats operate i
 2. If using Docker, open `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`
 3. Add the target group ID to `group_list` under `[chat]`
 4. It is recommended to temporarily enable `show_dropped_chat_list_messages = true` to view filtered messages in the logs
-5. Save and restart MaiBot
+5. Save; the plugin configuration-update lifecycle reloads the list, normally without restarting MaiBot
 
 ```toml
 [chat]

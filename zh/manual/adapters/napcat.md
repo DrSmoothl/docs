@@ -1,62 +1,62 @@
 ---
-title: 使用NapCat和适配器连接麦麦
+title: 使用 NapCat 适配器连接 QQ
 ---
-# 使用NapCat和适配器连接麦麦
 
-你可以通过 **NapCat** 来获取QQ的消息和信息
+# 使用 NapCat 适配器连接 QQ
 
-然后通过 **适配器**将这些消息翻译并发送给MaiBot
+当前 NapCat 适配器是 MaiBot 插件。NapCat 提供 **正向 WebSocket（WebSocket 服务器）**，适配器作为客户端主动连接 NapCat，再通过插件消息网关把消息交给 MaiBot。
 
-## 适配器仓库
+::: info 连接方向
+`NapCat WebSocket 服务器 ← NapCat 适配器客户端 → MaiBot 插件消息网关`
 
-NapCat 适配器的源码：[Mai-with-u/MaiBot-Napcat-Adapter](https://github.com/Mai-with-u/MaiBot-Napcat-Adapter)
+插件版不使用 `[maim_message]`，也不需要在 NapCat 中配置“反向 WebSocket”。
+:::
 
-## 安装适配器
+适配器源码：[Mai-with-u/MaiBot-Napcat-Adapter](https://github.com/Mai-with-u/MaiBot-Napcat-Adapter)
 
-你可以在WebUI的插件商店直接找到NapCat Adapter适配器，直接安装即可
+## 1. 安装并登录 NapCat
 
-⚠️安装后需要手动进行**启用**，你可以在webui的插件管理看到哪些插件被启用了
+按照 [NapCat 官方文档](https://napneko.github.io/guide/boot/Shell) 安装 NapCat，并登录用于机器人的 QQ 小号。
 
+## 2. 开启正向 WebSocket 服务器
 
+在 NapCat WebUI 的网络配置中：
 
-<details>
-<summary>（如果出现问题，也可以尝试手动安装）</summary>
+1. 新建或启用 **正向 WebSocket / WebSocket 服务器**。
+2. 设置监听地址和端口，常用端口为 `3001`。
+3. 可以设置访问 Token；如果设置了，稍后把同一个 Token 填入适配器。
+
+不要把 NapCat WebUI Token、MaiBot WebUI Access Token 和 WebSocket Token 混用。
+
+## 3. 安装并启用适配器
+
+在 MaiBot WebUI 中打开“插件管理”，从插件市场安装 **NapCat Adapter**，然后手动启用。插件默认配置为禁用，安装成功不等于已经运行。
+
+如果插件市场不可用，也可以把仓库克隆到 MaiBot 的 `plugins/` 目录：
 
 ```bash
-# 克隆插件
-git clone -b main https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git
-
+git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot-Napcat-Adapter
 ```
 
-**将适配器目录放入 MaiBot 的 `plugins/` 文件夹中**
+手动克隆后仍建议在 WebUI 中完成启用和配置。插件目录名可能因安装方式而异，不要依赖固定目录名判断是否安装成功。
 
-</details>
+## 4. 配置连接
 
+在 NapCat Adapter 的插件设置中填写：
 
-## 配置 NapCat
+**`napcat_server.host`** — NapCat 的地址。同机运行填 `127.0.0.1`；使用项目 Docker Compose 时填服务名 `napcat`。
 
-1. 打开 NapCat 的网页界面
-2. 找到 "正向 WebSocket" 或 "WebSocket 服务器" 设置
-3. 启用正向 WebSocket 服务器，监听端口需要和 NapCat Adapter插件中的 `端口` 一致 （`plugins/MaiBot-Napcat-Adapter/config.toml` 中 `napcat_server.port` ）
-4. 如果你设置的WebSocket连接有访问Token，将这个Token复制并填写到**Adapter插件配置**的**访问令牌**配置项中。（注意不是napcat webui的token也不是maibot webui的token！！！）
+**`napcat_server.port`** — NapCat 正向 WebSocket 的监听端口，例如 `3001`。
 
-具体配置方法请参考 [NapCat 官方文档](https://napneko.github.io/guide/boot/Shell)。
+**`napcat_server.token`** — NapCat 正向 WebSocket 的访问 Token；未设置则留空。
 
-正向 WebSocket 服务器默认端口通常为 `3001`。适配器会作为客户端连接到 NapCat，例如 `ws://127.0.0.1:3001`，具体地址和端口以适配器配置为准。
+适配器会连接类似 `ws://127.0.0.1:3001` 的地址。保存配置后，插件的 `on_config_update` 会停止旧连接并按新配置重新连接，通常不需要重启 MaiBot。
 
-## 启动
+## 5. 配置聊天名单
 
-直接启动 MaiBot 就行，适配器会自动加载并连接。
+适配器默认启用聊天名单过滤，群聊与私聊均默认为白名单，初始名单为空。未加入名单的消息会被丢弃。
 
-
-#### 群聊白名单
-
-NapCat 适配器默认启用聊天名单过滤，群聊默认是白名单模式。没有写进 `群聊名单` 的群消息会被直接丢弃；如果你发现 NapCat 已经连接成功，但群里 @ 机器人没有反应，优先插件的 `聊天过滤` 配置。
-
-<details>
-<summary>具体的配置文件项目</summary>
-
-`plugins/MaiBot-Napcat-Adapter/config.toml`
+测试时可在插件设置中临时关闭名单过滤；正式使用建议保留过滤并把允许的群号或 QQ 号加入对应名单。例如：
 
 ```toml
 [chat]
@@ -66,139 +66,14 @@ group_list_type = "whitelist"
 group_list = ["你的QQ群号"]
 ```
 
-测试阶段也可以临时关闭名单过滤：
+## 验证与排错
 
-```toml
-[chat]
-enable_chat_list_filter = false
-```
-</details>
+**确认插件已加载** — WebUI 插件列表显示 NapCat Adapter 已启用，MaiBot 日志没有加载错误。
 
-## 独立模式使用指南 🔧
+**确认连接方向** — NapCat 运行的是 WebSocket 服务器，适配器日志显示已连接到 NapCat；不要配置反向 WebSocket。
 
-::: warning 旧版方法
-独立版适配器是早期的接入方式，通常只建议在已有独立部署、兼容旧环境或有特殊网络需求时继续使用。新部署建议优先使用上方的插件版适配器，配置更少，也更便于维护。
-:::
+**已连接但不收消息** — 首先检查群聊或私聊白名单，并临时打开丢弃消息日志。
 
-<details>
-<summary>展开查看独立版适配器配置方法</summary>
+**连接失败** — 核对地址、端口和 WebSocket Token。Docker 中不要把 NapCat 地址写成 `127.0.0.1`。
 
-如果你需要独立运行适配器，按以下步骤操作。
-
-使用 `main` 分支：
-
-```bash
-# 克隆 main 分支（默认）
-git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git
-
-# 或者如果已克隆，确保在 main 分支
-cd MaiBot-Napcat-Adapter
-git checkout main
-```
-
-### 配置 MaiBot
-
-在 `config/bot_config.toml` 里添加：
-
-```toml
-[bot]
-platform = "qq"           # 用 QQ 平台
-qq_account = "123456789"  # 你的机器人 QQ 号（字符串）
-nickname = "麦麦"          # 机器人昵称
-```
-
-还是在 `config/bot_config.toml` 里，设置连接参数：
-
-```toml
-[maim_message]
-ws_server_host = "127.0.0.1"   # 服务器地址（本地就用这个）
-ws_server_port = 8000           # 端口号（默认 8000）
-auth_token = []                 # 认证令牌，空着就行
-```
-
-- **`ws_server_host`** — 服务器地址，本地用 `127.0.0.1`，服务器用实际 IP
-- **`ws_server_port`** — 端口号，默认 `8000`，改了就记住这个数字
-- **`auth_token`** — 密码验证，空着就行，不用管
-
-> 💡 **注意**：`maim_message` 配置的是 legacy WebSocket 服务（端口 8000）。适配器通过 MMC 协议连接 MaiBot，默认连接 MaiBot 的 `config/bot_config.toml` 中 `[maim_message]` 设置的 `ws_server_port`（默认 8000）。确保适配器的 `config.toml` 中 `maibot_server.port` 与 MaiBot 的 `ws_server_port` 设置一致。
-
-### 安装 NapCat
-
-请参考 [NapCat 官方文档](https://napneko.github.io/guide/boot/Shell) 安装 NapCat。
-
-**Docker 用户**：如果你使用项目自带的 `docker-compose.yml`，NapCat 已经作为 `napcat` 服务包含在内，直接和 MaiBot 一起启动即可：
-
-```bash
-docker compose up -d
-```
-
-### 设置 NapCat 连接
-
-1. 打开 NapCat 的网页界面
-2. 找到 "反向 WebSocket" 设置
-3. 填上 MaiBot 地址：`ws://127.0.0.1:8000/ws`
-
-具体配置方法请参考 [NapCat 官方文档](https://napneko.github.io/guide/boot/Shell)。
-
-💡 **提示**：如果 NapCat 和 MaiBot 都在 Docker Compose 里运行，请确认 MaiBot 的 `maim_message.ws_server_host` 监听地址允许容器网络访问。
-
-### 登录 QQ
-
-启动 NapCat 后需要登录 QQ。具体登录方法请参考 [NapCat 官方文档](https://napneko.github.io/guide/boot/Shell)。
-
-
-### 连接步骤
-
-推荐启动顺序：
-
-1. **启动 NapCat** → 等 QQ 登录成功
-2. **启动 MaiBot** → 等 WebSocket 服务启动
-3. **启动适配器** → 适配器连接到 NapCat 和 MaiBot
-4. **自动连接** → NapCat 会自动连上适配器
-
-```bash
-# Docker 一键启动（推荐）
-docker compose up -d
-
-# 手动启动
-# 终端 1：启动 NapCat
-# 终端 2：启动适配器 (进入适配器目录运行)
-# 终端 3：uv run python bot.py
-```
-
-</details>
-
-## 一些问题 ✅
-
-怎么知道连上了？看这几个地方：
-
-**插件模式**：
-
-1. **WebUI 插件列表**：能看到 NapCat 适配器插件已加载
-2. **MaiBot 日志**：看到适配器插件已加载的提示
-3. **发消息测试**：在 QQ 群里 @机器人，看有没有回复
-
-**独立模式**：
-
-1. **MaiBot 日志**：看到 "WebSocket 服务启动成功"
-2. **NapCat 日志**：看到 "反向 WebSocket 连接成功"
-3. **适配器日志**：看到连接成功
-4. **发消息测试**：在 QQ 群里 @机器人，看有没有回复
-
-### 连不上怎么办？
-
-**检查这几点**：
-
-- 是否启用了插件，插件是默认关闭的哦
-- 地址和端口填对了吗？是否正确填写WS连接的token
-- NapCat 和 MaiBot 在同一台机器吗？
-- 日志里有什么报错信息？
-
-### 收不到消息？
-
-**可能原因**：
-
-- 适配器是否正确设置了群聊白名单？哪些群聊允许聊天？
-- QQ 号填错了？要和 NapCat 登录的一致
-- NapCat 本身收到消息了吗？看 NapCat 日志
-- 网络连接正常吗？
+**改配置后没有重连** — 查看插件配置更新日志；只有热更新回调失败时，才把完整重启 MaiBot 作为兜底。

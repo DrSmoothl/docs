@@ -50,16 +50,16 @@ The plugin page will display:
 
 ### Enable/Disable Plugins
 
-- Switch ON → Plugin takes effect
-- Switch OFF → Plugin is disabled
-- Changes take effect immediately; no restart required
+- Switch ON → The runtime loads the plugin
+- Switch OFF → The unload lifecycle runs and the plugin stops
+- This normally applies immediately without restarting all of MaiBot
 
 ### Configure Plugins
 
 Some plugins allow custom settings:
 1. Click the "Settings" button of the plugin
 2. Modify configuration options
-3. Changes take effect immediately after saving
+3. After saving, the runtime invokes the plugin configuration-update lifecycle
 
 **Common Configurations**:
 - API Keys (for plugins requiring external services)
@@ -71,7 +71,7 @@ Some plugins allow custom settings:
 When a new version of a plugin is available, an update prompt will appear:
 1. Click the "Update" button
 2. Wait for download and installation
-3. Automatically completes; data will not be lost
+3. Source changes restart the plugin Supervisor and reload the plugin
 
 ### Uninstall Plugins
 
@@ -81,6 +81,22 @@ Unnecessary plugins can be uninstalled:
 3. Plugin files will be deleted
 
 ⚠️ **Note**: Plugin data may be lost after uninstallation
+
+## Actual Lifecycle and Restart Boundary
+
+**Install** — The file watcher detects the new plugin directory. Whether it starts immediately depends on its own `config.toml`; a plugin that defaults to disabled must still be enabled manually.
+
+**Enable and disable** — The runtime loads or unloads the plugin without restarting MaiBot.
+
+**Configuration update** — A loaded plugin receives `on_config_update`. Disabling it unloads it; enabling an unloaded plugin loads it.
+
+**Source update** — Changes to `.py`, `plugin.py`, or `_manifest.json` restart the plugin Supervisor. The plugin is briefly unavailable, but the MaiBot core remains running.
+
+**Uninstall** — The WebUI disables and unloads the plugin before deleting its files. Check whether the plugin stores user data in its own directory before uninstalling it.
+
+::: warning Restart is a recovery step
+Restart all of MaiBot only if the log reports that watching, loading, unloading, or a configuration callback failed. It is not a normal requirement for plugin management.
+:::
 
 ## Recommended Plugins
 

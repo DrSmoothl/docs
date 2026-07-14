@@ -54,6 +54,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: '关于 MaiBot', link: '/about/' },
         { text: 'EULA', link: '/about/EULA' },
+        { text: '隐私条款', link: '/about/PRIVACY' },
       ]
     },
   ],
