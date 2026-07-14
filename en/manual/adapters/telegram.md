@@ -1,6 +1,8 @@
 ---
 title: Telegram Adapter
----# Telegram Adapter
+---
+
+# Telegram Adapter
 
 The Telegram platform adapter for MaiBot, which seamlessly bridges a Telegram Bot with MaiBot via Telegram Bot API long polling.
 

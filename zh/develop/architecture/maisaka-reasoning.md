@@ -4,448 +4,127 @@ title: Maisaka 推理引擎
 
 # Maisaka 推理引擎
 
-Maisaka 是 MaiBot 的核心 AI 运行时，负责对话推理、节奏控制和工具调用。本文详述其内部架构、状态机和执行流程。
+Maisaka 是 MaiBot 的会话调度与多轮工具推理运行时。`MessageTurnScheduler` 负责按会话调度消息并判断是否进入 Planner，`MaisakaReasoningEngine` 负责驱动 Planner 的工具调用循环。
 
-## 架构总览
+## 核心组件
 
-```mermaid
-graph TD
-    subgraph "MaisakaHeartFlowChatting (runtime.py)"
-        A[message_cache 消息缓存] --> B[_schedule_message_turn 触发调度]
-        B --> C[_internal_turn_queue 异步队列]
-        C --> D["MaisakaReasoningEngine.run_loop()"]
-    end
-    subgraph "推理循环 (reasoning_engine.py)"
-        D --> E[收集待处理消息]
-        E --> F[消息静默等待]
-        F --> G{需要 Timing Gate?}
-        G -->|是| H["Timing Gate 子代理"]
-        G -->|否| I["Planner (Action Loop)"]
-        H -->|continue| I
-        H -->|wait/no_action| J[结束本轮]
-        I --> K[执行工具调用]
-        K --> L{暂停?}
-        L -->|是| J
-        L -->|否| M{达到最大轮次?}
-        M -->|是| J
-        M -->|否| G
-    end
-    subgraph "ChatLoopService (chat_loop_service.py)"
-        H -.->|sub_agent| N[context 选择 + prompt 构建]
-        I -.->|planner| N
-        N --> O[LLM 请求]
-        O --> P["Hook: before_request / after_response"]
-    end
-```
+**`MaisakaHeartFlowChatting`** — 单个聊天流的运行时对象，位于 `src/maisaka/runtime.py`。它维护消息缓存、上下文、等待状态、Planner 中断状态、工具注册表、Focus 状态和后台任务。
 
-## MaisakaHeartFlowChatting
+**`MessageTurnScheduler`** — 收到消息后，根据触发模式和会话状态决定立即开始推理、延迟检查或继续等待。
 
-源码位置：`src/maisaka/runtime.py`
+**`FrequencyThresholdTurnGate`** — 在频率模式下，结合有效回复频率、待处理消息数和空窗补偿作出判断。
 
-每个聊天会话对应一个 `MaisakaHeartFlowChatting` 实例，由 `HeartflowManager` 管理生命周期。
+**`ReplyNecessityTurnGate`** — 在 `reply_trigger_mode = "reply_necessity"` 时，根据消息内容和会话压力评分作出判断。
 
-### 状态机
+**`MaisakaChatLoopService`** — 构造 Planner 请求、模型消息和工具定义，并解析模型返回的工具调用。
 
-运行时具有三种状态：
+**`MaisakaReasoningEngine`** — 执行多轮 Planner → Tool → Planner 循环，处理暂停工具、无工具重试和循环结束原因。
 
-```mermaid
-stateDiagram-v2
-    [*] --> stop: 初始化
-    stop --> running: 收到新消息/超时
-    running --> running: 消息处理中
-    running --> wait: wait 工具触发
-    running --> stop: 处理完成/finish/no_action
-    wait --> running: 等待超时/新消息到达
-```
-
-- **`running`** — 正在执行推理循环
-- **`wait`** — 等待状态，wait 工具设定了超时时间
-- **`stop`** — 空闲状态，等待新的外部消息触发
-
-### 核心属性
-
-- **`session_id`** `str` — 会话 ID
-- **`_chat_history`** `list[LLMContextMessage]` — 内部上下文历史
-- **`message_cache`** `list[SessionMessage]` — 待处理消息缓存
-- **`_internal_turn_queue`** `asyncio.Queue` — 内部循环触发队列（"message" / "timeout"）
-- **`_tool_registry`** `ToolRegistry` — 统一工具注册表
-- **`_reasoning_engine`** `MaisakaReasoningEngine` — 推理引擎
-- **`_chat_loop_service`** `ChatLoopService` — 对话循环服务
-- **`_max_internal_rounds`** `int` — 最大内部轮次（默认 10）
-- **`_max_context_size`** `int` — 最大上下文消息数
-- **`_message_debounce_seconds`** `float` — 消息防抖秒数（默认 1.0）
-- **`_talk_frequency_adjust`** `float` — 说话频率倍率
-- **`deferred_tool_specs_by_name`** `dict[str, ToolSpec]` — 延迟发现工具池
-- **`discovered_tool_names`** `set[str]` — 已发现的延迟工具
-
-### 消息触发机制
+## 消息调度
 
 ```mermaid
 flowchart TD
-    A[新消息到达 register_message] --> B{当前状态?}
-    B -->|running + planner 活跃| C{连续打断超限?}
-    C -->|否| D["设置 planner_interrupt_flag"]
-    C -->|是| E[等待当前请求自然完成]
-    B -->|running + 无 planner| F[标记 debounce]
-    B -->|其他| G[_schedule_message_turn]
-    G --> H{待处理 >= 触发阈值?}
-    H -->|是| I[投递 message 到队列]
-    H -->|否| J{空窗补偿满足?}
-    J -->|是| I
-    J -->|否| K[调度延迟检查任务]
+    A["适配器消息进入聊天流"] --> B["register_message() 写入缓存"]
+    B --> C["MessageTurnScheduler"]
+    C --> D{"需要立即处理？"}
+    D -->|是| H["进入 Planner"]
+    D -->|否| E{"reply_trigger_mode"}
+    E -->|frequency| F["按回复频率判断"]
+    E -->|reply_necessity| G["按回复必要性判断"]
+    F --> I{"处理 / 延迟 / 等待"}
+    G --> J{"处理 / 等待"}
+    I -->|处理| H
+    I -->|延迟| K["稍后重新检查"]
+    I -->|等待| L["等待更多消息"]
+    J -->|处理| H
+    J -->|等待| L
 ```
 
-触发阈值计算：
-```python
-effective_frequency = talk_value * _talk_frequency_adjust  # 回复频率
-trigger_threshold = ceil(1.0 / effective_frequency)  # 所需消息数
-```
+直接提及、主动任务和部分 Focus 唤醒路径可以要求立即处理。频率模式下，`talk_value` 与动态规则共同决定有效回复频率；频率为静默时，消息仍会被消费，但不会进入正常回复循环。
 
-空窗补偿：当新消息数不足但空窗时间较长时，按最近平均回复时长折算等价消息数。
+## Planner 工具循环
 
-### 强制 continue 机制
+一次推理周期大致包括以下步骤：
 
-当检测到 @ 或提及时，`_arm_force_next_timing_continue()` 设置标记，使下一次 Timing Gate 直接返回 `continue`，确保 bot 回应直接呼叫。
-
-## MaisakaReasoningEngine
-
-源码位置：`src/maisaka/reasoning_engine.py`
-
-核心推理引擎，负责内部思考循环和工具执行。
-
-### 关键常量
-
-- **`TIMING_GATE_CONTEXT_LIMIT`** — `_max_context_size`（可配置） · Timing Gate 上下文消息上限（读取 `global_config.chat.max_context_size` / `max_private_context_size`）
-- **`TIMING_GATE_MAX_TOKENS`** — 384 · Timing Gate 最大输出 token
-- **`TIMING_GATE_TOOL_NAMES`** — `{"continue", "no_action", "wait"}` · Timing Gate 可用工具
-- **`ACTION_HIDDEN_TOOL_NAMES`** — `{"continue", "no_action"}` · Action Loop 隐藏的工具
-- **`MAX_INTERNAL_ROUNDS`** — 10 · 最大内部思考轮次
-
-### run_loop 主循环
-
-```python
-async def run_loop(self) -> None:
-    while runtime._running:
-        # 1. 等待触发信号
-        queued_trigger = await runtime._internal_turn_queue.get()
-        message_triggered, timeout_triggered = _drain_ready_turn_triggers(queued_trigger)
-
-        # 2. 消息防抖
-        if message_triggered:
-            await runtime._wait_for_message_quiet_period()
-
-        # 3. 收集待处理消息
-        cached_messages = runtime._collect_pending_messages()
-
-        # 4. 消息注入历史
-        await _ingest_messages(cached_messages)
-
-        # 5. 内部思考循环
-        for round_index in range(max_internal_rounds):
-            # 5a. Timing Gate（如果需要）
-            if timing_gate_required:
-                timing_action = await _run_timing_gate(anchor_message)
-            if timing_action != "continue":
-                break  # wait 或 no_action，结束本轮
-
-            # 5b. Planner（Action Loop）
-            response = await _run_interruptible_planner()
-
-            # 5c. 相似度检测
-            if _should_replace_reasoning(response.content):
-                # 替换为重新思考提示
-                response.content = "我应该根据我上面思考的内容进行反思..."
-
-            # 5d. 工具执行
-            if response.tool_calls:
-                should_pause, summaries, monitors = await _handle_tool_calls(...)
-                if should_pause:
-                    break
-                continue  # 工具执行后有新信息，继续循环
-
-            break  # 无工具调用且无内容，结束
-```
-
-### Timing Gate
-
-Timing Gate 是一个独立的子代理，决定对话节奏：
-
-```mermaid
-flowchart TD
-    A[Timing Gate 启动] --> B{强制 continue 标记?}
-    B -->|是| C["直接返回 continue"]
-    B -->|否| D["运行子代理 (24条上下文, 384 tokens)"]
-    D --> E{模型返回了哪个工具?}
-    E -->|wait| F["进入等待状态 (N秒)"]
-    E -->|no_action| G["结束本轮，等待新消息"]
-    E -->|continue| H["继续进入 Planner"]
-    E -->|无有效工具| H
-```
-
-Timing Gate 系统提示词：
-- 优先从 `maisaka_timing_gate` 模板加载
-- 兜底提示词强调 **只调用一个工具**，不要输出普通文本
-- 可用工具仅 `wait`、`no_action`、`continue` 三个
-
-### Planner（Action Loop）
-
-Planner 是主要的推理和工具执行阶段：
-
-1. **构建工具定义**：`_build_action_tool_definitions()`
-   - 过滤 `ACTION_HIDDEN_TOOL_NAMES`（continue、no_action）
-   - 内置 Action 工具直接暴露
-   - 默认第三方/插件工具放入 deferred 池，通过 `tool_search` 发现；声明 `core_tool=True` 或 `visibility="visible"` 的插件工具会直接暴露
-
-2. **运行可打断 Planner**：`_run_interruptible_planner()`
-   - 绑定 `asyncio.Event` 中断标记
-   - 新消息到达时设置标记 → LLM 请求中止（`ReqAbortException`）
-   - 连续打断有上限（`planner_interrupt_max_consecutive_count`）
-
-3. **思考去重**：`_should_replace_reasoning()`
-   - 当前后思考与上一轮相似度 > 90% 时
-   - 替换为"重新思考"提示，避免循环空转
-
-### Planner 打断机制
+1. 收集尚未处理的消息，并等待短暂的消息安静期。
+2. 从会话历史构造 Planner 上下文，加入视觉消息、中期回忆、人物画像和启发式记忆。
+3. 从 `ToolRegistry` 获取当前可用工具。较少使用的延迟加载工具先以提示形式出现，需要通过 `tool_search` 发现。
+4. 调用 `planner` 模型任务。
+5. 执行模型返回的工具调用，并把结果写回上下文。
+6. 普通工具执行完成后继续下一轮规划；`reply`、`wait` 等暂停工具会结束或挂起当前周期。
+7. Planner 连续不调用工具时，系统会追加提示并进行有限次数的重试。
 
 ```mermaid
 sequenceDiagram
+    participant S as Scheduler
     participant R as ReasoningEngine
-    participant P as Planner (LLM)
-    participant M as MaisakaRuntime
+    participant P as Planner
+    participant T as ToolRegistry
+    participant X as Replyer/SendService
 
-    R->>P: 发起 LLM 请求 (绑定 interrupt_flag)
-    M->>M: 新消息到达
-    M->>P: interrupt_flag.set()
-    P-->>R: ReqAbortException
-    R->>M: 等待消息安静期
-    R->>M: 收集新消息
-    R->>R: 跳过 Timing Gate 直接重试 Planner
+    S->>R: 开始一个会话轮次
+    R->>P: 上下文和工具定义
+    P-->>R: 推理内容和工具调用
+    R->>T: 执行工具
+    T-->>R: 返回工具结果
+    alt 普通工具
+        R->>P: 携带结果继续规划
+    else reply
+        T->>X: 生成并发送回复
+        X-->>R: 返回发送结果
+    else wait
+        R-->>S: 进入等待状态
+    end
 ```
 
-打断后行为：
-- 如果 `has_pending_messages` 且未达最大轮次 → 跳过 Timing Gate，重新进入 Planner
-- 否则 → 结束当前循环
+## 工具体系
 
-### 工具执行
+运行时将多个 Provider 注册到统一的 `ToolRegistry`：
 
-工具调用通过统一 `ToolRegistry` 路由：
+**内置工具** — 由 `MaisakaBuiltinToolProvider` 提供，包括 `reply`、`wait`、`send_image`、`send_emoji`、`query_memory`、`query_person_profile`、`tool_search` 等。
 
-```mermaid
-graph TD
-    A[Planner 返回 tool_calls] --> B["构建 ToolInvocation"]
-    B --> C["构建 ToolExecutionContext"]
-    C --> D["ToolRegistry.invoke()"]
-    D --> E{Provider 类型?}
-    E -->|maisaka_builtin| F["MaisakaBuiltinToolProvider"]
-    E -->|plugin| G["PluginToolProvider"]
-    E -->|mcp| H["MCPToolProvider"]
-    F --> I[执行内置工具处理器]
-    G --> J[RPC 调用插件子进程]
-    H --> K[MCP 协议调用]
-    I --> L["ToolExecutionResult"]
-    J --> L
-    K --> L
-    L --> M["追加 ToolResultMessage 到历史"]
-```
+**插件工具** — 由 `PluginToolProvider` 从独立插件运行时暴露。
 
-## 内置工具定义
+**MCP 工具** — MCP 启用且连接成功时，由 `MCPToolProvider` 注册。
 
-源码位置：`src/maisaka/builtin_tool/`
+工具可见性还会受到配置、Focus 模式、能力状态和延迟加载工具发现状态的影响。`tool_search` 只负责发现工具，不会代替目标工具执行操作。
 
-### Timing Gate 工具
+## 回复生成
 
-- **`continue`** — `continue_tool.py` · 允许继续进入下一轮思考 · 关键参数：无
-- **`no_action`** — `no_action.py` · 停止当前循环，等待新外部消息 · 关键参数：无
-- **`wait`** — `wait.py` · 暂停对话 N 秒后重新判断 · 关键参数：`seconds`（默认 30）
+Planner 调用 `reply` 时需要提供目标消息和回复理由。`reply` 工具会组织 Replyer 请求、表达方式选择、引用策略与可选的丰富回复附件，然后通过发送服务输出消息。
 
-### Action 工具
+Replyer 使用 `model_task_config.replyer`。表达方式选择可以使用 `model_task_config.expression_use`；留空时回退到 `utils`。
 
-- **`reply`** — `reply.py` · 生成并发送回复消息 · 关键参数：`msg_id`、`set_quote`、`reference_info`
-- **`send_emoji`** — `send_emoji.py` · 发送表情包 · 关键参数：无（自动根据上下文选择）
-- **`finish`** — `finish.py` · 结束当前思考轮次 · 关键参数：无
-- **`query_jargon`** — `query_jargon.py` · 查询黑话/词条 · 关键参数：`words`
-- **`query_memory`** — `query_memory.py` · 查询长期记忆 · 关键参数：`query`、`mode`、`limit`
-- **`query_person_profile`** — `query_person_profile.py` · 查询人物画像 · 关键参数：`person_name`
-- **`view_complex_message`** — `view_complex_message.py` · 查看完整转发消息 · 关键参数：`message_id`
-- **`tool_search`** — `tool_search.py` · 搜索延迟发现的工具 · 关键参数：`query`、`limit`
+相关 Hook 包括：
 
-### Deferred Tool 发现机制
+- `maisaka.planner.before_request`
+- `maisaka.planner.after_response`
+- `maisaka.replyer.before_request`
+- `maisaka.replyer.before_model_request`
+- `maisaka.replyer.after_response`
 
-Action Loop 中，普通第三方/插件工具默认不直接暴露给 Planner，而是通过两步发现：
+## 等待、退避与中断
 
-1. **tool_search**：搜索 deferred 工具池，匹配到的工具名标记为"已发现"
-2. **下一轮 Planner**：已发现的工具加入可见工具列表
+**连续等待限制** — `chat.reply_timing.max_consecutive_wait_count` 限制一个连续规划链中的 `wait` 次数。
 
-这减少了 Planner 一次看到的工具数量，避免选择困难。
+**无动作退避** — 连续未回复后，`IdleBackoff` 根据基准秒数、上限、开始次数和待处理消息绕过阈值，延迟下一次检查。
 
-插件 Tool 如果声明了 `core_tool=True` 或 `visibility="visible"`，会跳过 deferred 发现流程，直接进入 Planner 可见工具列表。该机制适合高频、低风险、上下文强相关的工具；普通插件工具仍建议保持默认 deferred 行为。
+**Planner 中断** — Planner 请求进行时收到新消息，可以设置中断标志并重新构造上下文。`planner_interrupt_max_consecutive_count` 控制连续中断次数，`0` 表示不限制。
 
-## ChatLoopService
+**等待恢复** — `wait` 可以在超时、收到新消息或主动任务到来后恢复。私聊与静默频率下的恢复策略略有不同。
 
-源码位置：`src/maisaka/chat_loop_service.py`
+## 上下文与监控
 
-负责单步 LLM 请求的封装，包括上下文选择、Prompt 构建和 Hook 触发。
+上下文处理会确保工具调用与工具结果成对出现，并在裁剪后移除孤立的工具结果。视觉模式决定 Planner 是否收到原始图片；图片超过数量限制时由视觉消息限制器处理。
 
-### chat_loop_step 流程
+运行时会向 Maisaka monitor 写入会话、消息、Planner、工具和回复阶段的事件，供 WebUI 的“麦麦观察”页面展示。事件模型定义在 `src/maisaka/monitor/events.py`。
 
-```mermaid
-flowchart TD
-    A["chat_loop_step()"] --> B["确保 Prompt 已加载"]
-    B --> C["select_llm_context_messages()"]
-    C --> D["_build_request_messages()"]
-    D --> E["Hook: maisaka.planner.before_request"]
-    E --> F["LLM generate_response"]
-    F --> G["Hook: maisaka.planner.after_response"]
-    G --> H["返回 ChatResponse"]
-```
+## 配置入口
 
-### 上下文选择策略
+- `[chat.reply_timing]`：回复频率、触发模式、中断、等待上限和无动作退避。
+- `[chat]`：上下文长度、中期回忆和上下文优化。
+- `[visual]`：Planner 和 Replyer 的视觉模式与图片限制。
+- `[experimental]`：Focus、丰富回复、行为学习和注意力漂移。
+- `model_task_config.planner`、`replyer` 和 `expression_use`：对应的模型任务。
 
-`select_llm_context_messages()` 从历史中选择给 LLM 的上下文：
-
-1. 按 `request_kind` 过滤（`planner` 请求隐藏 Timing Gate 工具链）
-2. 从末尾向前遍历，选择能成功转换为 LLM 消息的条目
-3. 计数仅计算 `count_in_context=True` 的消息（`ToolResultMessage` 和 `ReferenceMessage` 不占窗口）
-4. 达到 `max_context_size` 后停止
-5. 隐藏最早 50% 的 assistant 文本消息（保留工具调用链路）
-
-### Hook Specs
-
-Maisaka 相关的 Hook 参数详情请参阅 [Hook 处理器](../../plugin/hooks#maisaka-规划器链)。本文仅介绍推理管线中 Hook 的位置和作用。
-
-## 上下文消息类型
-
-源码位置：`maibot/src/maisaka/context/messages.py`
-
-```mermaid
-classDiagram
-    class LLMContextMessage {
-        <<abstract>>
-        +role: str
-        +processed_plain_text: str
-        +count_in_context: bool
-        +source: str
-        +to_llm_message(enable_visual: bool) Message
-        +consume_once() bool
-    }
-    class SessionBackedMessage {
-        +raw_message: MessageSequence
-        +visible_text: str
-        +timestamp: datetime
-        +message_id: str
-        +source_kind: str
-        +count_in_context = True
-    }
-    class ComplexSessionMessage {
-        +prompt_text: str
-        +complex_message_type: str
-        +count_in_context = True
-    }
-    class ReferenceMessage {
-        +content: str
-        +reference_type: ReferenceMessageType
-        +remaining_uses_value: int
-        +display_prefix: str
-        +count_in_context = False
-    }
-    class AssistantMessage {
-        +content: str
-        +tool_calls: list~ToolCall~
-        +source_kind: str
-        +count_in_context: bool
-    }
-    class ToolResultMessage {
-        +content: str
-        +tool_call_id: str
-        +tool_name: str
-        +success: bool
-        +count_in_context = False
-    }
-    LLMContextMessage <|-- SessionBackedMessage
-    LLMContextMessage <|-- ComplexSessionMessage
-    SessionBackedMessage <|-- ComplexSessionMessage
-    LLMContextMessage <|-- ReferenceMessage
-    LLMContextMessage <|-- AssistantMessage
-    LLMContextMessage <|-- ToolResultMessage
-```
-
-### ReferenceMessageType
-
-- **`custom`** — 自定义参考消息
-- **`jargon`** — 黑话/词条查询结果
-- **`memory`** — 长期记忆检索结果
-- **`tool_hint`** — 工具提示信息（如 deferred tools 提醒）
-
-### 上下文窗口占用
-
-- **`SessionBackedMessage`** — 占用窗口 ✓ · 真实用户消息
-- **`ComplexSessionMessage`** — 占用窗口 ✓ · 复杂/转发消息
-- **`ReferenceMessage`** — 占用窗口 ✗ · 参考信息（不占用窗口）
-- **`AssistantMessage`** (assistant) — 占用窗口 ✓ · 内部思考文本
-- **`AssistantMessage`** (perception) — 占用窗口 ✗ · 感知类文本（打断提示等）
-- **`ToolResultMessage`** — 占用窗口 ✗ · 工具执行结果
-
-## Planner 消息前缀
-
-源码位置：`maibot/src/maisaka/context/planner_messages.py`
-
-每条用户消息注入 Planner 时，会添加结构化前缀：
-
-```
-[时间]HH:MM:SS
-[用户名]nickname
-[用户群昵称]group_card
-[msg_id]message_id
-[发言内容]实际消息文本
-```
-
-`build_planner_prefix()` 构建前缀，`build_planner_user_prefix_from_session_message()` 从 `SessionMessage` 提取参数。
-
-## 监控事件
-
-源码位置：`maibot/src/maisaka/monitor/events.py`
-
-通过 WebSocket 向前端监控面板广播事件：
-
-- **`session.start`** — 运行时启动 · 关键数据：session_id, session_name
-- **`message.ingested`** — 消息注入历史 · 关键数据：speaker_name, content, message_id
-- **`cycle.start`** — 思考循环开始 · 关键数据：cycle_id, round_index, max_rounds
-- **`timing_gate.result`** — Timing Gate 决策完成 · 关键数据：action, content, tool_calls, prompt_tokens
-- **`planner.finalized`** — 规划器完成 · 关键数据：完整 cycle 数据、token 统计、耗时
-
-## 完整推理流程示例
-
-以群聊中用户发送一条 @bot 消息为例：
-
-```mermaid
-sequenceDiagram
-    participant User as 用户
-    participant Chat as ChatBot
-    participant HF as HeartFlowManager
-    participant RT as MaisakaHeartFlowChatting
-    participant RE as ReasoningEngine
-    participant TG as Timing Gate
-    participant PL as Planner
-    participant Tool as 工具执行
-
-    User->>Chat: "@麦麦 你好"
-    Chat->>HF: process_message()
-    HF->>RT: register_message()
-    Note over RT: 检测到 @，设置 force_continue
-
-    RT->>RE: run_loop() 消费消息
-    RE->>RE: _ingest_messages() 注入历史
-
-    RE->>TG: _run_timing_gate()
-    Note over TG: force_continue=True，跳过
-    TG-->>RE: continue
-
-    RE->>PL: _run_interruptible_planner()
-    PL-->>RE: thought + [reply_tool_call]
-
-    RE->>Tool: _invoke_tool_call("reply", ...)
-    Tool-->>RE: ToolExecutionResult(success=True)
-    Note over Tool: reply 工具调用 SendService 发送消息
-
-    RE->>RE: _end_cycle() 记录循环耗时
-```
+修改推理流程文档时，应同时核对 `runtime.py`、`turn_scheduler.py`、`turn_gates.py`、`reasoning_engine.py`、`chat_loop_service.py` 和 `builtin_tool/`。

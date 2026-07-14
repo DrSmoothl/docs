@@ -1,6 +1,8 @@
 ---
 title: Modify Configuration in the Browser
----# Modify Configuration in the Browser
+---
+
+# Modify Configuration in the Browser
 
 No need to edit files, just click around to change MaiBot's settings!
 

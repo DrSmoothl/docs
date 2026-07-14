@@ -103,7 +103,7 @@ git checkout main
 ```toml
 [bot]
 platform = "qq"           # 用 QQ 平台
-qq_account = 123456789    # 你的机器人 QQ 号
+qq_account = "123456789"  # 你的机器人 QQ 号（字符串）
 nickname = "麦麦"          # 机器人昵称
 ```
 

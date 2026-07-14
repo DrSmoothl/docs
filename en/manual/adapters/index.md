@@ -1,6 +1,8 @@
 ---
 title: Adapter Overview
----# Adapter Overview
+---
+
+# Adapter Overview
 
 Adapters are responsible for connecting messaging platforms such as QQ, Telegram, WeChat, and Discord to MaiBot. Different adapters support different platforms, have different runtime methods, and have different maintenance statuses. For your first deployment, it is recommended to prioritize adapters that are actively maintained and have complete documentation.
 

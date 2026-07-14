@@ -1,6 +1,8 @@
 ---
 title: Command Component
----# Command Component
+---
+
+# Command Component
 
 `@Command` is a command component based on regex matching. When a message sent by a user matches a Command's regex pattern, MaiBot will dispatch and execute the corresponding Command handler function.
 

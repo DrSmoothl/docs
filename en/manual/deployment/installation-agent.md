@@ -1,6 +1,8 @@
 ---
 title: Agent Installation Guide
----# Agent Installation Guide (In Testing, Availability Not Guaranteed)
+---
+
+# Agent Installation Guide (In Testing, Availability Not Guaranteed)
 
 Let AI install MaiBot for you, you just need to answer a few questions.
 

@@ -16,9 +16,11 @@ This document is organized according to `src/config/official_configs.py` and `sr
 - **`[personality]`** — Character setting and reply style
 - **`[visual]`** — Image understanding mode and visual prompt
 - **`[chat]`** — Reply frequency, context, chat prompts
+- **`[experimental]`** — Behavior learning, rich replies, Focus, and attention drift
 - **`[message_receive]`** — Image parsing threshold and message filtering
 - **`[a_memorix]`** — Long-term memory system: storage, vectorization, retrieval, profiles, evolution, and Web operations
-- **`[expression]`** — Expression learning, jargon learning, expression checking
+- **`[expression]`** — Expression learning, selection, and checking
+- **`[jargon]`** — Jargon learning and sharing groups
 - **`[voice]`** — Speech recognition
 - **`[emoji]`** — Emoji collection, filtering, sending
 - **`[keyword_reaction]`** — Keyword/regex triggered reactions
@@ -33,6 +35,7 @@ This document is organized according to `src/config/official_configs.py` and `sr
 - **`[database]`** — Message binary data saving policy
 - **`[mcp]`** — MCP client and server configuration
 - **`[plugin_runtime]`** — Plugin runtime and browser rendering configuration
+- **`[plugin]`** — Users allowed to manage plugins through chat commands
 
 ::: tip
 The `[inner] version` at the top of the configuration file is managed by the program. Users usually do not need to edit this version manually.
@@ -45,14 +48,14 @@ The `[inner] version` at the top of the configuration file is managed by the pro
 ```toml
 [bot]
 platform = "qq"
-qq_account = 123456789
+qq_account = "123456789"
 platforms = []
 nickname = "MaiMai"
 alias_names = ["XiaoMai", "MaiZi"]
 ```
 
 - **`platform`** — Main platform identifier, such as qq. Default: empty
-- **`qq_account`** — QQ account used by the bot, used to identify @mentions and self messages. Default: 0
+- **`qq_account`** — Bot account ID stored as a string, used to identify @mentions and self messages. Default: empty
 - **`platforms`** — Other platform identifiers, used in multi-platform scenarios. Default: empty
 - **`nickname`** — Bot nickname. Default: `麦麦`
 - **`alias_names`** — Bot aliases, used when detecting mentions. Default: empty
@@ -82,12 +85,22 @@ multiple_probability = 0.2
 [visual]
 planner_mode = "auto"
 replyer_mode = "auto"
+max_image_num = 128
+wait_image_recognize_max_time = 10.0
+handle_oversized_images = true
+max_image_size_mb = 30.0
+oversized_image_handle_method = "compress"
 ```
 
 The image description prompt is managed by the Prompt template `prompts/<locale>/image_description.prompt`.
 
 - **`planner_mode`** — Planner visual mode, options are text, multimodal, or auto; auto chooses based on model metadata. Default: `auto`
 - **`replyer_mode`** — Replyer visual mode, options are text, multimodal, or auto; auto chooses based on model metadata. Default: `auto`
+- **`max_image_num`** — Maximum images in one multimodal request. Default: 128
+- **`wait_image_recognize_max_time`** — Maximum wait for image recognition, in seconds. Default: 10
+- **`handle_oversized_images`** — Whether oversized images are compressed or discarded. Default: enabled
+- **`max_image_size_mb`** — Oversized-image threshold in MB. Default: 30
+- **`oversized_image_handle_method`** — `compress` or `discard`. Default: `compress`
 
 ## Chat [chat]
 
@@ -95,55 +108,64 @@ The image description prompt is managed by the Prompt template `prompts/<locale>
 
 ```toml
 [chat]
-talk_value = 1.0
-private_talk_value = 1.0
-mentioned_bot_reply = false
-inevitable_at_reply = true
-enable_at = true
-enable_reply_quote = true
 max_context_size = 40
 max_private_context_size = 60
 enable_context_optimization = true
 mid_term_memory = true
-mid_term_memory_lenth = 5
-enable_independent_timing_gate = true
-planner_interrupt_max_consecutive_count = 2
+mid_term_memory_lenth = 10
+self_message_special_mark = true
+
+[chat.reply_timing]
+talk_value = 1.0
+private_talk_value = 1.0
+mentioned_bot_reply = false
+inevitable_at_reply = true
+reply_trigger_mode = "frequency"
+planner_interrupt_max_consecutive_count = 0
+max_consecutive_wait_count = 3
+no_action_backoff_base_seconds = 15.0
+no_action_backoff_cap_seconds = 300.0
+no_action_backoff_start_count = 2
+no_action_backoff_bypass_pending_count = 6
+enable_talk_value_rules = false
+
+[chat.reply_style]
+enable_reply_quote = true
 group_chat_prompt = "..."
 private_chat_prompts = "..."
 chat_prompts = []
-enable_talk_value_rules = true
 ```
 
 - **`talk_value`** — Chat frequency. Smaller means quieter, range 0-1. Default: 1.0
 - **`private_talk_value`** — Private chat frequency. Smaller means quieter, range 0-1. Default: 1.0
 - **`mentioned_bot_reply`** — Whether to tend to reply when the bot name is mentioned in plain text. Default: disabled
 - **`inevitable_at_reply`** — Whether to always reply when @mentioned. Default: enabled
-- **`enable_at`** — Whether to allow using at mentions. Default: enabled
 - **`enable_reply_quote`** — Whether to include quoted replies. Default: enabled
 - **`max_context_size`** — Number of context messages sent to the model. Default: 40
 - **`max_private_context_size`** — Private chat context length. Default: 60
 - **`enable_context_optimization`** — Whether to optimize Planner context usage, with possible cache impact. Default: enabled
 - **`mid_term_memory`** — Whether to summarize trimmed chat history with the utils model and keep it as an expandable complex message. Default: enabled
-- **`mid_term_memory_lenth`** — Maximum number of mid-term summary messages to retain; the oldest one is removed when exceeded. Default: 5
-- **`enable_independent_timing_gate`** — Whether to use an independent Timing Gate; when disabled, pacing tools are merged into Planner. Default: enabled
-- **`planner_interrupt_max_consecutive_count`** — Maximum consecutive planner interruptions by new messages. 0 disables interruption protection. Default: 2
+- **`mid_term_memory_lenth`** — Maximum number of mid-term recall messages to retain. Default: 10
+- **`reply_trigger_mode`** — Message trigger strategy, either `frequency` or `reply_necessity`. Default: `frequency`
+- **`planner_interrupt_max_consecutive_count`** — Maximum consecutive Planner interruptions by new messages. 0 means unlimited. Default: 0
+- **`max_consecutive_wait_count`** — Maximum consecutive `wait` calls in one Planner cycle. Default: 3
 - **`group_chat_prompt`** — General group chat instructions. See default config
 - **`private_chat_prompts`** — General private chat instructions. See default config
 - **`chat_prompts`** — Extra prompts by platform/chat flow. Default: empty
-- **`enable_talk_value_rules`** — Whether to enable dynamic talk frequency rules. Default: enabled
+- **`enable_talk_value_rules`** — Whether to enable dynamic talk frequency rules. Default: disabled
 - **`talk_value_rules`** — Adjusts talk_value by chat flow and time range. Two default rules
 
 ### talk_value_rules
 
 ```toml
-[[chat.talk_value_rules]]
+[[chat.reply_timing.talk_value_rules]]
 platform = ""
 item_id = ""
 rule_type = "group"
 time = "00:00-08:59"
 value = 0.8
 
-[[chat.talk_value_rules]]
+[[chat.reply_timing.talk_value_rules]]
 platform = ""
 item_id = ""
 rule_type = "group"
@@ -160,7 +182,7 @@ value = 1.0
 ### chat_prompts
 
 ```toml
-[[chat.chat_prompts]]
+[[chat.reply_style.chat_prompts]]
 platform = "qq"
 item_id = "123456"
 rule_type = "group"
@@ -168,6 +190,20 @@ prompt = "Speak more briefly in this group."
 ```
 
 `platform`, `item_id`, and `prompt` must all be filled in; otherwise the extra prompt entry is invalid.
+
+## Experimental Features [experimental]
+
+**`enable_behavior_learning`** — Enables behavior learning. Default: disabled.
+
+**`enable_rich_reply`** — Allows the `reply` action to attach images, emoji, or mentions. Default: disabled.
+
+**`emotion_trait`** — Experimental emotional trait: `rational_calm`, `neutral`, or `sentimental`. Default: `neutral`.
+
+**`behavior_learning_list`** / **`behavior_groups`** — Select chat scopes and sharing groups for behavior learning.
+
+**`focus_mode`**, **`focus_on_private`**, **`focus_chat_whitelist`**, **`focus_groups`**, and **`focus_cool_time`** control Focus mode.
+
+**`attention_drift`** — Experimental attention-drift settings, including its switch, drift level, anchor policy, and reaction style.
 
 ## Message Receiving [message_receive]
 
@@ -202,17 +238,15 @@ Legacy `[memory]` fields migrate into `[a_memorix.integration]` and `[a_memorix.
 
 ## Expression Learning [expression]
 
-`[expression]` controls expression learning, jargon learning, expression auto-checking, and shared expression groups.
+`[expression]` controls expression learning and expression selection. Jargon learning has its own `[jargon]` section.
 
 - **`learning_list`** — Expression learning configuration by chat flow
-- **`advanced_chosen`** — Whether to enable sub-agent based second-stage expression selection
 - **`expression_groups`** — Shared expression learning groups
 - **`expression_checked_only`** — Whether to select only checked and non-rejected expressions
-- **`expression_self_reflect`** — Whether to enable automatic expression optimization
-- **`expression_auto_check_interval`** — Auto-check interval in seconds
-- **`expression_auto_check_count`** — Number of expressions randomly selected for each auto-check
-- **`expression_auto_check_custom_criteria`** — Additional custom evaluation criteria
-- **`all_global_jargon`** — Whether to enable global jargon mode
+- **`expression_self_reflect`** — Whether to review learned expressions with AI before writing them
+- **`expression_selection_mode`** — Selection strategy: `legacy`, `vector`, or `vector_intent`
+- **`expression_vector_index_path`** — Vector index path, resolved relative to the project root
+- **`expression_vector_candidate_pool_size`** — Candidate count passed to the expression selector, with a hard limit of 50
 
 ### learning_list
 
@@ -220,18 +254,16 @@ Legacy `[memory]` fields migrate into `[a_memorix.integration]` and `[a_memorix.
 [[expression.learning_list]]
 platform = ""
 item_id = ""
-rule_type = "group"
-use_expression = true
-enable_learning = true
-enable_jargon_learning = true
+type = "group"
+use = true
+learn = true
 ```
 
 - **`platform`** — Platform. Empty together with item_id means global
 - **`item_id`** — User/group ID. Empty together with platform means global
-- **`rule_type`** — Chat flow type, group or private
-- **`use_expression`** — Whether to use learned expressions
-- **`enable_learning`** — Whether to enable expression optimization learning
-- **`enable_jargon_learning`** — Whether to enable jargon learning
+- **`type`** — Chat flow type, group or private
+- **`use`** — Whether to use learned expressions
+- **`learn`** — Whether to learn expressions from this chat
 
 ## Voice [voice]
 
@@ -245,7 +277,6 @@ enable_jargon_learning = true
 - **`check_interval`** — Emoji check interval in minutes
 - **`steal_emoji`** — Whether to collect emojis from chat
 - **`content_filtration`** — Whether to enable emoji filtering
-- **`filtration_prompt`** — Emoji filtering requirement
 
 ## Keyword Reaction [keyword_reaction]
 
@@ -301,7 +332,7 @@ llm_request_snapshot_limit = 128
 maisaka_prompt_preview_limit = 256
 maisaka_reply_effect_limit = 256
 suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "httpcore", "requests", "sqlalchemy", "openai", "uvicorn", "jieba"]
-library_log_levels = { aiohttp = "WARNING" }
+library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }
 ```
 
 - **`date_style`** — Log date format. Default: `m-d H:i:s`
@@ -317,13 +348,14 @@ library_log_levels = { aiohttp = "WARNING" }
 - **`maisaka_prompt_preview_limit`** — Maximum number of Maisaka Prompt preview groups per session. Default: 256
 - **`maisaka_reply_effect_limit`** — Maximum number of Maisaka reply effect records per session. Default: 256
 - **`suppress_libraries`** — List of third-party libraries to completely suppress logs. 11 libraries
-- **`library_log_levels`** — Log levels for specific third-party libraries. Default: `{"aiohttp": "WARNING"}`
+- **`library_log_levels`** — Log levels for specific third-party libraries. Default: `{"aiohttp": "WARNING", "PIL": "WARNING"}`
 
 ### response_splitter
 
 - **`enable`** — Whether to enable response splitting
 - **`max_length`** — Maximum allowed response length
 - **`max_sentence_num`** — Maximum allowed sentence count
+- **`max_split_num`** — Maximum number of split messages. Default: 3
 - **`enable_kaomoji_protection`** — Whether to protect kaomoji
 - **`enable_overflow_return_all`** — Whether to return all content when sentence count exceeds the limit
 
@@ -335,12 +367,10 @@ library_log_levels = { aiohttp = "WARNING" }
 
 ### debug
 
-- **`enable_maisaka_stage_board`** — Whether to enable the Maisaka stage board
 - **`show_maisaka_thinking`** — Whether to show replyer reasoning
-- **`show_jargon_prompt`** — Whether to show jargon-related prompts
-- **`show_memory_prompt`** — Whether to show memory retrieval prompts
 - **`enable_reply_effect_tracking`** — Whether to enable reply effect score tracking
-- **`record_reply_request`** — Whether to record Replyer request body. Disabled by default
+- **`keep_prompt_preview_json_base64`** — Whether Prompt preview JSON keeps image base64 data. Disabled by default
+- **`record_tool_structured_content`** — Whether to store structured tool results for debugging. Disabled by default
 - **`enable_llm_cache_stats`** — Whether to record LLM prompt cache debug statistics. Disabled by default
 
 ## Message Service [maim_message]
@@ -361,9 +391,10 @@ library_log_levels = { aiohttp = "WARNING" }
 ## WebUI [webui]
 
 - **`enabled`** — Whether to enable WebUI. Default: enabled
-- **`host`** — WebUI bind host. Default: `127.0.0.1`
+- **`host`** — WebUI bind host list. Default: `["127.0.0.1", "::1"]`
 - **`port`** — WebUI bind port. Default: 8001
 - **`mode`** — WebUI running mode, options are development or production. Default: `production`
+- **`webui_style`** — UI style number: 0 for legacy, 1 for future-retro. Default: 1
 - **`anti_crawler_mode`** — Anti-crawler mode, options are false, strict, loose, or basic. Default: `basic`
 - **`allowed_ips`** — IP whitelist, comma-separated; supports exact IP, CIDR, and wildcard. Default: `127.0.0.1`
 - **`trusted_proxies`** — Trusted proxy IP list. Default: empty
@@ -455,14 +486,16 @@ env = {}
 ```toml
 [bot]
 platform = "qq"
-qq_account = 123456789
+qq_account = "123456789"
 nickname = "MaiMai"
 alias_names = ["XiaoMai"]
 
 [chat]
+max_context_size = 40
+
+[chat.reply_timing]
 talk_value = 0.7
 inevitable_at_reply = true
-max_context_size = 40
 
 [a_memorix]
 

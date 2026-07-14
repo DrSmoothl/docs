@@ -1,6 +1,8 @@
 ---
 title: Message Gateway
----# Message Gateway
+---
+
+# Message Gateway
 
 The `@MessageGateway` decorator is used to declare a message gateway component, implementing bidirectional message routing between MaiBot and external message platforms (such as QQ, Discord, etc.). The message gateway is the core component of a platform adapter, responsible for outbound message sending and inbound message injection.
 

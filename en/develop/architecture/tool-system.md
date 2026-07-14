@@ -325,7 +325,7 @@ Built-in tools are part of the MaiSaka inference engine, used to perform core ac
 
 Built-in Tool Characteristics:
 
-**Strong Binding to Inference Flow**: Built-in tools serve the Planner, Timing Gate, and Action Loop.
+**Strong Binding to Inference Flow**: Built-in tools serve the Planner tool loop, reply generation, and session waiting.
 
 **Centralized Declaration Management**: `BUILTIN_TOOL_ENTRIES` centrally declares tool names, spec constructors, and handlers.
 

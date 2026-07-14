@@ -2,6 +2,13 @@
 
 For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-with-u/MaiBot/releases).
 
+::: timeline 2026-07-09
+- [1.0.12] Improved Planner-to-Replyer information transfer and reduced duplicate replies
+- WebUI: more reliable offline observation records, custom API model lists, multiple model configurations, data import/export, and upgrade announcements
+- Initial setup now guides users to replace the temporary startup Token with a persistent Token
+- Messaging: the host can control adapter admission; fixed handling of oversized emoji images
+:::
+
 ::: timeline 2026-06-12
 - [1.0.0] **Systematic upgrade!** Maisaka inference engine refactored with Planner-Replyer deep integration
 - Thinking effort mechanism: dynamically controls reply time and length

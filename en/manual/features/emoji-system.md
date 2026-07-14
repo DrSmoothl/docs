@@ -1,6 +1,8 @@
 ---
 title: Sticker Feature
----# Sticker Feature 😊
+---
+
+# Sticker Feature 😊
 
 MaiBot doesn't just send text; it can also send stickers! And it doesn't send them randomly—it intelligently selects appropriate stickers based on the chat context, making conversations more interesting and lively.
 

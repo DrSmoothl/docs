@@ -21,7 +21,7 @@ The complete processing pipeline from message reception to final response, suppo
 
 ### 🧠 Maisaka Reasoning Engine
 
-A multi-turn internal reasoning system based on tool calling. Planner decision-making, Timing Gate rhythm control, automatic interruption, and retries ensure natural and smooth conversation flow.
+A multi-turn internal reasoning system based on tool calling. Message Turn Gates, Planner decisions, automatic interruption, and retries keep conversation flow natural.
 
 [Learn about Maisaka →](../manual/features/maisaka-reasoning.md)
 

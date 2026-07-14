@@ -326,7 +326,7 @@ Provider 不关心其他来源如何注册，也不直接参与 LLM 选择。它
 
 内置工具特点：
 
-**强绑定推理流程** ：内置工具服务于 Planner、Timing Gate 和 Action Loop。
+**强绑定推理流程** ：内置工具服务于 Planner 工具循环、回复生成和会话等待。
 
 **声明集中管理** ：`BUILTIN_TOOL_ENTRIES` 集中声明工具名、spec 构造器和 handler。
 

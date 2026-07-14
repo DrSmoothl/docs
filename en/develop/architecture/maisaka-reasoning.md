@@ -1,449 +1,130 @@
 ---
-title: Maisaka Inference Engine
----# Maisaka Reasoning Engine
+title: Maisaka Reasoning Engine
+---
 
-Maisaka is the core AI runtime of MaiBot, responsible for conversation reasoning, pacing control, and tool calling. This document details its internal architecture, state machine, and execution flow.
+# Maisaka Reasoning Engine
 
-## Architecture Overview
+Maisaka is MaiBot's per-session scheduler and multi-round tool-reasoning runtime. `MessageTurnScheduler` schedules messages and decides when they enter the Planner. `MaisakaReasoningEngine` then drives the Planner tool loop.
 
-```mermaid
-graph TD
-    subgraph "MaisakaHeartFlowChatting (runtime.py)"
-        A[message_cache 消息缓存] --> B[_schedule_message_turn 触发调度]
-        B --> C[_internal_turn_queue 异步队列]
-        C --> D["MaisakaReasoningEngine.run_loop()"]
-    end
-    subgraph "推理循环 (reasoning_engine.py)"
-        D --> E[收集待处理消息]
-        E --> F[消息静默等待]
-        F --> G{需要 Timing Gate?}
-        G -->|是| H["Timing Gate 子代理"]
-        G -->|否| I["Planner (Action Loop)"]
-        H -->|continue| I
-        H -->|wait/no_action| J[结束本轮]
-        I --> K[执行工具调用]
-        K --> L{暂停?}
-        L -->|是| J
-        L -->|否| M{达到最大轮次?}
-        M -->|是| J
-        M -->|否| G
-    end
-    subgraph "ChatLoopService (chat_loop_service.py)"
-        H -.->|sub_agent| N[context 选择 + prompt 构建]
-        I -.->|planner| N
-        N --> O[LLM 请求]
-        O --> P["Hook: before_request / after_response"]
-    end
-```
+## Core components
 
-## MaisakaHeartFlowChatting
+**`MaisakaHeartFlowChatting`** — The runtime for one chat stream in `src/maisaka/runtime.py`. It owns the message cache, context, wait state, Planner interruption state, tool registry, Focus state, and background tasks.
 
-Source location: `src/maisaka/runtime.py`
+**`MessageTurnScheduler`** — Uses the trigger mode and session state to enter the Planner, defer a check, or wait for more messages.
 
-Each chat session corresponds to a `MaisakaHeartFlowChatting` instance, with its lifecycle managed by `HeartflowManager`.
+**`FrequencyThresholdTurnGate`** — In frequency mode, considers effective reply frequency, pending-message count, and idle compensation.
 
-### State Machine
+**`ReplyNecessityTurnGate`** — When `reply_trigger_mode = "reply_necessity"`, scores message content and session pressure.
 
-The runtime has three states:
+**`MaisakaChatLoopService`** — Builds Planner requests, model messages, and tool definitions, then parses model tool calls.
 
-```mermaid
-stateDiagram-v2
-    [*] --> stop: 初始化
-    stop --> running: 收到新消息/超时
-    running --> running: 消息处理中
-    running --> wait: wait 工具触发
-    running --> stop: 处理完成/finish/no_action
-    wait --> running: 等待超时/新消息到达
-```
+**`MaisakaReasoningEngine`** — Runs the Planner → Tool → Planner loop and handles pause tools, no-tool retries, and cycle termination.
 
-- **`running`** — Currently executing the reasoning loop
-- **`wait`** — Waiting state; the `wait` tool has set a timeout
-- **`stop`** — Idle state, waiting for a new external message trigger
-
-### Core Attributes
-
-- **`session_id`** `str` — Session ID
-- **`_chat_history`** `list[LLMContextMessage]` — Internal context history
-- **`message_cache`** `list[SessionMessage]` — Pending message cache
-- **`_internal_turn_queue`** `asyncio.Queue` — Internal loop trigger queue ("message" / "timeout")
-- **`_tool_registry`** `ToolRegistry` — Unified tool registry
-- **`_reasoning_engine`** `MaisakaReasoningEngine` — Reasoning engine
-- **`_chat_loop_service`** `ChatLoopService` — Conversation loop service
-- **`_max_internal_rounds`** `int` — Maximum internal rounds (default 10)
-- **`_max_context_size`** `int` — Maximum context message count
-- **`_message_debounce_seconds`** `float` — Message debounce seconds (default 1.0)
-- **`_talk_frequency_adjust`** `float` — Speaking frequency multiplier
-- **`deferred_tool_specs_by_name`** `dict[str, ToolSpec]` — Deferred discovery tool pool
-- **`discovered_tool_names`** `set[str]` — Discovered deferred tools
-
-### Message Trigger Mechanism
+## Message scheduling
 
 ```mermaid
 flowchart TD
-    A[新消息到达 register_message] --> B{当前状态?}
-    B -->|running + planner 活跃| C{连续打断超限?}
-    C -->|否| D["设置 planner_interrupt_flag"]
-    C -->|是| E[等待当前请求自然完成]
-    B -->|running + 无 planner| F[标记 debounce]
-    B -->|其他| G[_schedule_message_turn]
-    G --> H{待处理 >= 触发阈值?}
-    H -->|是| I[投递 message 到队列]
-    H -->|否| J{空窗补偿满足?}
-    J -->|是| I
-    J -->|否| K[调度延迟检查任务]
+    A["Adapter message enters the chat stream"] --> B["register_message() caches it"]
+    B --> C["MessageTurnScheduler"]
+    C --> D{"Process immediately?"}
+    D -->|yes| H["Enter Planner"]
+    D -->|no| E{"reply_trigger_mode"}
+    E -->|frequency| F["Evaluate reply frequency"]
+    E -->|reply_necessity| G["Evaluate reply necessity"]
+    F --> I{"process / defer / wait"}
+    G --> J{"process / wait"}
+    I -->|process| H
+    I -->|defer| K["Check again later"]
+    I -->|wait| L["Wait for more messages"]
+    J -->|process| H
+    J -->|wait| L
 ```
 
-Trigger threshold calculation:
-```python
-effective_frequency = talk_value * _talk_frequency_adjust  # 回复频率
-trigger_threshold = ceil(1.0 / effective_frequency)  # 所需消息数
-```
+Direct mentions, proactive tasks, and some Focus wake-up paths can request immediate processing. In frequency mode, `talk_value` and dynamic rules determine the effective reply frequency. At a silent frequency, messages are still consumed without entering the normal reply loop.
 
-Idle window compensation: When the number of new messages is insufficient but the idle time is long, it is converted into an equivalent number of messages based on the recent average response duration.
+## Planner tool loop
 
-### Forced Continue Mechanism
+A reasoning cycle broadly follows these steps:
 
-When an @ or mention is detected, `_arm_force_next_timing_continue()` sets a flag so that the next Timing Gate directly returns `continue`, ensuring the bot responds to the direct call.
-
-## MaisakaReasoningEngine
-
-Source location: `src/maisaka/reasoning_engine.py`
-
-The core reasoning engine responsible for the internal thinking loop and tool execution.
-
-### Key Constants
-
-- **`TIMING_GATE_CONTEXT_LIMIT`** — `_max_context_size` (configurable) · Timing Gate context message limit (reads `global_config.chat.max_context_size` / `max_private_context_size`)
-- **`TIMING_GATE_MAX_TOKENS`** — 384 · Timing Gate maximum output tokens
-- **`TIMING_GATE_TOOL_NAMES`** — `{"continue", "no_action", "wait"}` · Timing Gate available tools
-- **`ACTION_HIDDEN_TOOL_NAMES`** — `{"continue", "no_action"}` · Action Loop hidden tools
-- **`MAX_INTERNAL_ROUNDS`** — 10 · Maximum internal thinking rounds
-
-### run_loop Main Loop
-
-```python
-async def run_loop(self) -> None:
-    while runtime._running:
-        # 1. 等待触发信号
-        queued_trigger = await runtime._internal_turn_queue.get()
-        message_triggered, timeout_triggered = _drain_ready_turn_triggers(queued_trigger)
-
-        # 2. 消息防抖
-        if message_triggered:
-            await runtime._wait_for_message_quiet_period()
-
-        # 3. 收集待处理消息
-        cached_messages = runtime._collect_pending_messages()
-
-        # 4. 消息注入历史
-        await _ingest_messages(cached_messages)
-
-        # 5. 内部思考循环
-        for round_index in range(max_internal_rounds):
-            # 5a. Timing Gate（如果需要）
-            if timing_gate_required:
-                timing_action = await _run_timing_gate(anchor_message)
-            if timing_action != "continue":
-                break  # wait 或 no_action，结束本轮
-
-            # 5b. Planner（Action Loop）
-            response = await _run_interruptible_planner()
-
-            # 5c. 相似度检测
-            if _should_replace_reasoning(response.content):
-                # 替换为重新思考提示
-                response.content = "我应该根据我上面思考的内容进行反思..."
-
-            # 5d. 工具执行
-            if response.tool_calls:
-                should_pause, summaries, monitors = await _handle_tool_calls(...)
-                if should_pause:
-                    break
-                continue  # 工具执行后有新信息，继续循环
-
-            break  # 无工具调用且无内容，结束
-```
-
-### Timing Gate
-
-The Timing Gate is an independent sub-agent that determines the conversation pace:
-
-```mermaid
-flowchart TD
-    A[Timing Gate 启动] --> B{强制 continue 标记?}
-    B -->|是| C["直接返回 continue"]
-    B -->|否| D["运行子代理 (24条上下文, 384 tokens)"]
-    D --> E{模型返回了哪个工具?}
-    E -->|wait| F["进入等待状态 (N秒)"]
-    E -->|no_action| G["结束本轮，等待新消息"]
-    E -->|continue| H["继续进入 Planner"]
-    E -->|无有效工具| H
-```
-
-Timing Gate system prompt:
-- Prioritizes loading from the `maisaka_timing_gate` template
-- Fallback prompts emphasize **calling only one tool** and not outputting plain text
-- Available tools are limited to `wait`, `no_action`, and `continue`
-
-### Planner (Action Loop)
-
-The Planner is the primary reasoning and tool execution phase:
-
-1. **Construct Tool Definitions**: `_build_action_tool_definitions()`
-   - Filter `ACTION_HIDDEN_TOOL_NAMES` (continue, no_action)
-   - Built-in Action tools are exposed directly
-   - Default third-party/plugin tools are placed in the deferred pool and discovered via `tool_search`; plugin tools declaring `core_tool=True` or `visibility="visible"` are exposed directly
-
-2. **Run Interruptible Planner**: `_run_interruptible_planner()`
-   - Bind `asyncio.Event` interrupt flag
-   - When a new message arrives, the flag is set → LLM request is aborted (`ReqAbortException`)
-   - There is a limit to consecutive interruptions (`planner_interrupt_max_consecutive_count`)
-
-3. **Thinking Deduplication**: `_should_replace_reasoning()`
-   - When the similarity between current thinking and the previous round is > 90%
-   - Replace with a "rethink" prompt to avoid infinite loops
-
-### Planner Interrupt Mechanism
+1. Collect unprocessed messages and wait for a short quiet period.
+2. Build Planner context, including visual content, mid-term recall, person profiles, and heuristic memory.
+3. Obtain available tools from `ToolRegistry`. Less common deferred tools first appear as hints and must be discovered through `tool_search`.
+4. Call the `planner` model task.
+5. Execute returned tool calls and append their results to the context.
+6. Continue planning after normal tools; pause or end the cycle for tools such as `reply` and `wait`.
+7. If the Planner repeatedly returns no tool call, append guidance and retry a limited number of times.
 
 ```mermaid
 sequenceDiagram
+    participant S as Scheduler
     participant R as ReasoningEngine
-    participant P as Planner (LLM)
-    participant M as MaisakaRuntime
+    participant P as Planner
+    participant T as ToolRegistry
+    participant X as Replyer/SendService
 
-    R->>P: 发起 LLM 请求 (绑定 interrupt_flag)
-    M->>M: 新消息到达
-    M->>P: interrupt_flag.set()
-    P-->>R: ReqAbortException
-    R->>M: 等待消息安静期
-    R->>M: 收集新消息
-    R->>R: 跳过 Timing Gate 直接重试 Planner
+    S->>R: Start session turn
+    R->>P: Context and tool definitions
+    P-->>R: Reasoning and tool calls
+    R->>T: Invoke tools
+    T-->>R: Tool results
+    alt normal tool
+        R->>P: Continue with results
+    else reply
+        T->>X: Generate and send reply
+        X-->>R: Send result
+    else wait
+        R-->>S: Enter wait state
+    end
 ```
 
-Behavior after interruption:
-- If `has_pending_messages` and the maximum rounds have not been reached → Skip Timing Gate and re-enter Planner
-- Otherwise → End the current loop
+## Tool system
 
-### Tool Execution
+The runtime registers several providers in one `ToolRegistry`:
 
-Tool calls are routed through a unified `ToolRegistry`:
+**Built-in tools** — `MaisakaBuiltinToolProvider` exposes `reply`, `wait`, `send_image`, `send_emoji`, `query_memory`, `query_person_profile`, `tool_search`, and other built-ins.
 
-```mermaid
-graph TD
-    A[Planner 返回 tool_calls] --> B["构建 ToolInvocation"]
-    B --> C["构建 ToolExecutionContext"]
-    C --> D["ToolRegistry.invoke()"]
-    D --> E{Provider 类型?}
-    E -->|maisaka_builtin| F["MaisakaBuiltinToolProvider"]
-    E -->|plugin| G["PluginToolProvider"]
-    E -->|mcp| H["MCPToolProvider"]
-    F --> I[执行内置工具处理器]
-    G --> J[RPC 调用插件子进程]
-    H --> K[MCP 协议调用]
-    I --> L["ToolExecutionResult"]
-    J --> L
-    K --> L
-    L --> M["追加 ToolResultMessage 到历史"]
-```
+**Plugin tools** — `PluginToolProvider` exposes tools from the isolated plugin runtime.
 
-## Built-in Tool Definitions
+**MCP tools** — `MCPToolProvider` is registered when MCP is enabled and connected.
 
-Source location: `src/maisaka/builtin_tool/`
+Visibility also depends on configuration, Focus mode, capability state, and deferred-tool discovery. `tool_search` discovers tools but does not execute the target tool.
 
-### Timing Gate Tools
+## Reply generation
 
-- **`continue`** — `continue_tool.py` · Allows proceeding to the next thinking round · Key parameters: None
-- **`no_action`** — `no_action.py` · Stops the current loop and waits for new external messages · Key parameters: None
-- **`wait`** — `wait.py` · Pauses the conversation for N seconds before re-evaluating · Key parameters: `seconds` (default 30)
+When the Planner calls `reply`, it provides a target message and reply reason. The tool prepares the Replyer request, expression selection, quote policy, and optional rich-reply attachments before sending through the send service.
 
-### Action Tools
+Replyer uses `model_task_config.replyer`. Expression selection may use `model_task_config.expression_use`, falling back to `utils` when empty.
 
-- **`reply`** — `reply.py` · Generates and sends a reply message · Key parameters: `msg_id`, `set_quote`, `reference_info`
-- **`send_emoji`** — `send_emoji.py` · Sends an emoji/sticker · Key parameters: None (automatically selected based on context)
-- **`finish`** — `finish.py` · Ends the current thinking round · Key parameters: None
-- **`query_jargon`** — `query_jargon.py` · Queries slang/terms · Key parameters: `words`
-- **`query_memory`** — `query_memory.py` · Queries long-term memory · Key parameters: `query`, `mode`, `limit`
-- **`query_person_profile`** — `query_person_profile.py` · Queries character persona · Key parameters: `person_name`
-- **`view_complex_message`** — `view_complex_message.py` · Views full forwarded message · Key parameters: `message_id`
-- **`tool_search`** — `tool_search.py` · Searches for deferred discovery tools · Key parameters: `query`, `limit`
+Relevant Hooks include:
 
-### Deferred Tool Discovery Mechanism
+- `maisaka.planner.before_request`
+- `maisaka.planner.after_response`
+- `maisaka.replyer.before_request`
+- `maisaka.replyer.before_model_request`
+- `maisaka.replyer.after_response`
 
-In the Action Loop, ordinary third-party/plugin tools are not exposed to the Planner by default. Instead, they are discovered in two steps:
+## Waiting, backoff, and interruption
 
-1. **tool_search**: Searches the deferred tool pool; matching tool names are marked as "discovered"
-2. **Next Planner Round**: Discovered tools are added to the visible tool list
+**Consecutive wait limit** — `chat.reply_timing.max_consecutive_wait_count` limits `wait` calls in one continuous planning chain.
 
-This reduces the number of tools the Planner sees at once, avoiding decision paralysis.
+**No-action backoff** — After repeated no-reply decisions, `IdleBackoff` delays the next check using the configured base, cap, start count, and pending-message bypass threshold.
 
-If a plugin Tool declares `core_tool=True` or `visibility="visible"`, it skips the deferred discovery process and enters the Planner's visible tool list directly. This mechanism is suitable for high-frequency, low-risk, and context-strongly-related tools; ordinary plugin tools are still recommended to maintain default deferred behavior.
+**Planner interruption** — A new message during a Planner request can set an interruption flag and rebuild context. `planner_interrupt_max_consecutive_count` limits consecutive interruptions; `0` means unlimited.
 
-## ChatLoopService
+**Wait recovery** — A wait can resume after a timeout, a new message, or a proactive task. Private chats and silent-frequency sessions use slightly different recovery policies.
 
-Source location: `src/maisaka/chat_loop_service.py`
+## Context and monitoring
 
-Responsible for encapsulating single-step LLM requests, including context selection, Prompt construction, and Hook triggering.
+Context processing keeps tool calls paired with tool results and removes orphaned results after trimming. Visual mode controls whether the Planner receives original images; the visual limiter handles requests above the image limit.
 
-### chat_loop_step Flow
+The runtime records session, message, Planner, tool, and reply stages for the WebUI observation view. Event models are defined in `src/maisaka/monitor/events.py`.
 
-```mermaid
-flowchart TD
-    A["chat_loop_step()"] --> B["确保 Prompt 已加载"]
-    B --> C["select_llm_context_messages()"]
-    C --> D["_build_request_messages()"]
-    D --> E["Hook: maisaka.planner.before_request"]
-    E --> F["LLM generate_response"]
-    F --> G["Hook: maisaka.planner.after_response"]
-    G --> H["返回 ChatResponse"]
-```
+## Configuration entry points
 
-### Context Selection Strategy
+- `[chat.reply_timing]`: reply frequency, trigger mode, interruption, wait limit, and no-action backoff.
+- `[chat]`: context size, mid-term recall, and context optimization.
+- `[visual]`: Planner and Replyer visual modes and image limits.
+- `[experimental]`: Focus, rich replies, behavior learning, and attention drift.
+- `model_task_config.planner`, `replyer`, and `expression_use`: corresponding model tasks.
 
-`select_llm_context_messages()` selects the context for the LLM from the history:
-
-1. Filter by `request_kind` (`planner` requests hide the Timing Gate tool chain)
-2. Traverse backward from the end, selecting entries that can be successfully converted to LLM messages
-3. Counting only includes `count_in_context=True` messages (`ToolResultMessage` and `ReferenceMessage` do not occupy the window)
-4. Stop after reaching `max_context_size`
-5. Hide the earliest 50% of assistant text messages (preserving the tool call chain)
-
-### Hook Specs
-
-For detailed Hook parameter information related to Maisaka, please refer to [Hook Processors](../../plugin/hooks#maisaka-planner-chain). This section only introduces the position and role of Hooks in the reasoning pipeline.
-
-## Context Message Types
-
-Source location: `maibot/src/maisaka/context/messages.py`
-
-```mermaid
-classDiagram
-    class LLMContextMessage {
-        <<abstract>>
-        +role: str
-        +processed_plain_text: str
-        +count_in_context: bool
-        +source: str
-        +to_llm_message(enable_visual: bool) Message
-        +consume_once() bool
-    }
-    class SessionBackedMessage {
-        +raw_message: MessageSequence
-        +visible_text: str
-        +timestamp: datetime
-        +message_id: str
-        +source_kind: str
-        +count_in_context = True
-    }
-    class ComplexSessionMessage {
-        +prompt_text: str
-        +complex_message_type: str
-        +count_in_context = True
-    }
-    class ReferenceMessage {
-        +content: str
-        +reference_type: ReferenceMessageType
-        +remaining_uses_value: int
-        +display_prefix: str
-        +count_in_context = False
-    }
-    class AssistantMessage {
-        +content: str
-        +tool_calls: list~ToolCall~
-        +source_kind: str
-        +count_in_context: bool
-    }
-    class ToolResultMessage {
-        +content: str
-        +tool_call_id: str
-        +tool_name: str
-        +success: bool
-        +count_in_context = False
-    }
-    LLMContextMessage <|-- SessionBackedMessage
-    LLMContextMessage <|-- ComplexSessionMessage
-    SessionBackedMessage <|-- ComplexSessionMessage
-    LLMContextMessage <|-- ReferenceMessage
-    LLMContextMessage <|-- AssistantMessage
-    LLMContextMessage <|-- ToolResultMessage
-```
-
-### ReferenceMessageType
-
-- **`custom`** — Custom reference message
-- **`jargon`** — Slang/term query results
-- **`memory`** — Long-term memory retrieval results
-- **`tool_hint`** — Tool hint information (e.g., deferred tools reminders)
-
-### Context Window Occupancy
-
-- **`SessionBackedMessage`** — Occupies window ✓ · Real user message
-- **`ComplexSessionMessage`** — Occupies window ✓ · Complex/forwarded message
-- **`ReferenceMessage`** — Occupies window ✗ · Reference information (does not occupy window)
-- **`AssistantMessage`** (assistant) — Occupies window ✓ · Internal thinking text
-- **`AssistantMessage`** (perception) — Occupies window ✗ · Perception text (interrupt prompts, etc.)
-- **`ToolResultMessage`** — Occupies window ✗ · Tool execution result
-
-## Planner Message Prefix
-
-Source location: `maibot/src/maisaka/context/planner_messages.py`
-
-When each user message is injected into the Planner, a structured prefix is added:
-
-```
-[时间]HH:MM:SS
-[用户名]nickname
-[用户群昵称]group_card
-[msg_id]message_id
-[发言内容]实际消息文本
-```
-
-`build_planner_prefix()` constructs the prefix, and `build_planner_user_prefix_from_session_message()` extracts parameters from `SessionMessage`.
-
-## Monitoring Events
-
-Source location: `maibot/src/maisaka/monitor/events.py`
-
-Events are broadcast to the frontend monitoring panel via WebSocket:
-
-- **`session.start`** — Runtime start · Key data: session_id, session_name
-- **`message.ingested`** — Message injected into history · Key data: speaker_name, content, message_id
-- **`cycle.start`** — Thinking loop start · Key data: cycle_id, round_index, max_rounds
-- **`timing_gate.result`** — Timing Gate decision complete · Key data: action, content, tool_calls, prompt_tokens
-- **`planner.finalized`** — Planner complete · Key data: Full cycle data, token statistics, duration
-
-## Complete Reasoning Flow Example
-
-Taking a user sending an @bot message in a group chat as an example:
-
-```mermaid
-sequenceDiagram
-    participant User as 用户
-    participant Chat as ChatBot
-    participant HF as HeartFlowManager
-    participant RT as MaisakaHeartFlowChatting
-    participant RE as ReasoningEngine
-    participant TG as Timing Gate
-    participant PL as Planner
-    participant Tool as 工具执行
-
-    User->>Chat: "@麦麦 你好"
-    Chat->>HF: process_message()
-    HF->>RT: register_message()
-    Note over RT: 检测到 @，设置 force_continue
-
-    RT->>RE: run_loop() 消费消息
-    RE->>RE: _ingest_messages() 注入历史
-
-    RE->>TG: _run_timing_gate()
-    Note over TG: force_continue=True，跳过
-    TG-->>RE: continue
-
-    RE->>PL: _run_interruptible_planner()
-    PL-->>RE: thought + [reply_tool_call]
-
-    RE->>Tool: _invoke_tool_call("reply", ...)
-    Tool-->>RE: ToolExecutionResult(success=True)
-    Note over Tool: reply 工具调用 SendService 发送消息
-
-    RE->>RE: _end_cycle() 记录循环耗时
-```
+When updating this architecture, verify `runtime.py`, `turn_scheduler.py`, `turn_gates.py`, `reasoning_engine.py`, `chat_loop_service.py`, and `builtin_tool/` together.

@@ -1,6 +1,8 @@
 ---
 title: How MaiBot Thinks
----# How MaiBot Thinks 🧠
+---
+
+# How MaiBot Thinks 🧠
 
 Have you ever wondered how MaiBot actually "thinks" when chatting with you? Is it really just a simple "you ask, I answer" mechanism?
 

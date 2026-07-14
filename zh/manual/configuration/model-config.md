@@ -137,22 +137,22 @@ selection_strategy = "random"                 # [可选] 模型选择策略
 hard_timeout = 180.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [timing_gate（节奏控制）]
-# [可选] 节奏控制：独立判断是否该在此时说话。留空时自动回退到 planner。
-[model_task_config.timing_gate]
-model_list = []                               # [可选] 模型名称列表（→回退 planner）
-max_tokens = 4096                             # [可选] 最大输出 token 数
-temperature = 0.3                             # [可选] 模型温度
-slow_threshold = 12.0                         # [可选] 慢请求阈值（秒）
-selection_strategy = "random"                 # [可选] 模型选择策略
-hard_timeout = 120.0                          # [可选] 硬超时（秒）
-```
-
 ```toml [learner（学习）]
 # [可选] 学习模型：表达方式学习和黑话学习。留空时自动回退到 utils。
 [model_task_config.learner]
 model_list = []                               # [可选] 模型名称列表（→回退 utils）
 max_tokens = 4096                             # [可选] 最大输出 token 数
+hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [expression_use（表达选择）]
+# [可选] 表达方式选择模型。留空时自动回退到 utils。
+[model_task_config.expression_use]
+model_list = []                               # [可选] 模型名称列表（→回退 utils）
+max_tokens = 1024                             # [可选] 最大输出 token 数
+temperature = 0.3                             # [可选] 模型温度
+slow_threshold = 15.0                         # [可选] 慢请求阈值（秒）
+selection_strategy = "balance"                # [可选] 模型选择策略
 hard_timeout = 120.0                          # [可选] 硬超时（秒）
 ```
 
@@ -208,12 +208,12 @@ hard_timeout = 60.0                           # [可选] 硬超时（秒）
 ```
          ┌──────────┐
          │  planner │◄──── mid_memory（留空时回退）
-         │          │◄──── timing_gate（留空时回退）
          └──────────┘
               ▲
               │
          ┌──────────┐
          │  utils   │◄──── learner（留空时回退）
+         │          │◄──── expression_use（留空时回退）
          └──────────┘
 
 memory · emoji · vlm · voice · embedding → 留空不自动回退，调用方会跳过或报错

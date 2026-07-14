@@ -1,6 +1,8 @@
 ---
 title: Tool Component
----# Tool Component
+---
+
+# Tool Component
 
 `@Tool` is the most core component type in the MaiBot plugin system. It allows plugins to expose callabled tool functions to the LLM, enabling the LLM to proactively call external capabilities during the reasoning process—such as searching knowledge bases, querying databases, calling external APIs, etc.
 

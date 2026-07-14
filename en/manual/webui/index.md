@@ -1,6 +1,8 @@
 ---
 title: 🖥️ WebUI Admin Panel
----# 🖥️ WebUI Management Panel
+---
+
+# 🖥️ WebUI Management Panel
 
 Manage your bot right through your browser!
 
@@ -15,13 +17,14 @@ WebUI Access Token: a1b2c3d4...
 Please use this Token to log in to the WebUI
 ```
 
-**Important**: This password is only displayed once, make sure to save it!
+The first value shown is a temporary Token for the current startup. After signing in, the setup wizard requires you to set a secure persistent Token. A temporary Token is regenerated on the next startup.
 
 ### Login Steps
 
 1. Open your browser and visit `http://localhost:8001` (default address)
 2. Enter the password shown in the console
-3. After a successful login, you will see the management panel
+3. On first sign-in, set a persistent Token as instructed and sign in again with the new Token
+4. Complete initial setup to enter the management panel
 
 ## What Can You Do?
 
@@ -39,29 +42,30 @@ You can change the WebUI settings in `bot_config.toml`:
 ```toml
 [webui]
 enabled = true                # Whether to enable WebUI
-host = "127.0.0.1"            # Bind address
+host = ["127.0.0.1", "::1"]  # Bind address list
 port = 8001                   # Port number
 mode = "production"           # Running mode: development or production
+webui_style = 1               # UI style
 anti_crawler_mode = "basic"   # Anti-crawler mode: false / strict / loose / basic
 allowed_ips = "127.0.0.1"     # IP whitelist (comma-separated)
 ```
 
-- Change `host` to `0.0.0.0` to allow access from other devices on the LAN
+- Change `host` to `["0.0.0.0", "::"]` to listen on all IPv4/IPv6 interfaces; also configure firewall rules, access restrictions, and HTTPS
 - `port` can be changed to another number to avoid conflicts
 
 ## Forgot Your Password?
 
-If you forget your password:
+If you can still sign in, regenerate or update the Token in System Settings. If you can no longer sign in:
 
 1. Shut down MaiBot
 2. Delete the `data/webui.json` file
-3. Restart MaiBot, and a new password will be generated
+3. Restart MaiBot, use the new temporary Token shown in the console, and set a new persistent Token
 
 ## Security Reminders
 
 - Do not share your password with others
-- It is recommended to change the default port when deploying on the public network
-- Changing your password regularly is more secure
+- Prefer HTTPS or a trusted private network for remote access; changing the port alone is not access control
+- Regenerate the Token immediately if you suspect it has leaked
 
 ## More Features
 

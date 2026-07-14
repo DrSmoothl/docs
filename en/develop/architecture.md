@@ -1,6 +1,8 @@
 ---
 title: Architecture Design
----# Architecture Design
+---
+
+# Architecture Design
 
 This document is based on the code-map snapshot and serves as the navigation center for the architecture documentation. It breaks down MaiBot's architecture into 12 topical documents and connects the main entry points using the Runner/Worker process model and the MainSystem initialization flow.
 

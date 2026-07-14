@@ -1,6 +1,8 @@
 ---
 title: API Components
----# API Component
+---
+
+# API Component
 
 `@API` decorator is used to declare API interfaces for inter-plugin communication. Other plugins can call these APIs through `ctx.api.call()` to achieve functional interoperability between plugins.
 

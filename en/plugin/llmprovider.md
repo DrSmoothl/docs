@@ -1,6 +1,8 @@
 ---
 title: LLMProvider Component
----# LLMProvider Component
+---
+
+# LLMProvider Component
 
 `@LLMProvider` is used to declare that a plugin provides a new LLM Provider `client_type`. The main program will register this `client_type` into the LLM client registry, so existing `LLMService` and model task configurations do not need to change their invocation method—as long as the `api_providers[].client_type` in the model configuration points to the value declared in the plugin, the request will be initiated via the plugin Provider.
 

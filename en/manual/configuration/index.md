@@ -1,6 +1,8 @@
 ---
 title: Configuration Overview
----# Configuration Overview
+---
+
+# Configuration Overview
 ## 📋 Configuration File List
 
 MaiBot has two main configuration files, both located in the `config/` folder:

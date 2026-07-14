@@ -300,7 +300,7 @@ graph LR
     end
     subgraph 推理
         I --> J[Maisaka 运行时]
-        J --> K[Timing Gate]
+        J --> K[消息 Turn Gate]
         K --> L[Planner]
         L --> M[工具执行]
     end

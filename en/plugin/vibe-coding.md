@@ -1,6 +1,8 @@
 ---
 title: Vibe Coding Plugin Development Guide
----# Vibe Coding Plugin Development Guide
+---
+
+# Vibe Coding Plugin Development Guide
 
 This guide is for developers using AI to help write MaiBot plugins. The goal is to break down plugin requirements into units that are easy for AI to understand and verify without accidentally modifying the core program.
 

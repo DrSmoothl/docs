@@ -1,6 +1,8 @@
 ---
 title: SnowLuma Adapter
----# SnowLuma Adapter
+---
+
+# SnowLuma Adapter
 
 The SnowLuma Adapter allows MaiBot to connect to the QQ via [SnowLuma](https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter) to send and receive messages, and handle group and private chats.
 

@@ -1,6 +1,8 @@
 ---
 title: Contributing Guide
----# Contribution Guidelines
+---
+
+# Contribution Guidelines
 
 Welcome to MaiBot development! Please read the following guidelines carefully before submitting code.
 

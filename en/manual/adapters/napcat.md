@@ -1,7 +1,9 @@
 ---
 title: "# Connecting to MaiMai using NapCat and Adapter\n\nUse NapCat and an adapter
   to connect to MaiMai."
----# Connecting MaiBot using NapCat and Adapter
+---
+
+# Connecting MaiBot using NapCat and Adapter
 
 You can use **NapCat** to obtain QQ messages and information,
 
@@ -102,7 +104,7 @@ Add the following to `config/bot_config.toml`:
 ```toml
 [bot]
 platform = "qq"           # 用 QQ 平台
-qq_account = 123456789    # 你的机器人 QQ 号
+qq_account = "123456789"  # Bot QQ account (string)
 nickname = "麦麦"          # 机器人昵称
 ```
 

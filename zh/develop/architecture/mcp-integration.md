@@ -435,7 +435,7 @@ sequenceDiagram
 
 **工具系统架构** ：`docs/develop/architecture/tool-system.md` 说明统一 `ToolProvider`、`ToolRegistry` 和工具调用模型。本文只说明 MCP 如何接入这一层。
 
-**Maisaka 推理引擎** ：`docs/develop/architecture/maisaka-reasoning.md` 说明推理循环、Timing Gate、Planner 和工具执行流程。本文只说明 MCP 工具如何进入工具列表和 function_call 路由。
+**Maisaka 推理引擎** ：`docs/develop/architecture/maisaka-reasoning.md` 说明消息调度、Planner 循环和工具执行流程。本文只说明 MCP 工具如何进入工具列表和 function_call 路由。
 
 **插件开发文档** ：插件 Hook 的具体写法属于插件开发文档范围。本文只定义 MCP 相关 Hook 的触发边界和推荐载荷。
 

@@ -1,6 +1,8 @@
 ---
 title: Message Pipeline
----# Message Pipeline
+---
+
+# Message Pipeline
 
 MaiBot's message processing pipeline is the complete link from inbound reception to outbound transmission. This document details the internal mechanisms, data structures, and Hook interception points of each stage in the pipeline.
 
@@ -298,7 +300,7 @@ graph LR
     end
     subgraph 推理
         I --> J[Maisaka 运行时]
-        J --> K[Timing Gate]
+        J --> K[Message Turn Gate]
         K --> L[Planner]
         L --> M[工具执行]
     end

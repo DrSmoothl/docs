@@ -1,6 +1,8 @@
 ---
 title: What can MaiBot do?
----# What Can MaiBot Do? 🤖
+---
+
+# What Can MaiBot Do? 🤖
 
 MaiBot is a conversational AI bot designed to participate in conversations naturally like a real person, rather than simply answering questions. Let's take a look at what it can do:
 

@@ -1,7 +1,9 @@
 ---
 title: Model Configuration
 titleTemplate: :title · 模型配置
----# Model Configuration
+---
+
+# Model Configuration
 
 `model_config.toml` Configure the "AI brain" for Maimai — deciding which LLM models to use for different components, and how to connect to API providers.
 
@@ -135,23 +137,23 @@ selection_strategy = "random"                 # [可选] 模型选择策略
 hard_timeout = 180.0                          # [可选] 硬超时（秒）
 ```
 
-```toml [timing_gate（节奏控制）]
-# [可选] 节奏控制：独立判断是否该在此时说话。留空时自动回退到 planner。
-[model_task_config.timing_gate]
-model_list = []                               # [可选] 模型名称列表（→回退 planner）
-max_tokens = 4096                             # [可选] 最大输出 token 数
-temperature = 0.3                             # [可选] 模型温度
-slow_threshold = 12.0                         # [可选] 慢请求阈值（秒）
-selection_strategy = "random"                 # [可选] 模型选择策略
-hard_timeout = 120.0                          # [可选] 硬超时（秒）
-```
-
 ```toml [learner（学习）]
 # [可选] 学习模型：表达方式学习和黑话学习。留空时自动回退到 utils。
 [model_task_config.learner]
 model_list = []                               # [可选] 模型名称列表（→回退 utils）
 max_tokens = 4096                             # [可选] 最大输出 token 数
 hard_timeout = 120.0                          # [可选] 硬超时（秒）
+```
+
+```toml [expression_use (expression selection)]
+# [Optional] Expression selection model. Falls back to utils when empty.
+[model_task_config.expression_use]
+model_list = []
+max_tokens = 1024
+temperature = 0.3
+slow_threshold = 15.0
+selection_strategy = "balance"
+hard_timeout = 120.0
 ```
 
 ```toml [emoji（表情包选择）]
@@ -206,12 +208,12 @@ When `model_list` for some tasks is empty, other tasks are automatically reused:
 ```
          ┌──────────┐
          │  planner │◄──── mid_memory (falls back when empty)
-         │          │◄──── timing_gate (falls back when empty)
          └──────────┘
               ▲
               │
          ┌──────────┐
          │  utils   │◄──── learner (falls back when empty)
+         │          │◄──── expression_use (falls back when empty)
          └──────────┘
 
 memory · emoji · vlm · voice · embedding → No automatic fallback when empty, caller will skip or throw an error

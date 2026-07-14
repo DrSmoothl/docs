@@ -1,6 +1,8 @@
 ---
 title: Community
----# Community
+---
+
+# Community
 
 Welcome to the MaiBot community! Here you can exchange usage experiences with other users, get technical support, contribute to the project, and follow the latest project updates.
 

@@ -1,6 +1,8 @@
 ---
 title: Docker Deployment
----# 🐳 Docker Deployment Guide
+---
+
+# 🐳 Docker Deployment Guide
 
 Docker is like a big box that packages MaiBot and everything it needs together, allowing it to run with just one click!
 

@@ -435,7 +435,7 @@ sequenceDiagram
 
 **Tool System Architecture**: `docs/en/develop/architecture/tool-system.md` explains the unified `ToolProvider`, `ToolRegistry`, and the tool invocation model. This document only explains how MCP integrates into that layer.
 
-**Maisaka Reasoning Engine**: `docs/en/develop/architecture/maisaka-reasoning.md` explains the reasoning loop, Timing Gate, Planner, and tool execution flow. This document only explains how MCP tools enter the tool list and function_call routing.
+**Maisaka Reasoning Engine**: `docs/en/develop/architecture/maisaka-reasoning.md` explains message scheduling, the Planner loop, and tool execution. This document only explains how MCP tools enter the tool list and function_call routing.
 
 **Plugin Development Documentation**: Specific plugin Hook implementation details belong in the plugin development documentation. This document only defines the trigger boundaries and recommended payloads for MCP-related Hooks.
 

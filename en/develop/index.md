@@ -121,7 +121,7 @@ Core infrastructure providing communication, tool abstraction, and the system ru
 Message processing, reasoning, memory, WebUI, and service encapsulation constitute the primary business flows of MaiBot.
 
 - [Message Pipeline](./architecture/message-pipeline.md): The complete inbound message processing flow—from platform adapters to Hook interception, filtering, command dispatching, HeartFlow, and outbound sending.
-- [Maisaka Reasoning Engine](./architecture/maisaka-reasoning.md): The core of conversational reasoning—featuring Timing Gate rhythm control, Planner planning loops, tool invocation, and interruption mechanisms.
+- [Maisaka Reasoning Engine](./architecture/maisaka-reasoning.md): The core of conversational reasoning—featuring message Turn Gates, Planner loops, tool invocation, and interruption mechanisms.
 - [Memory System](./architecture/memory-system.md): The A-Memorix long-term memory engine—featuring dual-path retrieval, storage layers, memory strategies, and character profiles.
 - [WebUI Internal Mechanisms](./architecture/webui-internals.md): FastAPI backend architecture—covering authentication security, WebSocket communication, plugin management, and configuration hot-reloading.
 - [Service Layer Architecture](./architecture/service-layer.md): Encapsulates business services such as LLM invocation, memory operations, message sending, database access, and statistical aggregation for reuse by upper-layer modules.

@@ -72,10 +72,17 @@ multiple_probability = 0
 [visual]
 planner_mode = "auto"
 replyer_mode = "auto"
+max_image_num = 128
 wait_image_recognize_max_time = 10
 handle_oversized_images = true
 max_image_size_mb = 30.0
 oversized_image_handle_method = "compress"
+
+[visual.image_cache_cleanup]
+enabled = true
+check_interval_hours = 6.0
+image_file_retention_days = 14
+no_file_result_retention_days = 30
 ```
 
 **`planner_mode`** — 规划器视觉模式。**类型**：`str`（枚举）。**默认值**：`"auto"`。**可选值**：
@@ -84,6 +91,8 @@ oversized_image_handle_method = "compress"
 - `"multimodal"` — 多模态模式，发送视觉输入
 
 **`replyer_mode`** — 回复器视觉模式。**类型**：`str`（枚举）。**默认值**：`"auto"`。可选值同上。
+
+**`max_image_num`** — 单次多模态请求最多携带的图片数。**类型**：`int`。**默认值**：`128`。
 
 **`wait_image_recognize_max_time`** — 识图最长等待。**类型**：`float`。**默认值**：`10`。**单位**：秒。非视觉 planner 请求前等待图片识别完成的最长秒数；设为 `0` 不等待。
 
@@ -95,6 +104,16 @@ oversized_image_handle_method = "compress"
 - `"compress"` — 压缩后继续处理
 - `"discard"` — 丢弃该图片组件
 
+## 图片缓存清理
+
+**`image_cache_cleanup.enabled`** — 是否自动清理长期未使用的图片缓存。默认开启。
+
+**`image_cache_cleanup.check_interval_hours`** — 清理检查间隔，单位小时。默认 `6.0`。
+
+**`image_cache_cleanup.image_file_retention_days`** — 图片文件保留天数。默认 `14`。
+
+**`image_cache_cleanup.no_file_result_retention_days`** — 图片文件删除后，识别结果继续保留的天数。默认 `30`。
+
 ---
 
 # 聊天
@@ -103,27 +122,36 @@ oversized_image_handle_method = "compress"
 
 ```toml
 [chat]
-talk_value = 1
-private_talk_value = 1
-mentioned_bot_reply = false
-inevitable_at_reply = true
 self_message_special_mark = true
 max_context_size = 40
 max_private_context_size = 60
 enable_context_optimization = true
 mid_term_memory = true
 mid_term_memory_lenth = 10
-enable_reply_quote = true
-typing_speed = 1.0
+
+[chat.reply_timing]
+talk_value = 1.0
+private_talk_value = 1.0
+mentioned_bot_reply = false
+inevitable_at_reply = true
+reply_trigger_mode = "frequency"
 planner_interrupt_max_consecutive_count = 0
+max_consecutive_wait_count = 3
 no_action_backoff_base_seconds = 15
 no_action_backoff_cap_seconds = 300
 no_action_backoff_start_count = 2
 no_action_backoff_bypass_pending_count = 6
+enable_talk_value_rules = false
+talk_value_rules = [
+  { platform = "", item_id = "", rule_type = "group", time = "00:00-08:59", value = 0.8 },
+  { platform = "", item_id = "", rule_type = "group", time = "09:00-18:59", value = 1.0 },
+]
+
+[chat.reply_style]
+enable_reply_quote = true
 group_chat_prompt = "你正在 qq 群里聊天，下面是群里正在聊的内容..."
 private_chat_prompts = "你正在聊天，下面是正在聊的内容..."
 chat_prompts = []
-enable_talk_value_rules = false
 ```
 
 ## 字段说明
@@ -150,9 +178,11 @@ enable_talk_value_rules = false
 
 **`enable_reply_quote`** — 启用引用回复。**类型**：`bool`。**默认值**：`true`。
 
-**`typing_speed`** — 聊天速度。**类型**：`float`。**默认值**：`1.0`。取值范围：`0-2`。模拟打字时间倍乘。`0` 表示不等待，`1` 保持默认等待时间，`2` 表示两倍。
+**`reply_trigger_mode`** — 新消息进入 Planner 的触发模式。**类型**：`str`（枚举）。**默认值**：`"frequency"`。可选 `"frequency"` 或 `"reply_necessity"`。
 
 **`planner_interrupt_max_consecutive_count`** — Planner 连续打断上限。**类型**：`int`。**默认值**：`0`。Planner 遇到新消息重新思考的次数，`0` 表示不限制。
+
+**`max_consecutive_wait_count`** — Planner 连续调用 `wait` 的上限。**类型**：`int`。**默认值**：`3`。达到上限后，本轮不再允许继续等待。
 
 ## no_action 退避策略
 
@@ -179,14 +209,14 @@ enable_talk_value_rules = false
 按聊天流 / 日内时段配置发言频率，默认 2 条全局规则：
 
 ```toml
-[[chat.talk_value_rules]]
+[[chat.reply_timing.talk_value_rules]]
 platform = ""
 item_id = ""
 rule_type = "group"
 time = "00:00-08:59"
 value = 0.8
 
-[[chat.talk_value_rules]]
+[[chat.reply_timing.talk_value_rules]]
 platform = ""
 item_id = ""
 rule_type = "group"
@@ -207,7 +237,7 @@ value = 1.0
 ## chat_prompts
 
 ```toml
-[[chat.chat_prompts]]
+[[chat.reply_style.chat_prompts]]
 platform = "qq"
 item_id = "123456"
 rule_type = "group"
@@ -225,24 +255,42 @@ prompt = "这个群里说话要更简短。"
 ```toml
 [experimental]
 enable_behavior_learning = false
-enable_replyer_format_output = false
+enable_rich_reply = false
+emotion_trait = "neutral"
+behavior_learning_list = [{ platform = "", item_id = "", type = "group", use = true, learn = true }]
+behavior_groups = []
 focus_mode = false
 focus_on_private = false
+focus_chat_whitelist = []
 focus_groups = []
 focus_cool_time = 120
+
+[experimental.attention_drift]
+enabled = false
+drift_level = "scattered"
+anchor_policy = "balanced"
+reaction_style = "lively"
 ```
 
 **`enable_behavior_learning`** — 启用行为学习。**类型**：`bool`。**默认值**：`false`。关闭后不再从裁切历史中抽取和写入行为经验。
 
-**`enable_replyer_format_output`** — Replyer 格式化输出。**类型**：`bool`。**默认值**：`false`。允许 replyer 输出 `<text>`、`<at>`、`<emoji>`、`<image>` 等格式化片段，并在发送前解析为真实消息组件，可能影响回复表现。
+**`enable_rich_reply`** — 丰富回复能力。**类型**：`bool`。**默认值**：`false`。允许 `reply` 动作附加图片、表情包或 @。
+
+**`emotion_trait`** — 实验性情绪特质。**类型**：`str`（枚举）。**默认值**：`"neutral"`。可选 `"rational_calm"`、`"neutral"`、`"sentimental"`。
+
+**`behavior_learning_list`** / **`behavior_groups`** — 行为学习的聊天范围与互通组。前者默认包含一条全局群聊规则，后者默认为空。
 
 **`focus_mode`** — Focus 模式。**类型**：`bool`。**默认值**：`false`。开启后同一时间只有一个 Maisaka 处于活跃关注状态，忽略聊天频率控制。
 
 **`focus_on_private`** — 私聊启用 Focus。**类型**：`bool`。**默认值**：`false`。关闭时 Focus 仅作用于群聊。
 
+**`focus_chat_whitelist`** — Focus 聊天白名单。留空表示允许所有符合聊天类型开关的聊天流。
+
 **`focus_groups`** — Focus 互通组。**类型**：`list[ChatStreamGroup]`。**默认值**：`[]`。不配置时所有启用 Focus 的聊天共享一个 Focus；配置后同组互通，不同组可同时 Focus。
 
 **`focus_cool_time`** — Focus 冷却时间。**类型**：`int`。**默认值**：`120`。**单位**：秒。Focus 超过该秒数没有进入循环时，会被其他聊天的新消息唤醒一次。
+
+**`attention_drift`** — 注意力漂移实验配置。`enabled` 为总开关；其余字段控制漂移强度、回到上下文的策略和短反应风格。
 
 ---
 
@@ -289,9 +337,11 @@ enabled = true
 [expression]
 expression_checked_only = true
 expression_self_reflect = true
-enable_precise_expression_selection = false
+expression_selection_mode = "legacy"
+expression_vector_index_path = "data/expression_selection/expression_vector_index.json"
+expression_vector_candidate_pool_size = 50
 max_expression_learner = 3
-learning_list = []
+learning_list = [{ platform = "", item_id = "", type = "group", use = true, learn = true }]
 expression_groups = []
 ```
 
@@ -299,11 +349,15 @@ expression_groups = []
 
 **`expression_self_reflect`** — 表达学习 AI 审核。**类型**：`bool`。**默认值**：`true`。写入前进行 AI 审核。
 
-**`enable_precise_expression_selection`** — 精细表达选择。**类型**：`bool`。**默认值**：`false`。replyer 用子代理挑选更贴合语境的表达。
+**`expression_selection_mode`** — 表达选择策略。**类型**：`str`（枚举）。**默认值**：`"legacy"`。可选 `"legacy"`、`"vector"`、`"vector_intent"`。
+
+**`expression_vector_index_path`** — 表达向量索引路径。相对路径按项目根目录解析。
+
+**`expression_vector_candidate_pool_size`** — 交给表达选择模型的向量候选数，硬上限为 `50`。
 
 **`max_expression_learner`** — 表达学习批次数上限。**类型**：`int`。**默认值**：`3`。同一聊天流始终只允许一个批次。
 
-**`learning_list`** — 表达学习配置列表。**类型**：`list[LearningItem]`。**默认值**：`[]`。
+**`learning_list`** — 表达学习配置列表。**类型**：`list[LearningItem]`。默认包含一条全局群聊规则。
 
 **`expression_groups`** — 表达学习互通组。**类型**：`list[ChatStreamGroup]`。**默认值**：`[]`。组内的表达学习结果共享。
 
@@ -328,11 +382,11 @@ learn = true
 
 ```toml
 [jargon]
-learning_list = []
+learning_list = [{ platform = "", item_id = "", type = "group", use = true, learn = true }]
 jargon_groups = []
 ```
 
-**`learning_list`** — 黑话学习配置列表。**类型**：`list[LearningItem]`。**默认值**：`[]`。
+**`learning_list`** — 黑话学习配置列表。**类型**：`list[LearningItem]`。默认包含一条全局群聊规则。
 
 **`jargon_groups`** — 黑话学习互通组。**类型**：`list[ChatStreamGroup]`。**默认值**：`[]`。
 
@@ -521,25 +575,19 @@ enable = true
 ```toml
 [debug]
 show_maisaka_thinking = true
-show_jargon_prompt = false
-show_memory_prompt = false
 enable_reply_effect_tracking = false
-record_reply_request = false
-record_planner_request = false
+keep_prompt_preview_json_base64 = false
+record_tool_structured_content = false
 enable_llm_cache_stats = false
 ```
 
 **`show_maisaka_thinking`** — 显示回复器推理。**类型**：`bool`。**默认值**：`true`。
 
-**`show_jargon_prompt`** — 显示黑话提示词。**类型**：`bool`。**默认值**：`false`。
-
-**`show_memory_prompt`** — 显示记忆检索 prompt。**类型**：`bool`。**默认值**：`false`。
-
 **`enable_reply_effect_tracking`** — 回复效果评分追踪。**类型**：`bool`。**默认值**：`false`。
 
-**`record_reply_request`** — 记录 Replyer 请求体。**类型**：`bool`。**默认值**：`false`。
+**`keep_prompt_preview_json_base64`** — 在 Prompt 预览 JSON 中保留图片 base64。**类型**：`bool`。**默认值**：`false`。开启后更便于复现请求，但会明显增加存储占用。
 
-**`record_planner_request`** — 记录 Planner 完整请求和回复。**类型**：`bool`。**默认值**：`false`。
+**`record_tool_structured_content`** — 保存工具返回的结构化内容。**类型**：`bool`。**默认值**：`false`。用于调试，但会增加数据库体积。
 
 **`enable_llm_cache_stats`** — 记录 LLM prompt cache 统计。**类型**：`bool`。**默认值**：`false`。
 
@@ -588,9 +636,10 @@ api_server_allowed_api_keys = []
 ```toml
 [webui]
 enabled = true
-host = "127.0.0.1"
+host = ["127.0.0.1", "::1"]
 port = 8001
 mode = "production"
+webui_style = 1
 anti_crawler_mode = "basic"
 allowed_ips = "127.0.0.1"
 trusted_proxies = ""
@@ -602,11 +651,13 @@ enable_paragraph_content = false
 
 **`enabled`** — 启用 WebUI。**类型**：`bool`。**默认值**：`true`。
 
-**`host`** — 绑定主机。**类型**：`str`。**默认值**：`"127.0.0.1"`。
+**`host`** — 绑定主机列表。**类型**：`list[str]`。**默认值**：`["127.0.0.1", "::1"]`。手动允许外部访问时可使用 `["0.0.0.0", "::"]`。
 
 **`port`** — 绑定端口。**类型**：`int`。**默认值**：`8001`。
 
 **`mode`** — 运行模式。**类型**：`str`（枚举）。**默认值**：`"production"`。**可选值**：`"development"` / `"production"`。
+
+**`webui_style`** — WebUI 风格编号。**类型**：`int`。**默认值**：`1`。`0` 为旧风格，`1` 为未来复古风格。
 
 **`anti_crawler_mode`** — 防爬虫模式。**类型**：`str`。**默认值**：`"basic"`。**可选值**：`false` / `"strict"` / `"loose"` / `"basic"`。
 

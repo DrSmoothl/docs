@@ -122,7 +122,7 @@ uv run ruff format .
 消息处理、推理、记忆、WebUI 和服务封装构成 MaiBot 的主要业务链路。
 
 - [消息管线](./architecture/message-pipeline.md)：入站消息的完整处理流程——从平台适配器到 Hook 拦截、过滤、命令分发、HeartFlow 和出站发送
-- [Maisaka 推理引擎](./architecture/maisaka-reasoning.md)：对话推理的核心——Timing Gate 节奏控制、Planner 规划循环、工具调用和打断机制
+- [Maisaka 推理引擎](./architecture/maisaka-reasoning.md)：对话推理的核心——消息 Turn Gate、Planner 规划循环、工具调用和打断机制
 - [记忆系统](./architecture/memory-system.md)：A-Memorix 长期记忆引擎——双路检索、存储层、记忆策略和人物画像
 - [WebUI 内部机制](./architecture/webui-internals.md)：FastAPI 后端架构——认证安全、WebSocket 通信、插件管理和配置热重载
 - [服务层架构](./architecture/service-layer.md)：封装 LLM 调用、记忆操作、发送消息、数据库访问和统计聚合等业务服务，供上层模块复用
