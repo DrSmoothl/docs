@@ -23,34 +23,62 @@ Covers scenarios 1–6, the most common problems encountered by new users when d
 #### Error Symptoms
 - MaiBot crashes immediately on startup
 - Terminal prints TOML parsing error, e.g. `Invalid TOML syntax`
-- Or prompts `FileNotFoundError: config/bot_config.toml`
-- Or prompts `API密钥不能为空，请在配置中设置有效的API密钥。`
-- Or prompts `API基础URL不能为空`
+- Or reports a missing `[inner].version`, an invalid field type, or another configuration parsing error
 
 #### Quick Self-Check Trio
-1️⃣ Does the configuration file exist? Check if `bot_config.toml` exists in `config/`
+1️⃣ Do both `bot_config.toml` and `model_config.toml` exist in `config/`?
 2️⃣ Is the TOML syntax correct? Strings need quotes, numbers don't, booleans are lowercase
-3️⃣ Have you used WebUI to modify it? WebUI automatically validates syntax and won't make errors
+3️⃣ Which file and field does the log identify? Do not reset both files at once
 
 #### Solutions
 
-**Method 1 (Recommended): Modify Configuration via WebUI**
-WebUI automatically creates and validates configuration without manually writing TOML, no errors:
+**Method 1: Use WebUI if MaiBot still starts**
+
+WebUI validates the format when saving, making syntax errors less likely than direct TOML editing:
 
 1. Start MaiBot, open browser and visit `http://localhost:8001`
 2. Go to the "Configuration Management" page
 3. Fill in the content as prompted on the page and save
 
-> If MaiBot cannot start due to configuration errors, you can fix the critical errors to get the program running first, then adjust settings through WebUI.
+> If a parsing error prevents MaiBot from starting, WebUI will not start either. Use Method 2.
 
-**Method 2: Manually Copy Example Files**
-If WebUI is temporarily unavailable, copy the example files as a starting point:
-```bash
-cp config/bot_config.example.toml config/bot_config.toml
-cp config/model_config.example.toml config/model_config.toml
+**Method 2 (cannot start): Back up the broken file and let MaiBot regenerate it**
+
+The loader generates current defaults when the target configuration file **does not exist**; it does not overwrite an existing malformed file.
+
+Stop MaiBot and rename only the file identified by the log:
+
+::: code-group
+
+```powershell [Windows PowerShell]
+# If the log points to bot_config.toml
+Rename-Item config\bot_config.toml bot_config.broken.toml
+
+# If the log points to model_config.toml
+Rename-Item config\model_config.toml model_config.broken.toml
 ```
 
-**Method 3: Check TOML Syntax (Reference for Manual Editing)**
+```bash
+# Linux / macOS: run only the matching command
+mv config/bot_config.toml config/bot_config.broken.toml
+mv config/model_config.toml config/model_config.broken.toml
+```
+
+:::
+
+Start MaiBot again:
+
+```bash
+uv run python bot.py
+```
+
+MaiBot creates a missing `config/` directory and current default configuration, then continues starting. Re-enter required settings through WebUI. Use the old file only as a reference; copying it back wholesale can restore the syntax error or an obsolete structure.
+
+::: tip Backups during automatic upgrades
+When an existing configuration is upgraded or rewritten, the code first moves it to `config/old/` with a timestamp. A syntax error occurs before that rewrite path can run, so the manual rename above is still necessary.
+:::
+
+**Method 3: Repair only the TOML syntax (manual editing reference)**
 ```toml
 # ✅ Correct examples
 [bot]
@@ -69,8 +97,8 @@ enabled = True             # Error! Should be lowercase true
 If you've manually edited the file and aren't sure about the format, use an [online TOML validator](https://toml.io/en/) to check.
 
 #### Prevention Tips
-- 📝 **Use WebUI to modify configuration** — WebUI automatically validates syntax, no errors
-- 💾 **Backup before modifying** — `cp bot_config.toml bot_config.toml.bak`
+- 📝 **Use WebUI to modify configuration** — WebUI validates the format when saving
+- 💾 **Back up before modifying** — Back up `config/bot_config.toml` and `config/model_config.toml`
 - 🔍 **Make small changes** — Only modify a few lines at a time, test if startup works after saving
 
 ---
@@ -150,25 +178,33 @@ api_provider = "DeepSeek"
 Find the process occupying the port in Task Manager (Windows) or Activity Monitor (macOS) and end it. If you don't know which process is occupying it, simply restarting your computer can also free up the port.
 
 **Method 2: Change MaiBot's Port**
+
+Change only the service identified by the log. Do not copy both examples at once.
+
+If WebUI's default port `8001` is occupied:
+
 ```toml
 # config/bot_config.toml
-
-# WebUI port (default 8001)
 [webui]
 port = 8002             # Change to 8002 or another available port
-
-# WebSocket port (default 8000)
-[maim_message]
-ws_server_port = 18000  # Use a free port distinct from WebUI
 ```
 
-**Method 3: Start with a Different Port**
-Simply change the port in the configuration file and restart MaiBot. It's recommended to use less commonly used ports like 8002, 9000, etc.
+If you actually use legacy `maim_message` and its default port `8000` is occupied:
+
+```toml
+# config/bot_config.toml
+[maim_message]
+ws_server_port = 18000  # Example; any port confirmed to be free is valid
+```
+
+Ports `8001` and `8002` do not conflict. Port `8001` must not be suggested for another service in this scenario because an external process has already been confirmed to occupy it. The NapCat plugin adapter does not use `[maim_message]`.
+
+Restart MaiBot after changing a listening port so the service binds to the new value.
 
 #### Prevention Tips
 - 📝 **Document port assignments** — Avoid multiple services using the same port
 - 🔄 **Check after restart** — Sometimes old processes aren't cleaned up, may need to manually end them after restart
-- 🔧 **Use non-standard ports** — e.g., change 8001 to 18001 to reduce conflict probability
+- 🔧 **Verify before changing** — Use system tools to confirm the target port is free instead of guessing from its number
 
 ---
 

@@ -23,34 +23,62 @@ title: 🔧 错误排查 FAQ
 #### 错误现象
 - 启动 MaiBot 时立即崩溃
 - 终端打印 TOML 解析错误，如 `Invalid TOML syntax`
-- 或提示 `FileNotFoundError: config/bot_config.toml`
-- 或提示 `API密钥不能为空，请在配置中设置有效的API密钥。`
-- 或提示 `API基础URL不能为空`
+- 或提示缺少 `[inner].version`、字段类型不正确等配置解析错误
 
 #### 快速自查三连
-1️⃣ 配置文件存在吗？看看 `config/` 文件夹里有没有 `bot_config.toml`
+1️⃣ 配置文件存在吗？看看 `config/` 文件夹里有没有 `bot_config.toml` 和 `model_config.toml`
 2️⃣ TOML 语法对吗？字符串加引号、数字不引号、布尔值小写
-3️⃣ 用 WebUI 改过吗？WebUI 会自动验证语法，不会出错
+3️⃣ 日志指出的是哪个文件和字段？不要同时重置两个配置文件
 
 #### 解决方案
 
-**方法一（推荐）：用 WebUI 修改配置**
-WebUI 会自动创建和验证配置，不需要手写 TOML，不会出错：
+**方法一：MaiBot 仍能启动时使用 WebUI**
+
+WebUI 保存配置时会做格式校验，比直接手写 TOML 更不容易产生语法错误：
 
 1. 启动 MaiBot，打开浏览器访问 `http://localhost:8001`
 2. 进入「配置管理」页面
 3. 按页面提示填写内容，保存即可
 
-> 如果 MaiBot 因配置错误无法启动，可以先修好关键错误让程序跑起来，再通过 WebUI 调整配置。
+> 如果配置解析错误导致 MaiBot 无法启动，WebUI 也不会启动，请使用方法二。
 
-**方法二：手动复制示例文件**
-如果暂时用不了 WebUI，可以复制示例文件作为起点：
-```bash
-cp config/bot_config.example.toml config/bot_config.toml
-cp config/model_config.example.toml config/model_config.toml
+**方法二（无法启动时）：备份故障文件，让程序重新生成**
+
+加载代码会在目标配置文件**不存在**时生成当前版本的默认配置；已存在但语法错误的文件不会被自动覆盖。
+
+先停止 MaiBot，根据日志只重命名出错的那个文件：
+
+::: code-group
+
+```powershell [Windows PowerShell]
+# 如果日志指向 bot_config.toml
+Rename-Item config\bot_config.toml bot_config.broken.toml
+
+# 如果日志指向 model_config.toml
+Rename-Item config\model_config.toml model_config.broken.toml
 ```
 
-**方法三：检查 TOML 语法（手改文件时参考）**
+```bash
+# Linux / macOS：只执行日志对应的一条
+mv config/bot_config.toml config/bot_config.broken.toml
+mv config/model_config.toml config/model_config.broken.toml
+```
+
+:::
+
+然后重新启动：
+
+```bash
+uv run python bot.py
+```
+
+MaiBot 会创建缺失的 `config/` 目录以及当前版本的默认配置，并继续启动。进入 WebUI 重新填写必要设置；旧文件只用于人工对照，不要整份覆盖回去，否则可能把错误或旧版本结构一并恢复。
+
+::: tip 自动升级时的备份
+配置版本升级或程序重写已有配置时，代码会先把旧文件移动到 `config/old/` 并添加时间戳。语法错误发生在解析阶段时无法执行这一步，所以手动重命名仍然必要。
+:::
+
+**方法三：只修复 TOML 语法（手改文件时参考）**
 ```toml
 # ✅ 正确示例
 [bot]
@@ -69,8 +97,8 @@ enabled = True             # 错误！应该小写 true
 如果手动改了文件不确定格式对不对，可以用 [TOML 在线验证器](https://toml.io/cn/) 检查。
 
 #### 预防建议
-- 📝 **用 WebUI 改配置** — WebUI 会自动验证语法，不会出错
-- 💾 **修改前备份** — `cp bot_config.toml bot_config.toml.bak`
+- 📝 **用 WebUI 改配置** — WebUI 会在保存时验证格式
+- 💾 **修改前备份** — 备份 `config/bot_config.toml` 和 `config/model_config.toml`
 - 🔍 **小步修改** — 每次只改几行，保存后测试能否启动
 
 ---
@@ -150,25 +178,33 @@ api_provider = "DeepSeek"
 在任务管理器（Windows）或活动监视器（macOS）中找到占用端口的进程并结束它。如果不知道哪个进程占用了，直接重启电脑也可以释放端口。
 
 **方法二：修改 MaiBot 端口**
+
+只修改日志中报错的服务，不要把下面两个示例同时照抄。
+
+如果 WebUI 默认端口 `8001` 被占用：
+
 ```toml
 # config/bot_config.toml
-
-# WebUI 端口（默认 8001）
 [webui]
 port = 8002             # 改为 8002 或其他空闲端口
-
-# WebSocket 端口（默认 8000）
-[maim_message]
-ws_server_port = 18000  # 使用与 WebUI 不同的空闲端口
 ```
 
-**方法三：换个端口启动**
-启动时换个端口也很简单，改完配置文件重新启动 MaiBot 就行。建议用 8002、9000 这类不太常用的端口。`
+如果你确实启用了 legacy `maim_message`，并且日志显示它的默认端口 `8000` 被占用：
+
+```toml
+# config/bot_config.toml
+[maim_message]
+ws_server_port = 18000  # 示例；也可以使用其他已确认空闲的端口
+```
+
+`8001` 和 `8002` 本身不冲突。这里不能继续推荐 `8001` 给另一个服务，是因为本场景已经确认 `8001` 被外部进程占用。NapCat 插件版不使用 `[maim_message]`。
+
+修改监听端口后需要重新启动 MaiBot，使服务绑定到新端口。
 
 #### 预防建议
 - 📝 **记录端口分配** — 避免多个服务用同一端口
 - 🔄 **重启后检查** — 有时旧进程未清理，重启后需手动结束
-- 🔧 **使用非标准端口** — 如 8001 改为 18001，降低冲突概率
+- 🔧 **先确认再修改** — 使用系统工具确认目标端口空闲，不要只凭端口数字猜测
 
 ---
 

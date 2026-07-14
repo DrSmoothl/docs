@@ -52,8 +52,8 @@ python --version
 
 2️⃣ **Missing Configuration File**
 ```bash
-# Automatically created on first startup
-# If missing, manually create the config folder
+# First startup creates config/, bot_config.toml, and model_config.toml
+# If generation fails, check directory write permissions and the log
 ```
 
 3️⃣ **Port Already in Use**
@@ -64,8 +64,10 @@ WebUI server startup failed: Port 8001 is already in use (host=127.0.0.1)
 ```
 
 **Method 1: Change the Port** — Edit `config/bot_config.toml`:
-- WebUI Port: `[webui]` → `port = 8002`
-- Legacy WebSocket port: `[maim_message]` → `ws_server_port = 18000` (default 8000; keep it distinct from WebUI and other services. The NapCat plugin adapter does not use it)
+- If the log says WebUI port `8001` is occupied: set `[webui].port = 8002`, or choose another port confirmed to be free
+- Change `[maim_message].ws_server_port` only when the log says its legacy WebSocket port `8000` is occupied; the NapCat plugin adapter does not use this setting
+
+Ports `8001` and `8002` do not conflict. The important point is not to move a service to a port the log has already shown to be occupied, and to change only the service that actually failed.
 
 **Method 2: Terminate the Process**:
 ```bash

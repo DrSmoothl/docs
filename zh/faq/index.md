@@ -53,8 +53,8 @@ python --version
 
 2️⃣ **配置文件缺失**
 ```
-# 第一次启动会自动创建
-# 如果没有，手动创建 config 文件夹
+# 第一次启动会自动创建 config/、bot_config.toml 和 model_config.toml
+# 生成失败时检查目录写入权限和日志
 ```
 
 3️⃣ **端口被占用**
@@ -65,8 +65,10 @@ WebUI 服务器 启动失败: 端口 8001 已被占用 (host=127.0.0.1)
 ```
 
 **方法一：改端口** — 编辑 `config/bot_config.toml`：
-- WebUI 端口：`[webui]` → `port = 8002`
-- Legacy WebSocket 端口：`[maim_message]` → `ws_server_port = 18000`（默认 8000；要与 WebUI 等其他服务使用不同端口。NapCat 插件版不使用此项）
+- 如果日志显示 WebUI 的 `8001` 被占用：`[webui]` → `port = 8002`，或选择其他已确认空闲的端口
+- 只有日志显示 legacy WebSocket 的 `8000` 被占用时，才修改 `[maim_message].ws_server_port`；NapCat 插件版不使用此项
+
+`8001` 和 `8002` 并不冲突。关键是不要把服务改到日志已经确认被其他进程占用的端口，并且只修改实际报错的服务。
 
 **方法二：关进程**：
 ```bash
