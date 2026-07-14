@@ -35,3 +35,6 @@ Changing to a model with different dimensions may require rebuilding vectors thr
 
 Support depends on both MaiBot's current memory implementation and the service API. For text memory, prefer a stable text embedding model rather than assuming that any provider-labeled multimodal model is a drop-in replacement.
 
+::: info Source note
+Some embedding compatibility and multimodal-embedding troubleshooting ideas were adapted from the community [Quick FAQ / Community Tutorial](https://www.kdocs.cn/l/ctOGhVv6L8Yq), where the relevant notes are explicitly credited to ARC. This page corrects the endpoint and scope for the current implementation.
+:::

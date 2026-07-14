@@ -30,3 +30,6 @@ Use logs to identify whether time is spent on model requests, tools, image recog
 
 Inspect the raw model output to distinguish model output from post-processing. When reply splitting is enabled, check `max_sentence_num` and `enable_overflow_return_all`. If disabling splitting does not resolve the issue, continue with personality, prompt, and model checks.
 
+::: info Source note
+Some symptoms and troubleshooting ideas on this page were adapted from the community [Quick FAQ / Community Tutorial](https://www.kdocs.cn/l/ctOGhVv6L8Yq). The source explicitly credits 千石可乐 for experience related to the bot replying to itself. This page rewrites that material for the current message path and configuration.
+:::

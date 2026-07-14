@@ -44,9 +44,11 @@ features:
 
 ## Acknowledgements
 
-Thank you to every maintainer and contributor who helps build and improve the MaiBot documentation.
+Thank you to everyone who maintains and improves the MaiBot documentation.
 
-Every addition, correction, translation, report, and suggestion makes this documentation more accurate and easier to use.
+Major maintainers and contributors include SengokuCola, Dreamwxz, UnCLAS-Prommer, infinitycat, 墨梓柒, 晴猫 (春河晴), 梦归云帆, zhangxinhui02, STMfan, and king-81, together with every community member who submitted content, corrections, translations, or feedback. See the complete history on [GitHub Contributors](https://github.com/Mai-with-u/docs/graphs/contributors).
+
+Some FAQ troubleshooting material was adapted from the community-maintained document [MaiBot Tutorial — Quick FAQ / Community Tutorial](https://www.kdocs.cn/l/ctOGhVv6L8Yq). Metadata from the July 12, 2026 export identifies 池雨 as the creator and 无为青年 as the modifier. Individual answers in the source also explicitly credit 千石可乐 and ARC. The material in this site was rechecked and rewritten against the current MaiBot implementation.
 
 <style scoped>
 #star-canvas {

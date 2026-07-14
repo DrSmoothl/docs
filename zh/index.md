@@ -45,9 +45,11 @@ features:
 
 ## 鸣谢
 
-感谢所有参与 MaiBot 文档维护与建设的维护者和贡献者。
+感谢所有参与 MaiBot 文档维护与建设的朋友。
 
-每一次内容补充、错误修正、翻译、反馈与建议，都在帮助这份文档变得更加准确和易用。
+文档的主要维护者与贡献者包括：SengokuCola、Dreamwxz、UnCLAS-Prommer、infinitycat、墨梓柒、晴猫（春河晴）、梦归云帆、zhangxinhui02、STMfan、king-81，以及其他提交内容、修正、翻译和反馈的社区成员。完整记录见 [GitHub Contributors](https://github.com/Mai-with-u/docs/graphs/contributors)。
+
+部分 FAQ 排障经验参考了社区协作文档[《麦麦教程-常见问题速查/社区教程》](https://www.kdocs.cn/l/ctOGhVv6L8Yq)。2026 年 7 月 12 日导出版本的页面信息显示创建者为池雨、修改者为无为青年；正文中部分答复另有明确署名，其中包括千石可乐和 ARC。相关内容已根据当前 MaiBot 实现重新核对和改写。
 
 <style scoped>
 #star-canvas {
