@@ -73,6 +73,16 @@ Docker 会把重要数据保存在你电脑的这些位置：
 
 `docker compose up -d` 只会把 MaiBot 和 NapCat 容器启动起来，还需要完成 NapCat 登录、WebSocket 和适配器配置，MaiBot 才能真正收到 QQ 消息。
 
+先在 MaiBot WebUI 的基础配置中填写机器人平台和 QQ 账号，或编辑 `./docker-config/mmc/bot_config.toml`：
+
+```toml
+[bot]
+platform = "qq"
+qq_account = "123456789"  # 必须与 NapCat 实际登录的 QQ 号一致
+```
+
+NapCat 负责登录和收发 QQ 消息；`bot.qq_account` 供 MaiBot 核心识别机器人自己的消息。它不是 NapCat 的登录配置，但不能省略或填写成其他账号。
+
 1. 打开 NapCat 管理面板：`http://localhost:6099`
 2. 登录 NapCat 管理面板。如果需要 token，请查看 `./docker-config/napcat/webui.json` 中的 `token` 字段。
 3. 在 NapCat 管理面板中登录 QQ 小号。
@@ -185,7 +195,8 @@ docker compose logs core
 
 90% 是因为：
 - 配置文件没填对（特别是 API 密钥）
-- QQ 号填错了
+
+QQ 号填错通常不会让 `core` 容器直接退出，但会导致 MaiBot 无法正确识别自己的消息、头像或相关数据。请确认 `[bot].qq_account` 与 NapCat 登录账号一致。
 
 ### 内存不够？
 

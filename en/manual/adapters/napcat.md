@@ -28,7 +28,19 @@ In NapCat WebUI network settings:
 
 Do not confuse the NapCat WebUI token, MaiBot WebUI Access Token, and WebSocket access token.
 
-## 3. Install and Enable the Adapter
+## 3. Configure MaiBot's Bot Account
+
+Set the platform and QQ account in WebUI basic settings, or edit `config/bot_config.toml`:
+
+```toml
+[bot]
+platform = "qq"
+qq_account = "123456789"
+```
+
+`qq_account` must match the QQ account actually logged in through NapCat. NapCat logs that account into QQ, while MaiBot core uses this setting to identify messages sent by the bot itself. The plugin adapter does not use `[maim_message]`, but it still requires `[bot].qq_account`.
+
+## 4. Install and Enable the Adapter
 
 Open **Plugin Management** in MaiBot WebUI, install **NapCat Adapter** from the plugin marketplace, and enable it manually. Its default configuration is disabled, so a successful installation alone does not start it.
 
@@ -40,7 +52,7 @@ git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot
 
 After a manual clone, use the WebUI to enable and configure it. The actual directory name may vary by installation method, so do not use a hard-coded directory name as proof that installation succeeded.
 
-## 4. Configure the Connection
+## 5. Configure the Connection
 
 Set these fields in the NapCat Adapter settings:
 
@@ -52,7 +64,7 @@ Set these fields in the NapCat Adapter settings:
 
 The adapter connects to an address such as `ws://127.0.0.1:3001`. After saving, its `on_config_update` lifecycle stops the old connection and reconnects with the new settings; a full MaiBot restart is normally unnecessary.
 
-## 5. Configure Chat Lists
+## 6. Configure Chat Lists
 
 Chat-list filtering is enabled by default. Group and private chats both default to whitelist mode, with initially empty lists. Messages outside the lists are discarded.
 

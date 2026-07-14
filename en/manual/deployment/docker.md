@@ -73,6 +73,16 @@ Docker saves important data in these locations on your computer:
 
 `docker compose up -d` will only start the MaiBot and NapCat containers. You still need to complete the NapCat login, WebSocket, and adapter configuration before MaiBot can actually receive QQ messages.
 
+First set the bot platform and QQ account in MaiBot WebUI, or edit `./docker-config/mmc/bot_config.toml`:
+
+```toml
+[bot]
+platform = "qq"
+qq_account = "123456789"  # Must match the QQ account actually logged in through NapCat
+```
+
+NapCat handles QQ login and message transport. `bot.qq_account` is used by MaiBot core to identify messages sent by the bot itself. It is not a NapCat login setting, but it must not be omitted or set to a different account.
+
 1. Open the NapCat management panel: `http://localhost:6099`
 2. Log in to the NapCat management panel. If a token is required, check the `token` field in `./docker-config/napcat/webui.json`.
 3. Log in to your QQ alternate account in the NapCat management panel.
@@ -185,7 +195,8 @@ docker compose logs core
 
 90% of the time it's because:
 - Configuration file is not filled in correctly (especially the API key)
-- QQ number is filled in incorrectly
+
+An incorrect QQ account does not normally make the `core` container exit directly, but it prevents MaiBot from reliably identifying its own messages, avatar, and related data. Ensure `[bot].qq_account` matches the account logged in through NapCat.
 
 ### Not enough memory?
 

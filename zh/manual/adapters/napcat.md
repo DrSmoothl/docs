@@ -28,7 +28,19 @@ title: 使用 NapCat 适配器连接 QQ
 
 不要把 NapCat WebUI Token、MaiBot WebUI Access Token 和 WebSocket Token 混用。
 
-## 3. 安装并启用适配器
+## 3. 配置 MaiBot 的机器人账号
+
+在 WebUI 基础配置中填写平台和 QQ 账号，或编辑 `config/bot_config.toml`：
+
+```toml
+[bot]
+platform = "qq"
+qq_account = "123456789"
+```
+
+`qq_account` 必须与 NapCat 实际登录的 QQ 号一致。NapCat 用该账号登录 QQ；MaiBot 核心用这个配置识别机器人自己发送的消息。插件版虽然不使用 `[maim_message]`，但仍然需要 `[bot].qq_account`。
+
+## 4. 安装并启用适配器
 
 在 MaiBot WebUI 中打开“插件管理”，从插件市场安装 **NapCat Adapter**，然后手动启用。插件默认配置为禁用，安装成功不等于已经运行。
 
@@ -40,7 +52,7 @@ git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot
 
 手动克隆后仍建议在 WebUI 中完成启用和配置。插件目录名可能因安装方式而异，不要依赖固定目录名判断是否安装成功。
 
-## 4. 配置连接
+## 5. 配置连接
 
 在 NapCat Adapter 的插件设置中填写：
 
@@ -52,7 +64,7 @@ git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot
 
 适配器会连接类似 `ws://127.0.0.1:3001` 的地址。保存配置后，插件的 `on_config_update` 会停止旧连接并按新配置重新连接，通常不需要重启 MaiBot。
 
-## 5. 配置聊天名单
+## 6. 配置聊天名单
 
 适配器默认启用聊天名单过滤，群聊与私聊均默认为白名单，初始名单为空。未加入名单的消息会被丢弃。
 
