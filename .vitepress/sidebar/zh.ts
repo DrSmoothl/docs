@@ -63,7 +63,22 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '常见问题',
       collapsed: false,
       items: [
-        { text: 'FAQ', link: '/faq/' },
+        { text: 'FAQ 总览', link: '/faq/' },
+        { text: '基础使用', link: '/faq/basic-usage' },
+        { text: '部署与启动', link: '/faq/deployment' },
+        { text: '一键包', link: '/faq/one-key' },
+        { text: '适配器连接', link: '/faq/adapters' },
+        { text: '聊天与回复', link: '/faq/chat-and-reply' },
+        { text: '模型与 API', link: '/faq/models-and-api' },
+        { text: '记忆与学习', link: '/faq/memory-and-learning' },
+        { text: '插件问题', link: '/faq/plugins' },
+        { text: '数据与迁移', link: '/faq/backup-and-migration' },
+      ]
+    },
+    {
+      text: '排错与支持',
+      collapsed: false,
+      items: [
         { text: '错误排查', link: '/faq/error-troubleshooting' },
       ]
     },

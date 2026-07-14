@@ -68,7 +68,22 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'FAQ',
       collapsed: false,
       items: [
-        { text: 'FAQ', link: '/en/faq/' },
+        { text: 'FAQ Overview', link: '/en/faq/' },
+        { text: 'Basic Usage', link: '/en/faq/basic-usage' },
+        { text: 'Deployment and Startup', link: '/en/faq/deployment' },
+        { text: 'One-click Package', link: '/en/faq/one-key' },
+        { text: 'Adapter Connections', link: '/en/faq/adapters' },
+        { text: 'Chat and Replies', link: '/en/faq/chat-and-reply' },
+        { text: 'Models and APIs', link: '/en/faq/models-and-api' },
+        { text: 'Memory and Learning', link: '/en/faq/memory-and-learning' },
+        { text: 'Plugin Issues', link: '/en/faq/plugins' },
+        { text: 'Backup and Migration', link: '/en/faq/backup-and-migration' },
+      ]
+    },
+    {
+      text: 'Troubleshooting and Support',
+      collapsed: false,
+      items: [
         { text: 'Error Troubleshooting', link: '/en/faq/error-troubleshooting' },
       ]
     },

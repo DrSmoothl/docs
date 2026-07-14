@@ -42,6 +42,12 @@ features:
   - QQ: 729957033
   - QQ: 1022489779 (Casual Chat Group)
 
+## Acknowledgements
+
+Thank you to every maintainer and contributor who helps build and improve the MaiBot documentation.
+
+Every addition, correction, translation, report, and suggestion makes this documentation more accurate and easier to use.
+
 <style scoped>
 #star-canvas {
   position: fixed;
