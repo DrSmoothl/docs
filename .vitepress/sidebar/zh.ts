@@ -169,6 +169,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: '开发指南', link: '/develop/' },
         { text: '架构设计', link: '/develop/architecture' },
         { text: '贡献指南', link: '/develop/contributing' },
+        { text: '文档编写特性', link: '/develop/markdown-features' },
       ]
     },
     {

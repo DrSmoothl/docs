@@ -163,6 +163,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Development Guide', link: '/en/develop/' },
         { text: 'Architecture Design', link: '/en/develop/architecture' },
         { text: 'Contributing Guide', link: '/en/develop/contributing' },
+        { text: 'Markdown Features', link: '/en/develop/markdown-features' },
       ]
     },
     {
