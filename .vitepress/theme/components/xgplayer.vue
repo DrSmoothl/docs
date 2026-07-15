@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, shallowRef, onMounted, onUnmounted } from 'vue'
+import 'xgplayer/dist/index.min.css'
 
 interface Props {
   url: string
@@ -52,6 +53,10 @@ onUnmounted(() => {
 <style scoped>
 .xgplayer-container {
   width: 100%;
+  min-height: 360px;
+  background: #000;
   margin: 16px 0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 </style>
