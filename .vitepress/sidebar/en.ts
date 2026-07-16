@@ -198,7 +198,10 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'About',
       collapsed: false,
       items: [
-        { text: 'About MaiBot', link: '/en/about/' },
+        { text: 'About the Project', link: '/en/about/' },
+        { text: 'About This Docs', link: '/en/about/about-docs' },
+        { text: 'Community Groups', link: '/en/about/community' },
+        { text: 'Acknowledgements & Links', link: '/en/about/acknowledgements' },
         { text: 'EULA', link: '/en/about/EULA' },
         { text: 'Privacy Policy', link: '/en/about/PRIVACY' },
       ]

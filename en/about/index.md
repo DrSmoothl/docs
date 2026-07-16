@@ -1,34 +1,39 @@
 ---
-title: About
+title: About the Project
 ---
 
-# About MaiBot
+# About the Project
 
-MaiBot is an LLM-based interactive agent designed to be a living presence in chat platforms. It's not just a tool for answering questions, but a companion that brings life to conversations.
+MaiBot (MaiSaka) is an interactive agent based on large language models. She is more than just a "helpful assistant" that completes tasks -- she is a digital life form that tries to understand you and interact in a genuinely human style. She does not pursue perfection or efficiency above all else. She pursues warmth and authenticity.
 
-## Project Overview
-
-MaiBot is an intelligent agent primarily built for QQ group chats. Unlike traditional AI assistants that often feel robotic and overly formal, MaiBot focuses on natural interaction and deep integration with the chat environment.
-
-It features:
-- **Natural Conversation**: Moves away from long-winded AI responses to a style that fits human chatting habits.
-- **Intelligent Timing**: Knows when to speak and when to stay silent to maintain the flow of conversation.
-- **Continuous Learning**: Mimics speaking styles and learns new slang or inside jokes autonomously.
-- **User Understanding**: Builds a deep understanding of users based on psychological personality theories.
-- **Extensible System**: A powerful plugin system that allows for nearly infinite functional expansion.
-- **Long-term Memory**: Powered by the A-Memorix engine, ensuring that every meaningful interaction is remembered.
+- 💭 **No one likes GPT-sounding dialogue**: MaiBot uses a more natural conversational style. Instead of long-winded, markdown-heavy replies, she chats in a way that feels casual, varied, and human.
+- 🎭 **No longer stuck in rigid Q&A**: She knows when to speak, how to read the room, when to join a conversation, and when to stay quiet.
+- 🧠 **MaiSaka becoming human**: In group conversations, MaiBot imitates how people around her speak, learns new slang and in-group language, and keeps evolving.
+- ❤️ **Always learning more about you**: Inspired by personality theory in psychology, MaiBot gradually builds an understanding of your preferences, traits, habits, and behavior style.
+- 🔌 **Plugin system**: Provides powerful APIs and an event system with virtually unlimited room for extension.
 
 ## Design Philosophy
 
-The core of MaiBot is guided by the principle: **"Most-like, not best" (最像而不是好)**.
+> **SengokuCola says:**
+> - This project originally started as a few extra features for the NiuNiu bot, but it kept growing until a full rewrite became inevitable. The goal was to create a "life form" active in QQ group chats, not a feature-complete bot, but something as human-like and real-feeling as possible.
+> - The core design principle is: "more lifelike, not merely better."
+> - If people truly want AI companionship, not everyone needs a perfect "helpful assistant" that solves every problem. Some people may want a life form that can make mistakes and has its own perceptions and thoughts.
 
-Founded by SengokuCola (千石可乐), the project aims to create a "living entity" rather than a perfect tool. The belief is that if people seek AI companionship, they don't always want a flawless, problem-solving assistant. Instead, they might prefer a life-form that feels real, including its imperfections, perceptions, and unique thoughts.
+> **xxxxx says:**
+> *Code is open, but the soul is yours.*
+
+## Related Projects
+
+<Linkcard url="https://github.com/MaiM-with-u/Amaidesu" title="Amaidesu" description="Let MaiBot stream on Bilibili" />
+
+<Linkcard url="https://github.com/MoFox-Studio/MoFox-Core" title="MoFox_Bot" description="Enhanced Fork based on MaiCore 0.10.0 — more stable and fun" />
+
+<Linkcard url="https://github.com/MaiM-with-u/Maicraft" title="MaiCraft" description="Let MaiBot play Minecraft with you (currently paused)" />
 
 ## Open Source & License
 
-MaiBot is committed to the open-source community and is released under the **GPL-3.0** license. We believe in transparency and collaborative evolution to make the agent more human-like.
+MaiBot is released under the **GPL-3.0** license. Please read the [End User License Agreement (EULA)](./EULA) and [Privacy Policy](./PRIVACY) before use. Please evaluate AI-generated content carefully.
 
-| Document | Description |
-|----------|-------------|
-| [EULA](/en/about/EULA) | End User License Agreement |
-| [Privacy Policy](/en/about/PRIVACY) | Data handling, telemetry, and third-party plugin privacy boundaries |
+::: warning Important
+MaiBot is an open-source project and is completely free to use. If you see anyone selling MaiBot, please be careful and avoid being scammed.
+:::

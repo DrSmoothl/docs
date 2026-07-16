@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface Props {
   url: string
   title: string
@@ -9,6 +11,16 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   logo: ''
 })
+
+const resolvedLogo = computed(() => {
+  if (props.logo) return props.logo
+  try {
+    const host = new URL(props.url).hostname
+    return `https://${host}/favicon.ico`
+  } catch {
+    return ''
+  }
+})
 </script>
 
 <template>
@@ -17,8 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
       <span class="linkcard-title">{{ props.title }}</span>
       <span class="linkcard-desc">{{ props.description }}</span>
     </div>
-    <div v-if="props.logo" class="linkcard-logo">
-      <img :src="props.logo" :alt="props.title" />
+    <div v-if="resolvedLogo" class="linkcard-logo">
+      <img :src="resolvedLogo" :alt="props.title" />
     </div>
   </a>
 </template>
