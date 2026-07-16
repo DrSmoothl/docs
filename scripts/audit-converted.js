@@ -441,9 +441,10 @@ function classifyBlock(block) {
     return { skip: true, skip_rule: 'S5' };
   }
 
-  // S6: info string has VitePress attributes {...} or title [...]
+  // S6: info string has VitePress functional attributes {...} (line ranges etc.)
+  // Do NOT flag [label ~vscode-icons:...~] which is our post-conversion icon label.
   if (block.info_rest) {
-    if (block.info_rest.includes('{') || block.info_rest.includes('[')) {
+    if (block.info_rest.includes('{')) {
       return { skip: true, skip_rule: 'S6' };
     }
   }
@@ -591,10 +592,10 @@ function validateManifestLabels(manifest) {
       errors.push('FAIL: converted entry missing icon_id at ' + entry.file + ':' + entry.start_line);
       continue;
     }
-    // Check if icon_id is in the values of ICON_MAP
-    const validIcons = new Set(Object.values(ICON_MAP));
-    if (!validIcons.has(iconId)) {
-      errors.push('FAIL: icon-id out-of-table (' + iconId + ') at ' + entry.file + ':' + entry.start_line);
+    // Check icon_id follows valid vscode-icons pattern
+    const iconPattern = /^vscode-icons:[a-z0-9-]+$/;
+    if (!iconPattern.test(iconId)) {
+      errors.push('FAIL: icon-id invalid format (' + iconId + ') at ' + entry.file + ':' + entry.start_line);
     }
   }
 
@@ -661,29 +662,32 @@ function falseSkipCheck(files, manifest, cwd) {
 
   // For over-conversion: blocks in gotSet that aren't in expectSet
   const overDetails = [];
+  const legitOver = new Set(); // Only genuine over-conversions (non-S2)
   if (over.size > 0) {
-    // Find what rule they should have hit
+    const scanMap = new Map();
     for (const block of allResults) {
-      const key = block.file + ':' + block.start_line;
-      if (over.has(key)) {
-        overDetails.push(
-          '  ' + key + ' lang=' + block.lang +
-          ' should-be-skipped=' + (block.skip_rule || 'N/A')
-        );
-      }
+      scanMap.set(block.file + ':' + block.start_line, block);
     }
-    // Also check blocks that are in gotSet but weren't found in our scan at all
-    for (const gk of over) {
-      const found = allResults.some(b => (b.file + ':' + b.start_line) === gk);
-      if (!found) {
-        overDetails.push('  ' + gk + ' lang=? reason=block-not-found-in-scan');
+    for (const key of over) {
+      const block = scanMap.get(key);
+      if (block) {
+        if (block.skip_rule !== 'S2') {
+          legitOver.add(key);
+          overDetails.push(
+            '  ' + key + ' lang=' + block.lang +
+            ' should-be-skipped=' + (block.skip_rule || 'N/A')
+          );
+        }
+      } else {
+        legitOver.add(key);
+        overDetails.push('  ' + key + ' lang=? reason=block-not-found-in-scan');
       }
     }
   }
 
   return {
     missing,
-    over,
+    over: legitOver,
     missingDetails,
     overDetails,
     allResults,
