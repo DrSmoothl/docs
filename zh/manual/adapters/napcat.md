@@ -39,6 +39,7 @@ title: 使用 NapCat 适配器连接 QQ
 platform = "qq"
 qq_account = "123456789"
 ```
+
 :::
 
 `qq_account` 必须与 NapCat 实际登录的 QQ 号一致。NapCat 用该账号登录 QQ；MaiBot 核心用这个配置识别机器人自己发送的消息。插件版虽然不使用 `[maim_message]`，但仍然需要 `[bot].qq_account`。
@@ -54,6 +55,7 @@ qq_account = "123456789"
 ```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot-Napcat-Adapter
 ```
+
 :::
 
 手动克隆后仍建议在 WebUI 中完成启用和配置。插件目录名可能因安装方式而异，不要依赖固定目录名判断是否安装成功。
@@ -85,6 +87,7 @@ show_dropped_chat_list_messages = true
 group_list_type = "whitelist"
 group_list = ["你的QQ群号"]
 ```
+
 :::
 
 ## 验证与排错

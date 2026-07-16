@@ -45,6 +45,7 @@ servers:
       middlewares:
         <<: *default # Reference default middleware
 ```
+
 :::
 
 Use the startup script to launch GoCQ and perform QR code login.
@@ -64,6 +65,7 @@ git clone https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 python main.py
 ```
+
 :::
 
 ### Configuring GoCQ Adapter

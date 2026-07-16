@@ -84,6 +84,7 @@ uv build
 ```python
 from maibot_sdk import MaiBotPlugin, Command, Tool
 ```
+
 :::
 
 ### 2. 创建插件目录

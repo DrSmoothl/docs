@@ -146,6 +146,7 @@ export EULA_AGREE=<hash shown>
 export PRIVACY_AGREE=<hash shown>
 uv run python bot.py
 ```
+
 :::
 
 ### Step 6: Enter WebUI

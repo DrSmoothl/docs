@@ -39,6 +39,7 @@ Set the platform and QQ account in WebUI basic settings, or edit `config/bot_con
 platform = "qq"
 qq_account = "123456789"
 ```
+
 :::
 
 `qq_account` must match the QQ account actually logged in through NapCat. NapCat logs that account into QQ, while MaiBot core uses this setting to identify messages sent by the bot itself. The plugin adapter does not use `[maim_message]`, but it still requires `[bot].qq_account`.
@@ -54,6 +55,7 @@ If the marketplace is unavailable, clone the repository into MaiBot's `plugins/`
 ```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/Mai-with-u/MaiBot-Napcat-Adapter.git plugins/MaiBot-Napcat-Adapter
 ```
+
 :::
 
 After a manual clone, use the WebUI to enable and configure it. The actual directory name may vary by installation method, so do not use a hard-coded directory name as proof that installation succeeded.
@@ -85,6 +87,7 @@ show_dropped_chat_list_messages = true
 group_list_type = "whitelist"
 group_list = ["your-qq-group-id"]
 ```
+
 :::
 
 ## Verification and Troubleshooting

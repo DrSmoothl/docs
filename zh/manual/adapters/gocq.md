@@ -45,6 +45,7 @@ servers:
       middlewares:
         <<: *default # 引用默认中间件
 ```
+
 :::
 
 使用启动脚本启动GoCQ，进行扫码登录。
@@ -64,6 +65,7 @@ git clone https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 python main.py
 ```
+
 :::
 
 ### 配置 GoCQ Adapter

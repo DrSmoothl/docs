@@ -54,6 +54,7 @@ You can disable telemetry without affecting core chat:
 [telemetry]
 enable = false
 ```
+
 :::
 
 Telemetry is retained for a reasonable period needed for the purposes above, then deleted or anonymized. The project team does not sell raw telemetry records to third parties.

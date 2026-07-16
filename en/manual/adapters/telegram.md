@@ -41,6 +41,7 @@ Clone the adapter repository into the `plugins/` directory of MaiBot:
 cd /path/to/MaiBot/plugins
 git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 ```
+
 :::
 
 ### Dependencies
@@ -55,6 +56,7 @@ For SOCKS5 proxy support, install additionally:
 ```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+
 :::
 
 ## Configuration
@@ -98,6 +100,7 @@ MaiBot Core needs to identify "the bot itself" via the `platforms` field in the 
 [bot]
 platforms = ["telegram:123456789"]
 ```
+
 :::
 
 Where `123456789` is your Telegram Bot's numeric ID; you can also use the shorthand `tg:123456789`. The Bot's numeric ID will be output in the logs as `Telegram Bot: id=...` after the adapter starts successfully.
@@ -161,6 +164,7 @@ If the server cannot directly access the Telegram API, it can connect via a prox
 proxy_enabled = true
 proxy_url = "http://127.0.0.1:7890"
 ```
+
 :::
 
 ### SOCKS5 Proxy
@@ -172,6 +176,7 @@ Using a SOCKS5 proxy requires the additional installation of the `aiohttp-socks`
 ```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+
 :::
 
 Then configure:
@@ -183,6 +188,7 @@ Then configure:
 proxy_enabled = true
 proxy_url = "socks5://127.0.0.1:1080"
 ```
+
 :::
 
 ### Read Proxy from Environment Variables
@@ -196,6 +202,7 @@ If `HTTP_PROXY` or `HTTPS_PROXY` environment variables are already configured in
 proxy_enabled = true
 proxy_from_env = true
 ```
+
 :::
 
 ### Custom API Address
@@ -208,6 +215,7 @@ If using a self-hosted Telegram API proxy server (such as Telegram Bot API Serve
 [telegram_bot]
 api_base = "https://your-api-server.com"
 ```
+
 :::
 
 ## Topic Routing

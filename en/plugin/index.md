@@ -59,6 +59,7 @@ The package name is `maibot-plugin-sdk`, but in code, import using `maibot_sdk`:
 ```python
 from maibot_sdk import MaiBotPlugin, Command, Tool
 ```
+
 :::
 
 ### 2. Create Plugin Directory

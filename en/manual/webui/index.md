@@ -51,6 +51,7 @@ webui_style = 1               # UI style
 anti_crawler_mode = "basic"   # Anti-crawler mode: false / strict / loose / basic
 allowed_ips = "127.0.0.1"     # IP whitelist (comma-separated)
 ```
+
 :::
 
 - Change `host` to `["0.0.0.0", "::"]` to listen on all IPv4/IPv6 interfaces; also configure firewall rules, access restrictions, and HTTPS

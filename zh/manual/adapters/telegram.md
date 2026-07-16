@@ -40,6 +40,7 @@ Telegram 适配器的源码：[exynos967/MaiBot-Telegram-Adapter](https://github
 cd /path/to/MaiBot/plugins
 git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 ```
+
 :::
 
 ### 依赖
@@ -54,6 +55,7 @@ git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 ```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+
 :::
 
 ## 配置
@@ -97,6 +99,7 @@ MaiBot Core 需要通过主配置里的 `platforms` 字段识别"机器人自己
 [bot]
 platforms = ["telegram:123456789"]
 ```
+
 :::
 
 其中 `123456789` 是你的 Telegram Bot 的数字 ID，也可以使用简写 `tg:123456789`。Bot 数字 ID 会在适配器启动成功后通过日志 `Telegram Bot: id=...` 输出。
@@ -160,6 +163,7 @@ platforms = ["telegram:123456789"]
 proxy_enabled = true
 proxy_url = "http://127.0.0.1:7890"
 ```
+
 :::
 
 ### SOCKS5 代理
@@ -171,6 +175,7 @@ proxy_url = "http://127.0.0.1:7890"
 ```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+
 :::
 
 然后配置：
@@ -182,6 +187,7 @@ pip install aiohttp-socks
 proxy_enabled = true
 proxy_url = "socks5://127.0.0.1:1080"
 ```
+
 :::
 
 ### 从环境变量读取代理
@@ -195,6 +201,7 @@ proxy_url = "socks5://127.0.0.1:1080"
 proxy_enabled = true
 proxy_from_env = true
 ```
+
 :::
 
 ### 自定义 API 地址
@@ -207,6 +214,7 @@ proxy_from_env = true
 [telegram_bot]
 api_base = "https://your-api-server.com"
 ```
+
 :::
 
 ## Topic 分流

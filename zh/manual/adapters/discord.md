@@ -69,6 +69,7 @@ Discord 适配器源码：[litroenade/MaiBot-Discord-Adapter](https://github.com
 cd /path/to/MaiBot/plugins
 git clone https://github.com/litroenade/MaiBot-Discord-Adapter.git
 ```
+
 :::
 
 也可以通过 MaiBot 的 WebUI 界面安装插件。
@@ -102,6 +103,7 @@ config_version = "1.0.0"
 [connection]
 token = "你的Discord Bot Token"  # 必填
 ```
+
 :::
 
 然后重启 MaiBot 即可。
@@ -131,6 +133,7 @@ guild_list = ["你的服务器ID"]
 channel_list_type = "whitelist"
 channel_list = ["你的频道ID"]
 ```
+
 :::
 
 如果发现 Bot 已连接但消息没有反应，优先检查聊天过滤配置。

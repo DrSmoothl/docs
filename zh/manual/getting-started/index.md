@@ -141,6 +141,7 @@ export EULA_AGREE=<显示的hash>
 export PRIVACY_AGREE=<显示的hash>
 uv run python bot.py
 ```
+
 :::
 
 ### 第 6 步：进入 WebUI

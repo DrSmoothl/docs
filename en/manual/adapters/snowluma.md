@@ -40,6 +40,7 @@ cd MaiBot/plugins
 # 克隆仓库
 git clone https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter.git
 ```
+
 :::
 
 Alternatively, you can install the plugin via the MaiBot WebUI.
@@ -73,6 +74,7 @@ Edit `plugins/MaiBot-SnowLuma-Adapter/config.toml` and change `enabled` to `true
 enabled = true   # 改为 true
 config_version = "1.0.0"
 ```
+
 :::
 
 Then restart MaiBot.
@@ -127,6 +129,7 @@ During the testing phase, you can temporarily disable list filtering:
 [chat]
 enable_chat_list_filter = false
 ```
+
 :::
 
 Or add the group numbers you need to test to the whitelist:
@@ -139,6 +142,7 @@ enable_chat_list_filter = true
 group_list_type = "whitelist"
 group_list = ["你的QQ群号"]
 ```
+
 :::
 
 ### Message Filtering (`[filters]`)
@@ -175,6 +179,7 @@ ban_qq_bot = false
 [filters]
 ignore_self_message = true
 ```
+
 :::
 
 ## Verification and Troubleshooting
@@ -224,4 +229,5 @@ If you need a single MaiBot to interface with multiple SnowLuma instances (e.g.,
 [luma_client]
 connection_id = "bot-1"
 ```
+
 :::

@@ -70,6 +70,7 @@ Clone the adapter repository into MaiBot's `plugins/` directory:
 cd /path/to/MaiBot/plugins
 git clone https://github.com/litroenade/MaiBot-Discord-Adapter.git
 ```
+
 :::
 
 You can also install the plugin through MaiBot's WebUI.
@@ -103,6 +104,7 @@ config_version = "1.0.0"
 [connection]
 token = "Your Discord Bot Token"  # Required
 ```
+
 :::
 
 Then restart MaiBot.
@@ -132,6 +134,7 @@ guild_list = ["Your Server ID"]
 channel_list_type = "whitelist"
 channel_list = ["Your Channel ID"]
 ```
+
 :::
 
 If the Bot is connected but not responding to messages, check the chat filtering configuration first.

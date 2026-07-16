@@ -51,6 +51,7 @@ webui_style = 1               # 界面风格
 anti_crawler_mode = "basic"   # 防爬虫模式：false / strict / loose / basic
 allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 ```
+
 :::
 
 - `host` 改成 `["0.0.0.0", "::"]` 可以监听所有 IPv4/IPv6 网卡；同时应配置防火墙、访问白名单和 HTTPS
