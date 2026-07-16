@@ -52,10 +52,10 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '关于',
       collapsed: false,
       items: [
-        { text: '关于本项目', link: '/about/' },
-        { text: '关于本文档', link: '/about/about-docs' },
+        { text: '关于麦麦', link: '/about/' },
+        { text: '关于文档', link: '/about/about-docs' },
         { text: '交流群', link: '/about/community' },
-        { text: '致谢与链接', link: '/about/acknowledgements' },
+        { text: '致谢与友链', link: '/about/acknowledgements' },
         { text: 'EULA', link: '/about/EULA' },
         { text: '隐私条款', link: '/about/PRIVACY' },
       ]
