@@ -13,7 +13,9 @@ Welcome to MaiBot development! Please read the following guidelines carefully be
 3. Standard library / third-party library imports are placed before local module imports, separated by blank lines between blocks
 4. Adjust non-compliant import order when refactoring
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Standard library
 import asyncio
 import os
@@ -28,6 +30,8 @@ from src.common.logger import get_logger
 from src.config.config import config_manager
 ```
 
+:::
+
 ## Comment Guidelines
 
 1. Maintain good comments; preserve original comments when refactoring (content may be modified)
@@ -40,7 +44,9 @@ from src.config.config import config_manager
 2. Parameterized generics use Python 3.10+ built-in syntax (e.g., `dict[K, V]`, `list[T]`, `T | None`), avoid using legacy typing module syntax
 3. Once the variable type is determined, no need to use `or` fallback
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Recommended
 def process_message(message: SessionMessage, timeout: float = 5.0) -> bool:
     ...
@@ -49,6 +55,8 @@ def process_message(message: SessionMessage, timeout: float = 5.0) -> bool:
 def process_message(message, timeout=5.0):
     ...
 ```
+
+:::
 
 ## Anti-Pattern List
 
@@ -70,31 +78,47 @@ The following behaviors are **strictly prohibited** in the project:
 
 ### Install Dependencies
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
+:::
+
 ### Run Project
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
 
+:::
+
 ### Run Tests
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run pytest
 ```
 
+:::
+
 ### Code Linting
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Lint
 uv run ruff check .
 
 # Auto format
 uv run ruff format .
 ```
+
+:::
 
 ## PR Process
 

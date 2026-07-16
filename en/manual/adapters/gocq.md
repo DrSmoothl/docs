@@ -21,7 +21,9 @@ Close the GoCQ main program, then use the secure startup script to launch GoCQ. 
 
 Open `config.yml` and modify the following settings:
 
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 # List of connection services
 servers:
   # Add methods; multiple entries with the same method are allowed. For detailed configuration instructions, refer to the documentation.
@@ -43,6 +45,7 @@ servers:
       middlewares:
         <<: *default # Reference default middleware
 ```
+:::
 
 Use the startup script to launch GoCQ and perform QR code login.
 
@@ -54,11 +57,14 @@ If verification is required, open the provided link in a browser, press F12 to o
 
 Clone the [repository](https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git) from GitHub, install dependencies, and then start it using the appropriate environment.
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 python main.py
 ```
+:::
 
 ### Configuring GoCQ Adapter
 

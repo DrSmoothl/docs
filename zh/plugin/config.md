@@ -28,7 +28,9 @@ my_plugin/
 
 ### 基本用法
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -50,11 +52,15 @@ class MyPlugin(MaiBotPlugin):
         self.ctx.logger.info("最大重试: %d", self.config.max_retries)
 ```
 
+:::
+
 ### 嵌套配置
 
 通过嵌套 `PluginConfigBase` 类实现分组配置：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -89,11 +95,15 @@ class MyPlugin(MaiBotPlugin):
         self.ctx.logger.info("超时: %s", self.config.advanced.timeout)
 ```
 
+:::
+
 ## Field 字段
 
 `Field` 用于声明配置字段的元数据：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Field
 
 Field(
@@ -102,6 +112,8 @@ Field(
     description="...",     # 字段描述（显示在 WebUI 中）
 )
 ```
+
+:::
 
 - **`default`** `Any` — 字段默认值
 - **`default_factory`** `Callable` — 默认值工厂函数，用于 `list`、`dict`、嵌套 `PluginConfigBase` 等可变类型
@@ -112,34 +124,46 @@ Field(
 
 `PluginConfigBase` 子类可通过 `__ui_label__` 类属性设置在 WebUI 中显示的分组标题：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "基础设置"  # WebUI 中显示的标题
     enabled: bool = Field(default=True, description="是否启用插件")
 ```
 
+:::
+
 ### __ui_icon__
 
 `PluginConfigBase` 子类可通过 `__ui_icon__` 类属性设置在 WebUI 中显示的分组图标，接受 [Material Icons](https://fonts.google.com/icons) 图标名称：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "基础设置"
     __ui_icon__ = "settings"  # WebUI 中显示的 Material Icons 图标名
     enabled: bool = Field(default=True, description="是否启用插件")
 ```
 
+:::
+
 ### __ui_order__
 
 `PluginConfigBase` 子类可通过 `__ui_order__` 类属性设置分组在 WebUI 中的显示顺序，数值越小越靠前：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "基础设置"
     __ui_icon__ = "settings"
     __ui_order__ = 0  # WebUI 中分组的排序权重，数字越小越靠前
     enabled: bool = Field(default=True, description="是否启用插件")
 ```
+
+:::
 
 ### json_schema_extra
 
@@ -148,7 +172,9 @@ class PluginSection(PluginConfigBase):
 - `placeholder`：输入框的占位符提示文本
 - `group`：WebUI 中的配置分组提示
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPluginConfig(PluginConfigBase):
     """插件完整配置"""
     greeting: str = Field(
@@ -162,6 +188,8 @@ class MyPluginConfig(PluginConfigBase):
         json_schema_extra={"placeholder": "请输入 API Key", "group": "advanced"}
     )
 ```
+
+:::
 
 ## 访问配置
 
@@ -184,7 +212,9 @@ class MyPlugin(MaiBotPlugin):
 
 ### 原始字典访问
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     config_model = MyPluginConfig
 
@@ -193,6 +223,8 @@ class MyPlugin(MaiBotPlugin):
         raw = self.get_plugin_config_data()
         greeting = raw.get("plugin", {}).get("greeting", "默认值")
 ```
+
+:::
 
 `get_plugin_config_data()` 始终可用，返回 `dict[str, Any]`，无需声明 `config_model`。
 
@@ -222,7 +254,9 @@ class MyPlugin(MaiBotPlugin):
 
 配置文件使用 TOML 格式，与 `PluginConfigBase` 的嵌套结构对应：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 config_version = "1.0.0"
 enabled = true
@@ -232,6 +266,8 @@ greeting = "你好！"
 max_retries = 3
 timeout = 30.0
 ```
+
+:::
 
 ### config_version
 
@@ -243,7 +279,9 @@ timeout = 30.0
 
 当 `config.toml` 中缺少某些字段时，Runner 会根据 `config_model` 的默认值自动补齐：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 如果 config.toml 只有:
 # [plugin]
 # enabled = false
@@ -251,11 +289,15 @@ timeout = 30.0
 # Runner 会自动补齐 greeting 和 advanced 部分的默认值
 ```
 
+:::
+
 ### WebUI Schema
 
 声明 `config_model` 后，Runner 会自动生成 WebUI 可渲染的配置 Schema：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 插件类上的方法（通常不需要手动调用）
 schema = MyPlugin.build_config_schema(
     plugin_id="com.example.my-plugin",
@@ -264,13 +306,17 @@ schema = MyPlugin.build_config_schema(
 )
 ```
 
+:::
+
 WebUI 会根据 Schema 渲染配置表单，用户可以在浏览器中直接编辑配置。
 
 ## 通过 API 读取配置
 
 除了通过 `self.config` 和 `self.get_plugin_config_data()` 外，还可以通过能力代理读取配置：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 读取插件自身配置
 value = await self.ctx.config.get("plugin.greeting")
 
@@ -281,11 +327,15 @@ value = await self.ctx.config.get_plugin("com.other.plugin")
 all_config = await self.ctx.config.get_all()
 ```
 
+:::
+
 ## 不使用 config_model
 
 如果插件配置非常简单，可以不声明 `config_model`，直接使用 `ctx.config` 和 `get_plugin_config_data()`：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class SimplePlugin(MaiBotPlugin):
     # 不声明 config_model
 
@@ -297,5 +347,7 @@ class SimplePlugin(MaiBotPlugin):
         # self.config 会抛出 RuntimeError
         # 不要调用 self.config
 ```
+
+:::
 
 但建议始终使用 `config_model`，以获得更好的类型安全和 WebUI 集成体验。

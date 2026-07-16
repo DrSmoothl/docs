@@ -39,7 +39,9 @@ WebUI makes it easy to manage MaiBot:
 
 You can change the WebUI settings in `bot_config.toml`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [webui]
 enabled = true                # Whether to enable WebUI
 host = ["127.0.0.1", "::1"]  # Bind address list
@@ -49,6 +51,7 @@ webui_style = 1               # UI style
 anti_crawler_mode = "basic"   # Anti-crawler mode: false / strict / loose / basic
 allowed_ips = "127.0.0.1"     # IP whitelist (comma-separated)
 ```
+:::
 
 - Change `host` to `["0.0.0.0", "::"]` to listen on all IPv4/IPv6 interfaces; also configure firewall rules, access restrictions, and HTTPS
 - `port` can be changed to another number to avoid conflicts

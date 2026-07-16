@@ -279,7 +279,9 @@ A_Memorix 替代了旧版 `[memory]` 配置段落。如果你之前使用过 `[m
 
 旧版配置：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [memory]
 global_memory = true
 global_memory_blacklist = []
@@ -292,9 +294,13 @@ chat_summary_writeback_context_length = 50
 feedback_correction_enabled = false
 ```
 
+:::
+
 迁移后：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -315,6 +321,8 @@ mode = "blacklist"
 chats = []
 ```
 
+:::
+
 ---
 
 ## 配置示例
@@ -323,12 +331,16 @@ chats = []
 
 最简单的配置，仅启用记忆系统并使用全部默认值：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
 enabled = true
 ```
+
+:::
 
 其余所有子段落将使用默认值。这种方式适合快速上手，但需要确保 embedding 模型能够自动选择。
 
@@ -336,7 +348,9 @@ enabled = true
 
 适合日常使用的推荐配置，在默认值基础上做少量调整：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -364,11 +378,15 @@ chats = []
 enable_auto_adjust = true
 ```
 
+:::
+
 ### 高级配置
 
 启用反馈纠错、调整检索参数和记忆演化策略：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -441,6 +459,8 @@ enable_auto_save = true
 auto_save_interval_minutes = 3
 debug = false
 ```
+
+:::
 
 ---
 

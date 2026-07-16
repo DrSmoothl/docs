@@ -8,7 +8,9 @@ title: 首页卡片
 
 ## 基本示例
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import HomeCard, MaiBotPlugin
 
 
@@ -41,6 +43,8 @@ class StatusCardPlugin(MaiBotPlugin):
     async def home_card_marker(self) -> None:
         return None
 ```
+
+:::
 
 ## 参数
 

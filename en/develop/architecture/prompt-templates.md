@@ -87,7 +87,9 @@ This is not a fixed-interval file poller. There are no `prompt_reload_interval`,
 
 ## Development example
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from src.prompt.prompt_manager import prompt_manager
 
 prompt = prompt_manager.get_prompt("example")
@@ -95,6 +97,8 @@ prompt.add_context("user_name", "Alice")
 prompt.add_context("conversation_rules", lambda _: "Keep replies concise.")
 rendered = await prompt_manager.render_prompt(prompt)
 ```
+
+:::
 
 Use an `async def` context builder when data must be fetched asynchronously. Do not mutate shared instances in `prompt_manager.prompts`, and do not store request state in global context builders.
 

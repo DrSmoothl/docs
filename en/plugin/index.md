@@ -75,7 +75,9 @@ plugins/
 
 Declare plugin metadata in `_manifest.json` (for full field descriptions, see [Manifest System](./manifest.md)):
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
@@ -104,6 +106,8 @@ Declare plugin metadata in `_manifest.json` (for full field descriptions, see [M
   }
 }
 ```
+
+:::
 
 ### 4. Write Plugin Code
 
@@ -166,7 +170,9 @@ Place the plugin directory into the `plugins/` folder. After starting MaiBot, th
 
 All plugins must inherit from `MaiBotPlugin` and declare plugin capabilities through class attributes and decorators:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Tool, Command, CONFIG_RELOAD_SCOPE_SELF
 from typing import ClassVar, Iterable
 
@@ -188,6 +194,8 @@ def create_plugin():
     return MyPlugin()
 ```
 
+:::
+
 ### Component Decorators
 
 The SDK provides 8 component decorators, all imported from the top level of `maibot_sdk`:
@@ -207,7 +215,9 @@ The SDK provides 8 component decorators, all imported from the top level of `mai
 
 Access 17 capability proxies via `self.ctx`. All calls are automatically forwarded to the Host via RPC:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Context access
 self.ctx              # PluginContext instance
 self.ctx.paths        # Plugin persistence and runtime directories
@@ -233,11 +243,15 @@ self.ctx.tool         # LLM tool definition query
 self.ctx.maisaka      # Maisaka context appending and proactive tasks
 ```
 
+:::
+
 ### Configuration Models
 
 Plugins can declare strongly-typed configurations via `PluginConfigBase`. The Runner will automatically generate default configurations and WebUI Schemas:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -255,6 +269,8 @@ class MyPlugin(MaiBotPlugin):
         # Access raw dict via self.get_plugin_config_data()
         raw = self.get_plugin_config_data()
 ```
+
+:::
 
 - After declaring `config_model`, `self.config` returns a strongly-typed configuration instance
 - Calling `self.config` without declaration will raise a `RuntimeError`
@@ -276,10 +292,14 @@ my-plugin/
 
 Plugin runtime data should not be written to the plugin source code directory. Starting from SDK 2.6.0, you can obtain the plugin-specific directory injected by the Host via `self.ctx.paths`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 self.ctx.paths.data_dir     # Persistent data, default: data/plugins/<plugin_id>/
 self.ctx.paths.runtime_dir  # Temporary data, default: temp/plugins/<plugin_id>/
 ```
+
+:::
 
 - `data_dir` is suitable for storing plugin databases, JSON states, user-generated content, and other data that needs to persist across restarts.
 - `runtime_dir` is suitable for storing download caches, rendering intermediate artifacts, and temporary files that can be rebuilt.

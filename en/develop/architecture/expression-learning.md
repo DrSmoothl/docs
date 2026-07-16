@@ -80,7 +80,9 @@ The BehaviorLearner is responsible for capturing deep patterns in user-bot inter
 **Pattern Decay**: `BehaviorPatternMaintenance` periodically scans the Store and soft-deletes patterns with confidence below `DECAY_THRESHOLD` (default 0.2) that have not been triggered for over 7 days. The decay curve uses the exponential decay formula `confidence *= exp(-λ × Δt)`, where λ is controlled by the `DECAY_RATE` configuration.
 
 **Learning Example**:
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "scene": "User complains about work pressure late at night",
   "suggested_action": "First lighten the mood with a humorous GIF, then offer practical advice",
@@ -90,6 +92,8 @@ The BehaviorLearner is responsible for capturing deep patterns in user-bot inter
   "source_rooms": ["group_1001", "group_1002"]
 }
 ```
+
+:::
 
 ### ExpressionLearner
 
@@ -127,7 +131,9 @@ The ExpressionLearner focuses on non-textual expression tendencies, particularly
 **Review Flow**: Autonomously learned mappings are initially marked as `pending`. The AI reviewer evaluates content eligibility based on security policies; upon approval, the mapping is marked as `approved` and added to the production mapping table. Humans can intervene via Rescue (restore rejected mappings) or Reject (veto). Review logs are recorded in `ExpressionReviewStore.audit_log`, supporting traceability and rollback.
 
 **Learning Example**:
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "trigger_keywords": ["can't hold it in", "lmao", "hahaha"],
   "expression_id": "emoji_packet_042",
@@ -137,6 +143,8 @@ The ExpressionLearner focuses on non-textual expression tendencies, particularly
   "confidence_weight": 0.78
 }
 ```
+
+:::
 
 ### JargonMiner
 
@@ -176,7 +184,9 @@ The JargonMiner is responsible for extracting community-specific "insider lingo"
 `first_seen_at` / `last_seen_at` — First and last appearance timestamps, used for frequency decay calculation.
 
 **Learning Example**:
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "term": "YBB",
   "definition": "used as a playful greeting among close friends",
@@ -190,6 +200,8 @@ The JargonMiner is responsible for extracting community-specific "insider lingo"
   "last_seen_at": "2026-06-16T12:00:00Z"
 }
 ```
+
+:::
 
 ### SceneClusterer
 
@@ -229,7 +241,9 @@ The encoded three-dimensional vector is compared with existing `TagCluster` inst
 `last_updated` — Last update time, supporting cluster merging and splitting.
 
 **Clustering Example**:
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "cluster_id": "sc_0042",
   "tags": {
@@ -244,12 +258,16 @@ The encoded three-dimensional vector is compared with existing `TagCluster` inst
 }
 ```
 
+:::
+
 ## Learning Configuration Example
 
 The various behaviors of the learning module are centrally managed via `config.yaml`. The following are the core configuration items:
 
 **Behavior Learning Configuration**:
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 behavior_learner:
   trigger_frequency: 3           # Number of scenario-behavior pair occurrences to trigger candidate recording
   trigger_window_hours: 24       # Sliding window duration (hours)
@@ -259,8 +277,12 @@ behavior_learner:
   max_patterns_per_room: 200     # Maximum patterns per group
 ```
 
+:::
+
 **Expression Learning Configuration**:
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 expression_learner:
   min_frequency: 5               # Minimum occurrence count for emoji trigger
   observation_window: 30         # Observation window message count
@@ -269,8 +291,12 @@ expression_learner:
   auto_approve_threshold: 0.9    # Confidence threshold for auto-approval
 ```
 
+:::
+
 **Jargon Mining Configuration**:
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 jargon_miner:
   inference_thresholds: [1, 3, 5, 10]  # Four-level inference thresholds (occurrence count)
   cross_group_min: 2                    # Minimum number of groups required for cross-group confirmation
@@ -278,8 +304,12 @@ jargon_miner:
   max_jargon_per_room: 500              # Maximum jargon entries per group
 ```
 
+:::
+
 **Scene Clustering Configuration**:
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 scene_clusterer:
   cluster_window_size: 50        # Number of conversations per clustering analysis round
   reuse_threshold: 0.7           # Cluster reuse cosine similarity threshold
@@ -287,6 +317,8 @@ scene_clusterer:
   enable_merge: true             # Whether to enable automatic cluster merging
   merge_similarity: 0.9          # Cluster merge similarity threshold
 ```
+
+:::
 
 ## Core Processing Flow
 

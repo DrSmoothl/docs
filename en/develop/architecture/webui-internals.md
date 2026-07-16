@@ -56,7 +56,9 @@ Source: `src/webui/app.py`
 
 `create_app()` creates a FastAPI instance and configures middleware and routes:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 def create_app(host="0.0.0.0", port=8001, enable_static=True) -> FastAPI:
     app = FastAPI(title="MaiBot WebUI")
     _setup_anti_crawler(app)   # Anti-crawler middleware
@@ -68,11 +70,15 @@ def create_app(host="0.0.0.0", port=8001, enable_static=True) -> FastAPI:
     return app
 ```
 
+:::
+
 ### CORS Configuration
 
 Only allows localhost origins (development port + service port):
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 allow_origins = [
     "http://localhost:5173",      # Vite dev server
     "http://127.0.0.1:5173",
@@ -81,6 +87,8 @@ allow_origins = [
 ]
 allow_credentials = True
 ```
+
+:::
 
 ### Static File Security
 

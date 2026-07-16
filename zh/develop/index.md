@@ -78,33 +78,49 @@ MaiBot/
 
 ### 安装依赖
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
+:::
+
 ### 启动项目
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 `bot.py` 采用 Runner/Worker 双进程模型：Runner 进程负责守护与重启（退出码 42 触发重启），Worker 进程执行实际的 `MainSystem` 初始化与任务调度。
 
 ### 运行测试
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run pytest
 ```
 
+:::
+
 ### 代码检查与格式化
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Lint 检查
 uv run ruff check .
 
 # 自动格式化
 uv run ruff format .
 ```
+
+:::
 
 ## 架构详解
 

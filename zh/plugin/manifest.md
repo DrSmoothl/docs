@@ -17,7 +17,9 @@ title: Manifest
 
 以下是一个完整的 Manifest 示例：
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
@@ -60,6 +62,8 @@ title: Manifest
 }
 ```
 
+:::
+
 ## 必填字段
 
 - **`manifest_version`** `2` — Manifest 协议版本，当前固定为 `2`
@@ -98,7 +102,9 @@ title: Manifest
 
 `display.icon` 用于声明插件图标。该字段只影响 WebUI 展示，不参与插件运行时行为。
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "display": {
     "icon": {
@@ -110,6 +116,8 @@ title: Manifest
   }
 }
 ```
+
+:::
 
 - `type`: `lucide`、`emoji` 或 `local`
 - `value`: 图标值。`lucide` 使用图标名，`emoji` 使用单个表情或短文本，`local` 使用插件目录内相对路径
@@ -129,12 +137,16 @@ title: Manifest
 
 两者结构相同，为闭区间声明：
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "min_version": "1.0.0",
   "max_version": "1.99.99"
 }
 ```
+
+:::
 
 - `min_version`：允许的最低版本（闭区间）
 - `max_version`：允许的最高版本（闭区间）
@@ -185,13 +197,17 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
 
 ### 插件级依赖
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "type": "plugin",
   "id": "com.example.other-plugin",
   "version_spec": ">=1.0.0,<2.0.0"
 }
 ```
+
+:::
 
 - `id`：依赖插件的 ID，遵循与插件 ID 相同的格式规则
 - `version_spec`：版本约束表达式，使用 PEP 440 风格（如 `>=1.0.0`、`~=1.0`）
@@ -200,13 +216,17 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
 
 ### Python 包依赖
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "type": "python_package",
   "name": "httpx",
   "version_spec": ">=0.24.0"
 }
 ```
+
+:::
 
 - `name`：Python 包名，仅允许字母、数字、点号、下划线和横线
 - `version_spec`：版本约束表达式

@@ -39,7 +39,9 @@ WebUI 让你轻松管理 MaiBot：
 
 在 `bot_config.toml` 里可以改 WebUI 的设置：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [webui]
 enabled = true                # 是否启用 WebUI
 host = ["127.0.0.1", "::1"]  # 绑定地址列表
@@ -49,6 +51,7 @@ webui_style = 1               # 界面风格
 anti_crawler_mode = "basic"   # 防爬虫模式：false / strict / loose / basic
 allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 ```
+:::
 
 - `host` 改成 `["0.0.0.0", "::"]` 可以监听所有 IPv4/IPv6 网卡；同时应配置防火墙、访问白名单和 HTTPS
 - `port` 可以改成其他数字避免冲突

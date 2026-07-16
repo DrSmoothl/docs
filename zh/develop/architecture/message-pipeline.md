@@ -54,7 +54,9 @@ flowchart TD
 
 消息通过 maim-message `MessageServer` 到达后，调用 `ChatBot.message_process(message_data)` 进入主链路：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def message_process(self, message_data: Dict[str, Any]) -> None:
     # 1. 确保后台任务已启动
     await self._ensure_started()
@@ -64,6 +66,8 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
     message = SessionMessage.from_maim_message(maim_raw_message)
     await self.receive_message(message)
 ```
+
+:::
 
 ### `SessionMessage` 结构
 
@@ -109,11 +113,15 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 - **允许改写**：是
 
 参数 Schema：
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "message": { "type": "object", "description": "当前入站消息的序列化 SessionMessage" }
 }
 ```
+
+:::
 
 ### chat.receive.after_process
 
@@ -181,11 +189,15 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
 
 单例 `chat_manager`，管理所有聊天会话。
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class ChatManager:
     sessions: Dict[str, BotChatSession]    # session_id → BotChatSession
     last_messages: Dict[str, SessionMessage]  # session_id → 最近一条消息
 ```
+
+:::
 
 ### Session ID 计算
 
@@ -232,7 +244,9 @@ class ChatManager:
 
 源码位置：`src/chat/heart_flow/heartflow_message_processor.py`
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class HeartFCMessageReceiver:
     async def process_message(self, message: SessionMessage):
         # 1. 跳过通知消息
@@ -242,13 +256,17 @@ class HeartFCMessageReceiver:
         # 5. 注册用户到 Person 信息库
 ```
 
+:::
+
 ### HeartflowManager
 
 源码位置：`src/chat/heart_flow/heartflow_manager.py`
 
 管理 session 级别的 `MaisakaHeartFlowChatting` 实例：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class HeartflowManager:
     heartflow_chat_list: Dict[str, MaisakaHeartFlowChatting]
     _chat_create_locks: Dict[str, asyncio.Lock]
@@ -256,6 +274,8 @@ class HeartflowManager:
     async def get_or_create_heartflow_chat(self, session_id: str) -> MaisakaHeartFlowChatting
     def adjust_talk_frequency(self, session_id: str, frequency: float) -> None
 ```
+
+:::
 
 使用双重检查锁（double-checked locking）确保同一会话只创建一个 Maisaka 运行时实例。
 

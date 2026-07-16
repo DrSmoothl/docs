@@ -8,7 +8,9 @@ title: Command Component
 
 ## Decorator Signature
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Command
 
 @Command(
@@ -20,6 +22,8 @@ from maibot_sdk import Command
 )
 ```
 
+:::
+
 ### Parameter Description
 
 - **`name`** `str` — Command name, must be unique within the plugin
@@ -29,7 +33,9 @@ from maibot_sdk import Command
 
 ## Basic Usage
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command
 
 
@@ -40,20 +46,28 @@ class MyPlugin(MaiBotPlugin):
         return True, "Hello!", 2
 ```
 
+:::
+
 ### Command with Aliases
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @Command("greet", pattern=r"^/greet", aliases=["/hi", "/hey"])
 async def handle_greet(self, **kwargs):
     await self.ctx.send.text("Hello!", kwargs["stream_id"])
     return True, "Hello!", 2
 ```
 
+:::
+
 Using `/greet`, `/hi`, or `/hey` will all trigger this command.
 
 ### Command with Regex Capture Groups
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 import re
 
 @Command("echo", pattern=r"^/echo\s+(?P<text>.+)$")
@@ -64,6 +78,8 @@ async def handle_echo(self, **kwargs):
     await self.ctx.send.text(f"Echo: {text}", stream_id)
     return True, f"Echo: {text}", 1
 ```
+
+:::
 
 ## Handler Function Parameters
 
@@ -78,15 +94,21 @@ Command handler functions receive `**kwargs`, which contains the following param
 
 Command handler functions must return a triplet:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 return success, response, weight
 ```
+
+:::
 
 - **`success`** `bool` — Whether the command executed successfully
 - **`response`** `str` — Text description of the command execution result
 - **`weight`** `int` — Command priority weight; the higher the value, the higher the priority
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Command executed successfully
 return True, "Operation successful", 2
 
@@ -94,11 +116,15 @@ return True, "Operation successful", 2
 return False, "Parameter error", 1
 ```
 
+:::
+
 ## Regex Pattern Writing Guide
 
 ### Recommended Patterns
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Exact match /hello
 pattern=r"^/hello$"
 
@@ -112,11 +138,15 @@ pattern=r"^/echo\s+(?P<text>.+)$"
 pattern=r"^/set\s+(?P<key>\w+)\s+(?P<value>.+)$"
 ```
 
+:::
+
 ### Using Named Capture Groups
 
 It is recommended to use `(?P<name>...)` named capture groups, which allow you to access matching results by name via `kwargs["matched_groups"]`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @Command("ban", pattern=r"^/ban\s+(?P<user>\w+)(?:\s+(?P<reason>.+))?$")
 async def handle_ban(self, **kwargs):
     matched = kwargs.get("matched_groups", {})
@@ -125,6 +155,8 @@ async def handle_ban(self, **kwargs):
     await self.ctx.send.text(f"Banned {user}, reason: {reason}", kwargs["stream_id"])
     return True, f"Banned {user}", 2
 ```
+
+:::
 
 ## Command Execution Flow
 
@@ -153,7 +185,9 @@ There are built-in Hook points before and after command execution available for 
 
 ## Complete Example
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -196,3 +230,5 @@ class AdminPlugin(MaiBotPlugin):
 def create_plugin():
     return AdminPlugin()
 ```
+
+:::

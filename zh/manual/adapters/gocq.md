@@ -21,7 +21,9 @@
 
 打开 `config.yml`，修改以下配置：
 
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 # 连接服务列表
 servers:
   # 添加方式，同一连接方式可添加多个，具体配置说明请查看文档
@@ -43,6 +45,7 @@ servers:
       middlewares:
         <<: *default # 引用默认中间件
 ```
+:::
 
 使用启动脚本启动GoCQ，进行扫码登录。
 
@@ -54,11 +57,14 @@ servers:
 
 从GitHub上克隆[repo](https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git)，安装依赖，然后使用相应的环境启动。
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/LOGIC-SC/MaiBot-Gocq-Adapter.git
 pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple --upgrade
 python main.py
 ```
+:::
 
 ### 配置 GoCQ Adapter
 

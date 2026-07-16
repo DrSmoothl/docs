@@ -46,7 +46,9 @@ The OpenAI-compatible client (`client_type = "openai"`) splits `extra_params` us
 
 For example:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 extra_params = {
   headers = {"X-Trace-Id" = "test-001"},
   query = {version = "2024-01-01"},
@@ -55,9 +57,13 @@ extra_params = {
 }
 ```
 
+:::
+
 This is converted to request extras similar to:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 extra_headers = {"X-Trace-Id": "test-001"}
 extra_query = {"version": "2024-01-01"}
 extra_body = {
@@ -65,6 +71,8 @@ extra_body = {
     "enable_thinking": "false",
 }
 ```
+
+:::
 
 A common configuration like `extra_params = {enable_thinking = "false"}` sends `enable_thinking` as a request body field to the provider, not as a nested `{"extra_params": {"enable_thinking": "false"}}`.
 
@@ -84,10 +92,14 @@ A common configuration like `extra_params = {enable_thinking = "false"}` sends `
 
 `temperature` and `max_tokens` can be written in `extra_params` as model-level defaults, but the dedicated model fields are recommended:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 temperature = 0.7
 max_tokens = 4096
 ```
+
+:::
 
 This keeps the configuration clearer and avoids confusion with provider-specific request body fields that may use the same names.
 
@@ -106,7 +118,9 @@ Many large models support "thinking mode" — letting the model perform deep rea
 
 ### DeepSeek
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[models]]
 name = "deepseek-r1"
 model_identifier = "deepseek-reasoner"
@@ -114,6 +128,8 @@ api_provider = "deepseek"
 visual = false
 extra_params = {enable_thinking = true}   # Enable thinking mode
 ```
+
+:::
 
 - **`enable_thinking`** — `true` to enable thinking, `false` to disable
 
@@ -128,7 +144,9 @@ OpenAI's reasoning models use the `reasoning_effort` parameter to control reason
 - **`high`** — Complex debugging, deep planning. Quality prioritized
 - **`xhigh`** — Deep research, async tasks. Highest quality, maximum latency
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[models]]
 name = "gpt-5"
 model_identifier = "gpt-5.5"
@@ -136,6 +154,8 @@ api_provider = "openai"
 visual = false
 extra_params = {reasoning_effort = "medium"}
 ```
+
+:::
 
 > 💡 **Recommendation**: Use `medium` for daily use, `low` for speed-sensitive tasks, `high` for deep analysis.
 
@@ -150,7 +170,9 @@ extra_params = {reasoning_effort = "medium"}
 
 Gemini models use `thinking_config` in `extra_params` to control thinking:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[models]]
 name = "gemini-2.5-flash"
 model_identifier = "gemini-2.5-flash"
@@ -159,6 +181,8 @@ visual = true
 client_type = "google"
 extra_params = {thinking_config = {thinking_budget = 4096}}
 ```
+
+:::
 
 > ⚠️ Google API is not directly accessible in China. You'll need a proxy.
 
@@ -184,7 +208,9 @@ When `client_type = "google"`, `extra_params` does not follow the OpenAI-compati
 - **`query`** — Add URL query parameters, e.g. `{query: {"key": "value"}}`
 - **`body`** — Override request body fields, e.g. `{body: {"field": "value"}}`
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[models]]
 name = "custom-model"
 model_identifier = "custom-model-v1"
@@ -193,11 +219,15 @@ visual = false
 extra_params = {headers = {"X-API-Version" = "2024-06", "X-Priority" = "high"}}
 ```
 
+:::
+
 ## Combining Parameters
 
 You can use multiple parameters together:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[models]]
 name = "gpt-5-advanced"
 model_identifier = "gpt-5.5"
@@ -208,6 +238,8 @@ extra_params = {
     headers = {"X-Request-ID" = "custom-id", "X-Priority" = "high"}
 }
 ```
+
+:::
 
 ## Quick Parameter Reference
 

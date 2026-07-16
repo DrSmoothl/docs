@@ -34,10 +34,13 @@ Telegram 适配器的源码：[exynos967/MaiBot-Telegram-Adapter](https://github
 
 将适配器仓库克隆到 MaiBot 的 `plugins/` 目录下：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cd /path/to/MaiBot/plugins
 git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 ```
+:::
 
 ### 依赖
 
@@ -46,9 +49,12 @@ git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 
 如需 SOCKS5 代理支持，额外安装：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+:::
 
 ## 配置
 
@@ -85,10 +91,13 @@ ban_user_id = []              # 全局屏蔽用户
 
 MaiBot Core 需要通过主配置里的 `platforms` 字段识别"机器人自己"。启用 Telegram 后，请在 MaiBot 主配置的 `[bot]` 中加入 Telegram Bot 的数字 ID：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [bot]
 platforms = ["telegram:123456789"]
 ```
+:::
 
 其中 `123456789` 是你的 Telegram Bot 的数字 ID，也可以使用简写 `tg:123456789`。Bot 数字 ID 会在适配器启动成功后通过日志 `Telegram Bot: id=...` 输出。
 
@@ -144,46 +153,61 @@ platforms = ["telegram:123456789"]
 
 ### HTTP/HTTPS 代理
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_url = "http://127.0.0.1:7890"
 ```
+:::
 
 ### SOCKS5 代理
 
 使用 SOCKS5 代理需要额外安装 `aiohttp-socks` 依赖：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+:::
 
 然后配置：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_url = "socks5://127.0.0.1:1080"
 ```
+:::
 
 ### 从环境变量读取代理
 
 如果系统已配置 `HTTP_PROXY` 或 `HTTPS_PROXY` 环境变量，可以启用此选项：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_from_env = true
 ```
+:::
 
 ### 自定义 API 地址
 
 如果使用自建的 Telegram API 代理服务器（如 Telegram Bot API Server），可以修改 `api_base`：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 api_base = "https://your-api-server.com"
 ```
+:::
 
 ## Topic 分流
 

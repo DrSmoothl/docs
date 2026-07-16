@@ -77,33 +77,49 @@ MaiBot/
 
 ### Install Dependencies
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
+:::
+
 ### Start the Project
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 `bot.py` adopts a Runner/Worker dual-process model: the Runner process is responsible for guarding and restarting (exit code 42 triggers a restart), while the Worker process executes the actual `MainSystem` initialization and task scheduling.
 
 ### Run Tests
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run pytest
 ```
 
+:::
+
 ### Code Checking and Formatting
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Lint check
 uv run ruff check .
 
 # Auto-format
 uv run ruff format .
 ```
+
+:::
 
 ## Architecture Overview
 

@@ -96,7 +96,9 @@ flowchart TD
 
 宿主侧服务，桥接 MaiBot 主进程与 A-Memorix 内核：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class AMemorixHostService:
     _kernel: Optional[SDKMemoryKernel]
     _config_cache: Dict[str, Any] | None
@@ -106,6 +108,8 @@ class AMemorixHostService:
     async def reload() -> None  # 关闭内核 → 重新读取配置 → 重建内核
     async def invoke(component_name, args) -> Any  # 统一调用入口
 ```
+
+:::
 
 ### invoke 调用入口
 

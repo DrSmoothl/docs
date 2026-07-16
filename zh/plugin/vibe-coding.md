@@ -57,7 +57,9 @@ plugins/my-plugin/
 - `capabilities` 只声明确实需要的能力。
 - `i18n.default_locale` 推荐使用 `zh-CN`。
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
@@ -88,9 +90,13 @@ plugins/my-plugin/
 }
 ```
 
+:::
+
 ## 代码骨架
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any
 
 from maibot_sdk import Command, Field, MaiBotPlugin, PluginConfigBase, Tool
@@ -160,6 +166,8 @@ def create_plugin() -> MyPlugin:
     """创建插件实例。"""
     return MyPlugin()
 ```
+
+:::
 
 ## 组件选择
 

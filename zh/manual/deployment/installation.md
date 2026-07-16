@@ -39,11 +39,11 @@ cd MaiBot
 
 ::: code-group
 
-```bash [Windows]
+```bash [Windows ~vscode-icons:file-type-shell~]
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-```bash [macOS / Linux]
+```bash [macOS / Linux ~vscode-icons:file-type-shell~]
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
@@ -53,11 +53,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ::: code-group
 
-```bash [推荐：uv]
+```bash [推荐：uv ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
-```bash [备用：pip（不推荐，可能缺少部分依赖）]
+```bash [备用：pip（不推荐，可能缺少部分依赖） ~vscode-icons:file-type-shell~]
 pip install -r requirements.txt
 ```
 
@@ -66,9 +66,13 @@ pip install -r requirements.txt
 
 ## 启动
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 ## 用户协议确认
 
@@ -93,7 +97,9 @@ uv run python bot.py
 
 安装 uv 后需要将其加入 PATH 环境变量：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Linux/macOS
 source $HOME/.local/bin/env
 
@@ -103,11 +109,15 @@ source $HOME/.local/bin/env
 uv --version
 ```
 
+:::
+
 ### 非交互环境下如何同意用户协议？
 
 在服务器或无头环境下，无法在终端中输入"同意"，可以使用环境变量跳过：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # 方法一：使用程序提示的 hash 值（每次可能不同，以实际提示为准）
 export EULA_AGREE=<终端显示的hash值>
 export PRIVACY_AGREE=<终端显示的hash值>
@@ -115,3 +125,5 @@ export PRIVACY_AGREE=<终端显示的hash值>
 # 方法二：先运行一次看提示的 hash 值，记录后用环境变量启动
 uv run python bot.py  # 会显示需要的环境变量
 ```
+
+:::

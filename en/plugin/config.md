@@ -28,7 +28,9 @@ The two serve completely different purposes and should not be confused.
 
 ### Basic Usage
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -50,11 +52,15 @@ class MyPlugin(MaiBotPlugin):
         self.ctx.logger.info("Max retries: %d", self.config.max_retries)
 ```
 
+:::
+
 ### Nested Configuration
 
 Implement grouped configuration by nesting `PluginConfigBase` classes:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -89,11 +95,15 @@ class MyPlugin(MaiBotPlugin):
         self.ctx.logger.info("Timeout: %s", self.config.advanced.timeout)
 ```
 
+:::
+
 ## Field
 
 `Field` is used to declare metadata for configuration fields:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Field
 
 Field(
@@ -102,6 +112,8 @@ Field(
     description="...",     # Field description (displayed in WebUI)
 )
 ```
+
+:::
 
 - **`default`** `Any` — Field default value
 - **`default_factory`** `Callable` — Default value factory function, used for mutable types like `list`, `dict`, nested `PluginConfigBase`, etc.
@@ -112,34 +124,46 @@ Field(
 
 `PluginConfigBase` subclasses can set the group title displayed in the WebUI via the `__ui_label__` class attribute:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "Basic Settings"  # Title displayed in WebUI
     enabled: bool = Field(default=True, description="Whether to enable the plugin")
 ```
 
+:::
+
 ### __ui_icon__
 
 `PluginConfigBase` subclasses can set the group icon displayed in the WebUI via the `__ui_icon__` class attribute, accepting [Material Icons](https://fonts.google.com/icons) icon names:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "Basic Settings"
     __ui_icon__ = "settings"  # Material Icons icon name displayed in WebUI
     enabled: bool = Field(default=True, description="Whether to enable the plugin")
 ```
 
+:::
+
 ### __ui_order__
 
 `PluginConfigBase` subclasses can set the display order of groups in the WebUI via the `__ui_order__` class attribute. Lower values appear first:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PluginSection(PluginConfigBase):
     __ui_label__ = "Basic Settings"
     __ui_icon__ = "settings"
     __ui_order__ = 0  # Sorting weight for the group in WebUI; lower numbers appear first
     enabled: bool = Field(default=True, description="Whether to enable the plugin")
 ```
+
+:::
 
 ### json_schema_extra
 
@@ -148,7 +172,9 @@ class PluginSection(PluginConfigBase):
 - `placeholder`: Placeholder hint text for the input box
 - `group`: Configuration grouping hint in the WebUI
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPluginConfig(PluginConfigBase):
     """Plugin complete configuration"""
     greeting: str = Field(
@@ -162,6 +188,8 @@ class MyPluginConfig(PluginConfigBase):
         json_schema_extra={"placeholder": "Please enter API Key", "group": "advanced"}
     )
 ```
+
+:::
 
 ## Accessing Configuration
 
@@ -184,7 +212,9 @@ class MyPlugin(MaiBotPlugin):
 
 ### Raw Dictionary Access
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     config_model = MyPluginConfig
 
@@ -193,6 +223,8 @@ class MyPlugin(MaiBotPlugin):
         raw = self.get_plugin_config_data()
         greeting = raw.get("plugin", {}).get("greeting", "Default value")
 ```
+
+:::
 
 `get_plugin_config_data()` is always available, returns `dict[str, Any]`, and does not require declaring `config_model`.
 
@@ -222,7 +254,9 @@ For more on configuration hot reloading, see [Lifecycle](./lifecycle.md#on-confi
 
 The configuration file uses the TOML format, corresponding to the nested structure of `PluginConfigBase`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 config_version = "1.0.0"
 enabled = true
@@ -232,6 +266,8 @@ greeting = "Hello!"
 max_retries = 3
 timeout = 30.0
 ```
+
+:::
 
 ### config_version
 
@@ -243,7 +279,9 @@ timeout = 30.0
 
 When certain fields are missing in `config.toml`, the Runner automatically fills them based on the default values of `config_model`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # If config.toml only has:
 # [plugin]
 # enabled = false
@@ -251,11 +289,15 @@ When certain fields are missing in `config.toml`, the Runner automatically fills
 # The Runner will automatically fill in the default values for the greeting and advanced sections
 ```
 
+:::
+
 ### WebUI Schema
 
 After declaring `config_model`, the Runner automatically generates a WebUI-renderable configuration Schema:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Method on the plugin class (usually does not need to be called manually)
 schema = MyPlugin.build_config_schema(
     plugin_id="com.example.my-plugin",
@@ -264,13 +306,17 @@ schema = MyPlugin.build_config_schema(
 )
 ```
 
+:::
+
 The WebUI renders a configuration form based on the Schema, allowing users to edit the configuration directly in the browser.
 
 ## Reading Configuration via API
 
 In addition to using `self.config` and `self.get_plugin_config_data()`, you can also read configuration through the capability proxy:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Read the plugin's own configuration
 value = await self.ctx.config.get("plugin.greeting")
 
@@ -281,11 +327,15 @@ value = await self.ctx.config.get_plugin("com.other.plugin")
 all_config = await self.ctx.config.get_all()
 ```
 
+:::
+
 ## Not Using config_model
 
 If the plugin configuration is very simple, you can omit declaring `config_model` and directly use `ctx.config` and `get_plugin_config_data()`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class SimplePlugin(MaiBotPlugin):
     # Do not declare config_model
 
@@ -297,5 +347,7 @@ class SimplePlugin(MaiBotPlugin):
         # self.config will raise a RuntimeError
         # Do not call self.config
 ```
+
+:::
 
 However, it is recommended to always use `config_model` for better type safety and WebUI integration.

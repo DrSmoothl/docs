@@ -8,7 +8,9 @@ Plugins can add extension cards to the WebUI home page with the SDK `@HomeCard` 
 
 ## Basic Example
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import HomeCard, MaiBotPlugin
 
 
@@ -41,6 +43,8 @@ class StatusCardPlugin(MaiBotPlugin):
     async def home_card_marker(self) -> None:
         return None
 ```
+
+:::
 
 ## Parameters
 

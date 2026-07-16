@@ -16,16 +16,24 @@ You need to install:
 
 ### 1. Download MaiBot
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
 ```
 
+:::
+
 ### 2. One-click Start!
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 docker compose up -d
 ```
+
+:::
 
 The first startup will automatically generate configuration files, and then it will stop and wait for you to configure.
 
@@ -75,11 +83,15 @@ Docker saves important data in these locations on your computer:
 
 First set the bot platform and QQ account in MaiBot WebUI, or edit `./docker-config/mmc/bot_config.toml`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [bot]
 platform = "qq"
 qq_account = "123456789"  # Must match the QQ account actually logged in through NapCat
 ```
+
+:::
 
 NapCat handles QQ login and message transport. `bot.qq_account` is used by MaiBot core to identify messages sent by the bot itself. It is not a NapCat login setting, but it must not be omitted or set to a different account.
 
@@ -110,7 +122,9 @@ The NapCat adapter enables chat list filtering by default, and group chats are i
 
 Edit the `[chat]` configuration in `./data/MaiMBot/plugins/MaiBot-Napcat-Adapter/config.toml`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 enable_chat_list_filter = true
 show_dropped_chat_list_messages = true
@@ -118,12 +132,18 @@ group_list_type = "whitelist"
 group_list = ["Your QQ group number"]
 ```
 
+:::
+
 If you are just testing locally, you can also temporarily disable list filtering:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 enable_chat_list_filter = false
 ```
+
+:::
 
 After making changes, restart the core container:
 
@@ -137,10 +157,14 @@ The WebUI's enabled status, listening address, and in-container port are now all
 
 By default, `docker-compose.yml` will map the host's `18001` port to the container's `8001` port:
 
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 ports:
   - "18001:8001"
 ```
+
+:::
 
 When deploying with Docker, it is recommended to confirm that the WebUI configuration in `./docker-config/mmc/bot_config.toml` is as follows:
 
@@ -161,7 +185,9 @@ The default value of WebUI's `host` is `127.0.0.1` (only listens on the local lo
 
 ## 📋 Complete Steps (Step by Step)
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # 1. Download
 git clone https://github.com/Mai-with-u/MaiBot.git
 cd MaiBot
@@ -184,14 +210,20 @@ docker compose restart core
 docker compose logs -f core
 ```
 
+:::
+
 ## 🔧 Frequently Asked Questions
 
 ### Container exits immediately after starting?
 
 Check the logs to find the reason:
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 docker compose logs core
 ```
+
+:::
 
 90% of the time it's because:
 - Configuration file is not filled in correctly (especially the API key)
@@ -204,20 +236,32 @@ Docker consumes quite a bit of memory. It is recommended to have at least 2GB of
 
 ### Want to stop the robot?
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 docker compose down
 ```
 
+:::
+
 ### Want to restart?
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 docker compose restart
 ```
+
+:::
 
 ### Getting an error `unknown shorthand flag: 'd' in -d` when entering commands?
 
 This means your server has the **Standalone** version of Docker Compose installed. Please replace the space in the middle of the command with a **hyphen** to execute:
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 docker-compose up -d
 ```
+
+:::
 Similarly, all subsequent operations in this document in the format of `docker compose <command>` need to be written as `docker-compose <command>` on your server (e.g., `docker-compose restart core`)

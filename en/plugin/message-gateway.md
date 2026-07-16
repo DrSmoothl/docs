@@ -8,7 +8,9 @@ The `@MessageGateway` decorator is used to declare a message gateway component, 
 
 ## Decorator Signature
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MessageGateway
 
 @MessageGateway(
@@ -23,6 +25,8 @@ from maibot_sdk import MessageGateway
     **metadata,                  # 额外元数据
 )
 ```
+
+:::
 
 ## Routing Types
 
@@ -50,7 +54,9 @@ from maibot_sdk import MessageGateway
 
 Below is a complete example of a QQ platform adapter, implementing bidirectional message routing based on the NapCat protocol:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any
 
 from maibot_sdk import MaiBotPlugin, MessageGateway
@@ -158,11 +164,15 @@ def create_plugin():
     return NapCatGatewayPlugin()
 ```
 
+:::
+
 ## Inbound-Only Gateway Example
 
 If you only need to inject messages into MaiBot (e.g., Webhook listening), you can use `route_type="receive"`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any
 
 from maibot_sdk import MaiBotPlugin, MessageGateway
@@ -221,6 +231,8 @@ class WebhookReceiverPlugin(MaiBotPlugin):
 def create_plugin():
     return WebhookReceiverPlugin()
 ```
+
+:::
 
 ## Gateway Handler Parameters
 

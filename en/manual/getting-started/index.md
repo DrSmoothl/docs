@@ -52,15 +52,23 @@ MaiBot uses Git for code management. Download from [git-scm.com](https://git-scm
 
 **Option B: Git Clone** (if you have Git installed)
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 git clone https://github.com/Mai-with-u/MaiBot.git
 ```
 
+:::
+
 To use the development branch:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 git checkout dev
 ```
+
+:::
 
 ### Step 2: Install Python 🐍
 
@@ -70,9 +78,13 @@ git checkout dev
 2. **Check "Add Python to PATH"** during installation
 3. Open Command Prompt (`Win + R` → type `cmd` → Enter) and verify:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 python --version
 ```
+
+:::
 
 ### Step 3: Install uv (Package Manager) 📦
 
@@ -80,9 +92,13 @@ MaiBot uses [uv](https://docs.astral.sh/uv/) for dependency management — much 
 
 In Command Prompt:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
+
+:::
 
 **Close and reopen** Command Prompt after installation.
 
@@ -90,9 +106,13 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 Navigate to the MaiBot folder (in File Explorer, type `cmd` in the address bar) and run:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv sync
 ```
+
+:::
 
 This creates a virtual environment (`.venv`) and installs all dependencies (takes a few minutes).
 
@@ -102,9 +122,13 @@ MaiBot's `pyproject.toml` is pre-configured with the Tsinghua mirror — `uv syn
 
 ### Step 5: First Launch (Generate Config + Accept License)
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 **On the first launch, you'll be prompted to accept the EULA and Privacy Policy. Type `同意` (or `confirmed`) and press Enter.** The system generates default files in `config/` and continues initializing MaiBot and WebUI; a second launch is not required just to generate configuration.
 
@@ -203,9 +227,13 @@ If the bot replies, congratulations — you're all set! 🎉
 
 Check the logs by running:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 MaiBot continues after generating its default files. If it exits unexpectedly, use the final log error as the source of truth and check agreement confirmation, TOML syntax, port binding, and dependency initialization.
 
@@ -223,10 +251,14 @@ The default port is occupied by another program.
 
 Edit `config/bot_config.toml`, modify the port in the `[webui]` section:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [webui]
 port = 8002   # Change to an unused port like 8002, 8003
 ```
+
+:::
 
 Restart and the WebUI will be available at `http://127.0.0.1:8002`.
 
@@ -234,7 +266,9 @@ Restart and the WebUI will be available at `http://127.0.0.1:8002`.
 
 **Solution 2: Kill the process using the port**
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Windows (CMD)
 netstat -ano | findstr :8001
 # Note the PID in the last column, then:
@@ -245,6 +279,8 @@ lsof -i :8001
 # Note the PID, then:
 kill -9 <PID>
 ```
+
+:::
 
 Restart MaiBot after freeing the port.
 

@@ -13,7 +13,9 @@ title: 贡献指南
 3. 标准库/第三方库导入放在本地模块导入之前，块间用空行分隔
 4. 重构时调整不符合规范的导入顺序
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 标准库
 import asyncio
 import os
@@ -28,6 +30,8 @@ from src.common.logger import get_logger
 from src.config.config import config_manager
 ```
 
+:::
+
 ## 注释规范
 
 1. 保持良好注释；重构时保留原注释（可修改内容）
@@ -40,7 +44,9 @@ from src.config.config import config_manager
 2. 参数化泛型使用 Python 3.10+ 内置语法（如 `dict[K, V]`、`list[T]`、`T | None`），避免使用旧式 typing 模块写法
 3. 变量类型确定后不必使用 `or` 回退
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 推荐
 def process_message(message: SessionMessage, timeout: float = 5.0) -> bool:
     ...
@@ -49,6 +55,8 @@ def process_message(message: SessionMessage, timeout: float = 5.0) -> bool:
 def process_message(message, timeout=5.0):
     ...
 ```
+
+:::
 
 ## 反模式列表
 
@@ -70,31 +78,47 @@ def process_message(message, timeout=5.0):
 
 ### 安装依赖
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
+:::
+
 ### 运行项目
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
 
+:::
+
 ### 运行测试
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run pytest
 ```
 
+:::
+
 ### 代码检查
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Lint
 uv run ruff check .
 
 # 自动格式化
 uv run ruff format .
 ```
+
+:::
 
 ## PR 流程
 

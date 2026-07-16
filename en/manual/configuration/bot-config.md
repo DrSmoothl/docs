@@ -45,7 +45,9 @@ The `[inner] version` at the top of the configuration file is managed by the pro
 
 `[bot]` contains the bot's identity information. The most commonly used fields are `platform`, `qq_account`, `nickname`, and `alias_names`.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [bot]
 platform = "qq"
 qq_account = "123456789"
@@ -53,6 +55,8 @@ platforms = []
 nickname = "MaiMai"
 alias_names = ["XiaoMai", "MaiZi"]
 ```
+
+:::
 
 - **`platform`** — Main platform identifier, such as qq. Default: empty
 - **`qq_account`** — Bot account ID stored as a string, used to identify @mentions and self messages. Default: empty
@@ -64,13 +68,17 @@ alias_names = ["XiaoMai", "MaiZi"]
 
 `[personality]` controls MaiBot's character setting and language style.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [personality]
 personality = "你是一个大二女大学生，现在正在上网和群友聊天。"
 reply_style = "请不要刻意突出自身学科背景。可以参考贴吧，知乎和微博的回复风格。"
 multiple_reply_style = []
 multiple_probability = 0.2
 ```
+
+:::
 
 - **`personality`** — Character setting, recommended within 100 Chinese characters. See default config
 - **`reply_style`** — Default expression style, recommended 1-2 lines. See default config
@@ -81,7 +89,9 @@ multiple_probability = 0.2
 
 `[visual]` controls how image messages are handled by the planner and replyer.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [visual]
 planner_mode = "auto"
 replyer_mode = "auto"
@@ -91,6 +101,8 @@ handle_oversized_images = true
 max_image_size_mb = 30.0
 oversized_image_handle_method = "compress"
 ```
+
+:::
 
 The image description prompt is managed by the Prompt template `prompts/<locale>/image_description.prompt`.
 
@@ -106,7 +118,9 @@ The image description prompt is managed by the Prompt template `prompts/<locale>
 
 `[chat]` controls reply frequency, context length, group/private chat prompts, and dynamic talk frequency rules.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 max_context_size = 40
 max_private_context_size = 60
@@ -136,6 +150,8 @@ private_chat_prompts = "..."
 chat_prompts = []
 ```
 
+:::
+
 - **`talk_value`** — Chat frequency. Smaller means quieter, range 0-1. Default: 1.0
 - **`private_talk_value`** — Private chat frequency. Smaller means quieter, range 0-1. Default: 1.0
 - **`mentioned_bot_reply`** — Whether to tend to reply when the bot name is mentioned in plain text. Default: disabled
@@ -157,7 +173,9 @@ chat_prompts = []
 
 ### talk_value_rules
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[chat.reply_timing.talk_value_rules]]
 platform = ""
 item_id = ""
@@ -173,6 +191,8 @@ time = "09:00-18:59"
 value = 1.0
 ```
 
+:::
+
 - **`platform`** — Platform. Empty together with item_id means global
 - **`item_id`** — User/group ID. Empty together with platform means global
 - **`rule_type`** — Chat flow type, group or private
@@ -181,13 +201,17 @@ value = 1.0
 
 ### chat_prompts
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[chat.reply_style.chat_prompts]]
 platform = "qq"
 item_id = "123456"
 rule_type = "group"
 prompt = "Speak more briefly in this group."
 ```
+
+:::
 
 `platform`, `item_id`, and `prompt` must all be filled in; otherwise the extra prompt entry is invalid.
 
@@ -219,7 +243,9 @@ A_Memorix is MaiBot's long-term memory system. It handles memory storage, vector
 
 Use lowercase `[a_memorix]` in `bot_config.toml`; TOML section names are case-sensitive.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -231,6 +257,8 @@ memory_query_default_limit = 5
 person_fact_writeback_enabled = true
 chat_summary_writeback_enabled = true
 ```
+
+:::
 
 Main subsections include `integration`, `plugin`, `storage`, `embedding`, `retrieval`, `threshold`, `filter`, `episode`, `person_profile`, `memory`, `advanced`, and `web`.
 
@@ -250,7 +278,9 @@ Legacy `[memory]` fields migrate into `[a_memorix.integration]` and `[a_memorix.
 
 ### learning_list
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[expression.learning_list]]
 platform = ""
 item_id = ""
@@ -258,6 +288,8 @@ type = "group"
 use = true
 learn = true
 ```
+
+:::
 
 - **`platform`** — Platform. Empty together with item_id means global
 - **`item_id`** — User/group ID. Empty together with platform means global
@@ -280,7 +312,9 @@ learn = true
 
 ## Keyword Reaction [keyword_reaction]
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[keyword_reaction.keyword_rules]]
 keywords = ["keyword"]
 reaction = "reaction after trigger"
@@ -289,6 +323,8 @@ reaction = "reaction after trigger"
 regex = ["^regex.*"]
 reaction = "reaction after trigger"
 ```
+
+:::
 
 - **`keyword_rules`** — Keyword rule list
 - **`regex_rules`** — Regex rule list
@@ -317,7 +353,9 @@ reaction = "reaction after trigger"
 
 `[log]` controls log output format, level, and file management.
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [log]
 date_style = "m-d H:i:s"
 log_level_style = "lite"
@@ -334,6 +372,8 @@ maisaka_reply_effect_limit = 256
 suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "httpcore", "requests", "sqlalchemy", "openai", "uvicorn", "jieba"]
 library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }
 ```
+
+:::
 
 - **`date_style`** — Log date format. Default: `m-d H:i:s`
 - **`log_level_style`** — Log level display style, options are lite, compact, or full. Default: `lite`
@@ -430,7 +470,9 @@ library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }
 
 ### mcp.servers
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[mcp.servers]]
 name = "example"
 enabled = true
@@ -439,6 +481,8 @@ command = "uvx"
 args = ["some-mcp-server"]
 env = {}
 ```
+
+:::
 
 - **`name`** — Server name, must be unique
 - **`enabled`** — Whether to enable this server
@@ -483,7 +527,9 @@ env = {}
 
 ### Beginner Minimal Configuration
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [bot]
 platform = "qq"
 qq_account = "123456789"
@@ -508,14 +554,20 @@ person_fact_writeback_enabled = true
 chat_summary_writeback_enabled = true
 ```
 
+:::
+
 ### Connect an Adapter
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [maim_message]
 ws_server_host = "127.0.0.1"
 ws_server_port = 8000
 auth_token = []
 ```
+
+:::
 
 If the adapter runs in a Docker network or on another machine, adjust the listen address and port according to your deployment.
 

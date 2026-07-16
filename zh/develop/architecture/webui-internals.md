@@ -56,7 +56,9 @@ graph TD
 
 `create_app()` 创建 FastAPI 实例并配置中间件和路由：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 def create_app(host="0.0.0.0", port=8001, enable_static=True) -> FastAPI:
     app = FastAPI(title="MaiBot WebUI")
     _setup_anti_crawler(app)   # 反爬虫中间件
@@ -68,11 +70,15 @@ def create_app(host="0.0.0.0", port=8001, enable_static=True) -> FastAPI:
     return app
 ```
 
+:::
+
 ### CORS 配置
 
 只允许 localhost 来源（开发端口 + 服务端口）：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 allow_origins = [
     "http://localhost:5173",      # Vite 开发服务器
     "http://127.0.0.1:5173",
@@ -81,6 +87,8 @@ allow_origins = [
 ]
 allow_credentials = True
 ```
+
+:::
 
 ### 静态文件安全
 

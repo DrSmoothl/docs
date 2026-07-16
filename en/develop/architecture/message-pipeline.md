@@ -54,7 +54,9 @@ Source location: `src/chat/message_receive/bot.py`
 
 After a message arrives via maim-message `MessageServer`, `ChatBot.message_process(message_data)` is called to enter the main link:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def message_process(self, message_data: Dict[str, Any]) -> None:
     # 1. 确保后台任务已启动
     await self._ensure_started()
@@ -64,6 +66,8 @@ async def message_process(self, message_data: Dict[str, Any]) -> None:
     message = SessionMessage.from_maim_message(maim_raw_message)
     await self.receive_message(message)
 ```
+
+:::
 
 ### `SessionMessage` Structure
 
@@ -109,11 +113,15 @@ Triggered before `SessionMessage.process()`; can intercept or rewrite the origin
 - **Allow Rewrite**: Yes
 
 Parameter Schema:
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "message": { "type": "object", "description": "当前入站消息的序列化 SessionMessage" }
 }
 ```
+
+:::
 
 ### chat.receive.after_process
 
@@ -181,11 +189,15 @@ Source location: `src/chat/message_receive/chat_manager.py`
 
 A singleton `chat_manager` that manages all chat sessions.
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class ChatManager:
     sessions: Dict[str, BotChatSession]    # session_id → BotChatSession
     last_messages: Dict[str, SessionMessage]  # session_id → 最近一条消息
 ```
+
+:::
 
 ### Session ID Calculation
 
@@ -232,7 +244,9 @@ Source location: `src/chat/heart_flow/`
 
 Source location: `src/chat/heart_flow/heartflow_message_processor.py`
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class HeartFCMessageReceiver:
     async def process_message(self, message: SessionMessage):
         # 1. 跳过通知消息
@@ -242,13 +256,17 @@ class HeartFCMessageReceiver:
         # 5. 注册用户到 Person 信息库
 ```
 
+:::
+
 ### HeartflowManager
 
 Source location: `src/chat/heart_flow/heartflow_manager.py`
 
 Manages session-level `MaisakaHeartFlowChatting` instances:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class HeartflowManager:
     heartflow_chat_list: Dict[str, MaisakaHeartFlowChatting]
     _chat_create_locks: Dict[str, asyncio.Lock]
@@ -256,6 +274,8 @@ class HeartflowManager:
     async def get_or_create_heartflow_chat(self, session_id: str) -> MaisakaHeartFlowChatting
     def adjust_talk_frequency(self, session_id: str, frequency: float) -> None
 ```
+
+:::
 
 Uses double-checked locking to ensure only one Maisaka runtime instance is created per session.
 

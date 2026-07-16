@@ -96,7 +96,9 @@ Source location: `src/A_memorix/host_service.py`
 
 Host-side service, bridging MaiBot main process with A-Memorix kernel:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class AMemorixHostService:
     _kernel: Optional[SDKMemoryKernel]
     _config_cache: Dict[str, Any] | None
@@ -106,6 +108,8 @@ class AMemorixHostService:
     async def reload() -> None  # Close kernel → Re-read config → Rebuild kernel
     async def invoke(component_name, args) -> Any  # Unified invocation entry
 ```
+
+:::
 
 ### invoke Entry Point
 

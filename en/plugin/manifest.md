@@ -16,7 +16,9 @@ These two files serve completely different purposes; do not confuse them.
 
 Below is a complete Manifest example:
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
@@ -59,6 +61,8 @@ Below is a complete Manifest example:
 }
 ```
 
+:::
+
 ## Required Fields
 
 - **`manifest_version`** `2` — Manifest protocol version, currently fixed at `2`
@@ -97,7 +101,9 @@ Possible values:
 
 `display.icon` is used to declare the plugin icon. This field only affects WebUI display and does not participate in plugin runtime behavior.
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "display": {
     "icon": {
@@ -109,6 +115,8 @@ Possible values:
   }
 }
 ```
+
+:::
 
 - `type`: `lucide`, `emoji`, or `local`
 - `value`: Icon value. `lucide` uses the icon name, `emoji` uses a single emoji or short text, `local` uses a relative path within the plugin directory
@@ -128,12 +136,16 @@ Online URLs are not allowed as plugin icons. Local icons only support `.png`, `.
 
 Both share the same structure, declaring a closed interval:
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "min_version": "1.0.0",
   "max_version": "1.99.99"
 }
 ```
+
+:::
 
 - `min_version`: Minimum allowed version (inclusive)
 - `max_version`: Maximum allowed version (inclusive)
@@ -184,13 +196,17 @@ The `dependencies` array supports two types of dependencies, distinguished by th
 
 ### Plugin-Level Dependencies
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "type": "plugin",
   "id": "com.example.other-plugin",
   "version_spec": ">=1.0.0,<2.0.0"
 }
 ```
+
+:::
 
 - `id`: The ID of the dependent plugin, following the same formatting rules as plugin IDs
 - `version_spec`: Version constraint expression, using PEP 440 style (e.g., `>=1.0.0`, `~=1.0`)
@@ -199,13 +215,17 @@ The `dependencies` array supports two types of dependencies, distinguished by th
 
 ### Python Package Dependencies
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "type": "python_package",
   "name": "httpx",
   "version_spec": ">=0.24.0"
 }
 ```
+
+:::
 
 - `name`: Python package name; only letters, numbers, dots, underscores, and hyphens are allowed
 - `version_spec`: Version constraint expression

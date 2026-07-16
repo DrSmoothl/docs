@@ -88,12 +88,16 @@ Intercepting handlers are part of the main flow. They are registered with `inter
 
 Conceptually, an intercepting handler can be written as follows:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def security_filter(message: Optional[MaiMessages]):
     if should_block(message):
         return False, message  # equivalent to intercept_result.abort()
     return True, message
 ```
+
+:::
 
 If a handler needs to return a modified message, it can pass the new `MaiMessages` as the second return value. The caller can continue to write the `modified_message` back to the business object after receiving the `emit()` result.
 
@@ -109,11 +113,15 @@ Non-intercepting handlers are side-channel observers. They are registered with `
 
 Conceptually, non-intercepting handlers are suitable for auditing, statistics, logging, monitoring, and asynchronous side effects:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def audit_listener(message: Optional[MaiMessages]):
     await write_audit_log(message)
     return True, message
 ```
+
+:::
 
 Even if `audit_listener()` throws an error, it will not affect the main chain. The exception is recorded in the task completion callback.
 
@@ -140,7 +148,9 @@ EventBus handlers are plain async callables that do not need to inherit from a p
 
 The registration flow is straightforward:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 event_bus.subscribe(
     event_type=EventType.ON_MESSAGE,
     handler=handler_func,
@@ -150,11 +160,17 @@ event_bus.subscribe(
 )
 ```
 
+:::
+
 Unsubscription only requires the event type and handler name:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 event_bus.unsubscribe(event_type=EventType.ON_MESSAGE, name="example.handler")
 ```
+
+:::
 
 ## Key Flow
 
@@ -385,7 +401,9 @@ This strategy keeps the event bus stable, but also means that the caller cannot 
 
 ### Registering an Intercepting Handler
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def before_message(message: Optional[MaiMessages]):
     if not message:
         return True, None
@@ -402,9 +420,13 @@ event_bus.subscribe(
 )
 ```
 
+:::
+
 ### Registering a Non-Intercepting Handler
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def message_audit(message: Optional[MaiMessages]):
     if not message:
         return True, None
@@ -420,9 +442,13 @@ event_bus.subscribe(
 )
 ```
 
+:::
+
 ### Triggering an Event and Processing the Result
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 continue_flag, modified_message = await event_bus.emit(
     event_type=EventType.ON_MESSAGE,
     message=event_message,
@@ -434,6 +460,8 @@ if not continue_flag:
 if modified_message and modified_message.plain_text:
     message.processed_plain_text = modified_message.plain_text
 ```
+
+:::
 
 ## Relationship with the Legacy events_manager
 

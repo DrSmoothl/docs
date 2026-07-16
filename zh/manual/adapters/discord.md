@@ -63,10 +63,13 @@ Discord 适配器源码：[litroenade/MaiBot-Discord-Adapter](https://github.com
 
 将适配器仓库克隆到 MaiBot 的 `plugins/` 目录下：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cd /path/to/MaiBot/plugins
 git clone https://github.com/litroenade/MaiBot-Discord-Adapter.git
 ```
+:::
 
 也可以通过 MaiBot 的 WebUI 界面安装插件。
 
@@ -89,7 +92,9 @@ git clone https://github.com/litroenade/MaiBot-Discord-Adapter.git
 
 编辑 `plugins/MaiBot-Discord-Adapter/config.toml`，将 `enabled` 改为 `true` 并填写 Bot Token：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 enabled = true                # 启用适配器
 config_version = "1.0.0"
@@ -97,6 +102,7 @@ config_version = "1.0.0"
 [connection]
 token = "你的Discord Bot Token"  # 必填
 ```
+:::
 
 然后重启 MaiBot 即可。
 
@@ -116,13 +122,16 @@ token = "你的Discord Bot Token"  # 必填
 
 适配器默认启用聊天名单过滤，名单模式默认为**黑名单**（即允许所有来源）。如果需要限制 Bot 只响应特定服务器或频道，可以将模式改为白名单并填写对应 ID：
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 guild_list_type = "whitelist"
 guild_list = ["你的服务器ID"]
 channel_list_type = "whitelist"
 channel_list = ["你的频道ID"]
 ```
+:::
 
 如果发现 Bot 已连接但消息没有反应，优先检查聊天过滤配置。
 

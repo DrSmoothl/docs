@@ -48,10 +48,13 @@ Client UUID, time window, platform, and model aliases may be associated with a d
 
 You can disable telemetry without affecting core chat:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telemetry]
 enable = false
 ```
+:::
 
 Telemetry is retained for a reasonable period needed for the purposes above, then deleted or anonymized. The project team does not sell raw telemetry records to third parties.
 

@@ -35,10 +35,13 @@ After disabling Privacy Mode, the Bot will be able to receive all messages in gr
 
 Clone the adapter repository into the `plugins/` directory of MaiBot:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cd /path/to/MaiBot/plugins
 git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 ```
+:::
 
 ### Dependencies
 
@@ -47,9 +50,12 @@ git clone https://github.com/exynos967/MaiBot-Telegram-Adapter.git
 
 For SOCKS5 proxy support, install additionally:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+:::
 
 ## Configuration
 
@@ -86,10 +92,13 @@ Configuration can also be modified via hot-reload on the plugin configuration pa
 
 MaiBot Core needs to identify "the bot itself" via the `platforms` field in the main configuration. After enabling Telegram, please add the Telegram Bot's numeric ID to the `[bot]` of the MaiBot main configuration:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [bot]
 platforms = ["telegram:123456789"]
 ```
+:::
 
 Where `123456789` is your Telegram Bot's numeric ID; you can also use the shorthand `tg:123456789`. The Bot's numeric ID will be output in the logs as `Telegram Bot: id=...` after the adapter starts successfully.
 
@@ -145,46 +154,61 @@ If the server cannot directly access the Telegram API, it can connect via a prox
 
 ### HTTP/HTTPS Proxy
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_url = "http://127.0.0.1:7890"
 ```
+:::
 
 ### SOCKS5 Proxy
 
 Using a SOCKS5 proxy requires the additional installation of the `aiohttp-socks` dependency:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install aiohttp-socks
 ```
+:::
 
 Then configure:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_url = "socks5://127.0.0.1:1080"
 ```
+:::
 
 ### Read Proxy from Environment Variables
 
 If `HTTP_PROXY` or `HTTPS_PROXY` environment variables are already configured in the system, you can enable this option:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 proxy_enabled = true
 proxy_from_env = true
 ```
+:::
 
 ### Custom API Address
 
 If using a self-hosted Telegram API proxy server (such as Telegram Bot API Server), you can modify `api_base`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [telegram_bot]
 api_base = "https://your-api-server.com"
 ```
+:::
 
 ## Topic Routing
 

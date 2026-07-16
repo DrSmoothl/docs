@@ -8,7 +8,9 @@ title: 消息网关
 
 ## 装饰器签名
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MessageGateway
 
 @MessageGateway(
@@ -23,6 +25,8 @@ from maibot_sdk import MessageGateway
     **metadata,                  # 额外元数据
 )
 ```
+
+:::
 
 ## 路由类型
 
@@ -50,7 +54,9 @@ from maibot_sdk import MessageGateway
 
 以下是一个完整的 QQ 平台适配器示例，基于 NapCat 协议实现双向消息路由：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any
 
 from maibot_sdk import MaiBotPlugin, MessageGateway
@@ -158,11 +164,15 @@ def create_plugin():
     return NapCatGatewayPlugin()
 ```
 
+:::
+
 ## 仅入站网关示例
 
 如果只需要向 MaiBot 注入消息（如 Webhook 监听），可以使用 `route_type="receive"`：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any
 
 from maibot_sdk import MaiBotPlugin, MessageGateway
@@ -221,6 +231,8 @@ class WebhookReceiverPlugin(MaiBotPlugin):
 def create_plugin():
     return WebhookReceiverPlugin()
 ```
+
+:::
 
 ## 网关处理器参数
 

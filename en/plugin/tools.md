@@ -12,7 +12,9 @@ title: Tool Component
 
 ## Decorator Signature
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Tool
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -25,6 +27,8 @@ from maibot_sdk.types import ToolParameterInfo, ToolParamType
     **metadata,                                             # 额外元数据
 )
 ```
+
+:::
 
 ### Argument Descriptions
 
@@ -45,7 +49,9 @@ Description field conventions:
 
 Use an `ToolParameterInfo` list to declare parameters; the SDK automatically generates a JSON Schema:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Tool, MaiBotPlugin
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -75,11 +81,15 @@ class MyPlugin(MaiBotPlugin):
         return {"results": results}
 ```
 
+:::
+
 ### Method 2: dict parameters (Compatible with legacy declarations)
 
 Pass a dictionary in JSON Schema style directly:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     @Tool(
         "search",
@@ -93,6 +103,8 @@ class MyPlugin(MaiBotPlugin):
         results = await self._do_search(query, limit)
         return {"results": results}
 ```
+
+:::
 
 ## ToolParameterInfo Fields
 
@@ -121,7 +133,9 @@ class MyPlugin(MaiBotPlugin):
 
 Tool handlers are asynchronous methods on the plugin class that receive keyword arguments corresponding to parameter names and `**kwargs`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @Tool("greet", description="向用户打招呼",
       parameters=[
           ToolParameterInfo(name="stream_id", param_type=ToolParamType.STRING,
@@ -131,6 +145,8 @@ async def handle_greet(self, stream_id: str, **kwargs):
     await self.ctx.send.text("你好！", stream_id)
     return {"success": True, "message": "已回复"}
 ```
+
+:::
 
 ### Return Value
 The return value of a Tool handler is returned to the LLM as the tool execution result. The return value can be:
@@ -144,7 +160,9 @@ The LLM decides the next step based on the return value (e.g., replying to the u
 ### Returning Images and Other Media
 If a Tool needs to pass an image to Maisaka for further observation or reasoning, do not embed base64 images directly into `content`. It is recommended to return `dict`, placing the text for the LLM to read in `content` and the image itself in `content_items`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from base64 import b64encode
 
 
@@ -166,9 +184,13 @@ async def handle_draw(self, prompt: str, **kwargs):
     }
 ```
 
+:::
+
 You can also use data URLs:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 return {
     "success": True,
     "content": "图片已生成。",
@@ -182,6 +204,8 @@ return {
     ],
 }
 ```
+
+:::
 
 Common fields in `content_items` are as follows:
 

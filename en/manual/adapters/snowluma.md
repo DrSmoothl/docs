@@ -31,13 +31,16 @@ Source code for the SnowLuma Adapter: [Mai-with-u/MaiBot-SnowLuma-Adapter](https
 
 Clone the adapter repository into MaiBot's `plugins/` folder:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # 进入 MaiBot 的 plugins 目录
 cd MaiBot/plugins
 
 # 克隆仓库
 git clone https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter.git
 ```
+:::
 
 Alternatively, you can install the plugin via the MaiBot WebUI.
 
@@ -63,11 +66,14 @@ After installation, the SnowLuma adapter plugin is **disabled by default** and m
 
 Edit `plugins/MaiBot-SnowLuma-Adapter/config.toml` and change `enabled` to `true`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 enabled = true   # 改为 true
 config_version = "1.0.0"
 ```
+:::
 
 Then restart MaiBot.
 
@@ -115,19 +121,25 @@ The adapter enables chat list filtering by default, and group chats default to w
 
 During the testing phase, you can temporarily disable list filtering:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 enable_chat_list_filter = false
 ```
+:::
 
 Or add the group numbers you need to test to the whitelist:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 enable_chat_list_filter = true
 group_list_type = "whitelist"
 group_list = ["你的QQ群号"]
 ```
+:::
 
 ### Message Filtering (`[filters]`)
 
@@ -135,7 +147,9 @@ group_list = ["你的QQ群号"]
 
 ### Full Configuration Example
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 enabled = true
 config_version = "1.0.0"
@@ -161,6 +175,7 @@ ban_qq_bot = false
 [filters]
 ignore_self_message = true
 ```
+:::
 
 ## Verification and Troubleshooting
 
@@ -203,7 +218,10 @@ How do I know it's connected? Check these areas:
 
 If you need a single MaiBot to interface with multiple SnowLuma instances (e.g., multiple QQ accounts), you can configure a different `connection_id` for each instance to distinguish the links:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [luma_client]
 connection_id = "bot-1"
 ```
+:::

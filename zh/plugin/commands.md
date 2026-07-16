@@ -8,7 +8,9 @@ title: Command 组件
 
 ## 装饰器签名
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import Command
 
 @Command(
@@ -20,6 +22,8 @@ from maibot_sdk import Command
 )
 ```
 
+:::
+
 ### 参数说明
 
 - **`name`** `str` — 命令名称，需在插件内唯一
@@ -29,7 +33,9 @@ from maibot_sdk import Command
 
 ## 基本用法
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command
 
 
@@ -40,20 +46,28 @@ class MyPlugin(MaiBotPlugin):
         return True, "Hello!", 2
 ```
 
+:::
+
 ### 带别名的命令
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @Command("greet", pattern=r"^/greet", aliases=["/hi", "/hey"])
 async def handle_greet(self, **kwargs):
     await self.ctx.send.text("你好！", kwargs["stream_id"])
     return True, "你好！", 2
 ```
 
+:::
+
 使用 `/greet`、`/hi` 或 `/hey` 均可触发此命令。
 
 ### 带正则捕获组的命令
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 import re
 
 @Command("echo", pattern=r"^/echo\s+(?P<text>.+)$")
@@ -64,6 +78,8 @@ async def handle_echo(self, **kwargs):
     await self.ctx.send.text(f"Echo: {text}", stream_id)
     return True, f"Echo: {text}", 1
 ```
+
+:::
 
 ## 处理函数参数
 
@@ -78,15 +94,21 @@ Command 处理函数接收 `**kwargs`，其中包含以下参数：
 
 Command 处理函数必须返回三元组：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 return success, response, weight
 ```
+
+:::
 
 - **`success`** `bool` — 命令是否成功执行
 - **`response`** `str` — 命令执行结果的文本描述
 - **`weight`** `int` — 命令优先级权重，数值越高优先级越高
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 命令成功执行
 return True, "操作成功", 2
 
@@ -94,11 +116,15 @@ return True, "操作成功", 2
 return False, "参数错误", 1
 ```
 
+:::
+
 ## 正则模式编写指南
 
 ### 推荐模式
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 精确匹配 /hello
 pattern=r"^/hello$"
 
@@ -112,11 +138,15 @@ pattern=r"^/echo\s+(?P<text>.+)$"
 pattern=r"^/set\s+(?P<key>\w+)\s+(?P<value>.+)$"
 ```
 
+:::
+
 ### 使用命名捕获组
 
 推荐使用 `(?P<name>...)` 命名捕获组，可以通过 `kwargs["matched_groups"]` 按名称访问匹配结果：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @Command("ban", pattern=r"^/ban\s+(?P<user>\w+)(?:\s+(?P<reason>.+))?$")
 async def handle_ban(self, **kwargs):
     matched = kwargs.get("matched_groups", {})
@@ -125,6 +155,8 @@ async def handle_ban(self, **kwargs):
     await self.ctx.send.text(f"已封禁 {user}，原因：{reason}", kwargs["stream_id"])
     return True, f"已封禁 {user}", 2
 ```
+
+:::
 
 ## 命令执行流程
 
@@ -153,7 +185,9 @@ sequenceDiagram
 
 ## 完整示例
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -196,3 +230,5 @@ class AdminPlugin(MaiBotPlugin):
 def create_plugin():
     return AdminPlugin()
 ```
+
+:::

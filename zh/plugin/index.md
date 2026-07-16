@@ -50,16 +50,24 @@ graph TD
 
 ### 1. 安装 SDK
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install maibot-plugin-sdk
 ```
 
+:::
+
 如果你同时在本地修改 `maibot-plugin-sdk`，可以设置环境变量让 MaiBot 的插件 Runner 自动优先使用本地 SDK 源码：
 
-```powershell
+::: code-group
+
+```powershell [PowerShell ~vscode-icons:file-type-powershell~]
 $env:MAIBOT_PLUGIN_SDK_PATH = "C:\GitHub\MaiBot-dev\maibot-plugin-sdk"
 uv run python bot.py
 ```
+
+:::
 
 该路径必须指向包含 `pyproject.toml` 和 `maibot_sdk/` 的 SDK 仓库。设置后，Runner 会把该路径放到 `PYTHONPATH` 最前面，并使用本地 SDK 的 `project.version` 进行插件 manifest 兼容性检查。不要把这个环境变量指向不可信目录；它会让该目录中的 Python 代码进入插件运行时导入路径。
 
@@ -92,7 +100,9 @@ plugins/
 
 在 `_manifest.json` 中声明插件元信息（完整字段说明见 [Manifest 系统](./manifest.md)）：
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "manifest_version": 2,
   "id": "com.example.my-plugin",
@@ -121,6 +131,8 @@ plugins/
   }
 }
 ```
+
+:::
 
 ### 4. 编写插件代码
 
@@ -183,7 +195,9 @@ SDK 要求所有插件实现 `on_load()`、`on_unload()` 和 `on_config_update()
 
 所有插件必须继承 `MaiBotPlugin`，通过类属性和装饰器声明插件能力：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Tool, Command, CONFIG_RELOAD_SCOPE_SELF
 from typing import ClassVar, Iterable
 
@@ -205,6 +219,8 @@ def create_plugin():
     return MyPlugin()
 ```
 
+:::
+
 ### 组件装饰器
 
 SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
@@ -225,7 +241,9 @@ SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
 通过 `self.ctx` 访问 17 种能力代理，所有调用自动通过 RPC 转发到 Host：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 上下文访问
 self.ctx              # PluginContext 实例
 self.ctx.paths        # 插件持久化与运行时目录
@@ -251,11 +269,15 @@ self.ctx.tool         # LLM 工具定义查询
 self.ctx.maisaka      # Maisaka 上下文追加与主动任务
 ```
 
+:::
+
 ### 配置模型
 
 插件可通过 `PluginConfigBase` 声明强类型配置，Runner 会自动生成默认配置和 WebUI Schema：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -273,6 +295,8 @@ class MyPlugin(MaiBotPlugin):
         # 通过 self.get_plugin_config_data() 访问原始 dict
         raw = self.get_plugin_config_data()
 ```
+
+:::
 
 - 声明 `config_model` 后，`self.config` 返回强类型配置实例
 - 未声明时调用 `self.config` 会抛出 `RuntimeError`
@@ -294,10 +318,14 @@ my-plugin/
 
 插件运行时数据不应写入插件源码目录。SDK 2.6.0 起可以通过 `self.ctx.paths` 获取 Host 注入的插件专属目录：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 self.ctx.paths.data_dir     # 持久化数据，默认 data/plugins/<plugin_id>/
 self.ctx.paths.runtime_dir  # 临时数据，默认 temp/plugins/<plugin_id>/
 ```
+
+:::
 
 - `data_dir` 适合保存插件数据库、JSON 状态、用户生成内容等需要跨重启保留的数据。
 - `runtime_dir` 适合保存下载缓存、渲染中间产物、可重建的临时文件。

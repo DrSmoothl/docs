@@ -10,7 +10,9 @@ PlatformIO 驱动是 MaiBot 平台 IO 层的核心抽象。本文档详细介绍
 
 `PlatformIODriver`（定义在 `src/platform_io/drivers/base.py`）是所有平台 IO 驱动必须继承的抽象基类：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class PlatformIODriver(ABC):
     def __init__(self, descriptor: DriverDescriptor) -> None: ...
 
@@ -33,6 +35,8 @@ class PlatformIODriver(ABC):
     ) -> DeliveryReceipt: ...
 ```
 
+:::
+
 ### 必须实现的方法
 
 - **`send_message(message, route_key, metadata)`** — 通过具体驱动发送消息，返回 `DeliveryReceipt`。这是唯一必须实现的抽象方法
@@ -46,7 +50,9 @@ class PlatformIODriver(ABC):
 
 驱动收到外部平台消息后，需构造 `InboundMessageEnvelope` 并调用 `emit_inbound()` 上报：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 envelope = InboundMessageEnvelope(
     route_key=RouteKey(platform="qq", account_id="123456"),
     driver_id=self.driver_id,
@@ -57,6 +63,8 @@ envelope = InboundMessageEnvelope(
 accepted = await self.emit_inbound(envelope)
 ```
 
+:::
+
 `emit_inbound` 返回 `True` 表示消息被 Broker 接受并继续转发，`False` 表示被拒绝（未配置入站回调或消息被去重过滤）。
 
 ## 核心类型
@@ -65,7 +73,9 @@ accepted = await self.emit_inbound(envelope)
 
 `RouteKey` 是路由决策的唯一键，采用三层结构：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @dataclass(frozen=True, slots=True)
 class RouteKey:
     platform: str                           # 平台名称，如 "qq"、"discord"
@@ -73,19 +83,27 @@ class RouteKey:
     scope: Optional[str] = None             # 额外路由作用域
 ```
 
+:::
+
 路由解析遵循**从最具体到最宽泛**的回退顺序：`platform + account_id + scope` → `platform + account_id` → `platform + scope` → `platform`。通过 `resolution_order()` 方法可获取完整回退链：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 key = RouteKey(platform="qq", account_id="123", scope="group_456")
 key.resolution_order()
 # → [RouteKey("qq", "123", "group_456"), RouteKey("qq", "123", None), RouteKey("qq", None, "group_456"), RouteKey("qq", None, None)]
 ```
 
+:::
+
 `to_dedupe_scope()` 方法生成跨驱动共享的去重作用域字符串，格式为 `platform:account_id:scope`。
 
 ### InboundMessageEnvelope — 入站消息封装
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @dataclass(slots=True)
 class InboundMessageEnvelope:
     route_key: RouteKey                                # 入站路由键
@@ -98,11 +116,15 @@ class InboundMessageEnvelope:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
+:::
+
 去重键的优先级为：`dedupe_key` > `external_message_id` > `session_message.message_id`。Broker 不会根据 `payload` 内容猜测去重键，以避免将内容相同的不同消息误判为重复。
 
 ### DeliveryReceipt — 出站回执
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @dataclass(slots=True)
 class DeliveryReceipt:
     internal_message_id: str                    # 内部消息 ID
@@ -115,6 +137,8 @@ class DeliveryReceipt:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
+:::
+
 `DeliveryStatus` 枚举值：
 
 - **`PENDING`** — 待发送
@@ -124,7 +148,9 @@ class DeliveryReceipt:
 
 ### DriverDescriptor — 驱动描述
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 @dataclass(frozen=True, slots=True)
 class DriverDescriptor:
     driver_id: str                                # 全局唯一驱动 ID
@@ -136,13 +162,17 @@ class DriverDescriptor:
     metadata: Dict[str, Any] = field(default_factory=dict)
 ```
 
+:::
+
 `DriverKind` 枚举区分驱动来源：`LEGACY` 表示内置驱动，`PLUGIN` 表示插件提供的驱动。
 
 ## 实现并注册驱动
 
 ### 完整示例
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot.src.platform_io.drivers.base import PlatformIODriver
 from maibot.src.platform_io.types import (
     DeliveryReceipt, DeliveryStatus, DriverDescriptor, DriverKind,
@@ -183,9 +213,13 @@ class MyDriver(PlatformIODriver):
             )
 ```
 
+:::
+
 ### 注册与路由绑定
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot.src.platform_io.manager import get_platform_io_manager
 
 manager = get_platform_io_manager()
@@ -215,5 +249,7 @@ manager.bind_receive_route(RouteBinding(
     driver_kind=DriverKind.PLUGIN,
 ))
 ```
+
+:::
 
 Broker 运行中使用 `add_driver` / `remove_driver`，未运行时使用 `register_driver` / `unregister_driver`。路由绑定支持通过 `priority` 字段实现同一路由键下多驱动的优先级排序。

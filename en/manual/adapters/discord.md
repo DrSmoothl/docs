@@ -64,10 +64,13 @@ Server ID and channel ID are needed for chat filtering configuration. Enable Dev
 
 Clone the adapter repository into MaiBot's `plugins/` directory:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cd /path/to/MaiBot/plugins
 git clone https://github.com/litroenade/MaiBot-Discord-Adapter.git
 ```
+:::
 
 You can also install the plugin through MaiBot's WebUI.
 
@@ -90,7 +93,9 @@ The adapter is **disabled by default** after installation and needs to be manual
 
 Edit `plugins/MaiBot-Discord-Adapter/config.toml`, set `enabled` to `true` and fill in the Bot Token:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [plugin]
 enabled = true                # Enable the adapter
 config_version = "1.0.0"
@@ -98,6 +103,7 @@ config_version = "1.0.0"
 [connection]
 token = "Your Discord Bot Token"  # Required
 ```
+:::
 
 Then restart MaiBot.
 
@@ -117,13 +123,16 @@ Configuration can also be hot-reloaded via the WebUI plugin configuration page w
 
 The adapter enables chat list filtering by default, with the list mode set to **blacklist** (i.e., allows all sources by default). If you need to restrict the Bot to only respond to specific servers or channels, change the mode to whitelist and fill in the corresponding IDs:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [chat]
 guild_list_type = "whitelist"
 guild_list = ["Your Server ID"]
 channel_list_type = "whitelist"
 channel_list = ["Your Channel ID"]
 ```
+:::
 
 If the Bot is connected but not responding to messages, check the chat filtering configuration first.
 

@@ -10,7 +10,9 @@ MaiBot 插件有三个生命周期方法：`on_load()`、`on_unload()` 和 `on_c
 
 每个插件的 `plugin.py` 必须导出一个顶层 `create_plugin()` 函数，返回插件实例：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin
 
 
@@ -29,6 +31,8 @@ def create_plugin():
     return MyPlugin()
 ```
 
+:::
+
 Runner 加载插件时：
 
 1. 导入 `plugin.py` 模块
@@ -40,7 +44,9 @@ Runner 加载插件时：
 
 插件加载完成后的回调。Runner 在注入 `PluginContext` 并完成 capability bootstrap **之后**才调用此方法，因此可以在 `on_load()` 中直接使用 `self.ctx` 的所有能力代理。
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def on_load(self) -> None:
     """Called after plugin loaded. Initialize resources here.
 
@@ -48,6 +54,8 @@ async def on_load(self) -> None:
     so self.ctx is available.
     """
 ```
+
+:::
 
 **典型用途：**
 
@@ -58,7 +66,9 @@ async def on_load(self) -> None:
 
 **示例：**
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, PluginConfigBase, Field
 
 
@@ -87,14 +97,20 @@ class MyPlugin(MaiBotPlugin):
         return {"status": "ok"}
 ```
 
+:::
+
 ## on_unload()
 
 插件卸载前的回调。在此方法中释放插件持有的所有资源。
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def on_unload(self) -> None:
     """Called before plugin unloaded. Cleanup resources."""
 ```
+
+:::
 
 **典型用途：**
 
@@ -129,7 +145,9 @@ class MyPlugin(MaiBotPlugin):
 
 配置热重载回调。当插件配置或已订阅的全局配置发生变化时，Runner 会调用此方法。
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def on_config_update(
     self,
     scope: str,
@@ -145,6 +163,8 @@ async def on_config_update(
     """
 ```
 
+:::
+
 ### scope 取值
 
 - **`"self"`** → `CONFIG_RELOAD_SCOPE_SELF` — 插件自身配置。插件目录下的 `config.toml` 变化时**始终触发**，无需订阅
@@ -158,7 +178,9 @@ async def on_config_update(
 
 ### 示例
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, CONFIG_RELOAD_SCOPE_SELF, ON_BOT_CONFIG_RELOAD, ON_MODEL_CONFIG_RELOAD
 from typing import ClassVar, Iterable
 
@@ -187,11 +209,15 @@ class MyPlugin(MaiBotPlugin):
             self.ctx.logger.info("模型配置已更新: model=%s, version=%s", model_name, version)
 ```
 
+:::
+
 ## config_reload_subscriptions
 
 类变量，声明插件需要订阅的全局配置热重载范围。仅支持 `"bot"` 和 `"model"` 两个值：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import ClassVar, Iterable
 
 
@@ -209,6 +235,8 @@ class MyPlugin(MaiBotPlugin):
     # config_reload_subscriptions: ClassVar[Iterable[str]] = ()
 ```
 
+:::
+
 **规则：**
 
 - 默认值为空元组 `()`，即不订阅任何全局配置
@@ -221,7 +249,9 @@ class MyPlugin(MaiBotPlugin):
 
 以下是一个包含所有生命周期方法的完整插件示例：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from typing import Any, ClassVar
 
 from maibot_sdk import (
@@ -287,6 +317,8 @@ class GreeterPlugin(MaiBotPlugin):
 def create_plugin():
     return GreeterPlugin()
 ```
+
+:::
 
 ## 生命周期时序
 

@@ -95,7 +95,9 @@ flowchart LR
 
 ## 开发示例
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from src.prompt.prompt_manager import prompt_manager
 
 prompt = prompt_manager.get_prompt("example")
@@ -103,6 +105,8 @@ prompt.add_context("user_name", "小明")
 prompt.add_context("conversation_rules", lambda _: "回复保持简短。")
 rendered = await prompt_manager.render_prompt(prompt)
 ```
+
+:::
 
 若上下文需要异步数据，可以传入 `async def` 函数。不要直接修改 `prompt_manager.prompts` 中的共享实例，也不要把业务状态保存在全局上下文函数中。
 

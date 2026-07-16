@@ -279,7 +279,9 @@ A_Memorix replaces the old `[memory]` configuration section. If you previously u
 
 Old configuration:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [memory]
 global_memory = true
 global_memory_blacklist = []
@@ -292,9 +294,13 @@ chat_summary_writeback_context_length = 50
 feedback_correction_enabled = false
 ```
 
+:::
+
 After migration:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -315,6 +321,8 @@ mode = "blacklist"
 chats = []
 ```
 
+:::
+
 ---
 
 ## Configuration Examples
@@ -323,12 +331,16 @@ chats = []
 
 The simplest configuration, only enables the memory system and uses all defaults:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
 enabled = true
 ```
+
+:::
 
 All other subsections will use default values. This approach is suitable for quick start, but ensure the embedding model can be auto-selected.
 
@@ -336,7 +348,9 @@ All other subsections will use default values. This approach is suitable for qui
 
 A recommended configuration suitable for daily use, with minor adjustments from defaults:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -364,11 +378,15 @@ chats = []
 enable_auto_adjust = true
 ```
 
+:::
+
 ### Advanced Configuration
 
 Enabling feedback correction, adjusting retrieval parameters, and memory evolution strategies:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.plugin]
@@ -441,6 +459,8 @@ enable_auto_save = true
 auto_save_interval_minutes = 3
 debug = false
 ```
+
+:::
 
 ---
 

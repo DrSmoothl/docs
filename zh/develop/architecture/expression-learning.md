@@ -82,7 +82,9 @@ flowchart TD
 **模式衰减（Decay）**：`BehaviorPatternMaintenance` 定期扫描 Store，对置信度低于 `DECAY_THRESHOLD`（默认 0.2）且超过 7 天未触发的模式进行软删除。衰减曲线采用指数衰减公式 `confidence *= exp(-λ × Δt)`，λ 由 `DECAY_RATE` 配置项控制。
 
 **学习示例**：
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "scene": "用户在深夜抱怨工作压力大",
   "suggested_action": "先用幽默 GIF 缓和气氛，再提供实用建议",
@@ -92,6 +94,8 @@ flowchart TD
   "source_rooms": ["group_1001", "group_1002"]
 }
 ```
+
+:::
 
 ### ExpressionLearner（表情学习器）
 
@@ -129,7 +133,9 @@ flowchart TD
 **审核流程**：自主学习到的映射先标记为 `pending`。AI 审核器根据安全策略评估内容适格性，审核通过后标记为 `approved` 并加入生产映射表。人工可通过 Rescue（恢复被拒映射）或 Reject（否决）介入。审核日志记录于 `ExpressionReviewStore.audit_log`，支持追溯与回滚。
 
 **学习示例**：
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "trigger_keywords": ["绷不住了", "笑死", "哈哈哈"],
   "expression_id": "emoji_packet_042",
@@ -139,6 +145,8 @@ flowchart TD
   "confidence_weight": 0.78
 }
 ```
+
+:::
 
 ### JargonMiner（俚语挖掘器）
 
@@ -178,7 +186,9 @@ flowchart TD
 `first_seen_at` / `last_seen_at` — 首次与最后出现时间戳，用于频率衰减计算。
 
 **学习示例**：
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "term": "YBB",
   "definition": "used as a playful greeting among close friends",
@@ -192,6 +202,8 @@ flowchart TD
   "last_seen_at": "2026-06-16T12:00:00Z"
 }
 ```
+
+:::
 
 ### SceneClusterer（场景聚类器）
 
@@ -231,7 +243,9 @@ flowchart TD
 `last_updated` — 最后更新时间，支持簇的合并与分裂。
 
 **聚类示例**：
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "cluster_id": "sc_0042",
   "tags": {
@@ -246,12 +260,16 @@ flowchart TD
 }
 ```
 
+:::
+
 ## 学习配置示例
 
 学习模块的各项行为通过 `config.yaml` 集中管理，以下为核心配置项：
 
 **行为学习配置**：
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 behavior_learner:
   trigger_frequency: 3           # 同一场景-行为对触发候选的记录次数
   trigger_window_hours: 24       # 滑动窗口时长（小时）
@@ -261,8 +279,12 @@ behavior_learner:
   max_patterns_per_room: 200     # 每群组最大模式数
 ```
 
+:::
+
 **表情学习配置**：
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 expression_learner:
   min_frequency: 5               # 表情触发最低出现次数
   observation_window: 30         # 观测窗口消息数
@@ -271,8 +293,12 @@ expression_learner:
   auto_approve_threshold: 0.9    # 自动通过审核的置信度阈值
 ```
 
+:::
+
 **俚语挖掘配置**：
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 jargon_miner:
   inference_thresholds: [1, 3, 5, 10]  # 四级推理阈值（出现次数）
   cross_group_min: 2                    # 跨群确认所需的最小群组数
@@ -280,8 +306,12 @@ jargon_miner:
   max_jargon_per_room: 500              # 每群组最大俚语条目数
 ```
 
+:::
+
 **场景聚类配置**：
-```yaml
+::: code-group
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
 scene_clusterer:
   cluster_window_size: 50        # 每轮聚类分析的对话数
   reuse_threshold: 0.7           # 簇复用余弦相似度阈值
@@ -289,6 +319,8 @@ scene_clusterer:
   enable_merge: true             # 是否启用自动簇合并
   merge_similarity: 0.9          # 簇合并相似度阈值
 ```
+
+:::
 
 ## 核心处理流程
 

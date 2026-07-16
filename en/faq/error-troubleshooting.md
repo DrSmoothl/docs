@@ -68,9 +68,13 @@ mv config/model_config.toml config/model_config.broken.toml
 
 Start MaiBot again:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 MaiBot creates a missing `config/` directory and current default configuration, then continues starting. Re-enter required settings through WebUI. Use the old file only as a reference; copying it back wholesale can restore the syntax error or an obsolete structure.
 
@@ -79,7 +83,9 @@ When an existing configuration is upgraded or rewritten, the code first moves it
 :::
 
 **Method 3: Repair only the TOML syntax (manual editing reference)**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # ✅ Correct examples
 [bot]
 nickname = "麦麦"           # Strings need quotes
@@ -92,6 +98,8 @@ nickname = 麦麦             # Error! No quotes
 port = "8001"              # Error! Numbers shouldn't have quotes
 enabled = True             # Error! Should be lowercase true
 ```
+
+:::
 
 **Method 4: Online Validation**
 If you've manually edited the file and aren't sure about the format, use an [online TOML validator](https://toml.io/en/) to check.
@@ -118,7 +126,9 @@ If you've manually edited the file and aren't sure about the format, use an [onl
 #### Solutions
 
 **Step 1: Check API Key Configuration**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # model_config.toml
 [[api_providers]]
 name = "DeepSeek"
@@ -127,12 +137,18 @@ api_key = "sk-your-api-key-here"    # Required! Replace with your actual key
 auth_type = "bearer"
 ```
 
+:::
+
 **Step 2: Verify Key is Valid**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Test DeepSeek API
 curl https://api.deepseek.com/v1/models \
   -H "Authorization: Bearer sk-your-api-key-here"
 ```
+
+:::
 
 **Step 3: Check Balance**
 - Log into DeepSeek/OpenAI or other provider's dashboard
@@ -140,7 +156,9 @@ curl https://api.deepseek.com/v1/models \
 - Check if API Key has expired or been disabled
 
 **Step 4: Confirm Model Name**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # ✅ Correct example
 [[models]]
 model_identifier = "deepseek-chat"   # Must be a model name supported by the API provider
@@ -152,6 +170,8 @@ api_provider = "DeepSeek"
 model_identifier = "gpt-4"           # DeepSeek does not support GPT-4!
 api_provider = "DeepSeek"
 ```
+
+:::
 
 #### Prevention Tips
 - 🔑 **Don't commit Keys to Git** — Use environment variables or local configuration files
@@ -183,19 +203,27 @@ Change only the service identified by the log. Do not copy both examples at once
 
 If WebUI's default port `8001` is occupied:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
 [webui]
 port = 8002             # Change to 8002 or another available port
 ```
 
+:::
+
 If you actually use legacy `maim_message` and its default port `8000` is occupied:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
 [maim_message]
 ws_server_port = 18000  # Example; any port confirmed to be free is valid
 ```
+
+:::
 
 Ports `8001` and `8002` do not conflict. Port `8001` must not be suggested for another service in this scenario because an external process has already been confirmed to occupy it. The NapCat plugin adapter does not use `[maim_message]`.
 
@@ -264,7 +292,9 @@ If the port is taken by another program, WebUI won't start. Refer to Scenario 3 
 #### Solutions
 
 **Step 1: Check MCP Configuration**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
 
 [mcp]
@@ -290,8 +320,12 @@ mode = "bearer"
 bearer_token = "your-bearer-token-here"       # Required! Authentication token
 ```
 
+:::
+
 **Step 2: Verify MCP Service is Accessible**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Test HTTP type MCP
 curl -v https://mcp-search.example.com/sse \
   -H "Authorization: Bearer your-bearer-token-here"
@@ -301,8 +335,12 @@ node /path/to/mcp-server/index.js
 # You should see the MCP service startup log
 ```
 
+:::
+
 **Step 3: Check Common Errors**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # ❌ Error example 1: stdio mode missing command
 [[mcp.servers]]
 transport = "stdio"
@@ -318,6 +356,8 @@ url = ""                  # Error! Must specify HTTP endpoint
 mode = "bearer"
 bearer_token = ""         # Error! Must specify Token
 ```
+
+:::
 
 #### Prevention Tips
 - 📋 **Check each config item** — Refer to the MCP server documentation to confirm parameters
@@ -348,7 +388,9 @@ Restart MaiBot and observe the terminal logs, see if there are:
 If all of these appear, MaiBot itself is fine — it might be a platform permission or network issue.
 
 **Step 2: Check Reply Rules**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Check keyword rules
 [[keyword_reaction.keyword_rules]]
 keywords = ["你好", "hello"]    # Make sure it includes the message you sent
@@ -356,13 +398,19 @@ reaction = "你好呀！"
 enabled = true                  # Make sure the rule is enabled
 ```
 
+:::
+
 **Step 3: Check Rate Limits**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
 [chat]
 # Check if rate limits are too strict
 reply_frequency_limit = 10      # Max 1 reply per 10 seconds
 ```
+
+:::
 
 **Step 4: Check Platform Permissions**
 - QQ groups: Is the bot muted? Does it have permission to speak?
@@ -370,7 +418,9 @@ reply_frequency_limit = 10      # Max 1 reply per 10 seconds
 - Adapter: Is NapCat connected normally?
 
 **Step 5: Test LLM Response**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Manually test the API
 curl https://api.deepseek.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-api-key-here" \
@@ -378,6 +428,8 @@ curl https://api.deepseek.com/v1/chat/completions \
   -d '{"model":"deepseek-chat","messages":[{"role":"user","content":"你好"}]}'
 # You should receive a reply from the API
 ```
+
+:::
 
 #### Prevention Tips
 - 📊 **Monitor logs** — Regularly check logs, handle anomalies promptly
@@ -411,10 +463,14 @@ Re-download the plugin and choose a version compatible with your MaiBot version.
 
 **Step 2: Install Missing Dependencies**
 Check the log for errors like `No module named 'xxx'`. If found, the plugin is missing dependencies. Run the following in the plugin directory:
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cd plugins/your-plugin-directory
 uv sync
 ```
+
+:::
 
 **Step 3: Read the Full Error Log**
 When starting MaiBot, pay attention to the complete error information in the terminal, look for prompts like:
@@ -460,11 +516,15 @@ If you suspect database corruption (e.g., after a sudden power outage):
 
 **Step 3: Enable WAL Mode (Reduce Locking Conflicts)**
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [database]
 # Enable WAL mode to reduce multi-process locking conflicts
 journal_mode = "wal"
 ```
+
+:::
 
 **Step 4: Clean Up Disk Space**
 
@@ -494,10 +554,14 @@ Open the `logs/` folder and delete unneeded old log files. If disk space is crit
 
 **Step 1: Test Network Connectivity**
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Test if the API endpoint is reachable
 curl -v https://api.deepseek.com
 ```
+
+:::
 If it connects (returning HTTP 200 or 401 both count as connected), the network is fine.
 If it times out or can't connect, your network route to the API provider is blocked — try a different network.
 
@@ -505,7 +569,9 @@ If it times out or can't connect, your network route to the API provider is bloc
 
 If the network is poor, set a longer timeout:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[api_providers]]
 name = "DeepSeek"
 base_url = "https://api.deepseek.com"
@@ -515,11 +581,15 @@ max_retry = 3              # Number of retries on failure
 retry_interval = 8         # Retry interval (seconds)
 ```
 
+:::
+
 **Step 3: Try a Different API Provider**
 
 If DeepSeek is unstable, add a backup API in the configuration:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [[api_providers]]
 name = "DeepSeek"
 base_url = "https://api.deepseek.com"
@@ -530,6 +600,8 @@ name = "Backup"
 base_url = "https://api.openai.com/v1"  # Replace with another API
 api_key = "sk-your-backup-key"
 ```
+
+:::
 
 #### Prevention Tips
 - Set reasonable `timeout` (60–120 seconds) and `max_retry` (2–3 times)
@@ -557,20 +629,28 @@ api_key = "sk-your-backup-key"
 
 If using VLM for emoji verification, ensure the API Key is configured:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [emoji]
 # VLM API Key (if using visual model for emoji verification)
 vlm_api_key = "sk-your-vlm-key"
 ```
 
+:::
+
 **Step 2: Adjust Emoji Filtering Rules**
 
 If emojis are being falsely filtered:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [emoji]
 content_filtration = false   # Temporarily disable filtering to check if it's a rule issue
 ```
+
+:::
 
 **Step 3: Check Directory Permissions**
 
@@ -580,12 +660,16 @@ Ensure the `data/emojis/` directory is writable. If permissions are wrong, right
 
 If prompted that the registration quantity has exceeded the limit:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [emoji]
 emoji_send_num = 25          # Number of candidates sent at once (1-64)
 max_reg_num = 64             # Maximum number of registered emojis
 do_replace = true            # Replace old emojis when limit is reached
 ```
+
+:::
 
 #### Prevention Tips
 - Temporarily disable VLM verification during first use to check if it's a model issue
@@ -611,16 +695,22 @@ do_replace = true            # Replace old emojis when limit is reached
 
 **Step 1: Rebuild Knowledge Index**
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Use CLI command to rebuild index
 maibot knowledge rebuild
 
 # Or click the "Rebuild Index" button in WebUI
 ```
 
+:::
+
 **Step 2: Check Knowledge Files**
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # View the knowledge directory
 ls -la data/knowledge/
 
@@ -628,20 +718,28 @@ ls -la data/knowledge/
 # Corrupted files will cause loading failures
 ```
 
+:::
+
 **Step 3: Enable the Knowledge System**
 
 Confirm the knowledge system is enabled in the configuration file:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [knowledge]
 enabled = true
 ```
+
+:::
 
 **Step 4: Limit Single Knowledge Entry Length**
 
 If knowledge is too long and exceeds the embedding model's token limit:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [knowledge]
 # Maximum length of a single knowledge entry (Token count)
 max_chunk_size = 512
@@ -649,12 +747,18 @@ max_chunk_size = 512
 chunk_overlap = 50
 ```
 
+:::
+
 **Step 5: Check Vector Database**
 
 If the index is corrupted, delete the contents of `data/vector_index/` directory, then rebuild:
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 maibot knowledge rebuild
 ```
+
+:::
 
 #### Prevention Tips
 - Control the length of individual entries when adding knowledge to avoid exceeding the embedding model's token limit
@@ -684,7 +788,9 @@ Covers scenarios 12–17, problems encountered only in specific operations or co
 #### Solutions
 
 **Method 1: Clear Cookies and Re-login**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Browser operations:
 # 1. Press F12 to open Developer Tools
 # 2. Go to Application → Cookies
@@ -692,8 +798,12 @@ Covers scenarios 12–17, problems encountered only in specific operations or co
 # 4. Refresh the page and re-login
 ```
 
+:::
+
 **Method 2: Restart WebUI Service**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # If password or secret_key has been modified, restart the service
 # Docker deployment
 docker restart maibot
@@ -703,13 +813,19 @@ docker restart maibot
 python bot.py
 ```
 
+:::
+
 **Method 3: Check secret_key Configuration**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Edit config/bot_config.toml
 [webui]
 secret_key = "your-secret-key-here"  # Ensure it remains consistent with previous value
 session_expire = 7                   # Session validity (days), default 7 days
 ```
+
+:::
 
 > ⚠️ **Note**: Modifying `secret_key` will invalidate all logged-in sessions, requiring re-login.
 
@@ -736,7 +852,9 @@ session_expire = 7                   # Session validity (days), default 7 days
 #### Solutions
 
 **Step 1: Configure Bot Account**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Edit config/bot_config.toml
 [platforms.qq]
 enabled = true
@@ -753,8 +871,12 @@ adapter = "napcat"
 napcat_uin = "987654321"       # NapCat logged-in QQ number
 ```
 
+:::
+
 **Step 2: Check Adapter Connection**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # View adapter logs
 # Docker deployment
 docker logs maibot | grep -i adapter
@@ -762,6 +884,8 @@ docker logs maibot | grep -i adapter
 # Source deployment
 # Observe terminal output, look for "Adapter connected" related logs
 ```
+
+:::
 
 **Step 3: Verify Account Credentials**
 - **QQ platform** — Confirm the QQ number can log into NapCat/GoCQQ normally
@@ -799,7 +923,9 @@ docker logs maibot | grep -i adapter
 ```
 
 **Method 2: Escape Special Characters**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Error example: not escaped
 ban_msgs_regex = ["\d{17}[\dXx"]  # Square brackets not closed
 
@@ -811,8 +937,12 @@ ban_msgs_regex = [
 ]
 ```
 
+:::
+
 **Method 3: Use Plain Strings Instead of Regex**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # If complex matching isn't needed, plain strings are safer
 ban_words = ["广告", "加微信", "兼职"]  # Simple keywords, no regex needed
 
@@ -821,6 +951,8 @@ ban_words = ["广告", "加微信", "兼职"]  # Simple keywords, no regex neede
 # Use keyword matching instead
 ban_words = ["天气", "气温", "温度"]
 ```
+
+:::
 
 > 💡 **Tip**: Regex in TOML files requires double backslashes `\\` for escaping because `\` itself is a TOML escape character.
 
@@ -847,7 +979,9 @@ ban_words = ["天气", "气温", "温度"]
 #### Solutions
 
 **Step 1: Check Keyword Rule Configuration**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Edit config/bot_config.toml
 [keyword_reaction]
 
@@ -876,8 +1010,12 @@ priority = 15
 enabled = true
 ```
 
+:::
+
 **Step 2: Adjust Priorities**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Priority examples:
 # priority = 30 — Highest priority (exact match)
 # priority = 20 — Medium priority (regex match)
@@ -896,8 +1034,12 @@ reaction = "这个嘛..."
 priority = 5
 ```
 
+:::
+
 **Step 3: Test Punctuation Differences**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Full-width punctuation (Chinese input method)
 keywords = ["你好，", "你好，"]   # Different commas
 
@@ -907,6 +1049,8 @@ keywords = ["hello,", "hello!"]
 # Recommended to configure both types of punctuation
 keywords = ["你好，", "你好，", "hello", "hello!"]
 ```
+
+:::
 
 #### Prevention Tips
 - **Add comments to rules** — Comment the purpose next to each rule
@@ -939,11 +1083,15 @@ If you get a permission error (Permission denied), try a public repository (one 
 
 **Step 3: Adjust Git Timeout Configuration**
 If the repository is large, increase the timeout in `config/bot_config.toml`:
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [git_mirror]
 timeout = 300                    # Git operation timeout (seconds), default 300 seconds
 max_file_size = 100              # Maximum single file size (MB), files larger than this will be skipped
 ```
+
+:::
 
 #### Prevention Tips
 - **Test with a public repository first** — Switch to a private repo only after confirming sync works
@@ -970,7 +1118,9 @@ max_file_size = 100              # Maximum single file size (MB), files larger t
 Open the `logs/` folder and delete unneeded old log files. Generally, only the last few days of logs need to be kept — previous ones can be deleted directly.
 
 **Step 2: Configure Log Rotation**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Edit config/bot_config.toml
 [logging]
 level = "INFO"                 # Use INFO for production, DEBUG for debugging
@@ -978,6 +1128,8 @@ max_bytes = 10485760           # Maximum 10MB per single file
 backup_count = 5               # Keep 5 backup files
 enable_rotation = true         # Enable log rotation
 ```
+
+:::
 
 **Step 3: Clean Up Other Junk Files**
 - Docker users: Clean up unused images and containers to free space
@@ -1013,12 +1165,18 @@ Covers scenarios 18–19, problems rarely encountered but may appear in special 
 
 #### Solutions
 **Rebuild User Index**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 maibot person rebuild
 ```
 
+:::
+
 **Check Character Card Format**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Enter the character card directory
 cd data/persons/
 
@@ -1026,13 +1184,19 @@ cd data/persons/
 python -m json.tool "character-name.json" > /dev/null
 ```
 
+:::
+
 **Repair Database (Proceed with Caution)**
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Backup database
 cp data/MaiBot.db data/MaiBot.db.bak
 
 # Use WebUI to manage users, do not operate on the database directly
 ```
+
+:::
 
 #### Prevention Tips
 - 🖥️ **Use WebUI for management** — Don't modify the database file directly
@@ -1060,28 +1224,40 @@ Message sending and receiving is unstable, sometimes works and sometimes doesn't
 
 #### Solutions
 **Check WebSocket Address**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 # Open the adapter configuration file
 [adapter]
 ws_url = "ws://127.0.0.1:8000"  # Ensure the address and port are correct
 ```
 
+:::
+
 **Adjust Reconnect Interval**
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [adapter]
 reconnect_interval = 5  # Increase the interval to avoid frequent reconnection (unit: seconds)
 ```
+
+:::
 
 **Check Server Status**
 Check MaiBot's terminal output to confirm the WebSocket service is running normally (you should see logs like `WebSocket 服务启动成功`).
 
 **Enable Heartbeat Keepalive (Advanced)**
 If the network environment is poor, enable heartbeat in the adapter configuration:
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [adapter]
 enable_heartbeat = true
 heartbeat_interval = 30  # Send a heartbeat every 30 seconds
 ```
+
+:::
 
 #### Prevention Tips
 - 🌐 **Ensure network stability** — The network between server and adapter should be reliable
@@ -1219,21 +1395,31 @@ Depending on your deployment method, the way to get logs differs:
 **`🐍 Source Deployment`**
 : The terminal output where MaiBot is running is the most direct log. If the terminal has been closed, check the log files as follows:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 cat logs/maibot-*.log
 ```
 
+:::
+
 If you need more detailed logs, enable DEBUG level in `config/bot_config.toml`:
 
-```toml
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
 [log]
 log_level = "DEBUG"
 ```
 
+:::
+
 **`🐳 Docker Deployment`**
 : Use the `docker logs` command to view container logs:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # View all logs
 docker logs maibot
 
@@ -1244,15 +1430,21 @@ docker logs -f maibot
 docker logs --tail 100 maibot
 ```
 
+:::
+
 **`🪟 Windows Deployment`**
 : Log files are located in the `logs\` directory by default:
 
-```powershell
+::: code-group
+
+```powershell [PowerShell ~vscode-icons:file-type-powershell~]
 type logs\maibot-*.log
 
 # Or using PowerShell
 Get-Content logs\maibot-*.log
 ```
+
+:::
 
 > 💡 **Tip**: After getting the logs, wrap them in a ` ``` ` code block and paste them into the Issue. If the logs are very long, only include the section from the last startup to the error — don't paste thousands of lines of complete logs.
 
@@ -1301,3 +1493,5 @@ graph TD
 ```
 
 <!-- TASK_FLOWCHART_END -->
+
+

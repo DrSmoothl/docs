@@ -38,11 +38,11 @@ We recommend using [uv](https://github.com/astral-sh/uv) to manage dependencies.
 
 ::: code-group
 
-```bash [Windows]
+```bash [Windows ~vscode-icons:file-type-shell~]
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-```bash [macOS / Linux]
+```bash [macOS / Linux ~vscode-icons:file-type-shell~]
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
@@ -52,11 +52,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ::: code-group
 
-```bash [Recommended: uv]
+```bash [Recommended: uv ~vscode-icons:file-type-shell~]
 uv sync
 ```
 
-```bash [Fallback: pip (not recommended, may lack some dependencies)]
+```bash [Fallback: pip (not recommended, may lack some dependencies) ~vscode-icons:file-type-shell~]
 pip install -r requirements.txt
 ```
 
@@ -64,9 +64,13 @@ pip install -r requirements.txt
 
 ## Launch
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 uv run python bot.py
 ```
+
+:::
 
 ## User Agreement Confirmation
 
@@ -91,7 +95,9 @@ Refer to the [Model Configuration Documentation](../configuration/model-config.m
 
 After installing uv, you need to add it to the PATH environment variable:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Linux/macOS
 source $HOME/.local/bin/env
 
@@ -101,11 +107,15 @@ source $HOME/.local/bin/env
 uv --version
 ```
 
+:::
+
 ### How to accept the user agreement in a non-interactive environment?
 
 On a server or in a headless environment where you cannot type "agree" in the terminal, you can use environment variables to skip the prompt:
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Method 1: Use the hash value shown in the program prompt (may differ each time, refer to the actual prompt)
 export EULA_AGREE=<hash_value_shown_in_terminal>
 export PRIVACY_AGREE=<hash_value_shown_in_terminal>
@@ -113,3 +123,5 @@ export PRIVACY_AGREE=<hash_value_shown_in_terminal>
 # Method 2: Run once to see the required hash value, then start with environment variables
 uv run python bot.py  # This will display the required environment variables
 ```
+
+:::

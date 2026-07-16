@@ -52,7 +52,9 @@ MaiBot uses [maim-message](https://github.com/Mai-with-u/maim_message) as the un
 
 The core message type in maim-message is `Seg` (Message Segment). Each message consists of one or more `Seg`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maim_message import Seg
 
 # Text message segment
@@ -61,6 +63,8 @@ text_seg = Seg(type="text", data="Hello")
 # Image message segment
 image_seg = Seg(type="image", data={"file": "xxx.jpg"})
 ```
+
+:::
 
 ### Legacy Driver
 
@@ -72,7 +76,9 @@ MaiBot includes `LegacyPlatformDriver`, which encapsulates the communication log
 
 The new adapter must inherit the `PlatformIODriver` abstract base class from `src/platform_io/drivers/base.py`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from src.platform_io.drivers.base import PlatformIODriver
 from src.platform_io.types import DeliveryReceipt, DeliveryStatus, DriverDescriptor, DriverKind, RouteKey
 
@@ -89,9 +95,13 @@ class MyPlatformDriver(PlatformIODriver):
         )
 ```
 
+:::
+
 ### 2. Implement start/stop Lifecycle
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 async def start(self) -> None:
     # Initialize connection, start listening, etc.
     await self._connect()
@@ -101,11 +111,15 @@ async def stop(self) -> None:
     await self._disconnect()
 ```
 
+:::
+
 ### 3. Report Inbound Messages
 
 When the adapter receives an inbound message from an external platform, report it to the Broker via the `emit_inbound` method:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from src.platform_io.types import InboundMessageEnvelope, DriverKind
 
 envelope = InboundMessageEnvelope(
@@ -119,11 +133,15 @@ envelope = InboundMessageEnvelope(
 accepted = await self.emit_inbound(envelope)
 ```
 
+:::
+
 ### 4. Register the Driver
 
 Register the driver and bind routes via `PlatformIOManager`:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from src.platform_io.manager import get_platform_io_manager
 from src.platform_io.types import DriverDescriptor, DriverKind, RouteBinding
 
@@ -154,6 +172,8 @@ manager.bind_receive_route(RouteBinding(
     driver_kind=DriverKind.PLUGIN,
 ))
 ```
+
+:::
 
 ## Plugin Message Gateway Driver
 
