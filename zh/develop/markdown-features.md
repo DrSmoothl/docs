@@ -196,3 +196,134 @@ allowfullscreen>
 
 <Linkcard url="https://github.com/MaiM-with-u/MaiBot" title="MaiBot" description="一个智能 QQ 群聊天机器人" logo="/title_img/mai.png" />
 
+## 代码组强制写法
+
+本站在全站范围内对独立 fenced block 统一采用单标签 `::: code-group` 配内联图标的写法。本节是 AGENTS.md 引用的权威规范。
+
+**写法（强制）**
+
+````markdown
+::: code-group
+
+```<lang> [<语言名> ~vscode-icons:<图标ID>~]
+<代码逐字节不变>
+```
+
+:::
+````
+
+**纪律**
+
+- `<语言名>` 用英文大写：`TOML`、`Python`、`Bash`、`YAML`、`JSON`、`PowerShell`、`HTML`、`CSS`、`SCSS`、`Rust`、`Go`、`TypeScript`、`JavaScript`、`INI`、`Config`、`Env`、`Docker`
+- `::: code-group` 与内层 fence 之间、内层 fence 闭合 ```` ``` ```` 与 `:::` 之间**各留一个空行**
+- 图标用**内联** `~vscode-icons:<id>~` 显式指定，**不依赖关键词匹配**
+
+**图标映射预览**
+
+下列 code-group 演示所有有效语言名与对应图标。点击标签页可在渲染区看到实际图标效果。
+
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
+key = "value"
+```
+
+```python [Python ~vscode-icons:file-type-python~]
+print("hello")
+```
+
+```rust [Rust ~vscode-icons:file-type-rust~]
+fn main() {}
+```
+
+```go [Go ~vscode-icons:file-type-go~]
+package main
+```
+
+```typescript [TypeScript ~vscode-icons:file-type-typescript~]
+const x: number = 1
+```
+
+```javascript [JavaScript ~vscode-icons:file-type-js~]
+const x = 1
+```
+
+```json [JSON ~vscode-icons:file-type-json~]
+{"key": "value"}
+```
+
+```html [HTML ~vscode-icons:file-type-html~]
+<div></div>
+```
+
+```css [CSS ~vscode-icons:file-type-css~]
+.a {}
+```
+
+```scss [SCSS ~vscode-icons:file-type-scss~]
+$a: 1;
+```
+
+```yaml [YAML ~vscode-icons:file-type-yaml-official~]
+key: value
+```
+
+```ini [INI ~vscode-icons:file-type-ini~]
+[section]
+key = value
+```
+
+```conf [Config ~vscode-icons:file-type-config~]
+key = value
+```
+
+```env [Env ~vscode-icons:file-type-dotenv~]
+KEY=value
+```
+
+```bash [Bash ~vscode-icons:file-type-shell~]
+echo hello
+```
+
+```powershell [PowerShell ~vscode-icons:file-type-powershell~]
+Write-Host hello
+```
+
+```dockerfile [Docker ~vscode-icons:file-type-docker~]
+FROM node:20
+```
+
+:::
+
+**语言名 → 图标 ID 对照**
+
+- `toml`→`file-type-toml`
+- `python`/`py`→`file-type-python`
+- `rust`/`rs`→`file-type-rust`
+- `go`→`file-type-go`
+- `typescript`/`ts`→`file-type-typescript`
+- `javascript`/`js`→`file-type-js`
+- `json`→`file-type-json`
+- `html`→`file-type-html`
+- `css`→`file-type-css`
+- `scss`→`file-type-scss`
+- `yaml`/`yml`→`file-type-yaml-official`
+- `ini`→`file-type-ini`
+- `conf`→`file-type-config`
+- `env`→`file-type-dotenv`
+- `bash`/`sh`/`shell`→`file-type-shell`
+- `powershell`/`ps1`→`file-type-powershell`
+- `dockerfile`→`file-type-docker`
+
+**禁止包裹（S1–S5）**
+
+- **S1** `mermaid` / `mmd` 渲染图
+- **S2** `::: tip` / `::: details` / `::: code-group` / `::: timeline` 等容器内的块
+- **S3** `html` 块内含 `<xgplayer`、`<iframe`、`<Linkcard`
+- **S4** 4+ 反引号教学外层及其内部所有 ``` 块
+- **S5** 无语言标签 / `text` / `none` 的日志输出块
+
+**en/ 镜像约定**
+
+`en/` 的代码组结构必须与 `zh/` 对称（标签用英文大写语言名）。`en/` 与 `zh/` 的散文差异不在此约定同步范围内。
+

@@ -1,169 +1,67 @@
+## 动手前必读
 
-## 根目录文件
-| 文件 | 说明 |
-|------|------|
-| `README.md` | 项目说明，介绍文档仓库用途、本地开发方法和贡献指南 |
-| `_redirects` | 单页应用路由重定向配置（所有路径重定向到 /index.html） |
-| `.gitignore` | Git 忽略规则（node_modules, dist, .vitepress/cache 等） |
-| `package.json` | Node.js 项目配置（VitePress + Mermaid + Tabs 插件） |
-| `pnpm-lock.yaml` | pnpm 依赖锁定文件 |
-| `LICENSE` | 开源许可证文件 |
+动文档前按下列 5 条自检，任何一条不符都不算完。
 
-## 文件夹结构详述
+1. **先读** [`zh/develop/markdown-features.md`](zh/develop/markdown-features.md) —— VitePress Markdown 写法（图标、代码组、禁止包裹、可选组件）权威文件
+2. **修改 `zh/` 内容页 → 同 PR 内必须同步 `en/` 镜像**（术语/代码/文件名同步，散文可重写）
+3. **新增文档页面**：写文件后必须改 `.vitepress/sidebar/zh.ts` 与 `.vitepress/sidebar/en.ts`，必要时再改 `.vitepress/config.mts` 顶部导航，否则前端不出现
+4. **图片放 `public/images/...`，正文里以 `/images/...` 引用**；角色头像/标题图分别放 `public/avatars/`、`public/title_img/`
+5. **内容页禁止 Markdown 表格** —— 表格渲染差且移动端列宽不可控，改用定义列表（`**field** — 说明`）。仅 `index.md` 首页允许表格
 
-### `.vitepress/` — VitePress 站点配置
+**禁止速查**
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `config.mts` | VitePress 核心配置：导航栏、侧边栏、多语言（中文/English）、搜索、markdown 插件（Mermaid, Tabs）、社交链接；顶部导航开发文档下拉菜单（麦麦开发、插件开发） |
-| `theme/` | 自定义主题目录 |
-| `theme/index.ts` | 主题入口 |
-| `theme/style.css` | 自定义样式 |
+- ❌ 内容页用 `| A | B |` 表格 → ✅ `**A** — B` 定义列表
+- ❌ 裸 ``` ```toml ``` fence → ✅ 包在 `::: code-group` 内，标签带 `~vscode-icons:file-type-toml~` 内联图标
+- ❌ 标签依赖关键词自动匹配图标 → ✅ 显式 `~vscode-icons:<id>~`
 
-### `zh/` — 中文文档（简体中文）
+---
 
-中文文档根目录，包含以下内容：
+## 仓库地图
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | VitePress 首页/Hero page |
-| `manual/` | 用户手册 |
-| `develop/` | 开发文档 |
-| `features/` | 功能介绍页 |
-| `changelog/` | 更新日志 |
-| `community/` | 社区页面 |
-| `about/` | 关于MaiBot及法律文档（EULA） |
-| `plugin/` | 插件开发文档 |
-| `faq/` | 常见问题与故障排除（独立顶级目录） |
+按目录说明"这里应放什么方向的内容"；具体文件不再逐条列举。
 
-### `zh/manual/` — 用户手册（简体中文）
+### `.vitepress/` — 站点配置与主题
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | 用户手册总览 |
-| `deployment/` | 部署与安装指南（部署概览、源码安装、Docker、适配器安装） |
-| `adapters/` | 平台适配器文档（NapCat QQ连接、GoCQ 适配器） |
-| `configuration/` | 配置说明（Bot 配置、模型配置） |
-| `features/` | 功能详解（消息管线、Maisaka推理引擎、记忆系统、学习系统、表情包系统、MCP集成） |
-| `webui/` | WebUI 管理文档（配置管理、记忆管理、插件管理、聊天统计） |
-| `getting-started/` | 快速入门指南 |
+- **`config.mts`** — 顶部导航、搜索、多语言、markdown 插件注册（Mermaid、Tabs）、社交链接的入口
+- **`sidebar/zh.ts` / `sidebar/en.ts`** — 中英文侧边栏导航结构，新增文档必改这两处
+- **`theme/`** — 自定义主题（`index.ts` 入口、`style.css` 样式、`components/` Vue 组件）
 
-### `zh/develop/` — 开发文档（简体中文）
+### `zh/` — 中文文档（权威版）
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | 开发指南总览（技术栈、项目结构、环境搭建） |
-| `architecture.md` | 架构设计总览 |
-| `contributing.md` | 贡献指南 |
-| `architecture/` | 架构详解（消息管线、Maisaka推理引擎、记忆系统、WebUI内部机制） |
-| `plugin-dev/` | 插件开发文档（Manifest、生命周期、Tool、Command、Hook、事件处理、API组件、消息网关、Action、配置、API参考） |
-| `adapter-dev/` | 适配器开发文档（PlatformIO 驱动） |
+中文为**内容源**，任何变更以 `zh/` 为先。下述子目录各自承载一类面向读者的内容方向：
 
-### `zh/features/` — 功能介绍页
+- **`index.md`** — VitePress 首页 / Hero
+- **`manual/`** — **用户手册**：面向最终读者，讲部署、配置、适配器、功能详解、WebUI、快速入门
+  - `deployment/` 部署与安装概览、一键脚本、源码、Docker、installation-agent
+  - `adapters/` 平台适配器（NapCat、GoCQ、Discord、Telegram、Snowluma 等）
+  - `configuration/` Bot 配置、模型配置、Amemorix 配置、MCP 配置、模型附加参数
+  - `features/` 用户视角功能详解（消息管线、Maisaka 推理、记忆、学习、表情、MCP）
+  - `webui/` WebUI 使用（配置/记忆/插件/统计）
+  - `getting-started/` 快速入门
+- **`develop/`** — **开发文档**：面向贡献者，讲技术栈、架构、贡献规范
+  - `architecture.md` / `architecture/` 架构总览与 12 篇架构详解（消息管线、Maisaka、记忆、情绪、event-bus、tool-system、prompt-templates、service-layer、global-managers、webui-internals、mcp-integration、emoji-internals、expression-learning）
+  - `contributing.md` 贡献指南 / `markdown-features.md` Markdown 写法权威
+- **`plugin/`** — **插件开发文档**（权威统一入口）：manifest、lifecycle、tools、commands、hooks、event-handlers、api-components、message-gateway、actions、config、api-reference、home-cards、llmprovider、vibe-coding
+- **`features/`** — 首页特性卡片内容（面向落地页的精简功能亮点）
+- **`changelog/`** — 更新日志（按版本号命名，如 `v1-0-0.md`，首页用 `::: timeline` 渲染）
+- **`faq/`** — 常见问题与故障排除（分类覆盖部署、对话回复、记忆学习、模型 API、适配器、一键脚本、插件、备份迁移、错误排查）
+- **`about/`** — **项目元信息与法律**：关于 MaiBot、关于本文档、交流群、致谢与链接、最终用户许可协议（EULA）、用户隐私条款（PRIVACY）
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| 各功能页面 | 首页特性卡片展示内容 |
+### `en/` — 英文版文档（镜像）
 
-### `zh/changelog/` — 更新日志
-
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| 各版本日志 | 记录每个版本的更新内容 |
-
-### `zh/community/` — 社区页面
-
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| 各社区页面 | QQ群、GitHub链接、社交媒体、衍生项目 |
-
-### `zh/faq/` — 常见问题
-
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | 常见问题总览 |
-| `error-troubleshooting.md` | 错误排查 FAQ |
-
-### `zh/about/` — 关于与法律文档
-
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | 关于 MaiBot |
-| `EULA.md` | 最终用户许可协议 |
-
-### `zh/plugin/` — 插件开发文档
-
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `index.md` | 插件开发概览 |
-| `manifest.md` | 插件清单配置 |
-| `lifecycle.md` | 插件生命周期 |
-| `tool.md` | Tool 定义与实现 |
-| `command.md` | Command 定义与实现 |
-| `hook.md` | Hook 事件系统 |
-| `event.md` | 事件处理机制 |
-| `api.md` | API 组件参考 |
-| `gateway.md` | 消息网关 |
-| `action.md` | Action 动作系统 |
-| `config.md` | 插件配置 |
-| `reference.md` | API 参考 |
-
-### `en/` — 英文版文档
-
-en/ 目录下的结构与中文版完全镜像，包含 manual/（用户手册）、develop/（开发文档）、features/（功能介绍）、changelog/（更新日志）、community/（社区页面）、faq/（常见问题）、about/（关于与法律文档）等子目录。
-
-> ⚠️ **注意**：en/ 英文文档是通过翻译中文内容得来，应最大程度与中文内容保持同步。
+结构镜像 `zh/`，通过翻译得来，应最大程度与中文内容保持同步。详细差异以 `zh/` 为准。
 
 ### `public/` — 静态资源
 
-| 文件/文件夹 | 说明 |
-|-------------|------|
-| `images/` | 文档图片（截图、示意图） |
-| `title_img/` | 首页标题图片 |
-| `avatars/` | 头像/角色图片 |
+- **`images/`** — 截图与示意文档用图
+- **`title_img/`** — 首页标题图
+- **`avatars/`** — 角色/头像图片
+- **`installation-agent.md`** — 给 AI agent 阅读的安装引导，**非读者文档**，保留在 public，勿迁移
 
-### `.sisyphus/` — 内部工作流记录
-
-> ⚠️ 注意：此文件夹为内部工作流记录，请勿手动编辑
-
-## 文档写作约定
-
-- **不要在内容页中使用 Markdown 表格**。Markdown 表格在 VitePress 中渲染效果差（移动端不友好、列宽不可控），仅 `index.md` 页面允许使用表格。内容页请用定义列表替代，例如 `**`field`** — 说明。默认 X`
+---
 
 ## 代码块图标约定
 
-本站通过 `vitepress-plugin-group-icons` 为代码块标签页渲染图标。全站独立 fenced block 已统一转为单标签 `::: code-group` 配内联图标。
+完整写法、图标映射、禁止包裹规则（S1–S5）、en 镜像约定 → 见 [`zh/develop/markdown-features.md`](zh/develop/markdown-features.md) "代码组强制写法与禁止包裹"一节。
 
-### 写法（强制）
-
-````
-::: code-group
-
-```<lang> [<语言名> ~vscode-icons:<图标ID>~]
-<代码逐字节不变>
-```
-
-:::
-````
-
-- `<语言名>` 用英文大写：`TOML`、`Python`、`Bash`、`YAML`、`JSON`、`PowerShell`、`HTML`、`CSS`、`SCSS`、`Rust`、`Go`、`TypeScript`、`JavaScript`、`INI`、`Config`、`Env`、`Docker`。
-- `::: code-group` 与内层 fence 之间、内层 fence 闭合 ` ``` ` 与 `:::` 之间各留一个空行。
-- 图标用内联 `~vscode-icons:<id>~` 显式指定，不依赖关键词匹配。
-
-### 图标映射
-
-`toml`→`file-type-toml`、`python`/`py`→`file-type-python`、`rust`/`rs`→`file-type-rust`、`go`→`file-type-go`、`typescript`/`ts`→`file-type-typescript`、`javascript`/`js`→`file-type-js`、`json`→`file-type-json`、`html`→`file-type-html`、`css`→`file-type-css`、`scss`→`file-type-scss`、`yaml`/`yml`→`file-type-yaml-official`、`ini`→`file-type-ini`、`conf`→`file-type-config`、`env`→`file-type-dotenv`、`bash`/`sh`/`shell`→`file-type-shell`、`powershell`/`ps1`→`file-type-powershell`、`dockerfile`→`file-type-docker`。
-
-### 禁止包裹（S1–S5）
-
-- **S1** `mermaid` / `mmd` 渲染图
-- **S2** `::: tip` / `::: details` / `::: code-group` / `::: timeline` 等容器内的块
-- **S3** `html` 块内含 `<xgplayer`、`<iframe`、`<Linkcard`
-- **S4** 4+ 反引号教学外层及其内部所有 ``` 块
-- **S5** 无语言标签 / `text` / `none` 的日志输出块
-
-### en/ 镜像
-
-`en/` 的代码组结构必须与 `zh/` 对称（标签用英文大写语言名）。en `/` 与 `zh/` 的散文差异不在此约定同步范围内。
-
-> 完整说明见 `zh/develop/markdown-features.md`。
+**核心原则一句话**：全站独立 fenced block 已统一转为单标签 `::: code-group` 配内联 `~vscode-icons:<id>~` 图标，不依赖关键词匹配。
