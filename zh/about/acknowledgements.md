@@ -6,14 +6,6 @@ title: 致谢与链接
 
 ## 致谢
 
-### 特别致谢
-
-<Linkcard url="https://en.wikipedia.org/wiki/Sacabambaspis" title="萨卡班甲鱼" description="千石可乐很喜欢的生物" logo="/title_img/mai2.png" />
-
-<Linkcard url="https://space.bilibili.com/1344099355" title="略nd" description="为麦麦绘制早期精美人设" logo="https://i2.hdslb.com/bfs/face/1e17ed6e7c3fe0c46d9d0d22a85b169e6b4179ef.jpg" />
-
-<Linkcard url="https://github.com/NapNeko/NapCatQQ" title="NapCat" description="现代化的基于 NTQQ 的 Bot 协议实现" logo="https://napneko.github.io//assets/newlogo.png" />
-
 ### 项目贡献者
 
 感谢所有为 MaiBot 贡献代码的开发者：
@@ -27,6 +19,14 @@ title: 致谢与链接
 <img src="https://contrib.rocks/image?repo=MaiM-with-u/docs" alt="Docs Contributors" />
 
 也感谢池雨、摆烂の咕咕、时栖等群友的贡献。
+
+### 特别致谢
+
+<Linkcard url="https://en.wikipedia.org/wiki/Sacabambaspis" title="萨卡班甲鱼" description="千石可乐很喜欢的生物" logo="/title_img/mai2.png" />
+
+<Linkcard url="https://space.bilibili.com/1344099355" title="略nd" description="为麦麦绘制早期精美人设" logo="/images/lue-nd-avatar.jpg" />
+
+<Linkcard url="https://github.com/NapNeko/NapCatQQ" title="NapCat" description="现代化的基于 NTQQ 的 Bot 协议实现" logo="https://napneko.github.io//assets/newlogo.png" />
 
 ## 开源友链
 
