@@ -60,7 +60,7 @@ pnpm docs:preview
 - 新增文件后，修改所在目录的 index.md 使其包含你的文档
 - 在 `.vitepress/` 下修改 config.mts 或 sidebar 文件，确保导航能正确指向你的页面
 
-详细的贡献流程可以参考本仓库 [README](https://github.com/MaiM-with-u/docs) 的"贡献"部分；如果想参与 MaiBot 代码开发，请参阅 [贡献指南](/develop/contributing)。
+详细的贡献流程可以参考本仓库 [README](https://github.com/MaiM-with-u/docs) 的"贡献"部分；如果想参与 MaiBot 代码开发，请参阅贡献指南。
 
 ## 文档编写特性
 

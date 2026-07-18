@@ -170,35 +170,34 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '开发指南', link: '/develop/' },
-        { text: '架构设计', link: '/develop/architecture' },
-        { text: '贡献指南', link: '/develop/contributing' },
         { text: '文档编写特性', link: '/develop/markdown-features' },
       ]
     },
     {
-      text: '架构详解',
+      text: '进阶专题',
       collapsed: false,
       items: [
-        { text: '消息管线', link: '/develop/architecture/message-pipeline' },
-        { text: 'Maisaka 推理引擎', link: '/develop/architecture/maisaka-reasoning' },
-        { text: '记忆系统', link: '/develop/architecture/memory-system' },
-        { text: 'WebUI 内部机制', link: '/develop/architecture/webui-internals' },
-        { text: '事件总线', link: '/develop/architecture/event-bus' },
-        { text: '工具系统', link: '/develop/architecture/tool-system' },
-        { text: '服务层', link: '/develop/architecture/service-layer' },
-        { text: '表达学习', link: '/develop/architecture/expression-learning' },
-        { text: '表情系统内部', link: '/develop/architecture/emoji-internals' },
-        { text: 'MCP 集成', link: '/develop/architecture/mcp-integration' },
-        { text: 'Prompt 模板', link: '/develop/architecture/prompt-templates' },
-        { text: '全局管理器', link: '/develop/architecture/global-managers' },
-      ]
-    },
-    {
-      text: '适配器开发',
-      collapsed: false,
-      items: [
-        { text: '开发指南', link: '/develop/adapter-dev/' },
-        { text: 'PlatformIO 驱动', link: '/develop/adapter-dev/platform-io' },
+        { text: '数据库', link: '/develop/database' },
+        { text: '配置系统', link: '/develop/configuration' },
+        { text: '消息服务器与适配器对接', link: '/develop/message-server-and-adapters' },
+        { text: 'LLM 模型集成', link: '/develop/llm-providers' },
+        { text: 'MCP 集成与外部工具接入', link: '/develop/mcp-integration' },
+        {
+          text: 'WebUI HTTP API',
+          collapsed: false,
+          items: [
+            { text: 'WebUI HTTP API 入口', link: '/develop/webui-api/' },
+            { text: '认证与首次配置', link: '/develop/webui-api/auth-and-setup' },
+            { text: '系统控制', link: '/develop/webui-api/system-control' },
+            { text: '数据 & 记忆 API', link: '/develop/webui-api/data-and-memory-api' },
+            { text: '插件生命周期 API', link: '/develop/webui-api/plugin-lifecycle-api' },
+            { text: '实时订阅与统计', link: '/develop/webui-api/realtime-and-stats' },
+          ]
+        },
+        { text: '日志与可观测性', link: '/develop/observability' },
+        { text: '统计与数据导入导出', link: '/develop/statistics-io' },
+        { text: '事件管线与钩子', link: '/develop/event-pipeline-hooks' },
+        { text: '插件运行时内部架构', link: '/develop/plugin-runtime-internals' },
       ]
     },
   ],
