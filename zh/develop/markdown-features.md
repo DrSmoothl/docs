@@ -6,7 +6,7 @@ title: 文档编写特性
 
 编写者注：本页收录本站用到的**非 VitePress 原生**的插件特性，这些特性需要编写者在 Markdown 中写特定语法才能触发。VitePress 原生的 custom container（`::: tip` / `::: warning` 等）、代码块行号高亮、代码片段导入等特性请参见 [VitePress 官方文档](https://vitepress.dev/guide/markdown)。
 
-本页遵守[文档写作约定](/develop/contributing)：**内容页禁止使用 Markdown 表格**，请用列表或定义式描述。
+本页遵守[文档写作约定](https://github.com/MaiM-with-u/MaiBot/blob/main/docs/CONTRIBUTE.md)：**内容页禁止使用 Markdown 表格**，请用列表或定义式描述。
 
 ## Mermaid 图表
 
