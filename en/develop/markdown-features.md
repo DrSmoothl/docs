@@ -6,7 +6,7 @@ title: Markdown Features
 
 Writer's note: This page documents **non-native VitePress** plugin features used on this site. These features require writers to use specific syntax in Markdown to trigger them. For VitePress-native features such as custom containers (`::: tip` / `::: warning`, etc.), code block line highlighting, and code snippet imports, please refer to the [VitePress official documentation](https://vitepress.dev/guide/markdown).
 
-Content pages in this site must not use Markdown tables. Use lists or definition-style descriptions instead; index pages may use tables when appropriate.
+This page follows the [documentation writing conventions](https://github.com/MaiM-with-u/MaiBot/blob/main/docs/CONTRIBUTE.md): **content pages must not use Markdown tables**. Use lists or definition-style descriptions instead; index pages may use tables when appropriate.
 
 ## Mermaid Diagrams
 

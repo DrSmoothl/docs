@@ -60,7 +60,7 @@ You are welcome to contribute to the documentation! Here's how:
 - After adding new files, update the relevant index.md to include your document
 - Modify config.mts or sidebar files under `.vitepress/` to ensure proper navigation to your pages
 
-For the detailed documentation workflow, see the [repository README](https://github.com/MaiM-with-u/docs). Code contributions should follow the guidance in the MaiBot repository.
+For the detailed documentation workflow, see the [documentation repository README](https://github.com/MaiM-with-u/docs). Code contributions follow the [MaiBot contribution guide](https://github.com/MaiM-with-u/MaiBot/blob/main/docs/CONTRIBUTE.md).
 
 ## Markdown Features
 
