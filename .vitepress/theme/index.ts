@@ -38,6 +38,7 @@ export default {
     app.component('xgplayer', defineAsyncComponent(() => import('./components/xgplayer.vue')))
     app.component('ArticleMetadata', ArticleMetadata)
     app.component('Linkcard', defineAsyncComponent(() => import('./components/Linkcard.vue')))
+    app.component('AuroraBackground', defineAsyncComponent(() => import('./components/AuroraBackground.vue')))
 
     if (inBrowser) {
       NProgress.configure({ showSpinner: false })
