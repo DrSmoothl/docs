@@ -268,6 +268,7 @@ Self-check each item after the AI completes:
 - Plugin root contains `_manifest.json`, `plugin.py`, `README.md`, and `.gitignore`, with the complete configuration model defined in plugin code.
 - `.gitignore` includes `/config.toml`, and the Runner generates runtime configuration from `config_model`.
 - README includes function description, installation, configuration, commands, permissions/capabilities, and troubleshooting.
-- License is consistent with `_manifest.json` in `license`.n- Dependency declarations are complete, avoiding requiring users to manually install undeclared dependencies.
+- License is consistent with `_manifest.json` in `license`.
+- Dependency declarations are complete, avoiding requiring users to manually install undeclared dependencies.
 - No committed `.venv/`, `__pycache__/`, logs, databases, keys, or local configs.
 - If submitting to a plugin repository, read the repository's contribution guide and organize metadata accordingly.

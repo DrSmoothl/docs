@@ -150,6 +150,8 @@ all_config = await self.ctx.config.get_all()
 
 :::
 
+The plugin's `config_model` defines its configuration structure and defaults. The Runner stores values for the current installation in the generated `config.toml` under the plugin directory, and the configuration capability proxy reads the runtime configuration already loaded by the Runner.
+
 ## message — Historical Messages
 
 ::: code-group

@@ -84,7 +84,7 @@ Unnecessary plugins can be uninstalled:
 
 ## Actual Lifecycle and Restart Boundary
 
-**Install** — The file watcher detects the new plugin directory. Whether it starts immediately depends on its own `config.toml`; a plugin that defaults to disabled must still be enabled manually.
+**Install** — The file watcher detects the new plugin directory. The Runner generates `config.toml` from the defaults in the plugin's `config_model`; plugins whose `enabled` default is `false` must be enabled after installation.
 
 **Enable and disable** — The runtime loads or unloads the plugin without restarting MaiBot.
 

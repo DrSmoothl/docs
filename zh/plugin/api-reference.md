@@ -253,7 +253,7 @@ config = self.ctx.config
 - `await config.get_plugin(plugin_name=None)` — 获取指定插件的配置
 - `await config.get_all()` — 获取插件全部配置
 
-配置来源为插件目录下的 `config.toml`。
+配置结构和默认值由插件的 `config_model` 定义。Runner 将当前安装实例的值保存在插件目录下自动生成的 `config.toml` 中，配置能力代理读取的是 Runner 已加载的运行时配置。
 
 `config.get()`、`config.get_plugin()` 和 `config.get_all()` 都会直接返回配置值或配置字典，不需要手动从 RPC 结果中读取 `value` 字段。
 
