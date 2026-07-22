@@ -98,12 +98,17 @@ curl -X GET http://127.0.0.1:8001/api/webui/system/status \
 
 ### 查询待更新公告
 
-`GET /api/webui/system/update-notice` 返回当前是否有未确认的更新公告。
+`GET /api/webui/system/update-notice` 返回当前是否有未确认的更新公告。可选查询参数 **`force=true`** 用于调试公告展示：没有待确认公告时，服务端会生成一条当前版本的调试公告；正常客户端不应携带此参数。
 
 ::: code-group
 
 ```bash [curl 查询公告 ~vscode-icons:file-type-http~]
 curl -X GET http://127.0.0.1:8001/api/webui/system/update-notice \
+  -H "Cookie: maibot_session=你的Token"
+```
+
+```bash [curl 强制预览公告 ~vscode-icons:file-type-http~]
+curl -X GET "http://127.0.0.1:8001/api/webui/system/update-notice?force=true" \
   -H "Cookie: maibot_session=你的Token"
 ```
 

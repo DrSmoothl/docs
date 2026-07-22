@@ -121,40 +121,23 @@ uv run ruff format .
 
 :::
 
-## Architecture Overview
+## Advanced Topics
 
-Deep dive into the internal architecture and implementation principles of each subsystem:
+This section now focuses on deployment operators, integrators, and developers who need to inspect or extend concrete runtime boundaries:
 
-### Foundation Domain (Wave 1) — Core Infrastructure
-
-Core infrastructure providing communication, tool abstraction, and the system runtime foundation.
-
-- [Event Bus Architecture](./architecture/event-bus.md): The central event communication hub for the entire MaiBot system, providing a publish/subscribe model and two types of event handlers: intercepting and non-intercepting.
-- [Tool System Architecture](./architecture/tool-system.md): A unified abstraction layer for four categories of tool sources, integrating plugins, legacy Actions, built-in MaiSaka tools, and MCP tools via ToolProvider.
-
-### Core Functionality Domain (Wave 2) — Primary Business Flows
-
-Message processing, reasoning, memory, WebUI, and service encapsulation constitute the primary business flows of MaiBot.
-
-- [Message Pipeline](./architecture/message-pipeline.md): The complete inbound message processing flow—from platform adapters to Hook interception, filtering, command dispatching, HeartFlow, and outbound sending.
-- [Maisaka Reasoning Engine](./architecture/maisaka-reasoning.md): The core of conversational reasoning—featuring message Turn Gates, Planner loops, tool invocation, and interruption mechanisms.
-- [Memory System](./architecture/memory-system.md): The A-Memorix long-term memory engine—featuring dual-path retrieval, storage layers, memory strategies, and character profiles.
-- [WebUI Internal Mechanisms](./architecture/webui-internals.md): FastAPI backend architecture—covering authentication security, WebSocket communication, plugin management, and configuration hot-reloading.
-- [Service Layer Architecture](./architecture/service-layer.md): Encapsulates business services such as LLM invocation, memory operations, message sending, database access, and statistical aggregation for reuse by upper-layer modules.
-
-### Auxiliary Functionality Domain (Wave 3) — Enhancement Modules
-
-Enhancement modules that can be enabled, replaced, or extended based on deployment requirements.
-
-- [Expression Learning Architecture](./architecture/expression-learning.md): Learns behavioral patterns, slang, and expression preferences from conversations to provide continuously updated style materials for personalized responses.
-- [Emoji System Internal Architecture](./architecture/emoji-internals.md): Manages emoji pack loading, matching, and generation, providing visual expression materials for message understanding and response generation.
-- [MCP Integration Architecture](./architecture/mcp-integration.md): Connects to external MCP Servers to integrate remote tool capabilities into the unified Tool System.
-- [Prompt Template System](./architecture/prompt-templates.md): Manages prompt template loading, parameterization, and runtime updates, supporting the context organization of the reasoning engine.
-- [Global Manager Architecture](./architecture/global-managers.md): Centrally manages cross-module asynchronous tasks, configuration states, and runtime services to reduce entry-point orchestration complexity.
+- [Configuration System](./configuration.md) — Versioned TOML models, upgrades, validation, and hot reload
+- [Database](./database.md) — Sessions, identities, migrations, backups, and operational access
+- [Message Server and Adapter Integration](./message-server-and-adapters.md) — Protocol modes, authentication, routing, and delivery receipts
+- [LLM Provider Integration](./llm-providers.md) — Providers, models, tasks, extra parameters, and plugin clients
+- [MCP Integration](./mcp-integration.md) — Transports, callbacks, tool registration, and deployment security
+- [WebUI HTTP API](./webui-api/) — Authentication, system operations, data, plugins, realtime events, and statistics
+- [Logging and Observability](./observability.md) — Log routing, snapshots, and production diagnosis
+- [Statistics and Data Transfer](./statistics-io.md) — Aggregation and asynchronous import/export jobs
+- [Event Pipeline and Hooks](./event-pipeline-hooks.md) — Internal events and cross-process plugin Hooks
+- [Plugin Runtime Internals](./plugin-runtime-internals.md) — Host/Runner IPC, manifests, lifecycle, and recovery
 
 ## Next Steps
 
-- [Architecture Design](./architecture.md): Understand the Runner/Worker process model and message processing pipeline
-- [Contributing Guide](./contributing.md): Learn about coding standards and contribution workflow
-- [Plugin Development](../plugin/): Learn how to develop MaiBot plugins
-- [Adapter Development](./adapter-dev/): Learn how to develop platform adapters
+- [Plugin Development](../plugin/) — Build and package MaiBot plugins
+- [Bot Configuration](../manual/configuration/bot-config.md) — Configure a running deployment
+- [Markdown Features](./markdown-features.md) — Follow this repository's documentation conventions

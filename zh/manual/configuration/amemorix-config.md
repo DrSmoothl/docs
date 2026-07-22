@@ -107,9 +107,11 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 - **`model_name`** — 用于把记忆内容转换成向量的模型，`auto` 表示自动选择。默认 `auto`
 - **`dimension`** — 记忆向量的维度，需要与向量化模型保持一致。默认 1024
+- **`dimension_request_mode`** — 是否在 embedding 请求中携带维度参数：`explicit` 仅在显式指定时携带，`always` 总是携带，`never` 从不携带。默认 `explicit`
 - **`batch_size`** — 每次向量化请求处理的记忆条数。默认 32
 - **`max_concurrent`** — 同时进行的向量化请求数量。默认 5
 - **`enable_cache`** — 是否缓存向量化结果。默认关闭
+- **`runtime_train_threshold`** — 未训练向量池在运行期间触发 SQ8 后台训练所需的最少向量数。默认 256
 - **`quantization_type`** — 向量压缩方式，当前仅支持 `int8`（SQ8）。默认 `int8`
 
 ### Embedding 回退 [a_memorix.embedding.fallback]
@@ -164,11 +166,10 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 控制检索结果的阈值过滤策略，用于筛选出高质量的记忆条目。
 
-- **`min_threshold`** — 最小阈值，低于此值的检索结果将被过滤，范围 `0.0-1.0`。默认 0.3
+- **`min_threshold`** — 最小阈值，低于此值的检索结果将被过滤，范围 `0.0-1.0`，并且必须小于 `max_threshold`。默认 0.29
 - **`max_threshold`** — 最大阈值，范围 `0.0-1.0`。默认 0.95
 - **`percentile`** — 动态阈值百分位，范围 `0-100`。默认 75
-- **`min_results`** — 最小保留条数，即使阈值过滤后结果不足也至少保留此数量。默认 3
-- **`enable_auto_adjust`** — 是否启用自动阈值调整。默认开启
+- **`min_results`** — 最小保留条数，即使阈值过滤后结果不足也至少保留此数量。默认 4
 
 ---
 
@@ -188,8 +189,11 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 - **`enabled`** — 是否启用 Episode。默认开启
 - **`generation_enabled`** — 是否启用自动生成。默认开启
-- **`pending_batch_size`** — 待处理批大小。默认 50
-- **`pending_max_retry`** — 待处理最大重试次数。默认 3
+- **`source_poll_interval_seconds`** — 来源级 Episode 任务的轮询间隔，单位秒。默认 1.0
+- **`source_batch_size`** — 单轮领取的来源任务数量。默认 20
+- **`source_max_retry`** — 每个来源版本的最大尝试次数，包含首次尝试。默认 3
+- **`source_lease_seconds`** — 来源任务租约时长，单位秒。默认 1800
+- **`source_max_wait_seconds`** — 来源持续写入时允许的最大防抖等待时间，单位秒。默认 60
 - **`max_paragraphs_per_call`** — 单次最大段落数。默认 20
 - **`max_chars_per_call`** — 单次最大字符数，范围 `100+`。默认 6000
 - **`source_time_window_hours`** — 来源时间窗口小时数。默认 24.0
@@ -217,6 +221,12 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 - **`half_life_hours`** — 半衰期小时数，记忆权重每经过此时长衰减一半。默认 24.0
 - **`prune_threshold`** — 裁剪阈值，权重低于此值的记忆将被标记为待裁剪，范围 `0.0-1.0`。默认 0.1
 - **`freeze_duration_hours`** — 冻结时长小时数，新写入的记忆在冻结期内不参与演化。默认 24.0
+- **`revive_threshold`** — 冻结关系恢复为活跃状态的保留强度阈值，必须大于 `prune_threshold`。默认 0.15
+- **`access_reinforcement_alpha`** — 记忆被最终采用时的饱和加强系数。默认 0.05
+- **`access_reinforcement_cooldown_minutes`** — 同一关系两次访问加强之间的最短间隔，`0` 表示不限制。默认 60
+- **`explicit_reinforcement_alpha`** — 用户显式加强或独立新证据的饱和加强系数。默认 0.5
+- **`weaken_alpha`** — 显式弱化事件的比例系数。默认 0.5
+- **`lifecycle_batch_size`** — 单轮处理的到期关系数量。默认 1000
 
 ---
 
@@ -375,7 +385,8 @@ mode = "blacklist"
 chats = []
 
 [a_memorix.threshold]
-enable_auto_adjust = true
+min_threshold = 0.29
+min_results = 4
 ```
 
 :::
@@ -431,7 +442,6 @@ min_threshold = 0.35
 max_threshold = 0.95
 percentile = 80
 min_results = 5
-enable_auto_adjust = true
 
 [a_memorix.filter]
 enabled = true

@@ -133,6 +133,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: '学说话', link: '/manual/features/learning' },
         { text: '表情包系统', link: '/manual/features/emoji-system' },
         { text: 'MCP 工具', link: '/manual/features/mcp' },
+        { text: '管理终端', link: '/manual/features/management-console' },
       ]
     },
     {

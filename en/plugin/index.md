@@ -68,9 +68,10 @@ from maibot_sdk import MaiBotPlugin, Command, Tool
 plugins/
 └── my-plugin/
     ├── _manifest.json
-    ├── plugin.py
-    └── config.toml          # Optional
+    └── plugin.py
 ```
+
+Declare plugin configuration in `plugin.py` with `PluginConfigBase` and `Field`. When the Runner first loads the plugin, it generates the runtime `config.toml` from `config_model` and fills in newly added fields after the configuration model changes.
 
 ### 3. Write Manifest
 
@@ -276,7 +277,7 @@ class MyPlugin(MaiBotPlugin):
 - After declaring `config_model`, `self.config` returns a strongly-typed configuration instance
 - Calling `self.config` without declaration will raise a `RuntimeError`
 - `self.get_plugin_config_data()` is always available and returns the raw configuration dictionary
-- The configuration source is `config.toml` in the plugin directory
+- `config_model` defines the configuration structure and defaults, while the Runner stores current runtime values in `config.toml` under the plugin directory
 
 ## Directory Structure Conventions
 
@@ -284,14 +285,15 @@ class MyPlugin(MaiBotPlugin):
 my-plugin/
 ├── _manifest.json       # Required: Plugin manifest
 ├── plugin.py            # Required: Plugin entry point, containing create_plugin()
-├── config.toml          # Optional: Plugin configuration
 ├── i18n/                # Optional: Internationalization resources
 │   ├── zh-CN.json
 │   └── en-US.json
 └── assets/              # Optional: Static assets
 ```
 
-Plugin runtime data should not be written to the plugin source code directory. Starting from SDK 2.6.0, you can obtain the plugin-specific directory injected by the Host via `self.ctx.paths`:
+The configuration model is part of the plugin source, and the Runner generates the runtime configuration instance. The plugin repository's `.gitignore` should include `/config.toml`; after installation, WebUI or runtime configuration APIs maintain the user's configuration.
+
+Store plugin runtime data in the plugin-specific directories injected by the Host. Starting from SDK 2.6.0, these directories are available through `self.ctx.paths`:
 
 ::: code-group
 
@@ -304,7 +306,7 @@ self.ctx.paths.runtime_dir  # Temporary data, default: temp/plugins/<plugin_id>/
 
 - `data_dir` is suitable for storing plugin databases, JSON states, user-generated content, and other data that needs to persist across restarts.
 - `runtime_dir` is suitable for storing download caches, rendering intermediate artifacts, and temporary files that can be rebuilt.
-- Do not use the legacy `plugins/<plugin>/data` path for new data; do not directly concatenate user input into file paths to avoid path traversal attacks caused by `..` or absolute paths.
+- Store new data in these dedicated directories. Map user input to controlled filenames and verify resolved paths remain inside the target directory.
 
 ## Built-in and Third-party Plugins
 

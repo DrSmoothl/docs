@@ -6,22 +6,16 @@ title: Configuration Management
 
 MaiBot plugins support a declarative configuration management mechanism. By defining strongly-typed configuration models through `PluginConfigBase` and `Field`, the Runner automatically generates default configurations, fills in missing fields, and exposes renderable configuration schemas to the WebUI.
 
-## Configuration File Location
+## Configuration Generation and Storage
 
-Each plugin's configuration file is located under the plugin directory at `config.toml`:
+In `plugin.py`, a plugin uses `config_model` to declare its configuration structure, defaults, and WebUI metadata. When the Runner first loads the plugin, it generates the WebUI Schema and creates the runtime `config.toml` in the installed plugin directory. When fields are added to the configuration model, the Runner fills them into the existing configuration with their model defaults.
 
-```
-my_plugin/
-├── plugin.py          # Plugin entry point
-├── config.toml        # Plugin configuration (optional)
-└── _manifest.json     # Plugin metadata
-```
+The plugin source repository uses `config_model` as its configuration definition, and `.gitignore` should include `/config.toml`. Values changed through WebUI or runtime configuration APIs are stored in `config.toml` under the installed plugin directory.
 
-::: tip config.toml vs _manifest.json
-- `config.toml`: The plugin's **runtime configuration** (feature toggles, parameters, etc.), read by the plugin itself
-- `_manifest.json`: The plugin's **metadata** (ID, version, dependencies, etc.), validated and managed by the Host
-
-The two serve completely different purposes and should not be confused.
+::: tip Responsibilities of configuration-related files
+- `config_model` in `plugin.py`: Defines the configuration structure, types, defaults, and WebUI presentation metadata
+- `config.toml`: Stores the current installation's runtime configuration and is generated and maintained by the Runner
+- `_manifest.json`: Declares the plugin ID, version, dependencies, and capabilities and is validated and managed by the Host
 :::
 
 ## PluginConfigBase Configuration Model

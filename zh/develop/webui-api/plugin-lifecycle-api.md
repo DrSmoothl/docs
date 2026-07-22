@@ -31,6 +31,8 @@ curl -X GET http://127.0.0.1:8001/api/webui/plugins/installed \
 
 三个 POST 端点实现插件生命周期管理。它们都是异步长任务，内部通过 [WebSocket 进度通道](#_9-plugin-progress-ws-websocket-进度跟踪) 实时推送进度。
 
+同一个插件的安装、更新和卸载操作彼此互斥。如果该插件已经有一个变更操作正在执行，服务端会立即返回 **HTTP 409 Conflict**，不会排队或覆盖现有进度。响应 `detail` 会说明正在执行的操作；客户端应等待当前操作完成后重试。不同插件之间仍可并行操作。
+
 ### 安装
 
 **`POST /api/webui/plugins/install`** — 从 Git 仓库克隆并安装插件。请求体：

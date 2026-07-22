@@ -6,22 +6,16 @@ title: 配置管理
 
 MaiBot 插件支持声明式的配置管理机制，通过 `PluginConfigBase` 和 `Field` 定义强类型配置模型，Runner 会自动生成默认配置、补齐缺失字段，并向 WebUI 暴露可渲染的配置 Schema。
 
-## 配置文件位置
+## 配置生成与存储
 
-每个插件的配置文件位于插件目录下的 `config.toml`：
+插件在 `plugin.py` 中通过 `config_model` 声明配置结构、默认值和 WebUI 元数据。Runner 首次加载插件时生成 WebUI Schema，并在已安装插件目录中创建运行时 `config.toml`；配置模型增加字段后，Runner 会用模型默认值补齐现有配置。
 
-```
-my_plugin/
-├── plugin.py          # 插件入口
-├── config.toml        # 插件配置（可选）
-└── _manifest.json     # 插件元信息
-```
+插件源码仓库以 `config_model` 为配置定义，`.gitignore` 应包含 `/config.toml`。用户通过 WebUI 或运行时配置接口修改的值保存在安装目录中的 `config.toml`。
 
-::: tip config.toml vs _manifest.json
-- `config.toml`：插件的**运行时配置**（功能开关、参数等），由插件自身读取
-- `_manifest.json`：插件的**元信息**（ID、版本、依赖等），由 Host 校验和管理
-
-两者用途完全不同，不要混淆。
+::: tip 配置相关文件的职责
+- `plugin.py` 中的 `config_model`：定义配置结构、类型、默认值和 WebUI 展示信息
+- `config.toml`：保存当前安装实例的运行时配置，由 Runner 生成和维护
+- `_manifest.json`：声明插件 ID、版本、依赖和能力，由 Host 校验和管理
 :::
 
 ## PluginConfigBase 配置模型

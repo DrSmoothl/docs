@@ -129,6 +129,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Learning to Speak', link: '/en/manual/features/learning' },
         { text: 'Emoji System', link: '/en/manual/features/emoji-system' },
         { text: 'MCP Tools', link: '/en/manual/features/mcp' },
+        { text: 'Management Console', link: '/en/manual/features/management-console' },
       ]
     },
     {
@@ -161,35 +162,34 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'Development Guide', link: '/en/develop/' },
-        { text: 'Architecture Design', link: '/en/develop/architecture' },
-        { text: 'Contributing Guide', link: '/en/develop/contributing' },
         { text: 'Markdown Features', link: '/en/develop/markdown-features' },
       ]
     },
     {
-      text: 'Architecture',
+      text: 'Advanced Topics',
       collapsed: false,
       items: [
-        { text: 'Message Pipeline', link: '/en/develop/architecture/message-pipeline' },
-        { text: 'Maisaka Reasoning', link: '/en/develop/architecture/maisaka-reasoning' },
-        { text: 'Memory System', link: '/en/develop/architecture/memory-system' },
-        { text: 'WebUI Internals', link: '/en/develop/architecture/webui-internals' },
-        { text: 'Event Bus', link: '/en/develop/architecture/event-bus' },
-        { text: 'Tool System', link: '/en/develop/architecture/tool-system' },
-        { text: 'Service Layer', link: '/en/develop/architecture/service-layer' },
-        { text: 'Expression Learning', link: '/en/develop/architecture/expression-learning' },
-        { text: 'Emoji Internals', link: '/en/develop/architecture/emoji-internals' },
-        { text: 'MCP Integration', link: '/en/develop/architecture/mcp-integration' },
-        { text: 'Prompt Templates', link: '/en/develop/architecture/prompt-templates' },
-        { text: 'Global Managers', link: '/en/develop/architecture/global-managers' },
-      ]
-    },
-    {
-      text: 'Adapter Development',
-      collapsed: false,
-      items: [
-        { text: 'Development Guide', link: '/en/develop/adapter-dev/' },
-        { text: 'PlatformIO Driver', link: '/en/develop/adapter-dev/platform-io' },
+        { text: 'Database', link: '/en/develop/database' },
+        { text: 'Configuration System', link: '/en/develop/configuration' },
+        { text: 'Message Server and Adapters', link: '/en/develop/message-server-and-adapters' },
+        { text: 'LLM Provider Integration', link: '/en/develop/llm-providers' },
+        { text: 'MCP Integration', link: '/en/develop/mcp-integration' },
+        {
+          text: 'WebUI HTTP API',
+          collapsed: false,
+          items: [
+            { text: 'API Overview', link: '/en/develop/webui-api/' },
+            { text: 'Authentication and Setup', link: '/en/develop/webui-api/auth-and-setup' },
+            { text: 'System Control', link: '/en/develop/webui-api/system-control' },
+            { text: 'Data and Memory API', link: '/en/develop/webui-api/data-and-memory-api' },
+            { text: 'Plugin Lifecycle API', link: '/en/develop/webui-api/plugin-lifecycle-api' },
+            { text: 'Realtime and Statistics', link: '/en/develop/webui-api/realtime-and-stats' },
+          ]
+        },
+        { text: 'Logging and Observability', link: '/en/develop/observability' },
+        { text: 'Statistics and Data Transfer', link: '/en/develop/statistics-io' },
+        { text: 'Event Pipeline and Hooks', link: '/en/develop/event-pipeline-hooks' },
+        { text: 'Plugin Runtime Internals', link: '/en/develop/plugin-runtime-internals' },
       ]
     },
   ],

@@ -93,9 +93,10 @@ from maibot_sdk import MaiBotPlugin, Command, Tool
 plugins/
 └── my-plugin/
     ├── _manifest.json
-    ├── plugin.py
-    └── config.toml          # 可选
+    └── plugin.py
 ```
+
+插件配置在 `plugin.py` 中通过 `PluginConfigBase` 和 `Field` 声明。Runner 首次加载插件时根据 `config_model` 生成运行时 `config.toml`，并在配置模型更新后补齐新增字段。
 
 ### 3. 编写 Manifest
 
@@ -302,7 +303,7 @@ class MyPlugin(MaiBotPlugin):
 - 声明 `config_model` 后，`self.config` 返回强类型配置实例
 - 未声明时调用 `self.config` 会抛出 `RuntimeError`
 - `self.get_plugin_config_data()` 始终可用，返回原始配置字典
-- 配置来源为插件目录下的 `config.toml`
+- 配置结构与默认值由 `config_model` 定义，当前运行值由 Runner 保存在插件目录下的 `config.toml`
 
 ## 目录结构约定
 
@@ -310,14 +311,15 @@ class MyPlugin(MaiBotPlugin):
 my-plugin/
 ├── _manifest.json       # 必需：插件清单
 ├── plugin.py            # 必需：插件入口，包含 create_plugin()
-├── config.toml          # 可选：插件配置
 ├── i18n/                # 可选：国际化资源
 │   ├── zh-CN.json
 │   └── en-US.json
 └── assets/              # 可选：静态资源
 ```
 
-插件运行时数据不应写入插件源码目录。SDK 2.6.0 起可以通过 `self.ctx.paths` 获取 Host 注入的插件专属目录：
+配置模型属于插件源码，运行时配置实例由 Runner 生成。插件仓库的 `.gitignore` 应包含 `/config.toml`，安装后的用户配置由 WebUI 或运行时配置接口维护。
+
+插件运行时数据统一写入 Host 注入的插件专属目录。SDK 2.6.0 起可以通过 `self.ctx.paths` 获取这些目录：
 
 ::: code-group
 
@@ -330,7 +332,7 @@ self.ctx.paths.runtime_dir  # 临时数据，默认 temp/plugins/<plugin_id>/
 
 - `data_dir` 适合保存插件数据库、JSON 状态、用户生成内容等需要跨重启保留的数据。
 - `runtime_dir` 适合保存下载缓存、渲染中间产物、可重建的临时文件。
-- 不要使用旧式 `plugins/<plugin>/data` 保存新数据；不要把用户输入直接拼成文件路径，避免 `..` 或绝对路径造成路径逃逸。
+- 新数据使用上述专属目录；处理用户输入时应采用受控文件名映射，并在路径解析后校验结果仍位于目标目录内。
 
 ## 内置插件与第三方插件
 

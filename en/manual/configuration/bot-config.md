@@ -407,6 +407,7 @@ library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }
 
 ### debug
 
+- **`enable_console_input`** — Enables the interactive local management console. Disabled by default. It accepts local messages and management commands such as `/clear`, `/offline`, `/online`, and `/pm`. See [Management Console](../features/management-console.md).
 - **`show_maisaka_thinking`** — Whether to show replyer reasoning
 - **`enable_reply_effect_tracking`** — Whether to enable reply effect score tracking
 - **`keep_prompt_preview_json_base64`** — Whether Prompt preview JSON keeps image base64 data. Disabled by default

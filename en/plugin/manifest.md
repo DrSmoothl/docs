@@ -5,11 +5,10 @@ title: Manifest
 
 Every MaiBot plugin must include a `_manifest.json` file in its root directory to declare the plugin's metadata, version compatibility, dependencies, and capability requirements. The `ManifestValidator` on the Host side strictly validates this file before loading.
 
-::: tip Difference between `_manifest.json` and `config.toml`
-- `_manifest.json`: Plugin **metadata** (ID, version, dependencies, etc.), validated and managed by the Host
-- `config.toml`: Plugin **runtime configuration** (feature toggles, parameters, etc.), read by the plugin itself
-
-These two files serve completely different purposes; do not confuse them.
+::: tip Plugin metadata and runtime configuration
+- `_manifest.json`: Declares the plugin ID, version, dependencies, and capabilities and is validated and managed by the Host
+- `config_model` in `plugin.py`: Declares the configuration structure, defaults, and WebUI metadata
+- `config.toml`: Stores the current installation's runtime configuration and is generated and maintained by the Runner from `config_model`
 :::
 
 ## _manifest.json Structure

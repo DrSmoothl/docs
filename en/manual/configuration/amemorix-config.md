@@ -107,9 +107,11 @@ Basic settings for converting memory content into vectors. Vectorization is the 
 
 - **`model_name`** — Model used to convert memory content into vectors; `auto` means automatic selection. Default: `auto`
 - **`dimension`** — Dimension of memory vectors, must be consistent with the vectorization model. Default: 1024
+- **`dimension_request_mode`** — Controls whether the embedding request carries a dimension parameter: `explicit` only when requested, `always` on every request, and `never` to omit it. Default: `explicit`
 - **`batch_size`** — Number of memory items processed per vectorization request. Default: 32
 - **`max_concurrent`** — Number of concurrent vectorization requests. Default: 5
 - **`enable_cache`** — Whether to cache vectorization results. Disabled by default
+- **`runtime_train_threshold`** — Minimum number of untrained vectors required to trigger background SQ8 training at runtime. Default: 256
 - **`quantization_type`** — Vector compression method, currently only supports `int8` (SQ8). Default: `int8`
 
 ### Embedding Fallback [a_memorix.embedding.fallback]
@@ -164,11 +166,10 @@ Configuration for sparse retrieval based on full-text search (FTS5), used to sup
 
 Controls the threshold filtering strategy for retrieval results, used to filter high-quality memory entries.
 
-- **`min_threshold`** — Minimum threshold; results below this value will be filtered out, range `0.0-1.0`. Default: 0.3
+- **`min_threshold`** — Minimum threshold; results below this value will be filtered out. It must be lower than `max_threshold`. Default: 0.29
 - **`max_threshold`** — Maximum threshold, range `0.0-1.0`. Default: 0.95
 - **`percentile`** — Dynamic threshold percentile, range `0-100`. Default: 75
-- **`min_results`** — Minimum number of results to retain; ensures at least this many results remain even if threshold filtering reduces them. Default: 3
-- **`enable_auto_adjust`** — Whether to enable automatic threshold adjustment. Enabled by default
+- **`min_results`** — Minimum number of results to retain; ensures at least this many results remain even if threshold filtering reduces them. Default: 4
 
 ---
 
@@ -188,8 +189,11 @@ An Episode is an automatic summary and segmentation of a conversation, and is on
 
 - **`enabled`** — Whether to enable Episodes. Enabled by default
 - **`generation_enabled`** — Whether to enable automatic generation. Enabled by default
-- **`pending_batch_size`** — Pending batch size. Default: 50
-- **`pending_max_retry`** — Maximum retry count for pending items. Default: 3
+- **`source_poll_interval_seconds`** — Polling interval for source-level Episode jobs, in seconds. Default: 1.0
+- **`source_batch_size`** — Number of source jobs claimed in one cycle. Default: 20
+- **`source_max_retry`** — Maximum attempts for each source version, including the first attempt. Default: 3
+- **`source_lease_seconds`** — Source-job lease duration in seconds. Default: 1800
+- **`source_max_wait_seconds`** — Maximum debounce wait while a source continues receiving writes, in seconds. Default: 60
 - **`max_paragraphs_per_call`** — Maximum number of paragraphs per call. Default: 20
 - **`max_chars_per_call`** — Maximum number of characters per call, range `100+`. Default: 6000
 - **`source_time_window_hours`** — Source time window in hours. Default: 24.0
@@ -217,6 +221,12 @@ Memory evolution controls the decay mechanism of memories, allowing old memories
 - **`half_life_hours`** — Half-life in hours; memory weight halves after each such period. Default: 24.0
 - **`prune_threshold`** — Prune threshold; memories with weight below this value will be marked for pruning, range `0.0-1.0`. Default: 0.1
 - **`freeze_duration_hours`** — Freeze duration in hours; newly written memories do not participate in evolution during the freeze period. Default: 24.0
+- **`revive_threshold`** — Retention-strength threshold for reviving a frozen relation; must be greater than `prune_threshold`. Default: 0.15
+- **`access_reinforcement_alpha`** — Saturating reinforcement factor applied when a memory is selected for use. Default: 0.05
+- **`access_reinforcement_cooldown_minutes`** — Minimum interval between access reinforcements for the same relation; `0` disables the limit. Default: 60
+- **`explicit_reinforcement_alpha`** — Saturating reinforcement factor for explicit reinforcement or independent new evidence. Default: 0.5
+- **`weaken_alpha`** — Proportional factor for explicit weakening events. Default: 0.5
+- **`lifecycle_batch_size`** — Number of expired relations processed in one lifecycle cycle. Default: 1000
 
 ---
 
@@ -375,7 +385,8 @@ mode = "blacklist"
 chats = []
 
 [a_memorix.threshold]
-enable_auto_adjust = true
+min_threshold = 0.29
+min_results = 4
 ```
 
 :::
@@ -431,7 +442,6 @@ min_threshold = 0.35
 max_threshold = 0.95
 percentile = 80
 min_results = 5
-enable_auto_adjust = true
 
 [a_memorix.filter]
 enabled = true

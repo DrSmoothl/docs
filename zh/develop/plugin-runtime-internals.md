@@ -139,7 +139,7 @@ Envelope 提供三个便利方法：`is_request()`、`is_response()`、`is_broad
 
 ## RPC 方法清单
 
-### Host → Runner（16 个）
+### Host → Runner（17 个）
 
 以下方法由 Host 向 Runner 发起，在 `PluginRunner._register_handlers()` 中注册（源码行号 1232-1247）：
 
@@ -159,6 +159,7 @@ Envelope 提供三个便利方法：`is_request()`、`is_response()`、`is_broad
 14. **`plugin.validate_config`** — 请求 Runner 校验插件配置
 15. **`plugin.reload`** — 请求 Runner 热重载单个插件
 16. **`plugin.reload_batch`** — 请求 Runner 批量热重载插件
+17. **`plugin.unload_batch`** — 按依赖安全顺序批量卸载指定插件，并返回每个插件的卸载结果
 
 ### Runner → Host（简要）
 
@@ -175,7 +176,7 @@ Runner 也向 Host 发起请求，在 Supervisor 的 `_register_internal_methods
 
 ## Manifest v2 关键字段
 
-插件通过 `manifest.toml` 声明自身元数据。`PluginManifest` 模型（定义于 `manifest_validator.py:611-806`）强制执行 v2 协议（`manifest_version: Literal[2]`）并对关键字段做严格校验。以下是运维需要关注的字段：
+插件通过 `_manifest.json` 声明自身元数据。`PluginManifest` 模型定义在 `src/plugin_runtime/runner/manifest_validator.py`，它强制执行 v2 协议（`manifest_version: Literal[2]`）并对关键字段做严格校验。以下是运维需要关注的字段：
 
 **`id`** — 插件稳定 ID，格式为字母/数字/下划线，以点号或横线分隔，如 `github.author.plugin`。**不得与任何其他插件的 ID 重复**，否则启动时拒绝加载。
 
