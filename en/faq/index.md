@@ -36,6 +36,6 @@ Browse questions by topic. If the log already contains a specific error or statu
 
 ## Sources
 
-Some answers were adapted from the community-maintained document [MaiBot Tutorial — Quick FAQ / Community Tutorial](https://www.kdocs.cn/l/ctOGhVv6L8Yq). Metadata from the July 12, 2026 export identifies 池雨 as the creator and 无为青年 as the modifier. Individual answers in the source explicitly credit 千石可乐 and ARC.
+Some answers were adapted from the community-maintained document [MaiBot Tutorial — Quick FAQ / Community Tutorial](https://www.kdocs.cn/l/ctOGhVv6L8Yq). Thanks to all the authors for their support of MaiBot!
 
 The text on this site was not copied verbatim. It was reorganized, corrected, and verified against the current MaiBot configuration and code.
