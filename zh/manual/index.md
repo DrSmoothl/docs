@@ -12,8 +12,8 @@ title: 用户手册
 
 如果你是第一次使用 MaiBot，建议按以下顺序阅读：
 
-1. [部署概览](/manual/deployment/) - 了解部署方式和前提条件
-2. [安装指南](/manual/deployment/installation) - 下载并安装 MaiBot
+1. [Windows 部署](/manual/deployment/windows) 或 [Linux 部署](/manual/deployment/linux) - 下载并安装 MaiBot
+2. [Docker 部署](/manual/deployment/docker) - 用 Docker 快速部署
 3. [NapCat 适配器](/manual/adapters/napcat) - 连接 QQ
 4. [配置概览](/manual/configuration/) - 了解配置文件结构
 

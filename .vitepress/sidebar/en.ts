@@ -2,7 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 export const nav: DefaultTheme.NavItem[] = [
   { text: 'Home', link: '/en/' },
-  { text: 'Manual', link: '/en/manual/deployment/' },
+  { text: 'Manual', link: '/en/manual/' },
   { text: 'Development', items: [
     { text: 'MaiBot Development', link: '/en/develop/' },
     { text: 'Plugin Development', link: '/en/plugin/' },
@@ -100,9 +100,8 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'Deployment & Installation',
       collapsed: false,
       items: [
-        { text: 'Deployment Overview', link: '/en/manual/deployment/' },
-        { text: 'Installation Guide', link: '/en/manual/deployment/installation' },
-        { text: 'One-Click Package', link: '/en/manual/deployment/one_key' },
+        { text: 'Windows Deployment', link: '/en/manual/deployment/windows' },
+        { text: 'Linux Deployment', link: '/en/manual/deployment/linux' },
         { text: 'Docker Deployment', link: '/en/manual/deployment/docker' },
       ]
     },

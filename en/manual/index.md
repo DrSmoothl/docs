@@ -11,8 +11,8 @@ Welcome to the MaiBot User Manual! This covers a complete guide from installatio
 
 If this is your first time using MaiBot, we recommend reading in the following order:
 
-1. [Deployment Overview](/manual/deployment/) - Understand deployment methods and prerequisites
-2. [Installation Guide](/manual/deployment/installation) - Download and install MaiBot
+1. [Windows Deployment](/en/manual/deployment/windows) or [Linux Deployment](/en/manual/deployment/linux) - Download and install MaiBot
+2. [Docker Deployment](/en/manual/deployment/docker) - Quick deployment with Docker
 3. [NapCat Adapter](/manual/adapters/napcat) - Connect to QQ
 4. [Configuration Overview](/manual/configuration/) - Understand the configuration file structure
 

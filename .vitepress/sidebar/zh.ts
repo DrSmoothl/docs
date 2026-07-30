@@ -2,7 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 export const nav: DefaultTheme.NavItem[] = [
   { text: '首页', link: '/' },
-  { text: '用户手册', link: '/manual/deployment/' },
+  { text: '用户手册', link: '/manual/' },
   { text: '开发文档', items: [
     { text: '麦麦开发', link: '/develop/' },
     { text: '插件开发', link: '/plugin/' },
@@ -91,11 +91,9 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '部署与安装',
       collapsed: false,
       items: [
-        { text: '部署概览', link: '/manual/deployment/' },
-        { text: '源码安装', link: '/manual/deployment/installation' },
-        //{ text: 'Agent 安装指南', link: '/manual/deployment/installation-agent' },
-        { text: '一键包安装', link: '/manual/deployment/one_key' },
-        { text: 'Docker安装', link: '/manual/deployment/docker' },
+        { text: 'Windows 部署', link: '/manual/deployment/windows' },
+        { text: 'Linux 部署', link: '/manual/deployment/linux' },
+        { text: 'Docker 部署', link: '/manual/deployment/docker' },
       ]
     },
     {
