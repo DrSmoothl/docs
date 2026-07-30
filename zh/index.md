@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /manual/getting-started/
+      link: /manual/deployment/windows
     - theme: alt
       text: 功能介绍
       link: /features/
