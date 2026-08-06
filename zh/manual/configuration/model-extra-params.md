@@ -86,6 +86,52 @@ extra_params = {enable_thinking = false}
 - **限制**：思考模式下 `temperature` 和 `top_p` 会被静默忽略，`tool_choice` 会导致 400 错误
 - 第三方平台（如阿里云百炼/DashScope）使用 `enable_thinking`（布尔值）控制思考模式，与原生 `thinking` 对象写法不同。配置前请确认你使用的平台支持哪种参数格式
 
+## Responses API
+
+部分服务商（如 DeepSeek v4 flash 联网搜索）使用 OpenAI 的 **Responses 协议**，需要在服务商配置中设置 `client_type = "openai_responses"`。Responses API 的参数格式与 Chat Completions 略有不同：
+
+- **思考模式**：使用 `reasoning = {effort = "..."}` 而不是 `thinking`/`reasoning_effort`，`effort` 可选 `none` / `low` / `high` / `max`
+- **联网搜索**：把 `web_search` 原生工具写入 `tools` 列表即可启用
+
+::: code-group
+
+```toml [Responses（思考） ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-think"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "high"}}
+```
+
+```toml [Responses（非思考） ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-nothink"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "none"}}
+```
+
+```toml [Responses（联网搜索） ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-web"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "high"}, tools = [{type = "web_search"}]}
+```
+
+:::
+
+**要点：**
+
+- Responses 客户端中不要再写 `thinking` 或 `reasoning_effort`，请统一使用 `reasoning.effort`，否则会被校验拒绝
+- `reasoning.effort` 比 Chat Completions 多一个 `none`（完全关闭思考）
+- `web_search` 工具通过 `extra_params.body.tools` 传入（`body` 分组的字段与其他普通键会合并进请求体，见 [自定义 HTTP 请求](#自定义-http-请求)）
+- DeepSeek 的 Chat Completions 端点不支持原生联网搜索，使用联网搜索必须选择 `openai_responses` 客户端
+- Maisaka 监控页与日志会展示联网搜索摘要（本轮查询、动作、状态和来源数量）
+
 ## Gemini 原生 API
 
 当 `client_type = "google"` 时，`extra_params` 不按 OpenAI 的 `headers/query/body` 规则处理，而是由 Gemini 客户端按自身支持的字段筛选和映射到 `GenerateContentConfig`。
@@ -279,6 +325,8 @@ max_tokens = 4096
 - **`thinking`** — 思考模式控制，含 `type`（enabled/disabled）。适用 DeepSeek
 - **`reasoning_effort`** — 推理强度等级（DeepSeek V4 仅 high/max，OpenAI 6 级）。适用 DeepSeek, OpenAI
 - **`enable_thinking`** — 开启思考模式。适用阿里云百炼
+- **`reasoning`** — Responses API 思考控制，含 `effort`（none/low/high/max）。适用 DeepSeek（Responses 客户端）
+- **`tools`** — 原生工具列表，如 `{type = "web_search"}` 开启联网搜索。适用 DeepSeek Responses 客户端
 - **`headers`** — 自定义 HTTP 请求头。适用全部
 - **`query`** — 自定义 URL 查询参数。适用全部
 - **`body`** — 自定义请求体字段。适用全部

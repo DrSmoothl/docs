@@ -159,6 +159,52 @@ extra_params = {reasoning_effort = "medium"}
 
 > 💡 **Recommendation**: Use `medium` for daily use, `low` for speed-sensitive tasks, `high` for deep analysis.
 
+## Responses API
+
+Some providers (e.g. DeepSeek v4 flash web search) use the OpenAI **Responses protocol**. Set `client_type = "openai_responses"` in the provider config. The parameter format differs from Chat Completions:
+
+- **Thinking**: use `reasoning = {effort = "..."}` instead of `thinking` / `reasoning_effort`. `effort` accepts `none` / `low` / `high` / `max`
+- **Web search**: add the `web_search` native tool to the `tools` list to enable it
+
+::: code-group
+
+```toml [Responses (thinking) ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-think"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "high"}}
+```
+
+```toml [Responses (non-thinking) ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-nothink"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "none"}}
+```
+
+```toml [Responses (web search) ~vscode-icons:file-type-toml~]
+[[models]]
+name = "deepseek-v4-flash-responses-web"
+model_identifier = "deepseek-v4-flash"
+api_provider = "deepseek"
+client_type = "openai_responses"
+extra_params = {reasoning = {effort = "high"}, tools = [{type = "web_search"}]}
+```
+
+:::
+
+**Key Points:**
+
+- On the Responses client, do not use `thinking` or `reasoning_effort`; always use `reasoning.effort`, otherwise validation rejects the config
+- `reasoning.effort` adds `none` (fully disable thinking) compared to Chat Completions
+- The `web_search` tool is passed via `extra_params.body.tools` (fields grouped under `body` and other plain keys are merged into the request body, see [Custom HTTP Requests](#custom-http-requests))
+- DeepSeek's Chat Completions endpoint does not support native web search; you must use the `openai_responses` client for web search
+- The Maisaka monitor and logs display web search summaries (query, action, status and source count for the round)
+
 ## About client_type and Gemini
 
 `client_type` determines which client MaiBot uses to communicate with the API:
@@ -245,6 +291,8 @@ extra_params = {
 
 - **`enable_thinking`** — Enable thinking mode. Providers: DeepSeek
 - **`reasoning_effort`** — Reasoning depth level. Providers: OpenAI
+- **`reasoning`** — Responses API thinking control, with `effort` (`none`/`low`/`high`/`max`). Providers: DeepSeek (Responses client)
+- **`tools`** — Native tool list, e.g. `{type = "web_search"}` enables web search. Providers: DeepSeek Responses client
 - **`headers`** — Custom HTTP request headers. Providers: All
 - **`query`** — Custom URL query parameters. Providers: All
 - **`body`** — Custom request body fields. Providers: All

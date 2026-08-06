@@ -27,6 +27,32 @@ Intuitive charts display:
 - **7 Days** - Trends over the last week
 - **Peak Hours** - When the bot is most active
 
+## Detailed Statistics Page
+
+The "Statistics" entry in the sidebar (`/statistics`) opens an interactive native detailed statistics page, replacing the traditional static HTML report (the old report remains available at `maibot_statistics.html`). The time range can be switched at the top of the page:
+
+- **All time / Last 30 days / Last 7 days / Last 3 days**
+- **Last 24 hours / Last 3 hours / Last 1 hour / Last 15 minutes**
+
+### Core Metrics
+
+- **Uptime** - Total running duration of the bot
+- **Messages / Replies** - Messages received and replies sent
+- **Requests / Token Usage** - Model call count and total input/output tokens
+- **Cache Hits** - Cache hit/miss tokens and hit rate
+- **Cost** - Total spend, cost per 100 messages, cost per hour, etc.
+
+### Multi-Dimensional Analysis
+
+Detailed statistics can be broken down by:
+
+- **Model** - Request count, tokens, cache hit rate, cost and average latency per model
+- **Module** - Call distribution aggregated by feature module
+- **Request Type** - Cost share by request type
+- **Chat Flow** - Message volume and cost per chat flow
+- **Trends** - Time-series changes in cost, message volume, etc.
+- **Performance Metrics** - Key metrics such as cost per 100 messages and tokens per hour
+
 ## Chat Logs
 
 ### View Logs
