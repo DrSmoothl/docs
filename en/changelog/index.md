@@ -2,6 +2,14 @@
 
 For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-with-u/MaiBot/releases).
 
+::: timeline 2026-08-04
+- [1.1.4] Models: added support for the OpenAI Responses API (text, images, structured output, function tools, native tools, streaming events and usage stats); added native web search for DeepSeek v4 flash with related parameters
+- Maisaka: Responses native web search summaries (query, action, status and source count for the round) shown in the monitor and regular logs
+- WebUI [1.6.3]: new native detailed statistics page (keeps the old HTML report, interactive filtering by model/module/request type/chat flow, trends and performance metrics)
+- Plugin management: shows conflicting directories of duplicate plugins with explicit load failure reasons; refreshes runtime state immediately after enabling a plugin; cleans up empty plugin root directories on startup
+- Fixed being unable to add a new model provider when both model and provider lists are empty; improved plugin market card layout
+:::
+
 ::: timeline 2026-07-28
 - [1.1.3] WebUI: optimized sidebar hover behavior, page colors and layout, new storage management page
 - Maisaka: fixed Planner native reasoning incorrectly passed as body to Replyer; added typo correction message references

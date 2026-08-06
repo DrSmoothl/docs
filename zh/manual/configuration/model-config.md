@@ -20,7 +20,7 @@ titleTemplate: :title · 模型配置
 name = "deepseek"                          # [必填] API 服务商名称，在 models 的 api_provider 中需使用这个命名
 base_url = "https://api.deepseek.com/v1"   # [必填] API 服务商的 BaseURL
 api_key = "your-api-key"                   # [必填] API 密钥。若 auth_type 为 none 则不需要
-client_type = "openai"                     # [可选] 客户端类型：openai(默认) / google
+client_type = "openai"                     # [可选] 客户端类型：openai(默认) / openai_responses / google
 auth_type = "bearer"                       # [可选] 鉴权方式：bearer(默认) / header / query / none
 auth_header_name = "Authorization"         # [可选] 当 auth_type 为 header 时使用的请求头名称
 auth_header_prefix = "Bearer"              # [可选] 当 auth_type 为 header 时的请求头前缀，留空表示直接发送原始密钥
@@ -44,6 +44,7 @@ retry_interval = 5                         # [可选] 重试间隔，单位秒
 - **必填**：`name`（服务商名称）、`base_url`（端点地址）、`api_key`（密钥，`auth_type = "none"` 时除外）
 - **鉴权**：默认 `bearer` 适用于绝大部分服务商。其他可选 `header` / `query` / `none`
 - **客户端**：默认 `openai`。Google Gemini 用 `"google"`，见 [模型额外参数](./model-extra-params.md#gemini-原生-api)
+- **Responses API**：支持 OpenAI Responses 协议的服务商（如 DeepSeek v4 flash 的联网搜索）用 `"openai_responses"`，见 [模型额外参数](./model-extra-params.md#responses-api)
 - **超时与重试**：`timeout` 默认 60s，`max_retry` 默认 3 次，`retry_interval` 默认 5s
 - 其余字段参见上方注释，均有合理默认值
 
