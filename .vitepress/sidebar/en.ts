@@ -26,6 +26,13 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
     {
+      text: 'Plugin Store',
+      collapsed: false,
+      items: [
+        { text: 'Submit a Plugin', link: '/en/plugin/submission' },
+      ]
+    },
+    {
       text: 'Components',
       collapsed: false,
       items: [
@@ -90,10 +97,10 @@ export const sidebar: DefaultTheme.Sidebar = {
   ],
   '/en/manual/': [
     {
-      text: 'Quick Start',
+      text: 'Getting Started',
       collapsed: false,
       items: [
-        { text: 'Get Started in 5 Minutes', link: '/en/manual/getting-started/' },
+        { text: 'User Manual', link: '/en/manual/' },
       ]
     },
     {

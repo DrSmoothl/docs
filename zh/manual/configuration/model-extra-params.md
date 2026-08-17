@@ -257,11 +257,9 @@ extra_params = {
 
 客户端拆分后的实际效果：
 
-| 来源 | 目标 | 内容 |
-|------|------|------|
-| `headers` | HTTP 请求头 | `X-API-Version: 2024-06`, `X-Priority: high` |
-| `query` | URL 查询参数 | `?version=2024-01-01` |
-| `body` 内字段 + 其他普通键 | 请求体 JSON | `{"metadata": {"source": "maibot"}, "enable_thinking": false}` |
+**`headers`** — HTTP 请求头：`X-API-Version: 2024-06`，`X-Priority: high`
+**`query`** — URL 查询参数：`?version=2024-01-01`
+**`body` 内字段 + 其他普通键** — 请求体 JSON：`{"metadata": {"source": "maibot"}, "enable_thinking": false}`
 
 所以 `extra_params = {enable_thinking = "false"}` 等价于 `extra_params = {body = {enable_thinking = "false"}}`，都会把 `enable_thinking` 作为请求体 JSON 字段发给服务商，而不是发送嵌套的 `{"extra_params": {"enable_thinking": "false"}}`。
 

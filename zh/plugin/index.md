@@ -227,17 +227,15 @@ def create_plugin():
 
 SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
-| 装饰器 | 用途 | 说明 |
-|--------|------|------|
-| `@Tool` | LLM 工具/函数调用 | LLM 可调用的工具，最常用的组件类型 |
-| `@Command` | 斜杠命令 | 用户通过正则匹配触发的命令 |
-| `@HookHandler` | 命名 Hook 处理器 | 订阅特定 Hook 点，支持 blocking/observe 模式 |
-| `@EventHandler` | 消息/工作流事件 | 监听消息、LLM 生成等生命周期事件 |
-| `@API` | 插件间 API | 暴露可被其他插件调用的 API |
-| `@MessageGateway` | 平台适配器 | 将外部平台（QQ、Discord 等）接入 MaiBot |
-| `@HomeCard` | WebUI 首页卡片 | 在首页展示插件状态、入口或自定义内容 |
-| `@LLMProvider` | LLM Provider | 声明新LLM模型接入点（client_type），扩展模型服务 |
-| `@Action` | 兼容旧插件 | 内部自动转换为 `@Tool`，新插件应直接使用 `@Tool` |
+**`@Tool`** — LLM 工具/函数调用，LLM 可调用的工具，最常用的组件类型
+**`@Command`** — 斜杠命令，用户通过正则匹配触发的命令
+**`@HookHandler`** — 命名 Hook 处理器，订阅特定 Hook 点，支持 blocking/observe 模式
+**`@EventHandler`** — 消息/工作流事件，监听消息、LLM 生成等生命周期事件
+**`@API`** — 插件间 API，暴露可被其他插件调用的 API
+**`@MessageGateway`** — 平台适配器，将外部平台（QQ、Discord 等）接入 MaiBot
+**`@HomeCard`** — WebUI 首页卡片，在首页展示插件状态、入口或自定义内容
+**`@LLMProvider`** — LLM Provider，声明新 LLM 模型接入点（client_type），扩展模型服务
+**`@Action`** — 兼容旧插件，内部自动转换为 `@Tool`，新插件应直接使用 `@Tool`
 
 ### 能力代理
 
@@ -345,6 +343,7 @@ MaiBot 维护两个独立的 Runner 子进程：
 
 ## 下一步
 
+- [提交插件](./submission.md)：插件开发完成后，提交到官方插件中心
 - [Manifest 系统](./manifest.md)：了解 `_manifest.json` 的完整字段定义与校验规则
 - [生命周期](./lifecycle.md)：学习插件加载、卸载与配置热重载的生命周期方法
 - [Hook 系统](./hooks.md)：学习如何使用 @HookHandler 拦截和改写消息

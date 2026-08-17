@@ -1353,7 +1353,7 @@ heartbeat_interval = 30  # 每 30 秒发送一次心跳
 : 回想最近改过什么配置、装过什么插件、更新过什么版本。尝试回退到最后一次正常工作的状态，确认是不是哪步改错了。
 
 **`🌐 4. 搜索已知问题`**
-: 用错误关键词搜索 [GitHub Issues](https://github.com/LightStudents/MaiBot-Docs/issues) 或搜索引擎，看看是否有别人遇到过相同的问题。
+: 用错误关键词搜索 [GitHub Issues](https://github.com/Mai-with-u/docs/issues) 或搜索引擎，看看是否有别人遇到过相同的问题。
 
 ### 📋 提交 Issue 的信息清单
 
@@ -1380,13 +1380,13 @@ heartbeat_interval = 30  # 每 30 秒发送一次心跳
 : 加入 MaiBot 用户交流群，和其他用户一起交流使用经验。群号：`[请填写群号]`
 
 **`🐱 GitHub Issues`**
-: 确认是 Bug 或功能建议，请在 [GitHub Issues](https://github.com/LightStudents/MaiBot-Docs/issues) 提交。提交前记得先搜索，避免重复
+: 确认是 Bug 或功能建议，请在 [GitHub Issues](https://github.com/Mai-with-u/docs/issues) 提交。提交前记得先搜索，避免重复
 
 **`📖 官方文档站`**
-: 最新最全的文档请访问 [MaiBot 文档站](https://maibot-docs.vercel.app/)
+: 最新最全的文档请访问 [MaiBot 文档站](https://docs.mai-mai.org/)
 
 **`💬 GitHub Discussions`**
-: 功能讨论、技术提问可访问 [GitHub Discussions](https://github.com/LightStudents/MaiBot-Docs/discussions) 参与社区讨论
+: 功能讨论、技术提问可访问 [GitHub Discussions](https://github.com/Mai-with-u/docs/discussions) 参与社区讨论
 
 ### 📝 如何获取日志
 

@@ -37,7 +37,7 @@
   - `configuration/` Bot 配置、模型配置、Amemorix 配置、MCP 配置、模型附加参数
   - `features/` 用户视角功能详解（消息管线、Maisaka 推理、记忆、学习、表情、MCP）
   - `webui/` WebUI 使用（配置/记忆/插件/统计）
-  - `getting-started/` 快速入门
+  - `index.md` 快速上手（承担手册首页与新手引导职能，替代已删除的 getting-started）
 - **`develop/`** — **开发文档**：面向贡献者，讲技术栈、架构、贡献规范
   - `architecture.md` / `architecture/` 架构总览与 12 篇架构详解（消息管线、Maisaka、记忆、情绪、event-bus、tool-system、prompt-templates、service-layer、global-managers、webui-internals、mcp-integration、emoji-internals、expression-learning）
   - `contributing.md` 贡献指南 / `markdown-features.md` Markdown 写法权威

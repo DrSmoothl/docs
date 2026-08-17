@@ -136,6 +136,60 @@ pip install -r requirements.txt
 
 > 本仓库中，`zh/manual/deployment/installation.md` 使用了 `~vscode-icons:file-type-git~` 内联图标；其他文件中通过 `pnpm`/`npm`/`yarn`/`pip`/`uv` 等关键词自动匹配图标。
 
+## 代码组强制写法与禁止包裹
+
+本站约定：**凡是有语言标注的独立代码块，一律放进单标签 `::: code-group` 内**，标签显式指定 `~vscode-icons:<id>~` 内联图标，不依赖关键词匹配。下面用 S1–S5 说明强制写法与禁止包裹规则。
+
+### S1 独立代码块必须外包 code-group
+
+即使一个 code-group 里只有一个代码块，也必须用 `::: code-group` 包裹，并给标签配内联图标：
+
+```markdown
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
+[bot]
+platform = "qq"
+```
+
+:::
+```
+
+禁止不带 code-group 的裸语言 fence（` ```toml `、` ```python `、` ```bash ` 等）。
+
+### S2 标签必须显式内联图标
+
+code-group 标签要写成 `[标签文字 ~iconify图标名~]`，显式给出图标，**不要依赖关键词自动匹配**：
+
+- ❌ ` ```toml [配置] ` ` — 无图标
+- ✅ ` ```toml [配置 ~vscode-icons:file-type-toml~] ` — 显式图标
+
+图标名从 [Iconify](https://icon-sets.iconify.design/) 获取，常用：`vscode-icons:file-type-toml`、`vscode-icons:file-type-python`、`vscode-icons:file-type-json`、`vscode-icons:file-type-shell`、`vscode-icons:file-type-git`、`logos:docker-icon`。
+
+### S3 无语言标注的展示块不包裹
+
+没有语言标注的裸 fence（` ``` ` 无语言），用于展示目录树、日志输出、流程步骤、ASCII 图等**纯文本内容**，不属于代码，不需要外包 code-group，保持原样即可：
+
+````markdown
+```
+my-plugin/
+├── _manifest.json
+└── plugin.py
+```
+````
+
+### S4 mermaid / mmd 不包裹
+
+Mermaid 流程图（` ```mermaid `）用于渲染图表，` ```mmd ` 用于展示 Mermaid 源码，两者都必须保持独立 fence，**禁止**外包 code-group，否则无法渲染或失去展示语义。
+
+### S5 代码组内至少一个代码块、不嵌套
+
+`::: code-group` 内必须包含一个或多个 ` ``` ` fence，且**不能在 code-group 内再嵌套 code-group**。多个代码块用同一逻辑主题整理到一组，标签文字简短。
+
+### en 镜像约定
+
+翻译成英文时，code-group 结构、图标 ID、代码内容必须与中文版**完全一致**（术语可翻译，代码/字段/图标不翻译）。标签文字可译，但图标 `~vscode-icons:<id>~` 原样保留。
+
 ## 可选 Vue 组件
 
 以下两个 Vue 组件已在主题中注册，可以在 Markdown 中直接以 HTML 标签形式使用。组件源码位于 `.vitepress/theme/components/` 目录，在 `.vitepress/theme/index.ts` 中通过 `app.component()` 注册。

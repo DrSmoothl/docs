@@ -4,189 +4,295 @@ title: How MaiBot Remembers You
 
 # How MaiBot Remembers You 🧠
 
-Have you noticed that the more you chat with MaiBot, the better it understands you? It's not an illusion! When long-term memory is enabled, MaiBot can save important conversations, person facts, and chat summaries according to your configuration, making future replies better match your shared context.
+Have you noticed that the more you chat with MaiBot, the better it understands you? It's not an illusion! MaiBot genuinely has "memory". When long-term memory is enabled, it saves important conversations, person facts, and chat summaries according to your configuration, making future replies better match your shared experiences.
 
 ## Just Like Human Memory
 
-### 📝 What does it remember?
+### 📝 What Does It Remember?
 
 **Basic information about you**
+
 - Your name, nickname
 - What you like and dislike
 - Your speaking style
-- Which groups you're active in
+- Which groups you are active in
 
 **Your chat history**
-- Important things you've discussed
+
+- Important content you've discussed
 - Questions you've asked
 - Feedback you've given
-- Interesting things you've experienced together
+- Fun things you've experienced together
 
 **Your habits and preferences**
-- Topics you like
+
+- Topics you enjoy
 - When you're usually active
 - Words you like to use
 - What you're sensitive about
 
-### 🎯 How does it remember?
+### 🎯 How Does It Remember?
 
 **Automatic memory**
-When the corresponding switches are enabled, MaiBot can:
-- Extract stable person facts after sending replies
-- Summarize chats by message windows
-- Update profiles for relevant people
-- Store important content in long-term memory
+When the corresponding switches are enabled, MaiBot automatically:
+
+- Extracts stable person facts after sending a reply
+- Organizes chat summaries by message window
+- Updates the "profile" of relevant people
+- Writes important content into long-term memory
 
 **Smart organization**
-It doesn't remember everything — it:
-- Filters valuable information
+It doesn't remember everything indiscriminately; instead it:
+
+- Filters for valuable information
 - Merges similar content
-- Regularly organizes and summarizes
+- Periodically organizes and summarizes
 
 **Continuous updates**
-As your preferences change, it changes too:
+Your preferences change, and so does it:
+
 - Old, inaccurate information gets updated
 - New important information gets added
-- It adjusts its understanding of you based on new situations
+- Its understanding of you adjusts to new situations
 
 ::: tip
-The memory system does not unconditionally remember every message. Memory query, profile injection, person fact writeback, chat summary writeback, and feedback correction are controlled by `[a_memorix.integration]`.
+The memory system does not unconditionally remember every message. Whether querying, profile injection, person-fact write-back, chat-summary write-back, and feedback correction are allowed can all be configured in `[a_memorix.integration]`.
 :::
+
+## What Makes Up the Memory System?
+
+A_Memorix is not a single "notebook" but a set of capabilities working together around long-term conversation experience. The modules below jointly decide what MaiBot can remember, how it organizes memories, and when it uses them.
+
+### Long-term Memory Retrieval
+
+Long-term memory retrieval is responsible for finding previously saved information when needed. MaiBot can look up relevant memories by current topic, person, time range, or episode, and then use the results as a reference when replying.
+
+This type of memory suits relatively stable information, such as preferences, long-term facts, important conversations, and imported materials.
+
+### Person Profiles
+
+Person profiles maintain a summary archive for chat partners, recording relatively stable names, preferences, interaction traits, and recent important information. They are not chat logs themselves, but a "understanding of this person" distilled from multiple memories.
+
+Profiles let MaiBot quickly grasp who the current partner is, what they prefer, and which information needs attention before replying.
+
+### Episode Memory
+
+Episodes organize a stretch of chat or a group of related content into experience fragments. Compared with single facts, they better express "what happened during a period" or "what we discussed together before".
+
+Episode memory is especially helpful when users ask about a past experience, a past conversation, or something that happened around a certain time.
+
+### Knowledge Graph
+
+The knowledge graph represents entities and connections in memory as nodes and relations. Nodes can be people, topics, projects, or concepts; relations describe how they are linked.
+
+Its purpose is not to replace chat summaries, but to help the system understand "who is related to what" and "which information connects to which", and to make it convenient to view and correct relations in the WebUI.
+
+### Source Management
+
+Source management records where memories came from — a chat stream, an import task, or a piece of material. It lets memories be traced, filtered, and batch-processed.
+
+When a batch of material becomes outdated, or a chat source should no longer be kept, source information helps you manage memory more precisely.
+
+### Automatic Write-back
+
+Automatic write-back is responsible for sedimenting important chat information into long-term memory. It currently mainly covers person-fact write-back and chat-summary write-back: the former focuses on stable person information, the latter on the overall content of a conversation.
+
+Whether automatic write-back is enabled, its frequency, and the context scope are all controlled by configuration.
+
+### Import Center
+
+The import center adds existing materials to long-term memory, such as pasted text, uploaded files, or migrated historical data. It lets MaiBot quickly acquire background knowledge rather than relying solely on slowly accumulating chat.
+
+Imported content also flows into retrieval, the knowledge graph, episodes, and source management.
+
+### Feedback Correction
+
+Feedback correction handles cases where "old memories are proven inaccurate by later feedback". When enabled, after MaiBot queries memories, the system can combine subsequent user feedback to decide whether to mark or correct old content.
+
+This is an advanced capability suited to scenarios with large memory volumes where you want to reduce interference from outdated memories.
+
+### Memory Maintenance
+
+Memory maintenance adjusts the importance and retention tendency of memories. Some memories can be reinforced, some relations weakened, particularly important content can be kept longer, and unneeded content can be forgotten.
+
+These capabilities let memory not just "store" but also gradually adjust weights through use.
+
+### Delete and Restore
+
+Delete and restore provide a more cautious cleanup process. Before deletion you can preview the impact scope, and after deletion some content can be recovered via a recycle bin or operation logs.
+
+It suits handling mistakenly imported, outdated, private, or otherwise unwanted memories that should not keep participating in retrieval.
+
+### Retrieval Tuning
+
+Retrieval tuning improves problems like "searching too little, too noisy, or not relevant enough". It adjusts long-term memory search quality around recall count, ranking strategy, thresholds, and retrieval profiles.
+
+Tuning does not change MaiBot's personality; it affects how it finds material from the memory store.
+
+### Runtime Self-check
+
+Runtime self-check verifies whether the memory system currently works properly, especially baseline state such as embedding, vector dimensions, the vector store, and auto-save.
+
+When memory is enabled but nothing is retrieved, or imports fail, or vectorization errors occur, these checks help locate the problem.
 
 ## Building a "Profile" for Everyone 👤
 
-### What is a profile?
+### What Is a Person Profile?
 
-Just like real people "label" others, MaiBot builds a "profile" for each person:
+Just as real people "tag" others, MaiBot builds a "profile" for everyone:
 
 ```
-User: Xiao Ming
-├─ Basic Info
-│  ├─ Nickname: Mingming, Gege
-│  ├─ Active Time: 8-11 PM
-│  └─ Active Groups: Gaming, Classmates
-├─ Personality
-│  ├─ Speaking Style: Humorous, likes jokes
-│  ├─ Interests: Games, anime, tech
-│  └─ Response Pattern: Optimistic
-├─ Chat Preferences
-│  ├─ Likes: Game guides, new tech
-│  └─ Dislikes: Too serious topics
-│  └─ Common Expressions: "haha", "nice", "okay"
-└─ Important Memories
-   ├─ Helped him with a gaming problem last time
-   ├─ He doesn't like being called "bad"
-   └─ He's learning programming recently
+User: XiaoMing
+├─ Basic info
+│  ├─ Nicknames: Mingming, Brother Ming
+│  ├─ Active hours: 8-11 pm
+│  └─ Active groups: gaming group, classmates group
+├─ Personality traits
+│  ├─ Speaking style: humorous, loves jokes
+│  ├─ Interests: gaming, anime, tech
+│  └─ Reaction style: optimistic and positive
+├─ Chat preferences
+│  ├─ Likes: game guides, new tech
+│  ├─ Dislikes: overly serious topics
+│  └─ Common expressions: "haha", "awesome", "okay"
+└─ Important memories
+   ├─ I helped him solve a game problem last time
+   ├─ He doesn't like being called bad at games
+   └─ He's recently learning to code
 ```
 
-### What is the profile used for?
+### What Is the Profile Used For?
 
-**Better replies that understand you**
-- Knows your preferred style, uses that style to reply
-- Understands your knowledge level, explains in ways you can understand
-- Remembers your preferences, gives suggestions that suit you better
+**Replies that understand you better**
+
+- Knows your preferred style and replies in that style
+- Understands your knowledge level and explains in terms you can follow
+- Remembers your preferences and gives suggestions that suit you better
 
 **More natural conversations**
-- Won't repeatedly ask things you've already mentioned
-- Can continue topics you discussed before
-- Communication style becomes more like your friend
 
-**More attentive service**
+- Doesn't repeat things you've already said
+- Picks up topics you've discussed before
+- Speaks more and more like your friend
+
+**More considerate service**
+
 - Knows what help you need
 - Proactively provides information when you need it
-- Communicates in the way you're most comfortable with
+- Communicates in the way most comfortable for you
 
 ## Types of Memory
 
 ### 🧠 Long-term Memory
+
 Like human long-term memory, it remembers:
+
 - Your basic characteristics (relatively stable)
-- Important conversations you've had
+- Your important conversations
 - Your core preferences
 
-These memories are stored for a long time and won't be lost even after restart.
+These memories last a long time and survive restarts. Memory data is stored in the `data/a-memorix` directory by default.
 
 ### 💭 Short-term Memory
-Like human working memory, it remembers:
-- The context of current conversations
-- What you just discussed
-- Temporary important information
 
-These memories help it keep up with the current conversation.
+Like human working memory, it keeps:
+
+- The context of the current conversation
+- What was just discussed
+- Temporarily important information
+
+These memories help it keep up with the rhythm of the current conversation.
 
 ### 📊 Conversation Summary
-Regularly organizes your chat records into summaries:
-- What you discussed during this time
-- Any important events that happened
-- Any changes in your status
+
+Periodically summarizes your chats:
+
+- What was discussed in this period
+- Whether anything important happened
+- How your state changed
 
 ## How Does Memory Work?
 
 ### 1️⃣ Collecting Information
+
 During each chat:
+
 - Listens to what you say
 - Observes your reactions
 - Records important details
 
 ### 2️⃣ Extracting Key Points
-After writeback conditions are met:
+
+When write-back conditions are met:
+
 - Extracts key information
 - Identifies important changes
 - Updates related memories
 
 ### 3️⃣ Organizing and Storing
-Regular organization:
+
+Periodic organization:
+
 - Merges similar information
-- Removes outdated content
+- Deletes outdated content
 - Reinforces important memories
 
 ### 4️⃣ Retrieving and Using
+
 When needed:
+
 - Quickly finds relevant memories
-- Combines with current situation
-- Gives personalized responses
+- Uses them in the current context
+- Gives personalized replies
 
 ## Privacy and Security 🔒
 
-### Your data is safe
+### Your Data Is Safe
+
 - Memory data is stored in the local data directory by default
-- WebUI can view and manage long-term memory
+- The WebUI can view and manage long-term memory
 - Summaries, profiles, correction, and vectorization may call the model services you configured
 
-### You have control
-- Can view what it remembers
-- Can delete content you don't want remembered
-- Can adjust retention behavior with memory evolution, reinforcement, freezing, and protection
+### You Have Control
+
+- You can view what it has remembered
+- You can delete content you don't want it to keep
+- You can adjust retention policies through memory evolution, reinforcement, freezing, and protection
 
 ### Transparency
-- You can view long-term memory, person profiles, and sources in WebUI
-- You can disable memory query, profile injection, or automatic writeback
-- You can view and manage anytime
 
-## Effects of Memory
+- You can view long-term memories, person profiles, and sources through the WebUI
+- You can disable memory querying, profile injection, or automatic write-back
+- You can view and manage everything at any time
 
-### 🌟 Understanding you better over time
-At the start: "Hello, I'm MaiBot"
-After chatting: "Hey, got time to come online today? How's the game going?"
+## The Effects of Memory
 
-### 🎯 Getting more attentive
-At the start: Gives generic suggestions
-After chatting: "Based on what you mentioned last time, I think this is better for you"
+### 🌟 Understanding You Better Over Time
 
-### 🤝 Becoming more natural
-At the start: Like a customer service robot
-After chatting: Like a real friend
+Early on: "Hi, I'm MaiBot"
+After a while: "Hey, free to chat today? How's the gaming going?"
 
-## Want to View and Manage Memories?
+### 🎯 Getting More Attentive
 
-Through WebUI you can:
-- View what it remembers about you
+Early on: gives generic advice
+After a while: "Based on what you said last time, I think this suits you better"
+
+### 🤝 Becoming More Natural
+
+Early on: like a customer-service bot
+After a while: like a real friend
+
+## Want to View or Manage Memories?
+
+Through the WebUI you can:
+
+- See what it has remembered about you
 - Correct inaccurate person profiles or graph relations
 - Delete content you don't want to keep
-- Import data, manage recycle bins, and tune retrieval quality
+- Import materials, handle the recycle bin, and tune retrieval
 
-[Go to WebUI Memory Management page →](../webui/memory-management.md)
+[Go to the WebUI memory management page →](../webui/memory-management.md)
 
 ---
 
-MaiBot's memory system lets it build a more stable understanding across long-term conversations. You can always control what it can read and write through configuration and WebUI.
+MaiBot's memory system lets it do more than "remember" you — it gradually forms a more stable understanding through long-term conversation. It will understand you better and better, becoming more like a true friend. But remember: you can always manage which memories it can read and write through configuration and the WebUI.

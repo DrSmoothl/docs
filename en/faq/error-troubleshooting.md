@@ -1353,7 +1353,7 @@ Before asking for help, take 2 minutes to do the following checks — most probl
 : Think back to what configuration you recently changed, what plugins you installed, or what versions you updated. Try reverting to the last working state to confirm if something was changed incorrectly.
 
 **`🌐 4. Search Known Issues`**
-: Use error keywords to search [GitHub Issues](https://github.com/LightStudents/MaiBot-Docs/issues) or search engines to see if others have encountered the same problem.
+: Use error keywords to search [GitHub Issues](https://github.com/Mai-with-u/docs/issues) or search engines to see if others have encountered the same problem.
 
 ### 📋 Information Checklist for Submitting an Issue
 
@@ -1380,13 +1380,13 @@ When submitting an Issue on GitHub, please be sure to include the following info
 : Join the MaiBot user community to exchange experiences with other users. Group number: `[Please fill in group number]`
 
 **`🐱 GitHub Issues`**
-: If you've confirmed it's a bug or feature suggestion, please submit at [GitHub Issues](https://github.com/LightStudents/MaiBot-Docs/issues). Remember to search first to avoid duplicates
+: If you've confirmed it's a bug or feature suggestion, please submit at [GitHub Issues](https://github.com/Mai-with-u/docs/issues). Remember to search first to avoid duplicates
 
 **`📖 Official Documentation Site`**
-: For the latest and most comprehensive documentation, visit [MaiBot Documentation Site](https://maibot-docs.vercel.app/)
+: For the latest and most comprehensive documentation, visit [MaiBot Documentation Site](https://docs.mai-mai.org/)
 
 **`💬 GitHub Discussions`**
-: For feature discussions and technical questions, visit [GitHub Discussions](https://github.com/LightStudents/MaiBot-Docs/discussions) to join the community conversation
+: For feature discussions and technical questions, visit [GitHub Discussions](https://github.com/Mai-with-u/docs/discussions) to join the community conversation
 
 ### 📝 How to Get Logs
 

@@ -96,13 +96,17 @@ MaiBot 支持三种 MCP 传输方式：
 - 适合本地安装的工具（文件操作、浏览器自动化等）
 - 推荐使用 `uvx`（来自 [uv](https://docs.astral.sh/uv/)）运行，自动管理依赖
 
-```toml
+::: code-group
+
+```toml [stdio ~vscode-icons:file-type-toml~]
 [[mcp.servers]]
 name = "playwright"
 transport = "stdio"
 command = "uvx"
 args = ["@playwright/mcp"]
 ```
+
+:::
 
 ::: tip 使用 uvx
 `uvx` 是 Python 工具运行器，无需手动安装 MCP 服务器包，会自动从 PyPI 拉取并运行。确保你的环境中已安装 [uv](https://docs.astral.sh/uv/)。
@@ -116,7 +120,9 @@ args = ["@playwright/mcp"]
 - 支持 Bearer Token 认证和自定义请求头
 - 支持配置超时时间
 
-```toml
+::: code-group
+
+```toml [streamable_http ~vscode-icons:file-type-toml~]
 [[mcp.servers]]
 name = "remote-api"
 transport = "streamable_http"
@@ -127,6 +133,8 @@ mode = "bearer"
 bearer_token = "sk-your-token"
 ```
 
+:::
+
 ### sse（Server-Sent Events）
 
 通过 SSE 连接远程 MCP 服务器。适合需要长连接推送的远程服务。
@@ -135,7 +143,9 @@ bearer_token = "sk-your-token"
 - 支持 Bearer Token 认证和自定义请求头
 - 支持配置超时时间
 
-```toml
+::: code-group
+
+```toml [sse ~vscode-icons:file-type-toml~]
 [[mcp.servers]]
 name = "remote-sse"
 transport = "sse"
@@ -145,6 +155,8 @@ url = "https://mcp.example.com/sse"
 mode = "bearer"
 bearer_token = "sk-your-token"
 ```
+
+:::
 
 MaiBot 内部使用 `mcp` Python SDK 的 `stdio_client`、`streamable_http_client` 和 `sse_client` 实现三种传输。
 
@@ -191,9 +203,13 @@ MCP 工具通过 `MCPToolProvider` 集成到 Maisaka。该类实现了标准的 
 
 MCPToolProvider 在 MaiBot 启动时注册到工具注册表：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 tool_registry.register_provider(MCPToolProvider(manager))
 ```
+
+:::
 
 此后，Maisaka 规划器就能看到并使用这些 MCP 工具，与内置工具完全一致。
 
@@ -237,7 +253,9 @@ MCPManager 对工具名称有两层保护：
 
 允许你向 MCP 服务器暴露本地文件系统的部分路径，让服务器知道它可以读写哪些目录。
 
-```toml
+::: code-group
+
+```toml [Roots ~vscode-icons:file-type-toml~]
 [mcp.client.roots]
 enable = true
 
@@ -246,6 +264,8 @@ enabled = true
 uri = "file:///home/mai/data"
 name = "麦麦的数据目录"
 ```
+
+:::
 
 典型场景：连接文件系统 MCP 服务器（如 `@modelcontextprotocol/server-filesystem`）时，开启 Roots 后服务器就能知道你的数据目录在哪里，直接操作该目录下的文件。
 
@@ -262,12 +282,16 @@ MCP 服务端发起 Sampling 请求
       → 将响应转换回 MCP CreateMessageResult
 ```
 
-```toml
+::: code-group
+
+```toml [Sampling ~vscode-icons:file-type-toml~]
 [mcp.client.sampling]
 enable = true
 task_name = "planner"     # 执行 Sampling 时使用的模型任务名
 tool_support = true       # 允许 Sampling 中继续使用工具
 ```
+
+:::
 
 ::: warning ⚠️ Sampling 会消耗 Tokens
 启用 Sampling 意味着 MCP 服务端可以触发 MaiBot 的模型调用，会产生额外的 API 费用。确保 `task_name` 指向一个已配置好的模型任务。
@@ -277,12 +301,16 @@ tool_support = true       # 允许 Sampling 中继续使用工具
 
 允许 MCP 服务端请求用户填写表单或在浏览器中打开 URL。目前 UI 层尚未完全实现，但能力声明已在协议层预留。
 
-```toml
+::: code-group
+
+```toml [Elicitation ~vscode-icons:file-type-toml~]
 [mcp.client.elicitation]
 enable = true
 allow_form = true   # 允许表单模式
 allow_url = false   # 允许 URL 模式
 ```
+
+:::
 
 ## 工具结果的内容类型
 
@@ -308,9 +336,13 @@ MCP 功能依赖 `mcp` Python 包，这是一个**可选依赖**——如果你�
 
 安装方式：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install mcp
 ```
+
+:::
 
 ::: tip 无 MCP 也能运行
 即使没有任何 MCP 配置或未安装 `mcp` 包，MaiBot 也会正常运行——MCP 是完全可选的增强功能。
@@ -322,7 +354,9 @@ pip install mcp
 
 ### Playwright 浏览器自动化
 
-```toml
+::: code-group
+
+```toml [Playwright ~vscode-icons:file-type-toml~]
 [mcp]
 enable = true
 
@@ -333,11 +367,15 @@ command = "uvx"
 args = ["@playwright/mcp"]
 ```
 
+:::
+
 连接后，Maisaka 可以使用 Playwright 提供的浏览器自动化工具（导航网页、截图、点击元素等）。
 
 ### 文件系统服务器（配合 Roots）
 
-```toml
+::: code-group
+
+```toml [Filesystem ~vscode-icons:file-type-toml~]
 [mcp]
 enable = true
 
@@ -356,11 +394,15 @@ command = "npx"
 args = ["-y", "@modelcontextprotocol/server-filesystem", "/home/mai/data"]
 ```
 
+:::
+
 通过 Roots 能力，文件系统服务器知道 MaiBot 允许访问的目录范围。
 
 ### GitHub 服务器（带 Token）
 
-```toml
+::: code-group
+
+```toml [GitHub ~vscode-icons:file-type-toml~]
 [mcp]
 enable = true
 
@@ -372,11 +414,15 @@ args = ["-y", "@modelcontextprotocol/server-github"]
 env = { GITHUB_TOKEN = "ghp_your_token_here" }
 ```
 
+:::
+
 GitHub MCP 服务器需要通过环境变量传入 Personal Access Token。
 
 ### 远程 HTTP 服务器（Bearer 认证）
 
-```toml
+::: code-group
+
+```toml [Remote HTTP ~vscode-icons:file-type-toml~]
 [mcp]
 enable = true
 
@@ -389,6 +435,8 @@ url = "https://api.example.com/mcp"
 mode = "bearer"
 bearer_token = "sk-your-api-token"
 ```
+
+:::
 
 ## 故障排除
 
@@ -419,9 +467,13 @@ MaiBot 启动时会打印每个 MCP 服务器的连接状态。如果连接成�
 
 在连接 MaiBot 之前，可以使用 `mcp` SDK 自带的工具独立验证服务器是否正常工作：
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 mcp inspect uvx @playwright/mcp
 ```
+
+:::
 
 这可以帮助你排除 MaiBot 之外的问题。
 

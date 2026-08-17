@@ -64,4 +64,4 @@ pnpm docs:preview
 
 ## 文档编写特性
 
-本站除了 VitePress 原生功能，还配置了一些额外的 Markdown 插件和自定义组件。准备写文档的话，建议先看看 [文档编写特性](/develop/markdown-features.html) 页，了解 Mermaid 图表、更新时间线、代码组图标、Linkcard 组件等特性的用法和约束。
+本站除了 VitePress 原生功能，还配置了一些额外的 Markdown 插件和自定义组件。准备写文档的话，建议先看看 [文档编写特性](/develop/markdown-features) 页，了解 Mermaid 图表、更新时间线、代码组图标、Linkcard 组件等特性的用法和约束。

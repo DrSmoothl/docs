@@ -26,6 +26,13 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
     {
+      text: '插件市场',
+      collapsed: false,
+      items: [
+        { text: '提交插件', link: '/plugin/submission' },
+      ]
+    },
+    {
       text: '组件开发',
       collapsed: false,
       items: [
@@ -87,6 +94,13 @@ export const sidebar: DefaultTheme.Sidebar = {
     },
   ],
   '/manual/': [
+    {
+      text: '入门',
+      collapsed: false,
+      items: [
+        { text: '用户手册', link: '/manual/' },
+      ]
+    },
     {
       text: '部署与安装',
       collapsed: false,

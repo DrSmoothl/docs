@@ -8,16 +8,19 @@ Adapters are responsible for connecting messaging platforms such as QQ, Telegram
 
 ## Choose an Adapter
 
-| Adapter | Supported Platforms | Status | Description |
-| --- | --- | --- | --- |
-| [NapCat](./napcat.md) | QQ | Recommended | The QQ adapter officially maintained by MaiBot, supporting both the plugin version and the standalone version. The plugin version is the currently recommended solution. |
-| [GoCQ](./gocq.md) | QQ | Available, outdated | QQ adaptation solution based on go-cqhttp / AstralGocq, suitable for existing GoCQ environments or specific needs. |
-| [SnowLuma](./snowluma.md) | QQ | Available (In testing) | Next-generation QQ adaptation solution |
-| [Telegram](./telegram.md) | Telegram | Community adaptation | Telegram platform adaptation solution |
-| [Discord](./discord.md) | Discord | Community adaptation | Discord platform adaptation solution |
-| [Desktop Pet Adapter](https://github.com/MaiM-with-u/MaiM-desktop-pet) | Desktop Pet | Community adaptation | Integrates MaiBot into desktop pet interaction scenarios. |
-| [WeChat - wxauto Adapter](https://github.com/Angela459/WeMai) | WeChat | Community adaptation | WeChat platform adaptation solution based on wxauto. |
-| More adapters | - | Community adaptation | Follow the [MaiBot GitHub Organization](https://github.com/Mai-with-u) or community groups for information on more third-party adapters. |
+**QQ platform** — Recommended for first deployment
+- [NapCat](./napcat.md) (Recommended) — The QQ adapter officially maintained by MaiBot, supporting both the plugin version and the standalone version. The plugin version is the currently recommended solution.
+- [GoCQ](./gocq.md) (Available, outdated) — QQ adaptation solution based on go-cqhttp / AstralGocq, suitable for existing GoCQ environments or specific needs.
+- [SnowLuma](./snowluma.md) (Available, in testing) — Next-generation QQ adaptation solution.
+
+**Other platforms** — Community adaptations
+- [Telegram](./telegram.md) — Telegram platform adaptation solution
+- [Discord](./discord.md) — Discord platform adaptation solution
+
+**More community adapters**
+- [Desktop Pet Adapter](https://github.com/MaiM-with-u/MaiM-desktop-pet) — Integrates MaiBot into desktop pet interaction scenarios
+- [WeChat - wxauto Adapter](https://github.com/Angela459/WeMai) — WeChat platform adaptation solution based on wxauto
+- More third-party adapters — follow the [MaiBot GitHub Organization](https://github.com/Mai-with-u) or community groups for information
 
 When deploying for the QQ platform for the first time, it is recommended to use the **NapCat plugin version**. It runs directly as a MaiBot plugin, requires less configuration, and eliminates the need to maintain the network connection between the adapter and MaiBot separately.
 
@@ -58,10 +61,8 @@ Standalone version adapters need to connect to both the messaging platform and M
 
 Adapters typically require configuring two types of connections:
 
-| Connection Direction | Description |
-| --- | --- |
-| Messaging Platform → Adapter | For example, NapCat connects to QQ and pushes QQ messages to the adapter. |
-| Adapter → MaiBot | Standalone version adapters need to connect to MaiBot; plugin version adapters usually do not require additional configuration for this layer. |
+**Messaging Platform → Adapter** — For example, NapCat connects to QQ and pushes QQ messages to the adapter
+**Adapter → MaiBot** — Standalone version adapters need to connect to MaiBot; plugin version adapters usually do not require additional configuration for this layer
 
 When using a plugin version adapter, primarily confirm that the adapter can correctly connect to the messaging platform.
 

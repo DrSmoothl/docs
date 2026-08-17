@@ -202,16 +202,15 @@ def create_plugin():
 
 The SDK provides 8 component decorators, all imported from the top level of `maibot_sdk`:
 
-| Decorator | Purpose | Description |
-|--------|------|------|
-| `@Tool` | LLM tool/function calling | Tools callable by the LLM, the most commonly used component type |
-| `@Command` | Slash commands | Commands triggered by users via regex matching |
-| `@HookHandler` | Named Hook handlers | Subscribes to specific Hook points, supports blocking/observe modes |
-| `@EventHandler` | Message/Workflow events | Listens to lifecycle events such as messages and LLM generation |
-| `@API` | Inter-plugin API | Exposes APIs callable by other plugins |
-| `@MessageGateway` | Platform adapter | Integrates external platforms (QQ, Discord, etc.) into MaiBot |
-| `@LLMProvider` | LLM Provider | Declares new LLM model access points (client_type) to extend model services |
-| `@Action` | Legacy plugin compatibility | Internally auto-converted to `@Tool`; new plugins should directly use `@Tool` |
+**`@Tool`** — LLM tool/function calling. Tools callable by the LLM, the most commonly used component type
+**`@Command`** — Slash commands. Commands triggered by users via regex matching
+**`@HookHandler`** — Named Hook handlers. Subscribes to specific Hook points, supports blocking/observe modes
+**`@EventHandler`** — Message/Workflow events. Listens to lifecycle events such as messages and LLM generation
+**`@API`** — Inter-plugin API. Exposes APIs callable by other plugins
+**`@MessageGateway`** — Platform adapter. Integrates external platforms (QQ, Discord, etc.) into MaiBot
+**`@HomeCard`** — WebUI home page card. Shows plugin status, entry points, or custom content on the home page
+**`@LLMProvider`** — LLM Provider. Declares new LLM model access points (client_type) to extend model services
+**`@Action`** — Legacy plugin compatibility. Internally auto-converted to `@Tool`; new plugins should directly use `@Tool`
 
 ### Capability Proxies
 
@@ -319,6 +318,7 @@ Both use the same communication protocol and component registration mechanism. T
 
 ## Next Steps
 
+- [Submitting a Plugin](./submission.md): Submit your finished plugin to the official plugin center
 - [Manifest System](./manifest.md): Learn the complete field definitions and validation rules for `_manifest.json`
 - [Lifecycle](./lifecycle.md): Learn the lifecycle methods for plugin loading, unloading, and configuration hot-reloading
 - [Hook System](./hooks.md): Learn how to use `@HookHandler` to intercept and modify messages

@@ -64,6 +64,6 @@ For the detailed documentation workflow, see the [documentation repository READM
 
 ## Markdown Features
 
-In addition to VitePress's native features, this site is configured with extra Markdown plugins and custom components. Contributors should first read the [Markdown Features](/en/develop/markdown-features.html) page to learn about Mermaid charts, timestamps, code group icons, the Linkcard component, and related conventions.
+In addition to VitePress's native features, this site is configured with extra Markdown plugins and custom components. Contributors should first read the [Markdown Features](/en/develop/markdown-features) page to learn about Mermaid charts, timestamps, code group icons, the Linkcard component, and related conventions.
 
 For the list of documentation contributors, see [Acknowledgements & Links](./acknowledgements).
