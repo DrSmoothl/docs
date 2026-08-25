@@ -40,10 +40,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # No `version` here on purpose: pnpm/action-setup reads the exact
+      # version from package.json's `packageManager` field (pnpm@10.30.3),
+      # which avoids ERR_PNPM_BAD_PM_VERSION conflicts.
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
