@@ -12,7 +12,7 @@ This website is the official documentation for MaiBot, built with [VitePress](ht
 
 The documentation is organized by module, with `zh/` and `en/` directories mirrored:
 
-- **User Manual** (`manual/`) — Deployment and installation (source/Docker/one-click), adapter configuration (NapCat/GoCQ/Telegram/Discord), Bot and model configuration, feature guides, WebUI management
+- **User Manual** (`manual/`) — Deployment and installation (source/Docker/one-click), adapter configuration (NapCat/SnowLuma/QQ Official/Email, etc.), Bot and model configuration, feature guides, WebUI management
 - **Development** (`develop/`) — Tech stack and project structure, architecture design (message pipeline / Maisaka reasoning engine / memory system / plugin runtime, etc.), contributing guide, markdown features
 - **Plugin Development** (`plugin/`) — Plugin Manifest, lifecycle, Tool/Command/Hook/Event component development, API reference
 - **FAQ** (`faq/`) — Deployment, configuration, models, plugins, data migration FAQs; troubleshooting guide

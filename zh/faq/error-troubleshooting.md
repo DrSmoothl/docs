@@ -888,7 +888,7 @@ docker logs maibot | grep -i adapter
 :::
 
 **步骤三：验证账号凭证**
-- **QQ 平台** — 确认 QQ 号能正常登录 NapCat/GoCQ
+- **QQ 平台** — 确认 QQ 号能正常登录 NapCat
 - **微信平台** — 确认 Token 未过期且权限正确
 - **其他平台** — 参考对应适配器的文档
 

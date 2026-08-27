@@ -49,7 +49,7 @@ curl -X GET http://127.0.0.1:8001/api/webui/config/bot \
 
 ### Adapter Config
 
-Provides external management of `.toml` files for adapters like NapCat / GoCQ:
+Provides external management of `.toml` files for adapters like NapCat / SnowLuma:
 
 - **`GET /api/webui/config/adapter-config/path`** — Read the adapter config file path saved in `data/webui.json`
 - **`POST /api/webui/config/adapter-config/path`** — Set/update the path preference (whitelist validation)

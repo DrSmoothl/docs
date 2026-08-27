@@ -14,7 +14,7 @@ MaiBot 采用 Python 3.12+ / FastAPI / SQLModel / structlog / Pydantic + TOML �
 
 - **数据库** — SQLite + SQLModel 22 张表：连接与会话、PRAGMA 调优、数据归档与排查。（运维）
 - **配置系统** — 两份 TOML（bot_config + model_config）的版本链、热重载机制、升级钩子与旧版迁移。（运维 / 高级使用者）
-- **消息服务器与适配器对接** — WebSocket 消息服务器如何让外部适配器（NapCat、GoCQ、Discord、Telegram 等）接入 MaiBot：认证、消息流向与部署要点。（运维）
+- **消息服务器与适配器对接** — WebSocket 消息服务器如何让外部适配器（NapCat、SnowLuma、QQ 官方、邮件等）接入 MaiBot：认证、消息流向与部署要点。（运维）
 - **LLM 模型集成** — APIProvider / ModelInfo / ModelTaskConfig 三概念驱动的 LLM 接入链路，配置即连。（高级使用者）
 - **MCP 集成与外部工具接入** — MCP 客户端集成：三种 transport 选型、工具注册、命名冲突处理与调试。（高级使用者）
 - **WebUI HTTP API 入口** — 子目录 6 篇：FastAPI 后端 HTTP / WebSocket API 总览，含认证、路由组与场景跳转。（运维 / 高级使用者）

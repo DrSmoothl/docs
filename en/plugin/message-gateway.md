@@ -4,7 +4,7 @@ title: Message Gateway
 
 # Message Gateway
 
-The `@MessageGateway` decorator is used to declare a message gateway component, implementing bidirectional message routing between MaiBot and external message platforms (such as QQ, Discord, etc.). The message gateway is the core component of a platform adapter, responsible for outbound message sending and inbound message injection.
+The `@MessageGateway` decorator is used to declare a message gateway component, implementing bidirectional message routing between MaiBot and external message platforms (such as QQ, Email, etc.). The message gateway is the core component of a platform adapter, responsible for outbound message sending and inbound message injection.
 
 ## Decorator Signature
 
@@ -18,7 +18,7 @@ from maibot_sdk import MessageGateway
     *,
     name: str = "",              # 组件名，留空时使用方法名
     description: str = "",       # 组件描述
-    platform: str = "",          # 平台名称（如 qq、discord）
+    platform: str = "",          # 平台名称（如 qq、email）
     protocol: str = "",          # 协议或接入方言名称
     account_id: str = "",        # 账号 ID / self_id
     scope: str = "",             # 路由作用域
@@ -299,8 +299,8 @@ stateDiagram-v2
 
 ## Platform Field Descriptions
 
-- **`platform`** `str` — Target platform name (e.g., `"qq"`, `"discord"`, `"webhook"`)
-- **`protocol`** `str` — Protocol or implementation name (e.g., `"napcat"`, `"go-cqhttp"`, `"discord.py"`)
+- **`platform`** `str` — Target platform name (e.g., `"qq"`, `"email"`, `"webhook"`)
+- **`protocol`** `str` — Protocol or implementation name (e.g., `"napcat"`, `"snowluma"`, `"email"`)
 - **`account_id`** `str` — Bot account ID (e.g., `"10001"`, `"bot#1234"`)
 - **`scope`** `str` — Routing scope (e.g., `"primary"`, `"default"`)
 

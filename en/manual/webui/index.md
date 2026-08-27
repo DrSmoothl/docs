@@ -75,5 +75,5 @@ If you can still sign in, regenerate or update the Token in System Settings. If 
 
 - [Configuration Management](./config-management.md) - Change configurations in the browser
 - [Memory Management](./memory-management.md) - View and manage memories
-- [Plugin Management](./plugin-management.md) - Install and manage plugins
+- [Plugin Management](/en/manual/plugins/) - Install and manage plugins
 - [Chat Logs](./chat-stats.md) - View chat statistics

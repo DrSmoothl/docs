@@ -14,7 +14,7 @@ MaiBot uses Python 3.12+ / FastAPI / SQLModel / structlog / Pydantic + TOML hot 
 
 - **Database** — SQLite + SQLModel 22 tables: connections and sessions, PRAGMA tuning, data archiving and troubleshooting. (Operations)
 - **Configuration System** — version chains, hot reload mechanisms, upgrade hooks, and legacy migration for the two TOML files (bot_config + model_config). (Operations / Advanced Users)
-- **Message Server and Adapter Integration** — how the WebSocket message server lets external adapters (NapCat, GoCQ, Discord, Telegram, etc.) connect to MaiBot: authentication, message flow, and deployment notes. (Operations)
+- **Message Server and Adapter Integration** — how the WebSocket message server lets external adapters (NapCat, SnowLuma, QQ Official, Email, etc.) connect to MaiBot: authentication, message flow, and deployment notes. (Operations)
 - **LLM Model Integration** — the LLM integration pipeline driven by the three concepts of APIProvider / ModelInfo / ModelTaskConfig; configure to connect. (Advanced Users)
 - **MCP Integration and External Tool Access** — MCP client integration: three transport options, tool registration, naming conflict handling, and debugging. (Advanced Users)
 - **WebUI HTTP API Entry** — 6 sub-articles: FastAPI backend HTTP / WebSocket API overview, covering authentication, route groups, and scene navigation. (Operations / Advanced Users)

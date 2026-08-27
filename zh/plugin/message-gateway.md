@@ -4,7 +4,7 @@ title: 消息网关
 
 # 消息网关
 
-`@MessageGateway` 装饰器用于声明消息网关组件，实现 MaiBot 与外部消息平台（如 QQ、Discord 等）的双向消息路由。消息网关是平台适配器的核心组件，负责出站消息发送和入站消息注入。
+`@MessageGateway` 装饰器用于声明消息网关组件，实现 MaiBot 与外部消息平台（如 QQ、邮件等）的双向消息路由。消息网关是平台适配器的核心组件，负责出站消息发送和入站消息注入。
 
 ## 装饰器签名
 
@@ -18,7 +18,7 @@ from maibot_sdk import MessageGateway
     *,
     name: str = "",              # 组件名，留空时使用方法名
     description: str = "",       # 组件描述
-    platform: str = "",          # 平台名称（如 qq、discord）
+    platform: str = "",          # 平台名称（如 qq、email）
     protocol: str = "",          # 协议或接入方言名称
     account_id: str = "",        # 账号 ID / self_id
     scope: str = "",             # 路由作用域
@@ -299,8 +299,8 @@ stateDiagram-v2
 
 ## 平台字段说明
 
-- **`platform`** `str` — 目标平台名称（如 `"qq"`、`"discord"`、`"webhook"`）
-- **`protocol`** `str` — 协议或实现名称（如 `"napcat"`、`"go-cqhttp"`、`"discord.py"`）
+- **`platform`** `str` — 目标平台名称（如 `"qq"`、`"email"`、`"webhook"`）
+- **`protocol`** `str` — 协议或实现名称（如 `"napcat"`、`"snowluma"`、`"email"`）
 - **`account_id`** `str` — 机器人账号 ID（如 `"10001"`、`"bot#1234"`）
 - **`scope`** `str` — 路由作用域（如 `"primary"`、`"default"`）
 

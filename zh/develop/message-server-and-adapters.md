@@ -10,9 +10,9 @@ MaiBot 通过 `maim_message` 库对外暴露 WebSocket 服务，供外部适配�
 
 ## MaiBot 与适配器的关系
 
-MaiBot 本身**不内置任何平台适配器**。NapCat、GoCQ、Discord、Telegram、SnowLuma 等都不是 `src/` 下的库内代码。它们作为独立的外部程序，通过 WebSocket 连接到 MaiBot 的消息服务器，完成三件事：
+MaiBot 本身**不内置任何平台适配器**。NapCat、SnowLuma、QQ 官方、邮件等都不是 `src/` 下的库内代码。它们作为独立的外部程序，通过 WebSocket 连接到 MaiBot 的消息服务器，完成三件事：
 
-- **入站**：将平台（QQ、Discord 等）收到的消息转成 `maim_message` 格式发给 MaiBot
+- **入站**：将平台（QQ、邮件等）收到的消息转成 `maim_message` 格式发给 MaiBot
 - **出站**：接收 MaiBot 发出的 `maim_message` 格式消息，转成平台原生消息发送出去
 - **echo**：在成功发送消息后，将平台返回的真实消息 ID 回传给 MaiBot
 
@@ -96,7 +96,7 @@ auth_token = ["your-secret-token-here"]
 ```toml [TOML ~vscode-icons:file-type-toml~]
 [maim_message]
 enable_api_server = true
-api_server_allowed_api_keys = ["key-for-napcat", "key-for-discord"]
+api_server_allowed_api_keys = ["key-for-napcat", "key-for-email"]
 ```
 
 :::
@@ -114,7 +114,7 @@ api_server_allowed_api_keys = ["key-for-napcat", "key-for-discord"]
 ```python [Python ~vscode-icons:file-type-python~]
 @dataclass(frozen=True, slots=True)
 class RouteKey:
-    platform: str               # 平台名，如 qq、discord
+    platform: str               # 平台名，如 qq、email
     account_id: Optional[str]   # 账号 ID，区分同平台多账号
     scope: Optional[str]        # 额外路由作用域（租户、通道等）
 ```
@@ -284,7 +284,7 @@ class MinimalAdapter:
     async def on_bot_message(self, msg: dict) -> None:
         """收到 MaiBot 的出站消息，转成平台消息发送。"""
         print(f"[Adapter] 收到出站消息: msg_id={msg.get('message_id')}")
-        # 这里对接具体平台（QQ / Discord / Telegram）的发送 API
+        # 这里对接具体平台（QQ / email / iMessage）的发送 API
         # platform_msg_id = await send_to_platform(msg)
         # await self.echo_message(msg["message_id"], platform_msg_id)
 

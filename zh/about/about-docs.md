@@ -12,7 +12,7 @@ title: 关于本文档
 
 文档按功能模块组织，zh/ 和 en/ 目录镜像同步：
 
-- **用户手册** (`manual/`) — 部署安装（源码/Docker/一键包）、平台适配器配置（NapCat/GoCQ/Telegram/Discord）、Bot 与模型配置详解、功能使用说明、WebUI 管理操作
+- **用户手册** (`manual/`) — 部署安装（源码/Docker/一键包）、平台适配器配置（NapCat/SnowLuma/QQ 官方/邮件等）、Bot 与模型配置详解、功能使用说明、WebUI 管理操作
 - **开发文档** (`develop/`) — 技术栈与项目结构、架构设计（消息管线 / Maisaka 推理引擎 / 记忆系统 / 插件运行时等）、贡献指南、文档编写特性
 - **插件开发** (`plugin/`) — 插件 Manifest、生命周期、Tool/Command/Hook/Event 组件开发、API 参考
 - **常见问题** (`faq/`) — 部署、配置、模型、插件、数据迁移等 FAQ；错误排查指南

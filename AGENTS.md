@@ -1,18 +1,22 @@
 ## 动手前必读
 
-动文档前按下列 5 条自检，任何一条不符都不算完。
+**风格宣言（先读）**：读者带着问题来，我们直接给答案——先结论、后步骤、再排错；像朋友手把手教，不像说明书念参数。完整规则见 [`zh/develop/style-guide.md`](zh/develop/style-guide.md)（风格指南，含页面类型骨架与语气规则；拿不准时可联网检索 Diátaxis / Stripe Docs / Google 风格指南对齐）。
 
-1. **先读** [`zh/develop/markdown-features.md`](zh/develop/markdown-features.md) —— VitePress Markdown 写法（图标、代码组、禁止包裹、可选组件）权威文件
+动文档前按下列 6 条自检，任何一条不符都不算完。
+
+1. **先读** [`zh/develop/markdown-features.md`](zh/develop/markdown-features.md) —— VitePress Markdown 写法（图标、代码组、禁止包裹、可选组件）权威文件；再读 [`zh/develop/style-guide.md`](zh/develop/style-guide.md) —— 表达层风格（结论先行、步骤可照做、排错收尾）权威文件
 2. **修改 `zh/` 内容页 → 同 PR 内必须同步 `en/` 镜像**（术语/代码/文件名同步，散文可重写）
 3. **新增文档页面**：写文件后必须改 `.vitepress/sidebar/zh.ts` 与 `.vitepress/sidebar/en.ts`，必要时再改 `.vitepress/config.mts` 顶部导航，否则前端不出现
 4. **图片放 `public/images/...`，正文里以 `/images/...` 引用**；角色头像/标题图分别放 `public/avatars/`、`public/title_img/`
 5. **内容页禁止 Markdown 表格** —— 表格渲染差且移动端列宽不可控，改用定义列表（`**field** — 说明`）。仅 `index.md` 首页允许表格
+6. **外链尽量用 Linkcard** —— 独立成行/成块引用的外部链接（如适配器仓库、插件站、官方文档、社区链接）一律用 `<Linkcard>` 链接卡片，不写裸 `[text](url)`；仅句中内联引用可用普通 markdown 链接
 
 **禁止速查**
 
 - ❌ 内容页用 `| A | B |` 表格 → ✅ `**A** — B` 定义列表
 - ❌ 裸 ``` ```toml ``` fence → ✅ 包在 `::: code-group` 内，标签带 `~vscode-icons:file-type-toml~` 内联图标
 - ❌ 标签依赖关键词自动匹配图标 → ✅ 显式 `~vscode-icons:<id>~`
+- ❌ 独立外链用 `[text](https://...)` → ✅ 用 `<Linkcard>` 链接卡片
 
 ---
 
@@ -33,7 +37,7 @@
 - **`index.md`** — VitePress 首页 / Hero
 - **`manual/`** — **用户手册**：面向最终读者，讲部署、配置、适配器、功能详解、WebUI、快速入门
   - `deployment/` 部署与安装概览、一键脚本、源码、Docker、installation-agent
-  - `adapters/` 平台适配器（NapCat、GoCQ、Discord、Telegram、Snowluma 等）
+  - `adapters/` 平台适配器（NapCat、SnowLuma、QQ 官方、邮件、iMessage 等）
   - `configuration/` Bot 配置、模型配置、Amemorix 配置、MCP 配置、模型附加参数
   - `features/` 用户视角功能详解（消息管线、Maisaka 推理、记忆、学习、表情、MCP）
   - `webui/` WebUI 使用（配置/记忆/插件/统计）

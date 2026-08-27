@@ -207,7 +207,7 @@ The SDK provides 8 component decorators, all imported from the top level of `mai
 **`@HookHandler`** — Named Hook handlers. Subscribes to specific Hook points, supports blocking/observe modes
 **`@EventHandler`** — Message/Workflow events. Listens to lifecycle events such as messages and LLM generation
 **`@API`** — Inter-plugin API. Exposes APIs callable by other plugins
-**`@MessageGateway`** — Platform adapter. Integrates external platforms (QQ, Discord, etc.) into MaiBot
+**`@MessageGateway`** — Platform adapter. Integrates external platforms (QQ, Email, etc.) into MaiBot
 **`@HomeCard`** — WebUI home page card. Shows plugin status, entry points, or custom content on the home page
 **`@LLMProvider`** — LLM Provider. Declares new LLM model access points (client_type) to extend model services
 **`@Action`** — Legacy plugin compatibility. Internally auto-converted to `@Tool`; new plugins should directly use `@Tool`

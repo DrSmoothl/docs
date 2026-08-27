@@ -49,7 +49,7 @@ curl -X GET http://127.0.0.1:8001/api/webui/config/bot \
 
 ### 适配器配置
 
-提供 NapCat / GoCQ 等适配器 `.toml` 文件的外部管理能力：
+提供 NapCat / SnowLuma 等适配器 `.toml` 文件的外部管理能力：
 
 - **`GET /api/webui/config/adapter-config/path`** — 读取 `data/webui.json` 中保存的适配器配置文件路径
 - **`POST /api/webui/config/adapter-config/path`** — 设置/更新路径偏好（白名单校验）

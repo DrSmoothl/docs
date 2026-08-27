@@ -28,7 +28,7 @@ MaiBot 本身是开源软件，不收取软件使用费。实际运行通常需�
 
 ## MaiBot 支持哪些平台？
 
-平台支持由已安装的适配器决定。当前文档包含 NapCat、SnowLuma、GoCQ、Telegram 和 Discord 等适配器，实际可用能力以对应适配器版本为准。
+平台支持由已安装的适配器决定。当前文档包含 NapCat、SnowLuma、QQ 官方、QQBot、邮件、QQ 语音通话和 iMessage 等适配器，实际可用能力以对应适配器版本为准。
 
 ## 第一次使用需要注意什么？
 

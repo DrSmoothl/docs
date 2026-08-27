@@ -115,11 +115,39 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '适配器概览', link: '/manual/adapters/' },
-        { text: 'NapCat QQ 连接', link: '/manual/adapters/napcat' },
-        { text: 'GoCQ 适配器', link: '/manual/adapters/gocq' },
-        { text: 'SnowLuma 适配器', link: '/manual/adapters/snowluma' },
-        { text: 'Telegram 适配器', link: '/manual/adapters/telegram' },
-        { text: 'Discord 适配器', link: '/manual/adapters/discord' },
+        {
+          text: 'QQ（本地客户端登录）',
+          collapsed: false,
+          items: [
+            { text: 'NapCat — 官方推荐，登录自己的 QQ 号', link: '/manual/adapters/napcat' },
+            { text: 'SnowLuma — 官方维护，登录自己的 QQ 号', link: '/manual/adapters/snowluma' },
+          ]
+        },
+        {
+          text: 'QQ（开放平台机器人）',
+          collapsed: false,
+          items: [
+            { text: 'QQ 官方 — 社区维护，AppID 接入，支持子频道', link: '/manual/adapters/qq-official' },
+            { text: 'QQBot — 社区维护，AppID 接入，私聊与群聊', link: '/manual/adapters/qqbot' },
+          ]
+        },
+        {
+          text: '其他平台',
+          collapsed: false,
+          items: [
+            { text: '邮件 — 邮箱收发消息', link: '/manual/adapters/email' },
+            { text: 'QQ 语音通话 — 实时语音对话', link: '/manual/adapters/qq-voice-call' },
+            { text: 'iMessage — 接入 Apple 消息', link: '/manual/adapters/imessage' },
+          ]
+        },
+      ]
+    },
+    {
+      text: '插件',
+      collapsed: false,
+      items: [
+        { text: '插件概览', link: '/manual/plugins/' },
+        { text: '管理插件', link: '/manual/plugins/management' },
       ]
     },
     {
@@ -157,7 +185,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: '适配器管理', link: '/manual/webui/adapter-management' },
         { text: '命令管理', link: '/manual/webui/command-management' },
         { text: '记忆管理', link: '/manual/webui/memory-management' },
-        { text: '插件管理', link: '/manual/webui/plugin-management' },
         { text: '聊天与统计', link: '/manual/webui/chat-stats' },
       ]
     },
@@ -185,6 +212,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: '开发指南', link: '/develop/' },
+        { text: '文档风格指南', link: '/develop/style-guide' },
         { text: '文档编写特性', link: '/develop/markdown-features' },
       ]
     },

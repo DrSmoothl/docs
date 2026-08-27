@@ -4,7 +4,7 @@ title: Adapter Management
 
 # Adapter Management
 
-Adapters connect messaging platforms such as QQ, Telegram, and Discord to MaiBot. The WebUI **Adapter Management** page (under the "Bot Configuration" group in the sidebar) lets you view and manage all connected adapters and their account identities in one place.
+Adapters connect messaging platforms such as QQ, email, and iMessage to MaiBot. The WebUI **Adapter Management** page (under the "Bot Configuration" group in the sidebar) lets you view and manage all connected adapters and their account identities in one place.
 
 ## View Discovered Accounts
 
@@ -39,7 +39,7 @@ The **group / private chat access policy** (who an adapter is allowed to serve) 
 - View the current default action for group and private chats (allow / block)
 - Configure whitelist / blacklist (`allow_ids` / `deny_ids`) per adapter
 
-The underlying configuration file is `config/adapter_policy.toml`. See [Adapter Overview · Group / Private Chat Access Policy](../adapters/index.md#adapter-access-policy).
+The underlying configuration file is `config/adapter_policy.toml`. See [Adapter Overview](../adapters/index.md).
 
 ## Related Docs
 

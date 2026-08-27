@@ -75,5 +75,5 @@ allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 
 - [配置管理](./config-management.md) - 在浏览器里改配置
 - [记忆管理](./memory-management.md) - 查看和管理记忆
-- [插件管理](./plugin-management.md) - 安装和管理插件
+- [插件管理](/manual/plugins/) - 安装和管理插件
 - [聊天记录](./chat-stats.md) - 查看聊天统计

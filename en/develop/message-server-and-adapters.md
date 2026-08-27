@@ -10,9 +10,9 @@ MaiBot exposes a WebSocket server through the `maim_message` library for externa
 
 ## Relationship Between MaiBot and Adapters
 
-MaiBot itself **does not embed any platform adapters**. NapCat, GoCQ, Discord, Telegram, SnowLuma, and others are not library code under `src/`. They run as independent external programs, connecting to MaiBot's message server via WebSocket to accomplish three tasks:
+MaiBot itself **does not embed any platform adapters**. NapCat, SnowLuma, QQ Official, Email, and others are not library code under `src/`. They run as independent external programs, connecting to MaiBot's message server via WebSocket to accomplish three tasks:
 
-- **Inbound**: Convert messages received from platforms (QQ, Discord, etc.) into `maim_message` format and send them to MaiBot
+- **Inbound**: Convert messages received from platforms (QQ, Email, etc.) into `maim_message` format and send them to MaiBot
 - **Outbound**: Receive `maim_message`-format messages from MaiBot and convert them into platform-native messages for sending
 - **Echo**: After successfully sending a message, relay the platform's real message ID back to MaiBot
 
@@ -96,7 +96,7 @@ This service has its own authentication logic, controlled by the `api_server_all
 ```toml [TOML ~vscode-icons:file-type-toml~]
 [maim_message]
 enable_api_server = true
-api_server_allowed_api_keys = ["key-for-napcat", "key-for-discord"]
+api_server_allowed_api_keys = ["key-for-napcat", "key-for-email"]
 ```
 
 :::
@@ -114,7 +114,7 @@ api_server_allowed_api_keys = ["key-for-napcat", "key-for-discord"]
 ```python [Python ~vscode-icons:file-type-python~]
 @dataclass(frozen=True, slots=True)
 class RouteKey:
-    platform: str               # Platform name, e.g. qq, discord
+    platform: str               # Platform name, e.g. qq, email
     account_id: Optional[str]   # Account ID, distinguishes multiple accounts on the same platform
     scope: Optional[str]        # Additional routing scope (tenant, channel, etc.)
 ```
@@ -284,7 +284,7 @@ class MinimalAdapter:
     async def on_bot_message(self, msg: dict) -> None:
         """Receives outbound messages from MaiBot, converts to platform messages for sending."""
         print(f"[Adapter] Received outbound message: msg_id={msg.get('message_id')}")
-        # Connect to the specific platform (QQ / Discord / Telegram) send API here
+        # Connect to the specific platform (QQ / Email / iMessage) send API here
         # platform_msg_id = await send_to_platform(msg)
         # await self.echo_message(msg["message_id"], platform_msg_id)
 

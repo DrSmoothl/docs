@@ -888,7 +888,7 @@ docker logs maibot | grep -i adapter
 :::
 
 **Step 3: Verify Account Credentials**
-- **QQ platform** — Confirm the QQ number can log into NapCat/GoCQQ normally
+- **QQ platform** — Confirm the QQ number can log into NapCat normally
 - **WeChat platform** — Confirm the Token hasn't expired and permissions are correct
 - **Other platforms** — Refer to the corresponding adapter's documentation
 

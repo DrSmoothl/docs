@@ -22,7 +22,7 @@ Yes. The adapter's chat filters determine which groups and private chats are acc
 
 ## Which platforms are supported?
 
-Platform support is provided by adapters. This documentation includes NapCat, SnowLuma, GoCQ, Telegram, and Discord adapters. Actual capabilities depend on the installed adapter version.
+Platform support is provided by adapters. This documentation includes NapCat, SnowLuma, QQ Official, QQBot, Email, QQ Voice Call, and iMessage adapters. Actual capabilities depend on the installed adapter version.
 
 ## What should I do before first use?
 

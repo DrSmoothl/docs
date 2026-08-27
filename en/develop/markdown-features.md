@@ -183,6 +183,10 @@ allowfullscreen>
 
 ### Linkcard Link Card
 
+::: tip Usage preference
+**Standalone/block-level external links should always use a `<Linkcard>` card** — e.g. adapter repositories, the plugin site, official docs, and community links. Inline links inside a sentence (e.g. "install following the official docs") may remain plain Markdown links. Cards are block-level, so don't embed one inside a sentence.
+:::
+
 - **`url`** (required) — Link URL
 - **`title`** (required) — Card title
 - **`description`** (required) — Card description

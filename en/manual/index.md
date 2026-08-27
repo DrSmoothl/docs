@@ -4,7 +4,7 @@ title: User Manual
 
 # User Manual
 
-Welcome to the MaiBot User Manual. MaiBot is an LLM-powered chatbot framework — it connects to platforms such as QQ, Telegram, and Discord, and chats, remembers, learns, and uses tools in group conversations like a real person. This manual walks you through installation, configuration, and platform connection from scratch, then helps you master every feature.
+Welcome to the MaiBot User Manual. MaiBot is an LLM-powered chatbot framework — through adapters it connects to platforms such as QQ, email, and iMessage, and chats, remembers, learns, and uses tools in group conversations like a real person. This manual walks you through installation, configuration, and platform connection from scratch, then helps you master every feature.
 
 ::: tip System Requirements
 A computer with internet access (Windows 10+ / Linux / macOS), at least 2GB of free memory, and an LLM API key. The hardware bar is low — an ordinary home computer is enough.
@@ -62,7 +62,7 @@ Once it's running, explore the sections below to shape MaiBot into what you want
 
 <div class="nav-card">
   <h3>🔌 Platform Adapters</h3>
-  <p>Besides QQ, MaiBot can connect to Telegram, Discord, and more. See how each adapter is set up and maintained.</p>
+  <p>Besides QQ, MaiBot can connect to email, iMessage, and more. See how each adapter is set up and maintained.</p>
   <a href="/en/manual/adapters/">Adapters overview →</a>
 </div>
 

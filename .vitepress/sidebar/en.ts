@@ -113,6 +113,46 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
     {
+      text: 'Adapters',
+      collapsed: false,
+      items: [
+        { text: 'Adapters Overview', link: '/en/manual/adapters/' },
+        {
+          text: 'QQ (Local Client Login)',
+          collapsed: false,
+          items: [
+            { text: 'NapCat — officially recommended, logs in your own QQ account', link: '/en/manual/adapters/napcat' },
+            { text: 'SnowLuma — officially maintained, logs in your own QQ account', link: '/en/manual/adapters/snowluma' },
+          ]
+        },
+        {
+          text: 'QQ (Open Platform Bot)',
+          collapsed: false,
+          items: [
+            { text: 'QQ Official — community, AppID access, guild channels supported', link: '/en/manual/adapters/qq-official' },
+            { text: 'QQBot — community, AppID access, private & group chats', link: '/en/manual/adapters/qqbot' },
+          ]
+        },
+        {
+          text: 'Other Platforms',
+          collapsed: false,
+          items: [
+            { text: 'Email — send/receive messages via mailbox', link: '/en/manual/adapters/email' },
+            { text: 'QQ Voice Call — real-time voice conversations', link: '/en/manual/adapters/qq-voice-call' },
+            { text: 'iMessage — connect to Apple messaging', link: '/en/manual/adapters/imessage' },
+          ]
+        },
+      ]
+    },
+    {
+      text: 'Plugins',
+      collapsed: false,
+      items: [
+        { text: 'Plugins Overview', link: '/en/manual/plugins/' },
+        { text: 'Manage Plugins', link: '/en/manual/plugins/management' },
+      ]
+    },
+    {
       text: 'Configuration',
       collapsed: false,
       items: [
@@ -147,20 +187,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Adapter Management', link: '/en/manual/webui/adapter-management' },
         { text: 'Command Management', link: '/en/manual/webui/command-management' },
         { text: 'Memory Management', link: '/en/manual/webui/memory-management' },
-        { text: 'Plugin Management', link: '/en/manual/webui/plugin-management' },
         { text: 'Chat & Stats', link: '/en/manual/webui/chat-stats' },
-      ]
-    },
-    {
-      text: 'Adapters',
-      collapsed: false,
-      items: [
-        { text: 'Adapters Overview', link: '/en/manual/adapters/' },
-        { text: 'NapCat QQ Connection', link: '/en/manual/adapters/napcat' },
-        { text: 'GoCQ Adapter', link: '/en/manual/adapters/gocq' },
-        { text: 'SnowLuma Adapter', link: '/en/manual/adapters/snowluma' },
-        { text: 'Telegram Adapter', link: '/en/manual/adapters/telegram' },
-        { text: 'Discord Adapter', link: '/en/manual/adapters/discord' },
       ]
     },
   ],
@@ -170,6 +197,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'Development Guide', link: '/en/develop/' },
+        { text: 'Documentation Style Guide', link: '/en/develop/style-guide' },
         { text: 'Markdown Features', link: '/en/develop/markdown-features' },
       ]
     },
