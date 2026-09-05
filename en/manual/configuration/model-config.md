@@ -66,6 +66,7 @@ cache_price_in = 0.0                         # [Optional] Cache hit input price,
 price_out = 2.0                              # [Optional] Output price, unit: CNY/M token
 # temperature = 0.7                          # [Optional] Model-level temperature, overrides temperature in task config
 # max_tokens = 4096                          # [Optional] Model-level max token count, overrides max_tokens in task config
+# send_temperature = true                    # [Optional] Whether to send the MaiBot-managed temperature, true by default; set to false to stop sending model/task temperatures
 force_stream_mode = false                    # [Optional] Force stream output mode, set to true if the model does not support non-streaming output
 visual = false                               # [Optional] Whether it is a multimodal model (supports visual input)
 extra_params = {}                            # [Optional] Extra parameters, see Model Extra Params
@@ -78,6 +79,7 @@ extra_params = {}                            # [Optional] Extra parameters, see 
 - **Required**: `model_identifier` (API identifier), `name` (custom name), `api_provider` (associated provider)
 - **Pricing**: `price_in` / `price_out` used for statistics, unit is CNY/million tokens. Enable `cache` to separately set `cache_price_in`
 - **Model-level Override**: `temperature` / `max_tokens` can override task config; if not set, task defaults are used
+- **Temperature Send Switch**: `send_temperature` defaults to `true`; set it to `false` (or turn off "Send temperature parameter" in the WebUI model advanced settings) to stop MaiBot from sending any MaiBot-managed temperature for this model (model-level, task-level, and extra parameters), compatible with models that reject this parameter
 - **Vision**: `visual = true` indicates support for image input, used for `vlm` tasks
 - **`extra_params`**: Provider-specific parameters (thinking mode, reasoning intensity, etc.), see [Model Extra Params](./model-extra-params.md)
 

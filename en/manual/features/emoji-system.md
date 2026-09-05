@@ -60,6 +60,7 @@ MaiBot: (This sticker is so funny, saved!)
 - Uses AI to recognize sticker content
 - Analyzes the expressed emotion
 - Automatically generates tags
+- The analysis prompt can be edited per language and saved as custom versions in the WebUI "Prompt Management" page, with hot reload
 
 ### 2️⃣ Categorization & Organization
 **Categorize by Emotion**

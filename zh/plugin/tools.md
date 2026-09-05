@@ -158,6 +158,22 @@ Tool 处理函数的返回值会作为工具执行结果返回给 LLM。返回�
 
 LLM 会根据返回值决定下一步操作（如向用户回复、调用其他工具等）。
 
+返回 `dict` 时还可携带布尔字段 **`stop_after_execution`** —— 置为 `true` 表示请求在当前工具批次全部执行完成后结束本轮 Planner，等待新消息再继续：
+
+- 仅当工具**执行成功**时生效；同一批次内任意一个成功结果携带 `true` 即生效
+- 该字段必须为布尔值，返回其他类型会导致这次工具调用按失败处理
+- 缺省（不返回该字段）时视为 `false`，行为不变
+
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
+async def handle_shutdown(self, stream_id: str, **kwargs):
+    await self.ctx.send.text("本轮操作已完成。", stream_id)
+    return {"success": True, "stop_after_execution": True}
+```
+
+:::
+
 ### 返回图片和其他媒体
 
 如果 Tool 需要把图片交给 Maisaka 继续观察或推理，不要把图片 base64 直接塞进 `content`。推荐返回 `dict`，将给 LLM 阅读的文字放在 `content`，将图片本体放在 `content_items`：
