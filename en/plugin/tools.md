@@ -157,6 +157,22 @@ The return value of a Tool handler is returned to the LLM as the tool execution 
 
 The LLM decides the next step based on the return value (e.g., replying to the user, calling other tools, etc.).
 
+When returning a `dict`, you may also include the boolean field **`stop_after_execution`** — set it to `true` to request ending the current Planner run after the whole tool batch finishes, and wait for new messages before continuing:
+
+- Takes effect only when the tool **succeeds**; if any successful result in the same batch carries `true`, it applies
+- The field must be a boolean; any other type makes this tool call be treated as a failure
+- When omitted, it defaults to `false` and behavior is unchanged
+
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
+async def handle_shutdown(self, stream_id: str, **kwargs):
+    await self.ctx.send.text("本轮操作已完成。", stream_id)
+    return {"success": True, "stop_after_execution": True}
+```
+
+:::
+
 ### Returning Images and Other Media
 If a Tool needs to pass an image to Maisaka for further observation or reasoning, do not embed base64 images directly into `content`. It is recommended to return `dict`, placing the text for the LLM to read in `content` and the image itself in `content_items`:
 

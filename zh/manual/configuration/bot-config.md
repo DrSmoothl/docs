@@ -393,7 +393,7 @@ expression_groups = []
 
 **`expression_self_reflect`** — 表达学习 AI 审核。**类型**：`bool`。**默认值**：`true`。写入前进行 AI 审核。
 
-**`expression_selection_mode`** — 表达选择策略。**类型**：`str`（枚举）。**默认值**：`"legacy"`。可选 `"legacy"`、`"vector"`、`"vector_intent"`。
+**`expression_selection_mode`** — 表达选择策略。**类型**：`str`（枚举）。**默认值**：`"legacy"`。可选 `"legacy"`（随手）、`"vector_intent"`（超级精细，需要配置嵌入模型）。旧配置中的 `"vector"` 模式已移除，升级后首次启动会自动迁移为 `"vector_intent"` 并写回配置文件。
 
 **`expression_vector_index_path`** — 表达向量索引路径。相对路径按项目根目录解析。
 

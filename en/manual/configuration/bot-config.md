@@ -393,7 +393,7 @@ expression_groups = []
 
 **`expression_self_reflect`** — Expression learning AI review. **Type**: `bool`. **Default**: `true`. AI review before writing.
 
-**`expression_selection_mode`** — Expression selection strategy. **Type**: `str` (enum). **Default**: `"legacy"`. Options: `"legacy"`, `"vector"`, `"vector_intent"`.
+**`expression_selection_mode`** — Expression selection strategy. **Type**: `str` (enum). **Default**: `"legacy"`. Options: `"legacy"` (casual), `"vector_intent"` (super fine, requires an embedding model). The old `"vector"` mode has been removed; after upgrading, the first launch auto-migrates it to `"vector_intent"` and writes the config back.
 
 **`expression_vector_index_path`** — Expression vector index path. Relative paths resolve against the project root.
 
