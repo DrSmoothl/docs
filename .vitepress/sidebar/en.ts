@@ -23,12 +23,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Manifest', link: '/en/plugin/manifest' },
         { text: 'Lifecycle', link: '/en/plugin/lifecycle' },
         { text: 'Configuration', link: '/en/plugin/config' },
-      ]
-    },
-    {
-      text: 'Plugin Store',
-      collapsed: false,
-      items: [
         { text: 'Submit a Plugin', link: '/en/plugin/submission' },
       ]
     },
@@ -44,12 +38,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Message Gateway', link: '/en/plugin/message-gateway' },
         { text: 'LLMProvider', link: '/en/plugin/llmprovider' },
         { text: 'Action (Legacy)', link: '/en/plugin/actions' },
-      ]
-    },
-    {
-      text: 'Reference',
-      collapsed: false,
-      items: [
         { text: 'API Reference', link: '/en/plugin/api-reference' },
       ]
     },
@@ -59,14 +47,8 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'Changelog',
       collapsed: false,
       items: [
-        { text: 'Version Overview', link: '/en/changelog/' },
-      ]
-    },
-    {
-      text: 'Feature Updates',
-      collapsed: false,
-      items: [
-        { text: '1.0.0 Feature Page', link: '/en/changelog/v1-0-0' },
+        { text: 'Overview', link: '/en/changelog/' },
+        { text: 'v1.0.0 Highlights', link: '/en/changelog/v1-0-0' },
       ]
     },
   ],
@@ -75,22 +57,16 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'FAQ',
       collapsed: false,
       items: [
-        { text: 'FAQ Overview', link: '/en/faq/' },
+        { text: 'Overview', link: '/en/faq/' },
         { text: 'Basic Usage', link: '/en/faq/basic-usage' },
-        { text: 'Deployment and Startup', link: '/en/faq/deployment' },
+        { text: 'Deployment & Startup', link: '/en/faq/deployment' },
         { text: 'One-click Package', link: '/en/faq/one-key' },
-        { text: 'Adapter Connections', link: '/en/faq/adapters' },
-        { text: 'Chat and Replies', link: '/en/faq/chat-and-reply' },
-        { text: 'Models and APIs', link: '/en/faq/models-and-api' },
-        { text: 'Memory and Learning', link: '/en/faq/memory-and-learning' },
-        { text: 'Plugin Issues', link: '/en/faq/plugins' },
-        { text: 'Backup and Migration', link: '/en/faq/backup-and-migration' },
-      ]
-    },
-    {
-      text: 'Troubleshooting and Support',
-      collapsed: false,
-      items: [
+        { text: 'Adapters', link: '/en/faq/adapters' },
+        { text: 'Chat & Replies', link: '/en/faq/chat-and-reply' },
+        { text: 'Models & APIs', link: '/en/faq/models-and-api' },
+        { text: 'Memory & Learning', link: '/en/faq/memory-and-learning' },
+        { text: 'Plugins', link: '/en/faq/plugins' },
+        { text: 'Backup & Migration', link: '/en/faq/backup-and-migration' },
         { text: 'Error Troubleshooting', link: '/en/faq/error-troubleshooting' },
       ]
     },
@@ -101,12 +77,6 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'User Manual', link: '/en/manual/' },
-      ]
-    },
-    {
-      text: 'Deployment & Installation',
-      collapsed: false,
-      items: [
         { text: 'Windows Deployment', link: '/en/manual/deployment/windows' },
         { text: 'Linux Deployment', link: '/en/manual/deployment/linux' },
         { text: 'Docker Deployment', link: '/en/manual/deployment/docker' },
@@ -116,77 +86,45 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'Adapters',
       collapsed: false,
       items: [
-        { text: 'Adapters Overview', link: '/en/manual/adapters/' },
-        {
-          text: 'QQ (Local Client Login)',
-          collapsed: false,
-          items: [
-            { text: 'NapCat — officially recommended, logs in your own QQ account', link: '/en/manual/adapters/napcat' },
-            { text: 'SnowLuma — officially maintained, logs in your own QQ account', link: '/en/manual/adapters/snowluma' },
-          ]
-        },
-        {
-          text: 'QQ (Open Platform Bot)',
-          collapsed: false,
-          items: [
-            { text: 'QQ Official — community, AppID access, guild channels supported', link: '/en/manual/adapters/qq-official' },
-            { text: 'QQBot — community, AppID access, private & group chats', link: '/en/manual/adapters/qqbot' },
-          ]
-        },
-        {
-          text: 'Other Platforms',
-          collapsed: false,
-          items: [
-            { text: 'Email — send/receive messages via mailbox', link: '/en/manual/adapters/email' },
-            { text: 'QQ Voice Call — real-time voice conversations', link: '/en/manual/adapters/qq-voice-call' },
-            { text: 'iMessage — connect to Apple messaging', link: '/en/manual/adapters/imessage' },
-          ]
-        },
+        { text: 'Overview', link: '/en/manual/adapters/' },
+        { text: 'NapCat', link: '/en/manual/adapters/napcat' },
+        { text: 'SnowLuma', link: '/en/manual/adapters/snowluma' },
+        { text: 'QQ Official', link: '/en/manual/adapters/qq-official' },
+        { text: 'QQBot', link: '/en/manual/adapters/qqbot' },
+        { text: 'Email', link: '/en/manual/adapters/email' },
+        { text: 'QQ Voice Call', link: '/en/manual/adapters/qq-voice-call' },
+        { text: 'iMessage', link: '/en/manual/adapters/imessage' },
       ]
     },
     {
       text: 'Plugins',
       collapsed: false,
       items: [
-        { text: 'Plugins Overview', link: '/en/manual/plugins/' },
-        { text: 'Manage Plugins', link: '/en/manual/plugins/management' },
+        { text: 'Overview', link: '/en/manual/plugins/' },
+        { text: 'Management', link: '/en/manual/plugins/management' },
       ]
     },
     {
       text: 'Configuration',
       collapsed: false,
       items: [
-        { text: 'Configuration Overview', link: '/en/manual/configuration/' },
+        { text: 'Overview', link: '/en/manual/configuration/' },
         { text: 'Bot Config', link: '/en/manual/configuration/bot-config' },
         { text: 'Model Config', link: '/en/manual/configuration/model-config' },
         { text: 'Model Extra Parameters', link: '/en/manual/configuration/model-extra-params' },
-        { text: 'MCP Configuration', link: '/en/manual/configuration/mcp-config' },
+        { text: 'MCP Config', link: '/en/manual/configuration/mcp-config' },
         { text: 'A_Memorix Config', link: '/en/manual/configuration/amemorix-config' },
       ]
     },
     {
-      text: 'Features',
+      text: 'WebUI',
       collapsed: false,
       items: [
-        { text: 'Features Overview', link: '/en/manual/features/' },
-        { text: 'Message Processing', link: '/en/manual/features/message-pipeline' },
-        { text: 'How MaiBot Thinks', link: '/en/manual/features/maisaka-reasoning' },
-        { text: 'MaiBot\'s Memory', link: '/en/manual/features/memory-system' },
-        { text: 'Learning to Speak', link: '/en/manual/features/learning' },
-        { text: 'Emoji System', link: '/en/manual/features/emoji-system' },
-        { text: 'MCP Tools', link: '/en/manual/features/mcp' },
-        { text: 'Management Console', link: '/en/manual/features/management-console' },
-      ]
-    },
-    {
-      text: 'WebUI Management',
-      collapsed: false,
-      items: [
-        { text: 'WebUI Overview', link: '/en/manual/webui/' },
-        { text: 'Config Management', link: '/en/manual/webui/config-management' },
-        { text: 'Adapter Management', link: '/en/manual/webui/adapter-management' },
-        { text: 'Command Management', link: '/en/manual/webui/command-management' },
-        { text: 'Memory Management', link: '/en/manual/webui/memory-management' },
+        { text: 'Overview', link: '/en/manual/webui/' },
+        { text: 'Config', link: '/en/manual/webui/config-management' },
+        { text: 'Adapters', link: '/en/manual/webui/adapter-management' },
+        { text: 'Commands', link: '/en/manual/webui/command-management' },
+        { text: 'Memory', link: '/en/manual/webui/memory-management' },
         { text: 'Chat & Stats', link: '/en/manual/webui/chat-stats' },
       ]
     },
@@ -197,7 +135,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       collapsed: false,
       items: [
         { text: 'Development Guide', link: '/en/develop/' },
-        { text: 'Documentation Style Guide', link: '/en/develop/style-guide' },
+        { text: 'Style Guide', link: '/en/develop/style-guide' },
         { text: 'Markdown Features', link: '/en/develop/markdown-features' },
       ]
     },
@@ -207,25 +145,19 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: 'Database', link: '/en/develop/database' },
         { text: 'Configuration System', link: '/en/develop/configuration' },
-        { text: 'Message Server & Adapter Integration', link: '/en/develop/message-server-and-adapters' },
-        { text: 'LLM Model Integration', link: '/en/develop/llm-providers' },
-        { text: 'MCP Integration & External Tools', link: '/en/develop/mcp-integration' },
-        {
-          text: 'WebUI HTTP API',
-          collapsed: false,
-          items: [
-            { text: 'WebUI HTTP API Overview', link: '/en/develop/webui-api/' },
-            { text: 'Authentication & Setup', link: '/en/develop/webui-api/auth-and-setup' },
-            { text: 'System Control', link: '/en/develop/webui-api/system-control' },
-            { text: 'Data & Memory API', link: '/en/develop/webui-api/data-and-memory-api' },
-            { text: 'Plugin Lifecycle API', link: '/en/develop/webui-api/plugin-lifecycle-api' },
-            { text: 'Real-time Subscriptions & Stats', link: '/en/develop/webui-api/realtime-and-stats' },
-          ]
-        },
+        { text: 'Message Server & Adapters', link: '/en/develop/message-server-and-adapters' },
+        { text: 'LLM Integration', link: '/en/develop/llm-providers' },
+        { text: 'MCP Integration', link: '/en/develop/mcp-integration' },
+        { text: 'WebUI HTTP API', link: '/en/develop/webui-api/' },
+        { text: 'Auth & Setup', link: '/en/develop/webui-api/auth-and-setup' },
+        { text: 'System Control', link: '/en/develop/webui-api/system-control' },
+        { text: 'Data & Memory', link: '/en/develop/webui-api/data-and-memory-api' },
+        { text: 'Plugin Lifecycle', link: '/en/develop/webui-api/plugin-lifecycle-api' },
+        { text: 'Realtime & Stats', link: '/en/develop/webui-api/realtime-and-stats' },
         { text: 'Logging & Observability', link: '/en/develop/observability' },
-        { text: 'Statistics & Data Export', link: '/en/develop/statistics-io' },
+        { text: 'Statistics & Import/Export', link: '/en/develop/statistics-io' },
         { text: 'Event Pipeline & Hooks', link: '/en/develop/event-pipeline-hooks' },
-        { text: 'Plugin Runtime Internals', link: '/en/develop/plugin-runtime-internals' },
+        { text: 'Plugin Runtime Architecture', link: '/en/develop/plugin-runtime-internals' },
       ]
     },
   ],
