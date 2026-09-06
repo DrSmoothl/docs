@@ -8,7 +8,7 @@ MCP (Model Context Protocol) enables MaiBot to connect with external tools, tran
 This document details how to configure MCP in `bot_config.toml`.
 
 ::: tip 💡 Understand the Concepts First
-If you are not yet familiar with what MCP is, we recommend reading [MCP Feature Overview](../features/mcp.md) first to understand its capabilities.
+If you are not yet familiar with what MCP is, see the [MCP integration developer guide](/en/develop/mcp-integration) for its overall design.
 :::
 
 ## Configuration Structure Overview
@@ -463,5 +463,5 @@ It depends on the service you are connecting to. For GitHub MCP, go to GitHub Se
 
 ## Next Steps
 
-- To learn about MCP concepts and capabilities → [MCP Features Overview](../features/mcp.md)
+- To learn about MCP's overall design → [MCP integration developer guide](/en/develop/mcp-integration)
 - To view all configuration options → [Bot Configuration Overview](./bot-config.md)

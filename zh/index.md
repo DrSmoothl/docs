@@ -13,9 +13,6 @@ hero:
       text: 快速开始
       link: /manual/
     - theme: alt
-      text: 功能介绍
-      link: /features/
-    - theme: alt
       text: 开发文档
       link: /develop/
 
@@ -51,7 +48,6 @@ features:
   <div class="spotlight-body">
     <h2>如真人般的对话风格</h2>
     <p>麦麦不再像 GPT 那样堆砌长篇大论，她会看场合、读气氛、把握节奏——该开口就开口，该沉默就沉默，让群聊里的每一句都恰到好处。</p>
-    <a class="spotlight-link" href="/features/">了解更多 →</a>
   </div>
 </section>
 
@@ -62,7 +58,6 @@ features:
   <div class="spotlight-body">
     <h2>长期记忆 × 人格画像</h2>
     <p>A-Memorix 记忆引擎把你们每一次交流都写回她的记忆，再结合心理学人格模型，让她越相处越了解你——你说过的话、你的喜好、你的说话风格，她都记得清清楚楚。</p>
-    <a class="spotlight-link" href="/manual/features/memory-system">了解更多 →</a>
   </div>
 </section>
 
@@ -73,7 +68,6 @@ features:
   <div class="spotlight-body">
     <h2>持续学习 × 进化</h2>
     <p>麦麦会模仿群里其他人的说话方式，也会自己揣摩新词和黑话的含义，一直在悄悄进化，没准哪天就用上你昨夜随口蹦出的句式。</p>
-    <a class="spotlight-link" href="/manual/features/learning">了解更多 →</a>
   </div>
 </section>
 

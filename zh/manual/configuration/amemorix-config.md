@@ -9,7 +9,7 @@ A_Memorix 是 MaiBot 的长期记忆系统，负责记忆的存储、向量化�
 本文详细介绍如何在 `bot_config.toml` 中配置 `[a_memorix]` 段落。
 
 ::: tip 先了解概念
-如果你还不熟悉记忆系统是什么，建议先阅读 [记忆系统功能介绍](../features/memory-system.md)，了解它能做什么。
+记忆系统由 `[a_memorix]` 段落控制，各配置项的含义见下文；相关行为也可在 [WebUI 记忆管理](/manual/webui/memory-management) 中调整。
 :::
 
 ## 配置结构总览
@@ -511,5 +511,5 @@ debug = false
 
 ## 下一步
 
-- 了解记忆系统的概念和架构 -> [记忆系统功能介绍](../features/memory-system.md)
+- 在 WebUI 中管理记忆 -> [WebUI 记忆管理](/manual/webui/memory-management)
 - 查看所有配置项总览 -> [Bot 配置总览](./bot-config.md)

@@ -370,7 +370,6 @@ args = ["-y", "@modelcontextprotocol/server-filesystem", "/container/shared"]
 ## Related documentation
 
 - [MCP Configuration user guide](/en/manual/configuration/mcp-config): Basic field definitions and WebUI configuration
-- [MCP Tool feature docs](/en/manual/features/mcp): User-facing MCP tool behavior in conversations
 - Tool system architecture: ToolProvider unified tool source management
 - [MaiBot Configuration System](/en/develop/configuration): `bot_config.toml` overall structure and hot-reload
 - [MCP Specification](https://modelcontextprotocol.io): Official protocol documentation

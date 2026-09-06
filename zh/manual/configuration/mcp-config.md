@@ -9,7 +9,7 @@ MCP（Model Context Protocol）让 MaiBot 能够连接外部工具，从"只会�
 本文详细介绍如何在 `bot_config.toml` 中配置 MCP。
 
 ::: tip 💡 先了解概念
-如果你还不熟悉 MCP 是什么，建议先阅读 [MCP 功能概述](../features/mcp.md)，了解它能做什么。
+如果你还不熟悉 MCP 是什么，建议先阅读 [MCP 集成开发文档](/develop/mcp-integration)，了解它的整体设计。
 :::
 
 ## 配置结构总览
@@ -464,5 +464,5 @@ url = "https://mcp.example.com/weather"
 
 ## 下一步
 
-- 想了解 MCP 的概念和能做什么 → [MCP 功能概述](../features/mcp.md)
+- 想了解 MCP 的整体设计 → [MCP 集成开发文档](/develop/mcp-integration)
 - 查看所有配置项 → [Bot 配置总览](./bot-config.md)

@@ -383,5 +383,4 @@ Legacy Server 本身不内置 WSS，如有需要可在前面架 Nginx / Caddy �
 
 - [插件消息网关](../plugin/message-gateway.md)：插件内适配器开发（`@MessageGateway` 装饰器）
 - [插件 Hook 处理器](../plugin/hooks.md)：通过 Hook 拦截和改写消息流
-- [消息管线](../manual/features/message-pipeline.md)：入站消息在 MaiBot 内部的处理全流程
 - [开发指南](./index.md)：技术栈、项目结构和平行 IO 层设计

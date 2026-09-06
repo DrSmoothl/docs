@@ -367,7 +367,6 @@ args = ["-y", "@modelcontextprotocol/server-filesystem", "/container/shared"]
 ## 相关文档
 
 - [MCP 配置用户文档](/manual/configuration/mcp-config)：字段基础含义和 WebUI 配置
-- [MCP 工具功能文档](/manual/features/mcp)：用户视角 MCP 工具在对话中的表现
 - 工具系统架构：ToolProvider 统一管理工具来源
 - [MaiBot 配置系统](/develop/configuration)：`bot_config.toml` 整体结构与热重载
 - [MCP 规范](https://modelcontextprotocol.io)：官方协议文档

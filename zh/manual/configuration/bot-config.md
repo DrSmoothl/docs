@@ -672,7 +672,7 @@ enable_llm_cache_stats = false
 
 :::
 
-**`enable_console_input`** — 启用交互式本地管理终端。**类型**：`bool`。**默认值**：`false`。开启后可以在运行 MaiBot 的终端中发送本地消息，并使用 `/clear`、`/offline`、`/online` 和 `/pm` 等管理指令。详见[管理终端](../features/management-console.md)。
+**`enable_console_input`** — 启用交互式本地管理终端。**类型**：`bool`。**默认值**：`false`。开启后可以在运行 MaiBot 的终端中发送本地消息，并使用 `/clear`、`/offline`、`/online` 和 `/pm` 等管理指令。指令行为可在 [WebUI 命令管理](/manual/webui/command-management) 中查看。
 
 **`show_maisaka_thinking`** — 显示回复器推理。**类型**：`bool`。**默认值**：`true`。
 

@@ -672,7 +672,7 @@ enable_llm_cache_stats = false
 
 :::
 
-**`enable_console_input`** — Enable the interactive local management console. **Type**: `bool`. **Default**: `false`. When on, you can send local messages in the terminal running MaiBot and use admin commands like `/clear`, `/offline`, `/online`, and `/pm`. See [Management Console](../features/management-console.md).
+**`enable_console_input`** — Enable the interactive local management console. **Type**: `bool`. **Default**: `false`. When on, you can send local messages in the terminal running MaiBot and use admin commands like `/clear`, `/offline`, `/online`, and `/pm`. Command behavior is viewable in [WebUI Command Management](/en/manual/webui/command-management).
 
 **`show_maisaka_thinking`** — Show replyer reasoning. **Type**: `bool`. **Default**: `true`.
 

@@ -55,12 +55,6 @@ title: 用户手册
 </div>
 
 <div class="nav-card">
-  <h3>🧠 功能详解</h3>
-  <p>麦麦怎么决定回不回复、怎么记忆、怎么学说话、怎么用表情包和工具，这里讲透每一个机制。</p>
-  <a href="/manual/features/">功能概览 →</a>
-</div>
-
-<div class="nav-card">
   <h3>🔌 平台适配器</h3>
   <p>除了 QQ，麦麦还可以接入邮件、iMessage 等平台。查看不同适配器的接入方式和维护状态。</p>
   <a href="/manual/adapters/">适配器概览 →</a>

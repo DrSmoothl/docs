@@ -9,7 +9,7 @@ A_Memorix is MaiBot's long-term memory system, responsible for memory storage, v
 This document details how to configure the `[a_memorix]` section in `bot_config.toml`.
 
 ::: tip Understand the concept first
-If you are not yet familiar with the memory system, it is recommended to first read [Memory System Feature Overview](../features/memory-system.md) to understand what it can do.
+The memory system is controlled by the `[a_memorix]` section; each option is explained below. Related behavior can also be adjusted in [WebUI Memory Management](/en/manual/webui/memory-management).
 :::
 
 ## Configuration Structure Overview
@@ -511,5 +511,5 @@ Memory evolution is gradual. `half_life_hours` controls the decay speed, `freeze
 
 ## Next Steps
 
-- Learn about memory system concepts and architecture -> [Memory System Feature Overview](../features/memory-system.md)
+- Manage memory in the WebUI -> [WebUI Memory Management](/en/manual/webui/memory-management)
 - View an overview of all configuration options -> [Bot Configuration Overview](./bot-config.md)

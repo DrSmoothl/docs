@@ -55,12 +55,6 @@ Once it's running, explore the sections below to shape MaiBot into what you want
 </div>
 
 <div class="nav-card">
-  <h3>🧠 Features</h3>
-  <p>How MaiBot decides whether to reply, how it remembers, learns to speak, and uses emojis and tools — every mechanism explained.</p>
-  <a href="/en/manual/features/">Features overview →</a>
-</div>
-
-<div class="nav-card">
   <h3>🔌 Platform Adapters</h3>
   <p>Besides QQ, MaiBot can connect to email, iMessage, and more. See how each adapter is set up and maintained.</p>
   <a href="/en/manual/adapters/">Adapters overview →</a>

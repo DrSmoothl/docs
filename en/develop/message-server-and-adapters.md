@@ -383,5 +383,4 @@ Legacy Server does not have built-in WSS support. If needed, place Nginx / Caddy
 
 - [Plugin Message Gateway](../plugin/message-gateway.md): In-plugin adapter development (`@MessageGateway` decorator)
 - [Plugin Hook Handlers](../plugin/hooks.md): Intercepting and modifying message flow via Hooks
-- [Message Pipeline](../manual/features/message-pipeline.md): Full inbound message processing flow inside MaiBot
 - [Development Guide](./index.md): Tech stack, project structure, and parallel IO layer design

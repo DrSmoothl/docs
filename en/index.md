@@ -13,9 +13,6 @@ hero:
       text: Get Started
       link: /en/manual/
     - theme: alt
-      text: Features
-      link: /en/features/
-    - theme: alt
       text: Developer Docs
       link: /en/develop/
 
@@ -51,7 +48,6 @@ features:
   <div class="spotlight-body">
     <h2>Conversational, like a real person</h2>
     <p>MaiBot doesn't dump GPT-style paragraphs. It reads the room, feels the mood, and picks its moment — speaking up when it should and staying quiet when it shouldn't, so every line in the group chat lands just right.</p>
-    <a class="spotlight-link" href="/en/features/">Learn more →</a>
   </div>
 </section>
 
@@ -62,7 +58,6 @@ features:
   <div class="spotlight-body">
     <h2>Long-term Memory × Personality Profile</h2>
     <p>The A-Memorix engine writes every exchange back into its memory, then layers in a psychological personality model — so the more time you spend together, the better it knows you. Your words, your tastes, your way of speaking: it remembers them all.</p>
-    <a class="spotlight-link" href="/en/manual/features/memory-system">Learn more →</a>
   </div>
 </section>
 
@@ -73,7 +68,6 @@ features:
   <div class="spotlight-body">
     <h2>Continuous Learning × Evolution</h2>
     <p>MaiBot mimics how others in the group talk, and quietly figures out new slang and in-jokes on its own. It's always evolving — and might just drop the phrase you tossed out last night into tomorrow's reply.</p>
-    <a class="spotlight-link" href="/en/manual/features/learning">Learn more →</a>
   </div>
 </section>
 
