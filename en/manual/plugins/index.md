@@ -1,8 +1,8 @@
 ---
-title: Plugins
+title: Install Plugins
 ---
 
-# Plugins
+# Install Plugins
 
 Plugins are like "Apps" you install for MaiBot, giving it more capabilities—games, drawing, music, weather queries, and **adapters that connect platforms like QQ, email, and voice calls**—almost everything is a plugin.
 

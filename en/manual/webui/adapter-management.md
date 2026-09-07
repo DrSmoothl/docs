@@ -39,9 +39,9 @@ The **group / private chat access policy** (who an adapter is allowed to serve) 
 - View the current default action for group and private chats (allow / block)
 - Configure whitelist / blacklist (`allow_ids` / `deny_ids`) per adapter
 
-The underlying configuration file is `config/adapter_policy.toml`. See [Adapter Overview](../adapters/index.md).
+The underlying configuration file is `config/adapter_policy.toml`. See [Connect Platforms](../adapters/index.md).
 
 ## Related Docs
 
-- [Adapter Overview](../adapters/index.md) — choosing, installing and connecting adapters
+- [Connect Platforms](../adapters/index.md) — choosing, installing and connecting adapters
 - [Bot Config](../configuration/bot-config.md) — platform account and other configuration items

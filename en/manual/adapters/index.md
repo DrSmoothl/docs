@@ -1,8 +1,8 @@
 ---
-title: Adapter Overview
+title: Connect Platforms
 ---
 
-# Adapter Overview
+# Connect Platforms
 
 **Adapters connect messaging platforms such as QQ, email, and voice calls to MaiBot.** In MaiBot, **adapters are themselves plugins**—install, enable, and manage them in [Plugin Management](/en/manual/plugins/), then fill in the connection details in the plugin settings.
 

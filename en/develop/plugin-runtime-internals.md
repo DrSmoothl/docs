@@ -1,8 +1,8 @@
 ---
-title: Plugin Runtime Internal Architecture
+title: Runtime Architecture
 ---
 
-# Plugin Runtime Internal Architecture
+# Runtime Architecture
 
 This document is for readers who need to deploy, operate, or troubleshoot plugin issues. It dissects the internal design of MaiBot's plugin runtime. If you intend to write plugins (rather than operate them), start with the [Plugin Development Documentation](/en/plugin/) to understand Manifest, component registration, lifecycle callbacks, and other developer-facing usage. This document only discusses what happens between the Host and Runner, and does not cover decorator signatures like `@Tool` / `@Command` / `@Hook`.
 

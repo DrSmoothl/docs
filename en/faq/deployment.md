@@ -14,7 +14,7 @@ Do not repeatedly reinstall before identifying the cause. Search [Error Troubles
 
 Prefer editing through the WebUI. When editing TOML manually, quote strings, leave numbers unquoted, use lowercase `true` and `false`, and verify section names and array syntax.
 
-See [Configuration Overview](../manual/configuration/index.md) for paths and fields.
+See [Config Files](../manual/configuration/index.md) for paths and fields.
 
 ## What if a port is already in use?
 

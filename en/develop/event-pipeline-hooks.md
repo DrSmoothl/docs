@@ -1,8 +1,8 @@
 ---
-title: Event Pipeline and Hooks
+title: Events & Hooks
 ---
 
-# Event Pipeline and Hooks
+# Events & Hooks
 
 MaiBot has two event systems working together: the **EventBus** (a publish/subscribe model based on `EventType`) and **named Hooks** (a plugin dispatch model based on `HookDispatcher`). This page explains what they are, how they cooperate, and how to diagnose issues from an ops and power-user perspective.
 
@@ -263,6 +263,6 @@ If logs show a hook's blocking latency exceeding **500ms**, strongly recommend i
 ### Related documentation
 
 - Event bus architecture — Internal mechanisms of EventBus in detail
-- [Plugin Runtime Internal Architecture](/en/develop/plugin-runtime-internals) — Plugin runtime Host/Runner architecture
+- [Runtime Architecture](/en/develop/plugin-runtime-internals) — Plugin runtime Host/Runner architecture
 - [Hook Handlers](/en/plugin/hooks) — Hook usage guide from a plugin developer's perspective
 - [Event Handlers](/en/plugin/event-handlers) — EventHandler usage guide from a plugin developer's perspective

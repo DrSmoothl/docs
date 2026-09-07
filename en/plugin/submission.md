@@ -1,8 +1,8 @@
 ---
-title: Submitting a Plugin
+title: Publish a Plugin
 ---
 
-# Submitting a Plugin
+# Publish a Plugin
 
 Once your plugin is written and verified locally, you can submit it to the official MaiBot plugin center so all users can find and install it through the WebUI plugin store.
 

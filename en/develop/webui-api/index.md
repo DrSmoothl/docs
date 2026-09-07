@@ -178,7 +178,7 @@ Additionally, `POST /api/webui/setup/reset` clears the config state and rebuilds
 Jump to the corresponding sub-page based on what you need:
 
 - **[This page] WebUI HTTP API Entry** — API skeleton, auth, route structure, health check, first-time setup
-- **[Auth and First Setup](./auth-and-setup)** — Full Token replacement/regeneration/logout flow, First Run Setup automation scripts
+- **[Auth & Configuration](./auth-and-setup)** — Full Token replacement/regeneration/logout flow, First Run Setup automation scripts
 - **[System Control](./system-control)** — Ops endpoints: restart, shutdown, log viewing, runtime status queries
 - **[Plugin Lifecycle API](./plugin-lifecycle-api)** — HTTP interface for installing, uninstalling, enabling, disabling plugins
 - **[Data and Memory API](./data-and-memory-api)** — Amemorix memory graph CRUD, data import/export, retrieval tuning

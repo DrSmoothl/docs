@@ -178,7 +178,7 @@ MaiBot 初次启动时，TokenManager 会生成一个临时 Token 并打印在�
 你需要做什么，就去对应的子篇：
 
 - **［本页］WebUI HTTP API 入口** — API 骨架、认证、路由结构、健康检查、首次配置
-- **[认证与首次配置](./auth-and-setup)** — 完整的 Token 替换/重生成/登出流程，First Run Setup 的自动化脚本
+- **[认证与配置](./auth-and-setup)** — 完整的 Token 替换/重生成/登出流程，First Run Setup 的自动化脚本
 - **[系统控制](./system-control)** — 重启、关闭、日志查看、运行状态查询等运维端点
 - **[插件生命周期 API](./plugin-lifecycle-api)** — 安装、卸载、启用、禁用插件的 HTTP 接口
 - **[数据与记忆 API](./data-and-memory-api)** — Amemorix 记忆图谱的增删改查、数据导入导出、检索调优

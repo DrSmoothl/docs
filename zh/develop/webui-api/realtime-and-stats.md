@@ -1,10 +1,10 @@
 ---
-title: 实时订阅与统计
+title: 实时统计
 ---
 
-# 实时订阅与统计
+# 实时统计
 
-本篇覆盖 MaiBot WebUI 的实时推送通道和运维统计查询，是子目录的最后一篇。如果你刚打开[入口页](./index)，建议先读完路由结构再去[认证与首次配置](./auth-and-setup)完成登录。
+本篇覆盖 MaiBot WebUI 的实时推送通道和运维统计查询，是子目录的最后一篇。如果你刚打开[入口页](./index)，建议先读完路由结构再去[认证与配置](./auth-and-setup)完成登录。
 
 文中所有端点都挂在 `/api/webui` 前缀下。
 
@@ -69,7 +69,7 @@ WebSocket 连接通过一个可选的握手 Token 认证。连接时，服务端
 3. 临时 Token 有效期 60 秒，且只能使用一次（消费后立即删除）
 4. 验证临时 Token 时，服务端同时校验关联的原始 session Token 是否仍有效
 
-详细的安全特性（一次性消费、60 秒超时、session 联带校验）见 [认证与首次配置](./auth-and-setup#临时-websocket-token)。
+详细的安全特性（一次性消费、60 秒超时、session 联带校验）见 [认证与配置](./auth-and-setup#临时-websocket-token)。
 
 **响应体：**
 
@@ -274,7 +274,7 @@ asyncio.run(main())
 
 :::
 
-这个脚本依赖 `aiohttp`。运行前先完成登录拿到 Cookie（参见 [认证与首次配置](./auth-and-setup)），替换脚本中的 `COOKIE` 值即可使用。
+这个脚本依赖 `aiohttp`。运行前先完成登录拿到 Cookie（参见 [认证与配置](./auth-and-setup)），替换脚本中的 `COOKIE` 值即可使用。
 
 ## 接下来
 
@@ -282,5 +282,5 @@ asyncio.run(main())
 
 如果有具体需求：
 - 起手调试 API → 回 **[WebUI HTTP API 入口](./index)** 走快速测连
-- 写脚本对接 → **[认证与首次配置](./auth-and-setup)** 先搞定登录，再按场景跳转
+- 写脚本对接 → **[认证与配置](./auth-and-setup)** 先搞定登录，再按场景跳转
 - 查个别端点 → 直接用浏览器搜索功能在当前子目录搜索端点路径

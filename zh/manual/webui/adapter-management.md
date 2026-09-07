@@ -39,9 +39,9 @@ title: 适配器管理
 - 查看当前群聊与私聊的默认动作（放行 / 拒绝）
 - 为具体适配器配置白名单 / 黑名单（`allow_ids` / `deny_ids`）
 
-策略背后的配置文件是 `config/adapter_policy.toml`，详见 [适配器概览](../adapters/index.md)。
+策略背后的配置文件是 `config/adapter_policy.toml`，详见 [接入平台](../adapters/index.md)。
 
 ## 相关文档
 
-- [适配器概览](../adapters/index.md) — 适配器选型、安装与连接
+- [接入平台](../adapters/index.md) — 适配器选型、安装与连接
 - [Bot 配置](../configuration/bot-config.md) — 平台账号等配置项

@@ -1,8 +1,8 @@
 ---
-title: 用户手册
+title: 快速上手
 ---
 
-# 用户手册
+# 快速上手
 
 欢迎来到 MaiBot 用户手册。MaiBot（昵称「麦麦」）是一个基于大语言模型的聊天机器人框架——通过适配器它可以接入 QQ、邮件、iMessage 等平台，在群聊里像真人一样聊天、记忆、学习、使用工具。本手册从零开始，带你完成安装、配置、连接平台，并逐步掌握它的全部功能。
 
@@ -51,13 +51,13 @@ title: 用户手册
 <div class="nav-card">
   <h3>⚙️ 配置详解</h3>
   <p>人格、昵称、聊天风格、记忆开关……所有配置文件都能在 WebUI 里改，也能直接编辑 TOML。</p>
-  <a href="/manual/configuration/">配置概览 →</a>
+  <a href="/manual/configuration/">配置文件 →</a>
 </div>
 
 <div class="nav-card">
   <h3>🔌 平台适配器</h3>
   <p>除了 QQ，麦麦还可以接入邮件、iMessage 等平台。查看不同适配器的接入方式和维护状态。</p>
-  <a href="/manual/adapters/">适配器概览 →</a>
+  <a href="/manual/adapters/">接入平台 →</a>
 </div>
 
 </div>

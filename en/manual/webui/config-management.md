@@ -63,7 +63,7 @@ Edit the configuration file directly, suitable for tech-savvy users:
 
 **Requires a full MaiBot restart** — WebUI enable/bind/port settings, `maim_message` listeners and authentication, MCP connections, and process-level plugin-runtime settings.
 
-A plugin's own configuration is managed by the plugin lifecycle and normally hot-reloads. See the [Configuration Overview](../configuration/) for the complete boundary.
+A plugin's own configuration is managed by the plugin lifecycle and normally hot-reloads. See the [Config Files](../configuration/) for the complete boundary.
 
 ## Modification Suggestions
 

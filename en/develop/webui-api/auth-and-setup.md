@@ -1,8 +1,8 @@
 ---
-title: Auth and First Setup
+title: Auth & Configuration
 ---
 
-# Auth and First Setup
+# Auth & Configuration
 
 This page covers the authentication system and first-time setup flow of the WebUI HTTP API, aimed at ops personnel who need scripted management of MaiBot. If you've just opened the [entry page](./index), it's recommended to read the route structure and quick connectivity test first, then come back.
 

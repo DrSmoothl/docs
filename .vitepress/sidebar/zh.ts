@@ -23,7 +23,7 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Manifest', link: '/plugin/manifest' },
         { text: '生命周期', link: '/plugin/lifecycle' },
         { text: '配置管理', link: '/plugin/config' },
-        { text: '提交插件', link: '/plugin/submission' },
+        { text: '发布插件', link: '/plugin/submission' },
       ]
     },
     {
@@ -61,7 +61,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '常见问题',
       collapsed: false,
       items: [
-        { text: '总览', link: '/faq/' },
+        { text: '问题分类', link: '/faq/' },
         { text: '基础使用', link: '/faq/basic-usage' },
         { text: '部署与启动', link: '/faq/deployment' },
         { text: '一键包', link: '/faq/one-key' },
@@ -80,7 +80,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '入门',
       collapsed: false,
       items: [
-        { text: '用户手册', link: '/manual/' },
+        { text: '快速上手', link: '/manual/' },
         { text: 'Windows 部署', link: '/manual/deployment/windows' },
         { text: 'Linux 部署', link: '/manual/deployment/linux' },
         { text: 'Docker 部署', link: '/manual/deployment/docker' },
@@ -90,7 +90,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '适配器',
       collapsed: false,
       items: [
-        { text: '概览', link: '/manual/adapters/' },
+        { text: '接入平台', link: '/manual/adapters/' },
         { text: 'NapCat', link: '/manual/adapters/napcat' },
         { text: 'SnowLuma', link: '/manual/adapters/snowluma' },
         { text: 'QQ 官方', link: '/manual/adapters/qq-official' },
@@ -104,7 +104,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '插件',
       collapsed: false,
       items: [
-        { text: '概览', link: '/manual/plugins/' },
+        { text: '安装插件', link: '/manual/plugins/' },
         { text: '管理', link: '/manual/plugins/management' },
       ]
     },
@@ -112,7 +112,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '配置',
       collapsed: false,
       items: [
-        { text: '概览', link: '/manual/configuration/' },
+        { text: '配置文件', link: '/manual/configuration/' },
         { text: 'Bot 配置', link: '/manual/configuration/bot-config' },
         { text: '模型配置', link: '/manual/configuration/model-config' },
         { text: '模型额外参数', link: '/manual/configuration/model-extra-params' },
@@ -121,14 +121,14 @@ export const sidebar: DefaultTheme.Sidebar = {
       ]
     },
     {
-      text: 'WebUI',
+      text: '网页管理',
       collapsed: false,
       items: [
-        { text: '概览', link: '/manual/webui/' },
-        { text: '配置', link: '/manual/webui/config-management' },
-        { text: '适配器', link: '/manual/webui/adapter-management' },
-        { text: '命令', link: '/manual/webui/command-management' },
-        { text: '记忆', link: '/manual/webui/memory-management' },
+        { text: '登录与设置', link: '/manual/webui/' },
+        { text: '配置管理', link: '/manual/webui/config-management' },
+        { text: '适配器管理', link: '/manual/webui/adapter-management' },
+        { text: '命令管理', link: '/manual/webui/command-management' },
+        { text: '记忆管理', link: '/manual/webui/memory-management' },
         { text: '聊天与统计', link: '/manual/webui/chat-stats' },
       ]
     },
@@ -145,7 +145,7 @@ export const sidebar: DefaultTheme.Sidebar = {
   ],
   '/develop/': [
     {
-      text: '总览',
+      text: '开发总览',
       collapsed: false,
       items: [
         { text: '开发指南', link: '/develop/' },
@@ -159,19 +159,19 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: '数据库', link: '/develop/database' },
         { text: '配置系统', link: '/develop/configuration' },
-        { text: '消息服务器与适配器', link: '/develop/message-server-and-adapters' },
+        { text: '消息服务器', link: '/develop/message-server-and-adapters' },
         { text: 'LLM 集成', link: '/develop/llm-providers' },
         { text: 'MCP 集成', link: '/develop/mcp-integration' },
         { text: 'WebUI HTTP API', link: '/develop/webui-api/' },
-        { text: '认证与首次配置', link: '/develop/webui-api/auth-and-setup' },
+        { text: '认证与配置', link: '/develop/webui-api/auth-and-setup' },
         { text: '系统控制', link: '/develop/webui-api/system-control' },
         { text: '数据与记忆', link: '/develop/webui-api/data-and-memory-api' },
         { text: '插件生命周期', link: '/develop/webui-api/plugin-lifecycle-api' },
-        { text: '实时与统计', link: '/develop/webui-api/realtime-and-stats' },
-        { text: '日志与可观测性', link: '/develop/observability' },
-        { text: '统计与导入导出', link: '/develop/statistics-io' },
-        { text: '事件管线与钩子', link: '/develop/event-pipeline-hooks' },
-        { text: '插件运行时架构', link: '/develop/plugin-runtime-internals' },
+        { text: '实时统计', link: '/develop/webui-api/realtime-and-stats' },
+        { text: '日志与观测', link: '/develop/observability' },
+        { text: '数据导入导出', link: '/develop/statistics-io' },
+        { text: '事件与钩子', link: '/develop/event-pipeline-hooks' },
+        { text: '运行时架构', link: '/develop/plugin-runtime-internals' },
       ]
     },
   ],

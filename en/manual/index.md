@@ -1,8 +1,8 @@
 ---
-title: User Manual
+title: Quick Start
 ---
 
-# User Manual
+# Quick Start
 
 Welcome to the MaiBot User Manual. MaiBot is an LLM-powered chatbot framework — through adapters it connects to platforms such as QQ, email, and iMessage, and chats, remembers, learns, and uses tools in group conversations like a real person. This manual walks you through installation, configuration, and platform connection from scratch, then helps you master every feature.
 
@@ -51,13 +51,13 @@ Once it's running, explore the sections below to shape MaiBot into what you want
 <div class="nav-card">
   <h3>⚙️ Configuration</h3>
   <p>Personality, nickname, chat style, memory toggles… every config file can be edited in the WebUI, or as TOML directly.</p>
-  <a href="/en/manual/configuration/">Configuration overview →</a>
+  <a href="/en/manual/configuration/">Config Files →</a>
 </div>
 
 <div class="nav-card">
   <h3>🔌 Platform Adapters</h3>
   <p>Besides QQ, MaiBot can connect to email, iMessage, and more. See how each adapter is set up and maintained.</p>
-  <a href="/en/manual/adapters/">Adapters overview →</a>
+  <a href="/en/manual/adapters/">Connect Platforms →</a>
 </div>
 
 </div>

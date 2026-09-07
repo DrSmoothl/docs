@@ -14,7 +14,7 @@ title: 部署与启动
 
 优先通过 WebUI 修改配置。必须手动编辑时，确认 TOML 的字符串带引号、数字不带引号、布尔值使用小写 `true` 或 `false`，并检查段落名称和数组格式。
 
-配置文件路径和字段说明见[配置概览](../manual/configuration/index.md)。
+配置文件路径和字段说明见[配置文件](../manual/configuration/index.md)。
 
 ## 端口被占用怎么办？
 

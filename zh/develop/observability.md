@@ -1,8 +1,8 @@
 ---
-title: 日志与可观测性
+title: 日志与观测
 ---
 
-# 日志与可观测性
+# 日志与观测
 
 MaiBot 的日志系统基于 structlog + Python logging 构建，将所有日志同时路由到三条并行的输出通道：文件（JSONL 格式）、控制台（带颜色）和 WebUI（WebSocket 实时推送）。本文面向部署运维和进阶使用者，覆盖日志配置调优、第三方库降噪、LLM 请求失败快照抓取、WebSocket 日志订阅和线上排查流程。
 

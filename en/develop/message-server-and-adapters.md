@@ -1,8 +1,8 @@
 ---
-title: Message Server and Adapter Integration
+title: Message Server
 ---
 
-# Message Server and Adapter Integration
+# Message Server
 
 MaiBot exposes a WebSocket server through the `maim_message` library for external adapters to connect to. Adapters can run outside MaiBot (as independent processes, on separate machines, or even in different languages), as long as they follow the protocol. This document is for readers who need to deploy, operate, or write their own adapters, covering server modes, message flow, authentication mechanisms, and deployment essentials.
 

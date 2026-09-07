@@ -343,7 +343,7 @@ MaiBot 维护两个独立的 Runner 子进程：
 
 ## 下一步
 
-- [提交插件](./submission.md)：插件开发完成后，提交到官方插件中心
+- [发布插件](./submission.md)：插件开发完成后，提交到官方插件中心
 - [Manifest 系统](./manifest.md)：了解 `_manifest.json` 的完整字段定义与校验规则
 - [生命周期](./lifecycle.md)：学习插件加载、卸载与配置热重载的生命周期方法
 - [Hook 系统](./hooks.md)：学习如何使用 @HookHandler 拦截和改写消息

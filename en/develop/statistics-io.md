@@ -1,8 +1,8 @@
 ---
-title: Statistics and Data Import/Export
+title: Data Import/Export
 ---
 
-# Statistics and Data Import/Export
+# Data Import/Export
 
 MaiBot continuously generates data at runtime: messages, model calls, tool executions, online duration, and more. This data has three consumption paths: **real-time dashboards** query raw tables directly via HTTP API, **hourly aggregation** is periodically written to summary tables by a background service for direct SQL reads, and **async export** packages files into zip archives through WebUI data-transfer endpoints. The three paths are independent, each serving different operational scenarios.
 

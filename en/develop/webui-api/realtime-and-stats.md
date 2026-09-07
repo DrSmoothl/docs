@@ -1,10 +1,10 @@
 ---
-title: Realtime Subscriptions & Statistics
+title: Realtime Stats
 ---
 
-# Realtime Subscriptions & Statistics
+# Realtime Stats
 
-This page covers the real-time push channels and ops statistics queries of the MaiBot WebUI, and is the final page of this subdirectory. If you've just opened the [entry page](./index), it's recommended to read the route structure first, then complete login via [Auth and First Setup](./auth-and-setup).
+This page covers the real-time push channels and ops statistics queries of the MaiBot WebUI, and is the final page of this subdirectory. If you've just opened the [entry page](./index), it's recommended to read the route structure first, then complete login via [Auth & Configuration](./auth-and-setup).
 
 All endpoints in this document are mounted under the `/api/webui` prefix.
 
@@ -69,7 +69,7 @@ Browser-side WebSocket connections cannot carry Cookies. MaiBot provides a tempo
 3. The temporary Token is valid for 60 seconds and can only be used once (deleted immediately after consumption)
 4. When verifying the temporary Token, the server simultaneously checks that the associated original session Token is still valid
 
-For detailed security features (one-time consumption, 60-second timeout, session-linked validation), see [Auth and First Setup](./auth-and-setup#temporary-websocket-token).
+For detailed security features (one-time consumption, 60-second timeout, session-linked validation), see [Auth & Configuration](./auth-and-setup#temporary-websocket-token).
 
 **Response body:**
 
@@ -274,7 +274,7 @@ asyncio.run(main())
 
 :::
 
-This script depends on `aiohttp`. Before running, complete login to get a Cookie (see [Auth and First Setup](./auth-and-setup)), then replace the `COOKIE` value in the script.
+This script depends on `aiohttp`. Before running, complete login to get a Cookie (see [Auth & Configuration](./auth-and-setup)), then replace the `COOKIE` value in the script.
 
 ## Next Steps
 
@@ -282,5 +282,5 @@ At this point, the entire WebUI HTTP API subdirectory has been covered. From the
 
 If you have specific needs:
 - Getting started debugging the API → go back to **[WebUI HTTP API Entry](./index)** for a quick connectivity test
-- Writing script integrations → start with **[Auth and First Setup](./auth-and-setup)** to handle login, then jump by scenario
+- Writing script integrations → start with **[Auth & Configuration](./auth-and-setup)** to handle login, then jump by scenario
 - Looking up individual endpoints → use your browser's search function directly within this subdirectory to search for endpoint paths

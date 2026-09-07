@@ -6,7 +6,7 @@ title: 插件生命周期 API
 
 本文档覆盖插件安装、更新、启用/禁用、配置编辑、运行时组件查询、图标获取、统计代理以及进度跟踪的完整 HTTP 接口。面向部署运维和脚本化使用者，所有端点挂在 `/api/webui/plugins/` 下，均需 Cookie 认证（参考 [认证模型](./index.md#认证模型三种方式)）。
 
-如果你要调试插件的 Host/Runner 通信协议、熔断逻辑或进程生命周期，请转 [插件运行时内部架构](../plugin-runtime-internals.md)。本文只讲 API 操作，不涉及运行时协议细节。
+如果你要调试插件的 Host/Runner 通信协议、熔断逻辑或进程生命周期，请转 [运行时架构](../plugin-runtime-internals.md)。本文只讲 API 操作，不涉及运行时协议细节。
 
 ## 1. 已安装插件查询
 
@@ -156,7 +156,7 @@ curl -X GET http://127.0.0.1:8001/api/webui/plugins/runtime/plugins/example-plug
 
 :::
 
-> **区分说明** — 本节的组件查询是 API 层面的只读数据拉取，不涉及 Host/Runner 之间的进程通信协议（如 RPC 消息序列化、故障熔断恢复、Runner 生命周期管理等）。后者请参见 [插件运行时内部架构](../plugin-runtime-internals.md)。
+> **区分说明** — 本节的组件查询是 API 层面的只读数据拉取，不涉及 Host/Runner 之间的进程通信协议（如 RPC 消息序列化、故障熔断恢复、Runner 生命周期管理等）。后者请参见 [运行时架构](../plugin-runtime-internals.md)。
 
 ## 7. Plugin Icon 获取
 
@@ -218,7 +218,7 @@ plugin-progress 是一个 **WebSocket** 端点，不是 HTTP 请求。不能用 
 
 ## 10. 与运行时架构的关系
 
-本文覆盖的都是 HTTP / WebSocket API 层面的操作。当你需要了解这些操作背后的运行时机制（比如 `POST /install` 后插件如何被 Host 加载、Runner 子进程如何 spawn、`PUT /config` 后配置如何热刷新）时，请转到 **[插件运行时内部架构](../plugin-runtime-internals.md)**。那篇文档专门讲解：
+本文覆盖的都是 HTTP / WebSocket API 层面的操作。当你需要了解这些操作背后的运行时机制（比如 `POST /install` 后插件如何被 Host 加载、Runner 子进程如何 spawn、`PUT /config` 后配置如何热刷新）时，请转到 **[运行时架构](../plugin-runtime-internals.md)**。那篇文档专门讲解：
 
 - Host / Runner 双进程模型与 spawn 约定
 - `_manifest.json` 在运行时中的解析流程

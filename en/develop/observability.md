@@ -1,8 +1,8 @@
 ---
-title: Logging and Observability
+title: Logging & Monitoring
 ---
 
-# Logging and Observability
+# Logging & Monitoring
 
 MaiBot's logging system is built on structlog + Python logging, routing all logs simultaneously to three parallel output channels: file (JSONL format), console (with color), and WebUI (real-time WebSocket push). This document is for deployment operators and advanced users, covering log configuration tuning, third-party library noise reduction, LLM request failure snapshot capture, WebSocket log subscriptions, and online troubleshooting workflows.
 

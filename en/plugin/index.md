@@ -318,7 +318,7 @@ Both use the same communication protocol and component registration mechanism. T
 
 ## Next Steps
 
-- [Submitting a Plugin](./submission.md): Submit your finished plugin to the official plugin center
+- [Publish a Plugin](./submission.md): Submit your finished plugin to the official plugin center
 - [Manifest System](./manifest.md): Learn the complete field definitions and validation rules for `_manifest.json`
 - [Lifecycle](./lifecycle.md): Learn the lifecycle methods for plugin loading, unloading, and configuration hot-reloading
 - [Hook System](./hooks.md): Learn how to use `@HookHandler` to intercept and modify messages

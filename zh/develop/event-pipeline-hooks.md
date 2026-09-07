@@ -1,8 +1,8 @@
 ---
-title: 事件管线与钩子
+title: 事件与钩子
 ---
 
-# 事件管线与钩子
+# 事件与钩子
 
 MaiBot 内部有两套事件系统协同工作：**EventBus**（基于 `EventType` 的发布/订阅模型）和**命名 Hook**（基于 `HookDispatcher` 的插件调度模型）。本页从运维和高级使用者的视角解释它们是什么、如何配合、出了问题怎么看。
 
@@ -263,6 +263,6 @@ EventBus 的拦截型 handler 同理——它们是串行的。一个注册在 `
 ### 相关文档
 
 - 事件总线架构 — EventBus 内部机制详解
-- [插件运行时内部架构](/develop/plugin-runtime-internals) — 插件运行时 Host/Runner 架构
+- [运行时架构](/develop/plugin-runtime-internals) — 插件运行时 Host/Runner 架构
 - [Hook 处理器](/plugin/hooks) — 插件开发者视角的 Hook 使用指南
 - [事件处理器](/plugin/event-handlers) — 插件开发者视角的 EventHandler 使用指南

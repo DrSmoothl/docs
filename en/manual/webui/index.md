@@ -1,8 +1,8 @@
 ---
-title: 🖥️ WebUI Admin Panel
+title: Login & Settings
 ---
 
-# 🖥️ WebUI Management Panel
+# Login & Settings
 
 Manage your bot right through your browser!
 
