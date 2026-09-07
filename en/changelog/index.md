@@ -2,6 +2,22 @@
 
 For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-with-u/MaiBot/releases).
 
+::: timeline 2026-09-01
+- [1.2.4] Plugin tools can request ending the Planner after execution; models can stop sending the temperature parameter; WebUI [1.7.3] merges MaiMai Observation into the chat workspace and streamlines memory management
+- Maisaka: when a plugin tool returns `stop_after_execution: true` successfully, the Planner ends after the current tool batch finishes and waits for new messages
+- Models: model advanced settings add a "Send temperature parameter" switch (`send_temperature`, on by default); when off, MaiBot no longer sends any MaiBot-managed temperature — model-level, task-level, or from extra parameters — for compatibility with models that reject this parameter
+- WebUI [1.7.3]: the standalone "MaiMai Observation" page merges into the chat workspace; the sidebar now shows chattable sessions and read-only chat streams (marked with an "Observing" badge) in one place, and clicking a chat stream opens its reasoning timeline inline
+- WebUI [1.7.3]: long-term memory run status moves into the "More actions" menu, simplifying the top of the memory management page; tuning parameters and import common/advanced parameters collapse into dialogs; the audit timeline layout is adjusted — the audit scope now spans the full row and change summaries merge into the event list
+- WebUI [1.7.3]: emoji keyword-recognition prompts integrate into the "Prompt Management" page, with per-language editing, custom versions, and hot reload
+- Long-term memory: multiple fixes for person profile refresh, authoritative fact and alias maintenance, and memory import/audit flows; no config changes
+:::
+
+::: timeline 2026-08-23
+- [1.2.3] Expression config compatibility fix and Maisaka orphan tool message fix
+- Expressions: fixed startup failures when an old config still used the `vector` selection mode; after upgrading, the first launch auto-migrates it to `vector_intent` (Super Fine) and writes the config back
+- Maisaka: fixed orphan tool messages
+:::
+
 ::: timeline 2026-08-23
 - [1.2.2] Expression selection performance and accuracy improved; WebUI resource management and model config experience comprehensively upgraded
 - Expressions: MMR diversity reranking rewritten with vectorized implementation, significantly faster on large candidate pools; adjusted vector similarity weight mix, removed lexical overlap scoring to avoid false interference on short texts and CJK content; removed `vector` selection mode, existing configs auto-upgrade to `vector_intent`

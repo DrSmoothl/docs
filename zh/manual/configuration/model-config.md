@@ -66,6 +66,7 @@ cache_price_in = 0.0                         # [可选] 缓存命中输入价格
 price_out = 2.0                              # [可选] 输出价格，单位：元/M token
 # temperature = 0.7                          # [可选] 模型级别温度，会覆盖任务配置中的 temperature
 # max_tokens = 4096                          # [可选] 模型级别最大 token 数，会覆盖任务配置中的 max_tokens
+# send_temperature = true                    # [可选] 是否发送 MaiBot 管理的 temperature，默认 true；设为 false 后模型/任务温度均不发送
 force_stream_mode = false                    # [可选] 强制流式输出模式，模型不支持非流式输出时设为 true
 visual = false                               # [可选] 是否为多模态模型（支持视觉输入）
 extra_params = {}                            # [可选] 额外参数，详见 模型额外参数
@@ -78,6 +79,7 @@ extra_params = {}                            # [可选] 额外参数，详见 �
 - **必填**：`model_identifier`（API 标识符）、`name`（自定义名称）、`api_provider`（归属服务商）
 - **价格**：`price_in` / `price_out` 用于统计，单位 元/百万 token。开启 `cache` 后可单独设置 `cache_price_in`
 - **模型级覆盖**：`temperature` / `max_tokens` 可覆盖任务配置，不设则使用任务默认值
+- **温度发送开关**：`send_temperature` 默认 `true`；设为 `false`（对应 WebUI 模型高级设置中关闭"发送 temperature 参数"）后，MaiBot 不再向该模型发送任何由它管理的 temperature（模型级、任务级与附加参数中的温度），兼容不接受该参数的模型
 - **视觉**：`visual = true` 表示支持图像输入，用于 `vlm` 任务
 - **`extra_params`**：服务商特有参数（思考模式、推理强度等），详见 [模型额外参数](./model-extra-params.md)
 

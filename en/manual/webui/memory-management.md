@@ -34,13 +34,19 @@ Like a mind map, displaying relationships between concepts:
 - Lines indicate relationships (e.g., "Genshin Impact - Game")
 - Click a circle to view detailed information
 
+### Audit Timeline
+Review memory changes for each chat stream:
+- Memory audit events (additions, updates, deletions, etc.) are listed in reverse chronological order with pagination
+- Filter by chat stream and event type
+- Change summaries are merged directly into the event list
+
 ## Manage Memories
 
 ### Add Memories
 You can manually teach MaiBot new knowledge:
 1. Click "Import Memory"
 2. Paste text or upload a file
-3. Select the processing method
+3. Set common and advanced parameters in the "Import Parameters" dialog as needed
 4. Start the import
 
 ### Correct Memories
@@ -85,13 +91,12 @@ Especially important content can be set as permanent:
 - This content will never be automatically cleaned
 
 ### Memory Tuning
-If MaiBot's memory performance is poor, you can:
-- Adjust memory parameters
-- Re-process memories
-- Optimize retrieval effects
+If MaiBot's memory performance is poor, you can run tuning tasks to optimize retrieval:
+- The page keeps only the instructions and the start button as permanent content
+- Tuning parameters live in the "Tuning Parameters" dialog; they only affect the next tuning task, so keeping the defaults is fine
 
 ### Runtime Maintenance
-The WebUI also provides operational entry points for runtime self-check, auto-save toggle, vector reconstruction, paragraph vector backfill, import task logs, and deletion operation records.
+The WebUI also provides operational entry points for runtime self-check, auto-save toggle, vector reconstruction, paragraph vector backfill, import task logs, and deletion operation records. The "More actions" menu in the top-right corner centralizes memory run status (including vector reconstruction and data refresh), keeping the page header cleaner.
 
 ## Usage Recommendations
 
