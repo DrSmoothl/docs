@@ -4,9 +4,7 @@ title: A_Memorix Memory System Configuration
 
 # A_Memorix Memory System Configuration
 
-A_Memorix is MaiBot's long-term memory system, responsible for memory storage, vectorization, retrieval, person profiles, memory evolution, and Web operations. It replaces the old `[memory]` configuration section with finer-grained controls.
-
-This document details how to configure the `[a_memorix]` section in `bot_config.toml`.
+A_Memorix is MaiBot's long-term memory system, responsible for memory storage, vectorization, retrieval, person profiles, memory evolution, and Web operations. All of its configuration lives under the `[a_memorix]` section of `bot_config.toml`. It replaces the old `[memory]` configuration section with finer-grained controls.
 
 ::: tip Understand the concept first
 The memory system is controlled by the `[a_memorix]` section; each option is explained below. Related behavior can also be adjusted in [WebUI Memory Management](/en/manual/webui/memory-management).
@@ -16,7 +14,9 @@ The memory system is controlled by the `[a_memorix]` section; each option is exp
 
 A_Memorix configuration is located under the `[a_memorix]` section of `bot_config.toml`, containing 12 subsections. TOML section names are case-sensitive, please use lowercase `a_memorix`:
 
-```toml
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.integration]          # Memory usage in chat
@@ -33,13 +33,15 @@ A_Memorix configuration is located under the `[a_memorix]` section of `bot_confi
 [a_memorix.web]                  # Web operations
 ```
 
+:::
+
 ::: info
 Older documentation or legacy standalone configuration files may use `A_memorix` or `config/a_memorix.toml`. The current MaiBot main configuration uses `[a_memorix]` in `config/bot_config.toml`; the old `config/a_memorix.toml` serves only as a compatibility migration source.
 :::
 
 ---
 
-## Memory Integration [a_memorix.integration]
+## Memory Integration
 
 Controls how MaiMai uses long-term memory in chat. Includes memory retrieval tools, person profile query/injection, chat summary writeback, and feedback correction.
 
@@ -81,7 +83,7 @@ Feedback correction is disabled by default. Enabling it will incur additional mo
 
 ---
 
-## Memory System [a_memorix.plugin]
+## Memory System
 
 Master switch for the long-term memory system.
 
@@ -93,13 +95,13 @@ The memory system is disabled by default and must be manually set to `true` to e
 
 ---
 
-## Storage [a_memorix.storage]
+## Storage
 
 - **`data_dir`** — Data directory where memory data will be stored. Default: `data/a-memorix`
 
 ---
 
-## Memory Vectorization [a_memorix.embedding]
+## Memory Vectorization
 
 Basic settings for converting memory content into vectors. Vectorization is the foundation of memory retrieval; choosing the right model and parameters directly impacts retrieval quality.
 
@@ -114,7 +116,7 @@ Basic settings for converting memory content into vectors. Vectorization is the 
 - **`runtime_train_threshold`** — Minimum number of untrained vectors required to trigger background SQ8 training at runtime. Default: 256
 - **`quantization_type`** — Vector compression method, currently only supports `int8` (SQ8). Default: `int8`
 
-### Embedding Fallback [a_memorix.embedding.fallback]
+### Embedding Fallback
 
 Degradation strategy when the primary embedding service is unavailable.
 
@@ -122,7 +124,7 @@ Degradation strategy when the primary embedding service is unavailable.
 - **`probe_interval_seconds`** — Probe interval in seconds, periodically checks if the primary service has recovered. Default: 180
 - **`allow_metadata_only_write`** — Whether to allow writing metadata only (skip vectorization during fallback). Enabled by default
 
-### Paragraph Vector Backfill [a_memorix.embedding.paragraph_vector_backfill]
+### Paragraph Vector Backfill
 
 Handles paragraphs missing vectors and asynchronously completes vector data.
 
@@ -133,7 +135,7 @@ Handles paragraphs missing vectors and asynchronously completes vector data.
 
 ---
 
-## Retrieval [a_memorix.retrieval]
+## Retrieval
 
 Controls memory retrieval behavior, including Top-K parameters, PPR graph computation, and sparse retrieval.
 
@@ -149,7 +151,7 @@ Controls memory retrieval behavior, including Top-K parameters, PPR graph comput
 - **`ppr_concurrency_limit`** — PPR concurrency limit. Default: 4
 - **`enable_parallel`** — Whether to enable parallel retrieval. Enabled by default
 
-### Sparse Retrieval [a_memorix.retrieval.sparse]
+### Sparse Retrieval
 
 Configuration for sparse retrieval based on full-text search (FTS5), used to supplement vector retrieval.
 
@@ -162,7 +164,7 @@ Configuration for sparse retrieval based on full-text search (FTS5), used to sup
 
 ---
 
-## Threshold Filtering [a_memorix.threshold]
+## Threshold Filtering
 
 Controls the threshold filtering strategy for retrieval results, used to filter high-quality memory entries.
 
@@ -173,7 +175,7 @@ Controls the threshold filtering strategy for retrieval results, used to filter 
 
 ---
 
-## Chat Filtering [a_memorix.filter]
+## Chat Filtering
 
 Controls which chat streams participate in memory read/write operations.
 
@@ -183,7 +185,7 @@ Controls which chat streams participate in memory read/write operations.
 
 ---
 
-## Episode [a_memorix.episode]
+## Episode
 
 An Episode is an automatic summary and segmentation of a conversation, and is one of the core data units of the memory system.
 
@@ -201,7 +203,7 @@ An Episode is an automatic summary and segmentation of a conversation, and is on
 
 ---
 
-## Person Profile [a_memorix.person_profile]
+## Person Profile
 
 Person profiles maintain a summary archive for each user, containing key facts and preferences, automatically injected into context during chat.
 
@@ -213,7 +215,7 @@ Person profiles maintain a summary archive for each user, containing key facts a
 
 ---
 
-## Memory Evolution [a_memorix.memory]
+## Memory Evolution
 
 Memory evolution controls the decay mechanism of memories, allowing old memories to naturally weaken over time and preventing outdated information from interfering.
 
@@ -230,7 +232,7 @@ Memory evolution controls the decay mechanism of memories, allowing old memories
 
 ---
 
-## Advanced Runtime [a_memorix.advanced]
+## Advanced Runtime
 
 - **`enable_auto_save`** — Whether to enable automatic saving. Enabled by default
 - **`auto_save_interval_minutes`** — Auto-save interval in minutes. Default: 5
@@ -238,11 +240,11 @@ Memory evolution controls the decay mechanism of memories, allowing old memories
 
 ---
 
-## Web Operations [a_memorix.web]
+## Web Operations
 
 Manages memory system operations through the WebUI, including two sub-modules: the Import Center and the Tuning Center.
 
-### Import Center [a_memorix.web.import]
+### Import Center
 
 - **`enabled`** — Whether to enable the Import Center. Enabled by default
 - **`max_queue_size`** — Maximum queue length. Default: 20
@@ -252,7 +254,7 @@ Manages memory system operations through the WebUI, including two sub-modules: t
 - **`default_file_concurrency`** — Default file concurrency. Default: 2
 - **`default_chunk_concurrency`** — Default chunk concurrency. Default: 4
 
-### Tuning Center [a_memorix.web.tuning]
+### Tuning Center
 
 - **`enabled`** — Whether to enable the Tuning Center. Enabled by default
 - **`max_queue_size`** — Maximum queue length. Default: 8
@@ -264,7 +266,7 @@ Manages memory system operations through the WebUI, including two sub-modules: t
 
 ---
 
-## Migrating from Legacy [memory]
+## Migrating from Legacy Memory
 
 A_Memorix replaces the old `[memory]` configuration section. If you previously used `[memory]`, follow the migration mapping below:
 
@@ -512,4 +514,4 @@ Memory evolution is gradual. `half_life_hours` controls the decay speed, `freeze
 ## Next Steps
 
 - Manage memory in the WebUI -> [WebUI Memory Management](/en/manual/webui/memory-management)
-- View an overview of all configuration options -> [Bot Configuration Overview](./bot-config.md)
+- View all configuration options -> [Bot Configuration](./bot-config.md)

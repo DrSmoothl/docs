@@ -4,9 +4,7 @@ title: A_Memorix 记忆系统配置
 
 # A_Memorix 记忆系统配置
 
-A_Memorix 是 MaiBot 的长期记忆系统，负责记忆的存储、向量化、检索、人物画像、记忆演化和 Web 运维。它替代了旧版 `[memory]` 配置段落，提供了更细粒度的控制。
-
-本文详细介绍如何在 `bot_config.toml` 中配置 `[a_memorix]` 段落。
+A_Memorix 是 MaiBot 的长期记忆系统，负责记忆的存储、向量化、检索、人物画像、记忆演化和 Web 运维，配置全部写在 `bot_config.toml` 的 `[a_memorix]` 段落下。它替代了旧版 `[memory]` 配置段落，提供更细粒度的控制。
 
 ::: tip 先了解概念
 记忆系统由 `[a_memorix]` 段落控制，各配置项的含义见下文；相关行为也可在 [WebUI 记忆管理](/manual/webui/memory-management) 中调整。
@@ -16,7 +14,9 @@ A_Memorix 是 MaiBot 的长期记忆系统，负责记忆的存储、向量化�
 
 A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12 个子段落。TOML 段名区分大小写，请使用小写 `a_memorix`：
 
-```toml
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [a_memorix]
 
 [a_memorix.integration]          # 记忆在聊天中的使用
@@ -33,13 +33,15 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 [a_memorix.web]                  # Web 运维
 ```
 
+:::
+
 ::: info
 旧资料或旧版独立配置文件中可能出现 `A_memorix` 或 `config/a_memorix.toml`。当前 MaiBot 主配置以 `config/bot_config.toml` 中的 `[a_memorix]` 为准；旧版 `config/a_memorix.toml` 仅作为兼容迁移来源。
 :::
 
 ---
 
-## 记忆集成 [a_memorix.integration]
+## 记忆集成
 
 控制麦麦在聊天中如何使用长期记忆。包括记忆检索工具、人物画像查询/注入、聊天摘要写回和反馈纠错。
 
@@ -81,7 +83,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## 记忆系统 [a_memorix.plugin]
+## 记忆系统
 
 长期记忆系统的总开关。
 
@@ -93,13 +95,13 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## 存储 [a_memorix.storage]
+## 存储
 
 - **`data_dir`** — 数据目录，记忆数据将存储在此目录下。默认 `data/a-memorix`
 
 ---
 
-## 记忆向量化 [a_memorix.embedding]
+## 记忆向量化
 
 把记忆内容转换为向量时使用的基础设置。向量化是记忆检索的基础，选择合适的模型和参数直接影响检索质量。
 
@@ -114,7 +116,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 - **`runtime_train_threshold`** — 未训练向量池在运行期间触发 SQ8 后台训练所需的最少向量数。默认 256
 - **`quantization_type`** — 向量压缩方式，当前仅支持 `int8`（SQ8）。默认 `int8`
 
-### Embedding 回退 [a_memorix.embedding.fallback]
+### Embedding 回退
 
 当主力 embedding 服务不可用时的降级策略。
 
@@ -122,7 +124,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 - **`probe_interval_seconds`** — 探测间隔秒数，定期检测主力服务是否恢复。默认 180
 - **`allow_metadata_only_write`** — 是否允许仅写入元数据（回退期间跳过向量化）。默认开启
 
-### 段落向量回填 [a_memorix.embedding.paragraph_vector_backfill]
+### 段落向量回填
 
 处理缺少向量的段落，异步补全向量数据。
 
@@ -133,7 +135,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## 检索 [a_memorix.retrieval]
+## 检索
 
 控制记忆检索的行为，包括 Top-K 参数、PPR 图计算和稀疏检索。
 
@@ -149,7 +151,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 - **`ppr_concurrency_limit`** — PPR 并发限制。默认 4
 - **`enable_parallel`** — 是否启用并行检索。默认开启
 
-### 稀疏检索 [a_memorix.retrieval.sparse]
+### 稀疏检索
 
 基于全文检索（FTS5）的稀疏检索配置，用于补充向量检索。
 
@@ -162,7 +164,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## 阈值过滤 [a_memorix.threshold]
+## 阈值过滤
 
 控制检索结果的阈值过滤策略，用于筛选出高质量的记忆条目。
 
@@ -173,7 +175,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## 聊天过滤 [a_memorix.filter]
+## 聊天过滤
 
 控制哪些聊天流参与记忆系统的读写。
 
@@ -183,7 +185,7 @@ A_Memorix 配置位于 `bot_config.toml` 的 `[a_memorix]` 段落下，包含 12
 
 ---
 
-## Episode [a_memorix.episode]
+## Episode
 
 Episode 是对一段对话的自动总结与分段，是记忆系统的核心数据单元之一。
 
@@ -201,7 +203,7 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ---
 
-## 人物画像 [a_memorix.person_profile]
+## 人物画像
 
 人物画像为每个用户维护一份摘要档案，包含关键事实和偏好，在聊天时自动注入上下文。
 
@@ -213,7 +215,7 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ---
 
-## 记忆演化 [a_memorix.memory]
+## 记忆演化
 
 记忆演化控制记忆的衰减机制，使旧记忆随时间自然弱化，避免过时信息干扰。
 
@@ -230,7 +232,7 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ---
 
-## 高级运行时 [a_memorix.advanced]
+## 高级运行时
 
 - **`enable_auto_save`** — 是否启用自动保存。默认开启
 - **`auto_save_interval_minutes`** — 自动保存间隔（分钟）。默认 5
@@ -238,11 +240,11 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ---
 
-## Web 运维 [a_memorix.web]
+## Web 运维
 
 通过 WebUI 管理记忆系统的运维配置，包含导入中心和调优中心两个子模块。
 
-### 导入中心 [a_memorix.web.import]
+### 导入中心
 
 - **`enabled`** — 是否启用导入中心。默认开启
 - **`max_queue_size`** — 最大队列长度。默认 20
@@ -252,7 +254,7 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 - **`default_file_concurrency`** — 默认文件并发数。默认 2
 - **`default_chunk_concurrency`** — 默认分块并发数。默认 4
 
-### 调优中心 [A_memorix.web.tuning]
+### 调优中心
 
 - **`enabled`** — 是否启用调优中心。默认开启
 - **`max_queue_size`** — 最大队列长度。默认 8
@@ -264,7 +266,7 @@ Episode 是对一段对话的自动总结与分段，是记忆系统的核心数
 
 ---
 
-## 从旧版 [memory] 迁移
+## 从旧版迁移
 
 A_Memorix 替代了旧版 `[memory]` 配置段落。如果你之前使用过 `[memory]`，需要按照以下对应关系迁移：
 
@@ -512,4 +514,4 @@ debug = false
 ## 下一步
 
 - 在 WebUI 中管理记忆 -> [WebUI 记忆管理](/manual/webui/memory-management)
-- 查看所有配置项总览 -> [Bot 配置总览](./bot-config.md)
+- 查看所有配置项 -> [Bot 配置](./bot-config.md)

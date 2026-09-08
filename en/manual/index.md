@@ -51,7 +51,7 @@ Once it's running, explore the sections below to shape MaiBot into what you want
 <div class="nav-card">
   <h3>⚙️ Configuration</h3>
   <p>Personality, nickname, chat style, memory toggles… every config file can be edited in the WebUI, or as TOML directly.</p>
-  <a href="/en/manual/configuration/">Config Files →</a>
+  <a href="/en/manual/configuration/">Configuration Overview →</a>
 </div>
 
 <div class="nav-card">

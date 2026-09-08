@@ -112,7 +112,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: '配置',
       collapsed: false,
       items: [
-        { text: '配置文件', link: '/manual/configuration/' },
+        { text: '配置概览', link: '/manual/configuration/' },
         { text: 'Bot 配置', link: '/manual/configuration/bot-config' },
         { text: '模型配置', link: '/manual/configuration/model-config' },
         { text: '模型额外参数', link: '/manual/configuration/model-extra-params' },

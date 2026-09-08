@@ -1,11 +1,9 @@
 ---
 title: MCP Configuration
 ---
-# MCP Configuration 🛠️
+# MCP Configuration
 
-MCP (Model Context Protocol) enables MaiBot to connect with external tools, transforming it from "just chatting" to "both speaking and acting" — checking weather, searching news, reading files, calling APIs, and more, all within reach.
-
-This document details how to configure MCP in `bot_config.toml`.
+MCP (Model Context Protocol) enables MaiBot to connect with external tools, transforming it from "just chatting" to "both speaking and acting" — checking weather, searching news, reading files, calling APIs, and more, all within reach. All of the configuration lives under the `[mcp]` section of `bot_config.toml`, covered below in the order "master switch → client capabilities → server list".
 
 ::: tip 💡 Understand the Concepts First
 If you are not yet familiar with what MCP is, see the [MCP integration developer guide](/en/develop/mcp-integration) for its overall design.
@@ -58,13 +56,13 @@ bearer_token = ""
 
 ---
 
-## Master Switch [mcp]
+## Master Switch
 
 - **`enable`** — Whether to enable MCP. When set to `false`, no MCP servers will be connected. Enabled by default.
 
 ---
 
-## Client Capabilities [mcp.client]
+## Client Capabilities
 
 This section configures MaiBot's capabilities when acting as an MCP **client**, declaring them to the server.
 
@@ -85,7 +83,7 @@ Generally, no changes are needed unless you want the MCP server to see a differe
 - **`client_name`** — The client implementation name. Default: `"MaiBot"`
 - **`client_version`** — The client implementation version. Default: `"1.0.0"`
 
-### Roots Capabilities [mcp.client.roots]
+### Roots Capabilities
 
 Roots allow you to expose local file system paths to the MCP server, enabling the server to read and write files within those paths.
 
@@ -116,7 +114,7 @@ Each Root item:
 If connected to a file system MCP server (e.g., `@modelcontextprotocol/server-filesystem`), enabling Roots allows the server to know where your data directory is, thereby reading and writing files within that directory.
 :::
 
-### Sampling Capabilities [mcp.client.sampling]
+### Sampling Capabilities
 
 Sampling allows the MCP server to **request MaiBot to call a large language model** in reverse to complete certain tasks. This is an advanced bidirectional capability.
 
@@ -141,7 +139,7 @@ tool_support = true
 Enabling Sampling means the MCP server can trigger MaiBot's model calls, incurring additional API costs. Ensure `task_name` points to a configured model task.
 :::
 
-### Elicitation Capabilities [mcp.client.elicitation]
+### Elicitation Capabilities
 
 Elicitation allows the MCP server to request users to fill out forms or open URLs in a browser.
 
@@ -164,7 +162,7 @@ At least one mode (`allow_form` or `allow_url`) must be allowed when enabled.
 
 ---
 
-## Server Configuration [[mcp.servers]]
+## Server Configuration
 
 This is the most commonly used section — configure the MCP servers you want to connect to. **Multiple servers can be configured**, with each `[[mcp.servers]]` block corresponding to one server.
 
@@ -464,4 +462,4 @@ It depends on the service you are connecting to. For GitHub MCP, go to GitHub Se
 ## Next Steps
 
 - To learn about MCP's overall design → [MCP integration developer guide](/en/develop/mcp-integration)
-- To view all configuration options → [Bot Configuration Overview](./bot-config.md)
+- To view all configuration options → [Bot Configuration](./bot-config.md)

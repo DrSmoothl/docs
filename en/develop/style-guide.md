@@ -10,11 +10,12 @@ title: Documentation Style Guide
 
 Before writing any page, read the manifesto above, then follow the rules below. For syntax-level conventions (code groups, icons, Linkcard, no tables), see [Markdown Features](./markdown-features).
 
-## Three Iron Rules
+## Four Iron Rules
 
 1. **Lead with the conclusion** — Open the page with one or two sentences saying what problem this page solves and who it is for. Never open with "This article will introduce…".
 2. **Every step must be actionable** — Every value in the steps must be concrete: ports, paths, default values, button names, token names. Avoid vague instructions like "set as needed" or "configure appropriately".
 3. **End with troubleshooting** — Every page ends with a "Verification & Troubleshooting" section: one executable verification action plus 2–5 common failure scenarios with their fixes.
+4. **Headings are just words** — Headings contain only the heading text itself, in the page language: no numbering, dashes, or bracketed code names ("1. Tell Mai Who It Is — [bot]" ✗ → "Tell Mai Who It Is" ✓). Put ownership details in the body or code-group labels so the "On this page" outline stays clean and scannable.
 
 ## Identify the Page Type First
 

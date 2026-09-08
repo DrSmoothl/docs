@@ -18,14 +18,14 @@ titleTemplate: :title · 模型高级参数
 
 ---
 
-# 思考与非思考模式
+## 思考与非思考模式
 
 很多大模型支持"思考模式"，让模型在回答前先进行深度推理，从而提升复杂问题的回答质量。MaiBot 支持两种 API 体系，配置方式不同：
 
 - **OpenAI 兼容 API**（`client_type = "openai"`）：DeepSeek、OpenAI、阿里云百炼等
 - **Gemini 原生 API**（`client_type = "google"`）：Google Gemini 系列
 
-## OpenAI 兼容 API
+### OpenAI 兼容 API
 
 `thinking` 对象是多家服务商通用的思考模式开关，**DeepSeek**、**Kimi（月之暗面）**、**GLM（智谱）** 等均采用此格式，配置方式完全一致。`reasoning_effort` 为可选参数，不填则使用默认强度。部分第三方平台（如阿里云百炼/DashScope）则使用 `enable_thinking` 参数格式：
 
@@ -86,7 +86,7 @@ extra_params = {enable_thinking = false}
 - **限制**：思考模式下 `temperature` 和 `top_p` 会被静默忽略，`tool_choice` 会导致 400 错误
 - 第三方平台（如阿里云百炼/DashScope）使用 `enable_thinking`（布尔值）控制思考模式，与原生 `thinking` 对象写法不同。配置前请确认你使用的平台支持哪种参数格式
 
-## Responses API
+### Responses API
 
 部分服务商（如 DeepSeek v4 flash 联网搜索）使用 OpenAI 的 **Responses 协议**，需要在服务商配置中设置 `client_type = "openai_responses"`。Responses API 的参数格式与 Chat Completions 略有不同：
 
@@ -132,11 +132,11 @@ extra_params = {reasoning = {effort = "high"}, tools = [{type = "web_search"}]}
 - DeepSeek 的 Chat Completions 端点不支持原生联网搜索，使用联网搜索必须选择 `openai_responses` 客户端
 - Maisaka 监控页与日志会展示联网搜索摘要（本轮查询、动作、状态和来源数量）
 
-## Gemini 原生 API
+### Gemini 原生 API
 
 当 `client_type = "google"` 时，`extra_params` 不按 OpenAI 的 `headers/query/body` 规则处理，而是由 Gemini 客户端按自身支持的字段筛选和映射到 `GenerateContentConfig`。
 
-### Gemini 2.5（thinking_budget）
+#### Gemini 2.5（thinking_budget）
 
 Gemini 2.5 系列通过 `thinking_budget`（整数）控制思考预算：
 
@@ -180,7 +180,7 @@ extra_params = {thinking_config = {thinking_budget = -1, include_thoughts = true
 - `include_thoughts`：是否在响应中包含思考过程
 - 已知问题：Flash Preview 04-17 版本设置 `thinking_budget = 0` 可能失败
 
-### Gemini 3.0+（thinking_level）
+#### Gemini 3.0+（thinking_level）
 
 Gemini 3.0 及更新版本通过 `thinking_level`（枚举值）控制思考强度：
 
@@ -214,7 +214,7 @@ extra_params = {thinking_config = {thinking_level = "low", include_thoughts = tr
 - 不要同时使用 `thinking_budget` 和 `thinking_level`，会导致 400 错误
 - 多轮对话中需要使用 thought signatures 保持上下文
 
-### Gemini 总览
+#### Gemini 总览
 
 - **Gemini 2.5** — 通过 `thinking_budget` 控制思考预算，值域：`-1`（自动）/ `0`（关闭）/ `N`（预算），关闭方式为 `budget = 0`。budget 和 level 不可混用
 - **Gemini 3.0+** — 通过 `thinking_level` 控制思考等级，值域：`minimal` / `low` / `medium` / `high`，关闭方式为不设置或 `minimal`。不支持 token 级预算控制
@@ -223,7 +223,7 @@ Gemini 2.5 使用 token 数量间接控制强度，`-1` 为自动分配。Gemini
 
 > Google API 在国内无法直接访问，需要代理。
 
-# 自定义 HTTP 请求
+## 自定义 HTTP 请求
 
 `extra_params` 支持三个特殊 key 来精确控制 API 请求：
 
@@ -263,22 +263,22 @@ extra_params = {
 
 所以 `extra_params = {enable_thinking = "false"}` 等价于 `extra_params = {body = {enable_thinking = "false"}}`，都会把 `enable_thinking` 作为请求体 JSON 字段发给服务商，而不是发送嵌套的 `{"extra_params": {"enable_thinking": "false"}}`。
 
-# 高级鉴权配置
+## 高级鉴权配置
 
 - **`auth_header_name`** — Header 鉴权名称。默认 `Authorization`
 - **`auth_header_prefix`** — Header 鉴权前缀。默认 `Bearer`
 - **`auth_query_name`** — Query 鉴权参数名。默认 `api_key`
 
-# 其他高级参数
+## 其他高级参数
 
-## 模型级参数覆盖
+### 模型级参数覆盖
 
 - **`temperature`** — 模型级温度，覆盖任务配置。可选，如 `0.7`
 - **`max_tokens`** — 模型级最大 token，覆盖任务配置。可选，如 `4096`
 - **`force_stream_mode`** — 强制流式输出，不支持非流式时设为 `true`。默认关闭
 - **`extra_params`** — 额外参数字典。默认为空
 
-## 优先级说明
+### 优先级说明
 
 `temperature` 和 `max_tokens` 可以写在 `extra_params` 中作为模型级默认值，但更推荐使用模型配置里的同名独立字段：
 
@@ -300,7 +300,7 @@ max_tokens = 4096
 3. 当前模型 `extra_params` 中的同名字段
 4. 当前任务配置中的默认值
 
-## API 提供商高级配置
+### API 提供商高级配置
 
 - **`default_headers`** — 默认 HTTP 头。默认为空
 - **`default_query`** — 默认查询参数。默认为空
@@ -310,15 +310,15 @@ max_tokens = 4096
 - **`reasoning_parse_mode`** — 推理内容解析模式。默认 `auto`
 - **`tool_argument_parse_mode`** — 工具参数解析模式。默认 `auto`
 
-## 运行时配置
+### 运行时配置
 
 - **`timeout`** — 超时时间。推荐 60 秒
 - **`max_retry`** — 失败重试次数。推荐 3 次
 - **`retry_interval`** — 重试间隔。推荐 5 秒
 
-# 常用参数速查
+## 常用参数速查
 
-## OpenAI 兼容 API
+### OpenAI 兼容 API
 
 - **`thinking`** — 思考模式控制，含 `type`（enabled/disabled）。适用 DeepSeek
 - **`reasoning_effort`** — 推理强度等级（DeepSeek V4 仅 high/max，OpenAI 6 级）。适用 DeepSeek, OpenAI
@@ -329,7 +329,7 @@ max_tokens = 4096
 - **`query`** — 自定义 URL 查询参数。适用全部
 - **`body`** — 自定义请求体字段。适用全部
 
-## Gemini 原生 API
+### Gemini 原生 API
 
 - **`thinking_config`** — 思考配置，含 `thinking_budget` 或 `thinking_level`。适用 Gemini 全系
 - **`thinking_budget`** — 思考预算（-1 自动 / 0 关闭 / N 指定）。适用 Gemini 2.5
@@ -340,11 +340,4 @@ max_tokens = 4096
 
 ---
 
-**更多信息请参考各服务商官方文档：**
-
-- [DeepSeek API 文档](https://api-docs.deepseek.com/guides/thinking_mode)
-- [OpenAI 推理指南](https://platform.openai.com/docs/guides/reasoning)
-- [Google Gemini 思考配置](https://cloud.google.com/vertex-ai/generative-ai/docs/thinking)
-- [阿里云百炼 API 参考](https://help.aliyun.com/zh/model-studio/developer-reference/)
-- [Kimi 思考模式指南](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model)
-- [GLM 思考模式文档](https://docs.bigmodel.cn/cn/guide/capabilities/thinking-mode)
+更多细节以服务商官方文档为准：[DeepSeek 思考模式](https://api-docs.deepseek.com/guides/thinking_mode)、[OpenAI 推理指南](https://platform.openai.com/docs/guides/reasoning)、[Google Gemini 思考配置](https://cloud.google.com/vertex-ai/generative-ai/docs/thinking)、[阿里云百炼](https://help.aliyun.com/zh/model-studio/developer-reference/)、[Kimi 思考模式](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model)、[GLM 思考模式](https://docs.bigmodel.cn/cn/guide/capabilities/thinking-mode)。

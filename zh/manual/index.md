@@ -51,7 +51,7 @@ title: 快速上手
 <div class="nav-card">
   <h3>⚙️ 配置详解</h3>
   <p>人格、昵称、聊天风格、记忆开关……所有配置文件都能在 WebUI 里改，也能直接编辑 TOML。</p>
-  <a href="/manual/configuration/">配置文件 →</a>
+  <a href="/manual/configuration/">配置概览 →</a>
 </div>
 
 <div class="nav-card">

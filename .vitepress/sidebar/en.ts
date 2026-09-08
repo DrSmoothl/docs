@@ -108,7 +108,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       text: 'Configuration',
       collapsed: false,
       items: [
-        { text: 'Config Files', link: '/en/manual/configuration/' },
+        { text: 'Configuration Overview', link: '/en/manual/configuration/' },
         { text: 'Bot Config', link: '/en/manual/configuration/bot-config' },
         { text: 'Model Config', link: '/en/manual/configuration/model-config' },
         { text: 'Model Extra Parameters', link: '/en/manual/configuration/model-extra-params' },
