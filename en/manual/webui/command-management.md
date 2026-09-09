@@ -4,7 +4,9 @@ title: Command Management
 
 # Command Management
 
-Since 1.2.0, MaiBot provides **unified management** for plugin commands: you can view all registered commands in the WebUI and configure **execution permissions** (authorization) for each command. The entry point is the **Commands** editing mode of the **Bot Config** page (sidebar "Bot Configuration" group → Bot Config).
+Since 1.2.0, MaiBot provides **unified management** for plugin commands: view all registered commands in the WebUI and configure **execution permissions** (authorization) for each command. The entry point is the **命令管理** (Command Management) editing mode at the top of the **麦麦设置** (MaiBot Settings) page (sidebar "麦麦配置编辑" group → MaiBot Settings).
+
+![Command management](/images/webui/config-bot-commands.webp)
 
 ## View All Commands
 
@@ -26,8 +28,8 @@ A command can require **operator permission** (`operator` level). Once a command
 In the command management page:
 
 1. Select a command
-2. In **Allowed Users**, add users allowed to execute it (`platform:id` format)
-3. In **Allowed Chats**, select the chat flows allowed to execute it (chosen from existing chat flows)
+2. In **放行用户** (Allowed Users), add users allowed to execute it (`platform:id` format)
+3. In **放行聊天** (Allowed Chats), select the chat flows allowed to execute it (chosen from existing chat flows)
 4. After saving, the configuration is written to the `[plugin]` section of `bot_config.toml`
 
 ::: tip Permission evaluation order
@@ -50,6 +52,20 @@ allow_chats = ["chat-xxxx"]     # extra allowed chat flow IDs
 ```
 
 :::
+
+## Verification & Troubleshooting
+
+**Verify**: search a command name on the command management page — it should be found with the correct authorization flag, which means the command is registered.
+
+**Command list is empty?**
+
+- Confirm the corresponding plugin is installed and enabled
+- Plugins that don't declare a Command component won't appear in the list
+
+**Saving allow rules failed?**
+
+- User IDs must be in `platform:id` format
+- Allowed chats can only be selected from existing chat flows
 
 ## Related Docs
 

@@ -4,7 +4,9 @@ title: Adapter Management
 
 # Adapter Management
 
-Adapters connect messaging platforms such as QQ, email, and iMessage to MaiBot. The WebUI **Adapter Management** page (under the "Bot Configuration" group in the sidebar) lets you view and manage all connected adapters and their account identities in one place.
+Adapters connect messaging platforms such as QQ, email, and iMessage to MaiBot. The WebUI **适配器管理** (Adapter Management) page (under the "麦麦配置编辑" group in the sidebar, `/adapter-management`) lets you view and manage all connected adapters and their account identities in one place.
+
+![Adapter management](/images/webui/adapter-management.webp)
 
 ## View Discovered Accounts
 
@@ -40,6 +42,20 @@ The **group / private chat access policy** (who an adapter is allowed to serve) 
 - Configure whitelist / blacklist (`allow_ids` / `deny_ids`) per adapter
 
 The underlying configuration file is `config/adapter_policy.toml`. See [Connect Platforms](../adapters/index.md).
+
+## Verification & Troubleshooting
+
+**Verify**: after connecting an adapter, its account appears on the Adapter Management page with a healthy online status.
+
+**Account not showing?**
+
+- Confirm the adapter is connected and logged in to the platform
+- When an adapter reports no identity, the page falls back to the fallback account from the configuration
+
+**Soft disable not taking effect?**
+
+- Soft disable only affects inbound messages; the adapter connection stays up
+- Make sure you operated on the target account, not another account on the same instance
 
 ## Related Docs
 

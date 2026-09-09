@@ -1,128 +1,111 @@
 ---
 title: Chat History and Statistics
 ---
-# Chat Logs and Statistics
 
-See how active MaiBot is and what it has been chatting about!
+# Chat History and Statistics
 
-## Chat Statistics
+See how active MaiBot is and what it has been chatting about! The home page gives an overview, the detailed statistics page shows data, the chat management page shows records, and the resource pages manage stickers, expression styles, and slang.
 
-### 📊 Data Overview
-Open the "Chat Statistics" page to view:
-- **Total Messages** - How many messages the bot received
-- **Replies** - How many messages the bot replied to
-- **Uptime** - How long the bot has been running
-- **Average Response** - How fast the bot replies
+## Home Overview
 
-### 💰 Cost Statistics
-You can also view spending details:
-- **Total Cost** - Total amount spent
-- **Hourly Cost** - Average cost per hour
-- **Token Usage** - How much text the AI processed
-- **Cost by Model** - How much was spent on each AI model
+The **home page** (`/`) you land on after login shows the running overview in cards:
 
-### 📈 Trend Charts
-Intuitive charts display:
-- **24 Hours** - Activity over the last day
-- **7 Days** - Trends over the last week
-- **Peak Hours** - When the bot is most active
+![WebUI home page](/images/webui/home.webp)
 
-## Detailed Statistics Page
+- **Bot status** — online status and uptime
+- **Statistics overview** — messages, replies, requests, token usage
+- **Trend charts** — requests, tokens, and cost over time
+- **Model distribution** — usage share and details per model
+- **Prompt cache** — cache hit rate and saved cost
 
-The "Statistics" entry in the sidebar (`/statistics`) opens an interactive native detailed statistics page, replacing the traditional static HTML report (the old report remains available at `maibot_statistics.html`). The time range can be switched at the top of the page:
+Cards can be dragged to reorder, added, or removed; the top-right corner switches between 24-hour / 7-day / 30-day time ranges.
+
+## Detailed Statistics
+
+Switch the top workspace to "麦麦日志" (MaiBot Logs) and select the **详细统计** (Detailed Statistics) tab (`/statistics`) to open the interactive detailed statistics page:
+
+![Detailed statistics](/images/webui/statistics.webp)
+
+The time range can be switched at the top of the page:
 
 - **All time / Last 30 days / Last 7 days / Last 3 days**
 - **Last 24 hours / Last 3 hours / Last 1 hour / Last 15 minutes**
 
 ### Core Metrics
 
-- **Uptime** - Total running duration of the bot
-- **Messages / Replies** - Messages received and replies sent
-- **Requests / Token Usage** - Model call count and total input/output tokens
-- **Cache Hits** - Cache hit/miss tokens and hit rate
-- **Cost** - Total spend, cost per 100 messages, cost per hour, etc.
+- **Uptime** — total running duration of the bot
+- **Messages / Replies** — messages received and replies sent
+- **Requests / Token Usage** — model call count and total input/output tokens
+- **Cache Hits** — cache hit/miss tokens and hit rate
+- **Cost** — total spend, cost per 100 messages, cost per hour, etc.
 
 ### Multi-Dimensional Analysis
 
 Detailed statistics can be broken down by:
 
-- **Model** - Request count, tokens, cache hit rate, cost and average latency per model
-- **Module** - Call distribution aggregated by feature module
-- **Request Type** - Cost share by request type
-- **Chat Flow** - Message volume and cost per chat flow
-- **Trends** - Time-series changes in cost, message volume, etc.
-- **Performance Metrics** - Key metrics such as cost per 100 messages and tokens per hour
+- **Model** — request count, tokens, cache hit rate, cost and average latency per model
+- **Module** — call distribution aggregated by feature module
+- **Request Type** — cost share by request type
+- **Chat Messages** — message volume and cost per chat flow
+- **Charts / Metric Trends** — time-series changes in cost, message volume, etc.
 
-## Chat Logs
+## Chat Management
 
-### View Logs
-View detailed chat history:
-- Who said what
-- How the bot replied
-- When the conversation took place
-- In which group chat
+The **聊天管理** (Chat Management) page (`/chat-management`) manages all chat flows:
 
-### Search Logs
-Looking for specific content?
-- Filter by user
-- Search by time range
-- Filter by group chat
+![Chat management](/images/webui/chat-management.webp)
 
-### Log Management
-- **Clean Logs** - Delete old records
-- **Backup Important Chats** - Save interesting conversations
+- View message records per chat flow: who said what, how the bot replied, and when
+- Filter by user, time range, and chat flow
+- Manage learning settings such as speaking frequency rules
 
-## User Management
+## Local Chat
 
-### User List
-Displays all users who have chatted:
-- User nickname and avatar
-- How long they have been known
-- Chat frequency
-- Platform where they were met
+Switch the top workspace to "麦麦聊天" (MaiBot Chat, `/chat`) to talk to MaiBot directly without any external platform:
 
-### User Profiles
-Click on a user to view:
-- Personality traits
-- Interests and hobbies
-- Chatting habits
-- Interaction history
+![Local chat](/images/webui/chat.webp)
 
-### User Statistics
-- **Total Users** - How many users are known
-- **Active Users** - How many chat frequently
-- **Platform Distribution** - Counts for QQ, WeChat, etc.
+- Type a message and press Enter to send
+- Change your nickname and switch virtual identities
+- Message history is saved automatically
+
+![Sending a message in local chat](/images/webui/chat-message.webp)
+
+## Stickers
+
+The **表情包** (Stickers) page (`/resource/emoji`) manages collected stickers:
+
+![Stickers](/images/webui/emoji.webp)
+
+- Usage frequency statistics and popular stickers
+- Upload new ones and disable inappropriate ones
+
+Stickers in the WebUI are uniformly displayed in four states:
+
+- **认识** (Known): has a description, but is not registered or banned
+- **不认识** (Unknown): no description yet, and not registered or banned
+- **据为己用** (Claimed): already registered and available for MaiBot to use
+- **丢弃** (Discarded): already banned and no longer used
+
+Stickers manually uploaded via the WebUI are directly marked as "据为己用" (Claimed). The tag list filled in during upload is merged into the sticker description; if the image already exists in the database, the original record is reused, the description is updated, the ban is lifted, and it is marked as registered. Deleting unregistered stickers synchronously deletes the database record and local file; deleting registered stickers first unloads them from the available sticker library, then deletes the database record and file.
 
 ## Expression Styles
 
-### Speaking Style
-MaiBot learns different expression styles:
-- Formal/Casual
-- Lively/Serene
-- Humorous/Serious
-- Various internet slang
+The **表达方式** (Expression Styles) page (`/resource/expression`) manages the speaking styles MaiBot has learned:
 
-### Slang Management
-Internet slang learned by the bot:
-- New and trending words
-- Memes and jokes
-- Niche community terms
-- Can be manually approved or rejected
+![Expression styles](/images/webui/expression.webp)
 
-### Stickers
-Collected stickers:
-- Usage frequency statistics
-- Popular stickers
-- Ability to upload new ones
-- Ability to disable inappropriate ones
+- Formal/casual, lively/serene, humorous/serious, and other styles
+- Manually confirm or reject them
 
-Stickers in the WebUI are uniformly displayed in four states:
-- **Known**: Has a description, but is not registered or banned
-- **Unknown**: No description yet, and not registered or banned
-- **Claimed**: Already registered and available for MaiBot to use
-- **Discarded**: Already banned and no longer used
+## Slang
 
-Stickers manually uploaded via the WebUI are directly marked as "Claimed". The tag list filled in during upload is merged into the sticker description; if the image already exists in the database, the original record is reused, the description is updated, the ban is lifted, and it is marked as registered. Deleting unregistered stickers synchronously deletes the database record and local file; deleting registered stickers first unloads them from the available sticker library, then deletes the database record and file.
+The **黑话** (Slang) page (`/resource/jargon`) manages the internet slang learned by the bot:
+
+![Slang](/images/webui/jargon.webp)
+
+- New and trending words, memes and jokes, niche community terms
+- Manually confirm or reject them
 
 ## Reply Effect Evaluation {#reply-effect-evaluation}
 
@@ -141,7 +124,9 @@ enable_reply_effect_tracking = true
 
 :::
 
-Once enabled, a **Reply Effects** page (`/reply-effects`) appears under the "Advanced Tools" group in the WebUI sidebar.
+Once enabled, a **回复效果** (Reply Effects) page (`/reply-effects`) appears under the "高级工具" (Advanced Tools) group in the WebUI sidebar.
+
+![Reply effects](/images/webui/reply-effects.webp)
 
 ### Scoring Semantics (currently v6)
 
@@ -161,7 +146,9 @@ The evaluation standard has been upgraded over several rounds; the current imple
 
 ## Reasoning Process Token Display
 
-In the **Reasoning Process** page (`/reasoning-process`), the log list and details now show the following for each LLM request:
+In the **推理过程** (Reasoning Process) page (`/reasoning-process`), the log list and details show the following for each LLM request:
+
+![Reasoning process](/images/webui/reasoning-process.webp)
 
 - **Input tokens** — tokens sent to the model in the request
 - **Output tokens** — tokens returned by the model
@@ -169,50 +156,50 @@ In the **Reasoning Process** page (`/reasoning-process`), the log list and detai
 
 This makes the reasoning cost of a single reply easy to evaluate, especially cost growth in high-activity group chats.
 
+## Log Viewer
+
+Switch the top workspace to "麦麦日志" (MaiBot Logs) and select the **终端** (Terminal) tab (`/logs`) to watch MaiBot's runtime logs in real time:
+
+![Log viewer](/images/webui/logs-terminal.webp)
+
+- Filter by level (DEBUG / INFO / WARNING / ERROR / CRITICAL)
+- Keyword search, auto-scroll, and log export
+
 ## Usage Recommendations
 
 ### Daily Checks
+
 - Check statistics daily to understand activity levels
 - Monitor cost changes to avoid overspending
 - Review user feedback to improve the bot
 
 ### Data Analysis
+
 - Analyze peak hours to schedule maintenance appropriately
 - Observe user preferences to adjust the bot's personality
 - Track popular topics to add relevant content
 
 ### Optimization Tips
+
 - Response too slow? Check configuration
 - Costs too high? Switch to a cheaper model
 - Too few users? Increase promotion
 
-## Frequently Asked Questions
+## Verification & Troubleshooting
 
-**Q: How often are statistics updated?**
-A: Real-time updates; you can see the latest data anytime
+**Verify**: after sending a message, the message count on the home statistics overview increases and the record appears on the detailed statistics page.
 
-**Q: How long are logs saved?**
-A: Saved indefinitely by default; automatic cleanup can be configured
+**Statistics are empty?**
 
-**Q: Can data be exported?**
-A: Export functionality is not currently supported but will be added in future versions
+- A fresh deployment with no messages yet has empty data, which is normal
+- Make sure the time range is correct (default "All time")
 
-**Q: How to reduce usage costs?**
-A: Choose cheaper models, reduce unnecessary calls, and optimize prompts
+**Detailed statistics failed to load?**
 
-## Practical Tips
+- Retry later; statistics are collected periodically by background tasks
+- The legacy static report is still available at `maibot_statistics.html`
 
-### Monitor Bot Health
-- Response time suddenly increased? There may be an issue
-- Costs increased abnormally? Check for potential attacks
-- Active users declined? Check if something inappropriate was said
+**How to reduce usage costs?**
 
-### Improve User Experience
-- Analyze user profiles for personalized replies
-- Track popular topics to prepare relevant content
-- Record user feedback for continuous improvement
-
-### Save Costs
-- Choose cost-effective models
-- Set reasonable call frequencies
-- Avoid repeated calls that waste tokens
+- Choose cheaper models, reduce unnecessary calls, and optimize prompts
+- Watch the prompt cache hit rate; a low rate means the context changes frequently

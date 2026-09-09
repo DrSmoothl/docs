@@ -4,40 +4,72 @@ title: 登录与设置
 
 # 登录与设置
 
-通过浏览器就能管理你的机器人！
+MaiBot 自带浏览器管理面板（WebUI），启动后访问 `http://localhost:8001` 就能改配置、管记忆、看统计。这一页讲怎么登录、怎么完成首次设置，以及忘记密码怎么办。
 
-## 第一次使用
+## 获取登录密码
 
-### 获取登录密码
-
-第一次启动 MaiBot 时，控制台会显示一个密码（Token）：
+第一次启动 MaiBot 时，控制台会打印一个临时 Token：
 
 ```
-WebUI Access Token: a1b2c3d4...
-请使用此 Token 登录 WebUI
+🔑 WebUI 登录 Token: e37fd618051f802816dc3bf32067583294b2648aff233a2d4caee0f67ebfdfcb
+💡 请使用此 Token 登录 WebUI
 ```
 
-首次显示的是本次启动使用的临时 Token。登录后，首次配置向导会要求你设置一个符合安全要求的固定 Token；临时 Token 会在下次启动时重新生成。
+这个 Token 只用于本次启动的首次登录。登录后，首次配置向导会要求你设置一个固定 Token；临时 Token 在下次启动时会重新生成。
 
-### 登录步骤
+## 登录
 
-1. 打开浏览器，访问 `http://localhost:8001`（默认地址）
-2. 输入控制台显示的密码
-3. 首次登录时按向导设置固定 Token，并使用新 Token 重新登录
-4. 完成首次配置后进入管理面板
+1. 浏览器打开 `http://localhost:8001`，进入登录页
+2. 输入控制台显示的 Token，点击「登录」
+
+![WebUI 登录页](/images/webui/login.webp)
+
+3. 首次登录会进入配置向导，第一步是设置固定 Token
+
+![设置登录密码](/images/webui/setup-token.webp)
+
+固定 Token 需要同时满足：长度至少 10 位、包含大写字母、包含小写字母、包含特殊符号（例如 `MaiBot-Docs-2026!`）。
+
+![填写固定 Token](/images/webui/setup-token-filled.webp)
+
+4. 保存后旧 Token 立即失效，用新 Token 重新登录，再继续向导
+
+## 首次配置向导
+
+向导共三步，任何一步都可以点「跳过向导」（之后可在「WEBUI设置」中重新进入）：
+
+### 1. 设置登录密码
+
+把临时 Token 换成你自己的固定 Token。
+
+### 2. 基础与人格
+
+设置机器人昵称、人格描述和回复风格。
+
+![基础与人格](/images/webui/setup-bot-profile.webp)
+
+![填写昵称与人格](/images/webui/setup-bot-profile-filled.webp)
+
+### 3. API 与模型
+
+配置模型服务商（API 地址、Key）和基础模型。还没有 Key 可以先跳过，之后在[模型管理](./config-management.md)里补。
+
+![API 与模型配置](/images/webui/setup-model.webp)
+
+完成后进入管理面板首页：
+
+![WebUI 首页](/images/webui/home.webp)
 
 ## 能做什么？
 
-WebUI 让你轻松管理 MaiBot：
-
-- ⚙️ **改配置** - 不用编辑文件，点点鼠标就能改设置
-- 🧠 **管记忆** - 查看、编辑、删除机器人的记忆
-- 🔌 **装插件** - 安装和管理各种功能插件
-- 📊 **看统计** - 查看聊天记录和使用数据
+- ⚙️ **改配置** — 表单化编辑 `bot_config.toml`，不用碰文件
+- 🧠 **管记忆** — 查看、导入、修正、删除长期记忆
+- 🔌 **装插件** — 安装和管理插件、适配器
+- 📊 **看统计** — 消息、Token、费用与在线时长
 
 ## 基本设置
 
-在 `bot_config.toml` 里可以改 WebUI 的设置：
+在 `bot_config.toml` 里改 WebUI 的设置：
 
 ::: code-group
 
@@ -54,22 +86,52 @@ allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 
 :::
 
-- `host` 改成 `["0.0.0.0", "::"]` 可以监听所有 IPv4/IPv6 网卡；同时应配置防火墙、访问白名单和 HTTPS
+- `host` 改成 `["0.0.0.0", "::"]` 可以监听所有网卡；同时应配置防火墙、访问白名单和 HTTPS
 - `port` 可以改成其他数字避免冲突
+
+## WEBUI设置
+
+右上角齿轮进入 **WEBUI设置**（`/settings`），管理界面偏好：
+
+- **外观** — 主题模式（浅色/深色/跟随系统）、主题色、字体、圆角、自定义 CSS
+- **安全** — 修改或重新生成登录 Token
+- **其他** — 数据管理：清理日志与缓存、导入/导出设置、重置
+- **关于** — 版本信息、技术栈与开源许可
+
+![WEBUI设置](/images/webui/settings.webp)
+
+![关于页](/images/webui/settings-about.webp)
 
 ## 忘记密码怎么办？
 
-如果仍能登录，可在 WebUI 的系统设置中重新生成或修改 Token。如果已经无法登录：
+如果仍能登录，在「WEBUI设置 → 安全」中修改或重新生成 Token：
+
+![安全设置](/images/webui/settings-security.webp)
+
+如果已经无法登录：
 
 1. 关闭 MaiBot
 2. 删除 `data/webui.json` 文件
-3. 重新启动 MaiBot，使用控制台显示的新临时 Token 登录，并重新设置固定 Token
+3. 重新启动 MaiBot，用控制台显示的新临时 Token 登录，并重新设置固定 Token
 
-## 安全提醒
+## 验证与排错
 
-- 不要把密码告诉别人
-- 公网部署必须优先使用 HTTPS 或可信私有网络；仅修改默认端口不能替代访问控制
-- 怀疑 Token 泄露时应立即在系统设置中重新生成
+**验证**：登录后能看到首页统计卡片和左侧菜单，说明 WebUI 正常。
+
+**打不开页面？**
+
+- 确认 MaiBot 正在运行，控制台打印了「WebUI 服务器已启动」
+- 确认 `[webui].enabled = true`，端口没被占用
+
+**登录提示 Token 错误？**
+
+- 临时 Token 每次启动都会变，用本次启动控制台打印的值
+- 复制时别带上空格或换行
+
+**设置固定 Token 后进不去？**
+
+- 保存固定 Token 后旧 Token 立即失效，用新 Token 重新登录
+- 实在不行删除 `data/webui.json` 重置
 
 ## 更多功能
 
