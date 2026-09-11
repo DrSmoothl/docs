@@ -95,7 +95,9 @@ MaiBot's "learning" capability spans 5 categories of data models, stored across 
 The `expressions` table records the expression styles the bot should use in specific situations.
 
 **`situation` / `style`** — situation and style tags. For example, "group member seeking help / comfort", "silence / liven things up".
+
 **`content_list`** — JSON-format list of expression candidates (multiple alternative phrases).
+
 **`session_id`** — when `NULL`, represents a global expression; when set, only effective within that session.
 
 ### Jargon Mining
@@ -103,9 +105,13 @@ The `expressions` table records the expression styles the bot should use in spec
 The `jargons` table (`src/common/database/database_model.py:431-458`) records new words and inside jokes that emerge in groups.
 
 **`content`** — the jargon text itself.
+
 **`meaning`** — the AI-inferred meaning (e.g. "开黑 = team up for a game").
+
 **`is_jargon`** — whether this is confirmed jargon. `False` means it's still uncertain.
+
 **`is_complete`** — whether inference is complete (stops after `count > 100`).
+
 **`session_id_dict`** — which sessions this jargon appears in and the frequency, in JSON dictionary format. See [JSON Column Conventions](#json-column-conventions).
 
 ### Behavior Experience Learning
@@ -113,9 +119,13 @@ The `jargons` table (`src/common/database/database_model.py:431-458`) records ne
 This is the most complex set of learning models, containing 5 tables with source code spanning `database_model.py:321-428`.
 
 **`behavior_experience_paths`** — core path table. Records a feedback-able behavior experience: in a certain scene, a certain action was taken, producing a certain outcome.
+
 **`behavior_scene_clusters`** — scene clusters. Describes a type of scene using tag probability distributions (e.g. "group member seeking help with urgent tone").
+
 **`behavior_scene_tag_clusters`** — tag cluster member index, quickly mapping synonymous tags to the same cluster.
+
 **`behavior_actions`** — behavior action entities, reusing action text descriptions.
+
 **`behavior_outcomes`** — behavior outcome entities, reusing outcome descriptions.
 
 Association path: a `behavior_experience_paths` row points to the corresponding cluster, action, and outcome entities via `scene_cluster_id`, `action_id`, and `outcome_id`, forming a complete "scene → action → outcome" experience chain. The `evidence_list` field stores evidence message references supporting this experience as a JSON array.
@@ -125,7 +135,9 @@ Association path: a `behavior_experience_paths` row points to the corresponding 
 The `person_info` table (`database_model.py:472-501`) builds long-term profiles of conversation participants.
 
 **`person_id`** — a cross-platform / cross-user_id unified identity ID, the anchor for person profiles.
+
 **`person_name`** — inferred real name or form of address.
+
 **`memory_points`** — memory points in JSON format, storing AI-generated impression summaries about the person.
 
 ### High-Frequency Term Library
@@ -133,7 +145,9 @@ The `person_info` table (`database_model.py:472-501`) builds long-term profiles 
 The `high_frequency_terms` table (`database_model.py:256-276`) counts high-frequency words and phrases per group chat dimension.
 
 **`chat_id`** — group chat or private chat identifier.
+
 **`rank`** — ranking within the group.
+
 **`frequency`** — word frequency (occurrences / total words).
 
 ## Statistics and Telemetry
@@ -141,8 +155,11 @@ The `high_frequency_terms` table (`database_model.py:256-276`) counts high-frequ
 MaiBot has built its own hourly aggregation statistics system with 3 aggregation tables plus 1 cursor table:
 
 **`statistics_message_hourly`** — message volume aggregated by hour, deduplicated by `(bucket_time, chat_id)`.
+
 **`statistics_tool_hourly`** — tool call count aggregated by hour, deduplicated by `(bucket_time, tool_name)`.
+
 **`statistics_model_hourly`** — model usage aggregated by hour, including token count, cost (yuan), and latency variance.
+
 **`statistics_aggregation_cursors`** — incremental cursors, recording the maximum `id` last processed for each statistics source, ensuring no data loss when aggregating from scratch.
 
 The `llm_usage` table is the source of raw records. Each record contains the complete metadata of a model request: prompt tokens, completion tokens, cost (yuan), whether prompt cache was hit, etc. If you have enabled model cache billing, the `prompt_cache_hit_tokens` and `prompt_cache_miss_tokens` columns can help you calculate cache savings.

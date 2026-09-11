@@ -189,7 +189,9 @@ class MyPluginConfig(PluginConfigBase):
 
 ### Strongly-Typed Access (self.config)
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     config_model = MyPluginConfig
 
@@ -199,7 +201,9 @@ class MyPlugin(MaiBotPlugin):
         timeout = self.config.advanced.timeout
 ```
 
-::: warning 注意
+:::
+
+::: warning Note
 - Calling `self.config` without declaring `config_model` will raise `RuntimeError`
 - Calling `self.config` before the configuration is injected will also raise `RuntimeError`
 :::
@@ -226,7 +230,9 @@ class MyPlugin(MaiBotPlugin):
 
 When the `config.toml` file changes, the Runner automatically triggers the `on_config_update()` callback:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, CONFIG_RELOAD_SCOPE_SELF
 
 class MyPlugin(MaiBotPlugin):
@@ -238,7 +244,9 @@ class MyPlugin(MaiBotPlugin):
             self.ctx.logger.info("Configuration updated, new greeting: %s", self.config.plugin.greeting)
 ```
 
-::: important
+:::
+
+::: info
 `self.config` is automatically updated when `on_config_update(scope="self")` is called, so there is no need to manually re-read it.
 :::
 

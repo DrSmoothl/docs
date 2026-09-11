@@ -121,7 +121,9 @@ async def on_unload(self) -> None:
 
 **示例：**
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     async def on_unload(self) -> None:
         self.ctx.logger.info("插件正在卸载")
@@ -136,6 +138,8 @@ class MyPlugin(MaiBotPlugin):
         self.clear_dynamic_apis()
         await self.sync_dynamic_apis(offline_reason="插件已卸载")
 ```
+
+:::
 
 ::: warning 注意
 `on_unload()` 中仍然可以使用 `self.ctx`，但应尽快完成清理工作，不要执行耗时操作。
@@ -171,7 +175,7 @@ async def on_config_update(
 - **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — 全局 Bot 配置。需要通过 `config_reload_subscriptions` 订阅
 - **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM 模型配置。需要通过 `config_reload_subscriptions` 订阅
 
-::: important
+::: info
 - `scope == "self"` 的回调**始终触发**，不需要额外订阅
 - `scope == "bot"` 和 `scope == "model"` 只有在 `config_reload_subscriptions` 中声明后才会触发
 :::

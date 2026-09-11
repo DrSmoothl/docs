@@ -50,7 +50,7 @@ WebUI 保存配置时会做格式校验，比直接手写 TOML 更不容易产�
 
 ::: code-group
 
-```powershell [Windows PowerShell]
+```powershell [Windows PowerShell ~vscode-icons:file-type-powershell~]
 # 如果日志指向 bot_config.toml
 Rename-Item config\bot_config.toml bot_config.broken.toml
 
@@ -58,7 +58,7 @@ Rename-Item config\bot_config.toml bot_config.broken.toml
 Rename-Item config\model_config.toml model_config.broken.toml
 ```
 
-```bash
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Linux / macOS：只执行日志对应的一条
 mv config/bot_config.toml config/bot_config.broken.toml
 mv config/model_config.toml config/model_config.broken.toml

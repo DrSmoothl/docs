@@ -36,13 +36,13 @@ The persistent Token must satisfy all of: at least 10 characters, at least one u
 
 ## First-Time Setup Wizard
 
-The wizard has three steps, and any step can be skipped with **跳过向导** (Skip wizard); you can re-enter it later from **WEBUI设置** (WebUI Settings):
+The wizard has three steps, and any step can be skipped with **跳过向导** (Skip wizard); you can re-enter it later from **WebUI Settings**:
 
-### 1. Set Login Password
+### Set Login Password
 
 Replace the temporary Token with your own persistent Token.
 
-### 2. Bot Basics & Personality
+### Bot Basics & Personality
 
 Set the bot nickname, personality description, and reply style.
 
@@ -50,7 +50,7 @@ Set the bot nickname, personality description, and reply style.
 
 ![Filling in nickname and personality](/images/webui/setup-bot-profile-filled.webp)
 
-### 3. API & Models
+### API & Models
 
 Configure the model provider (API URL, key) and base models. If you don't have a key yet, skip and fill it in later under [Model Management](./config-management.md).
 
@@ -91,7 +91,7 @@ allowed_ips = "127.0.0.1"     # IP whitelist (comma-separated)
 
 ## WebUI Settings
 
-Click the gear icon in the top-right corner to open **WEBUI设置** (WebUI Settings, `/settings`) and manage interface preferences:
+Click the gear icon in the top-right corner to open **WebUI Settings** (`/settings`) and manage interface preferences:
 
 - **外观** (Appearance) - theme mode (light/dark/system), accent color, fonts, border radius, custom CSS
 - **安全** (Security) - change or regenerate the login Token
@@ -104,7 +104,7 @@ Click the gear icon in the top-right corner to open **WEBUI设置** (WebUI Setti
 
 ## Forgot Your Password?
 
-If you can still sign in, change or regenerate the Token under **WEBUI设置 → 安全** (WebUI Settings → Security):
+If you can still sign in, change or regenerate the Token under **WebUI Settings → Security**:
 
 ![Security settings](/images/webui/settings-security.webp)
 

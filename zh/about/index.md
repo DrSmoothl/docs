@@ -19,7 +19,6 @@ MaiBot（麦麦 / MaiSaka）是一个基于大语言模型的可交互智能体�
 > - 功能设计围绕一个核心原则："最像，而不是最好"。
 > - 如果一个人真的需要 AI 来陪伴，那未必是一个完美、什么都能解决的"helpful assistant"。也许更想要的，是一个会犯错、有自己想法和感受的"生命"。
 
-> **xxxxx 说：**
 > *Code is open, but the soul is yours.*
 
 ## 相关项目

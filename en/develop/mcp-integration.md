@@ -52,8 +52,11 @@ The `[mcp]` section lives in `bot_config.toml` and maps to the `MCPConfig` model
 Allows MCP Servers to request MaiBot to call an LLM in reverse.
 
 **`enable`** — Defaults to `false`.
+
 **`task_name`** — Model routing task name. Defaults to `"planner"`. See [Model Configuration](/en/manual/configuration/model-config) for `model_task_config`.
+
 **`include_context_support`** — Whether to allow carrying context messages. Defaults to `false`.
+
 **`tool_support`** — Whether to allow nested tool calls. Defaults to `false`. Token consumption may spike dramatically if enabled.
 
 ### client.elicitation — Server requests for user input
@@ -61,7 +64,9 @@ Allows MCP Servers to request MaiBot to call an LLM in reverse.
 Controls whether MCP Servers can ask the user for information.
 
 **`enable`** — Defaults to `false`.
+
 **`allow_form`** — Allow requesting forms. Defaults to `true`.
+
 **`allow_url`** — Allow requesting URLs to open. Defaults to `false`.
 
 ### servers — Server list (core section)
@@ -69,12 +74,19 @@ Controls whether MCP Servers can ask the user for information.
 A TOML array; each entry defines one MCP Server:
 
 **`name`** (required) — Unique identifier. Duplicates are not allowed.
+
 **`enabled`** — Defaults to `true`.
+
 **`transport`** — `"stdio"` / `"streamable_http"` / `"sse"`. Defaults to `"stdio"`.
+
 **`command`** — stdio launch command. **`args`** — Command argument list. **`env`** — Child process environment variables.
+
 **`url`** — HTTP/SSE remote address. **`headers`** — Request headers (commonly used for Bearer Tokens).
+
 **`http_timeout_seconds`** — HTTP timeout. Defaults to `30.0`.
+
 **`read_timeout_seconds`** — Read timeout. Defaults to `300.0`.
+
 **`authorization`** — Auth configuration, contains a `type` field.
 
 ## Three transports trade-offs
@@ -213,8 +225,11 @@ read_timeout_seconds = 300.0
 Bump `http_timeout_seconds` to 45 seconds to accommodate remote handshake latency. After restart, watch the console logs. Common causes of connection failure:
 
 **TLS certificate issues** — Confirm the environment can correctly verify the server's HTTPS certificate.
+
 **Authorization format** — Some servers are case-sensitive about `Bearer`; consult the server's docs.
+
 **Network unreachable** — Check whether the domain resolves and a TCP connection can be established.
+
 **http_timeout too short** — If the handshake is slow, keep increasing it.
 
 ## Host Callbacks: Sampling / Logging / Elicitation
@@ -254,10 +269,15 @@ MaiBot performs two levels of checks when registering MCP tools.
 The following 6 tool names are reserved by the kernel. No MCP Server may use them; conflicts are skipped with a warning:
 
 **`reply`** — Reply to message
+
 **`no_action`** — No-op
+
 **`stop`** — Stop execution
+
 **`create_table`** — Create data table
+
 **`list_tables`** — List data tables
+
 **`view_table`** — View data table
 
 Conflict log example: `⚠️ MCP tool 'reply' (from my-server) conflicts with built-in tool, skipped`

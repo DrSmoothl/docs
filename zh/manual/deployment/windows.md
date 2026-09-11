@@ -52,11 +52,11 @@ git clone https://github.com/Mai-with-u/MaiBot.git
 
 ::: code-group
 
-```bash [uv sync]
+```bash [uv sync ~vscode-icons:file-type-python~]
 uv sync
 ```
 
-```bash [pip install]
+```bash [pip install ~vscode-icons:file-type-python~]
 pip install -r requirements.txt
 ```
 
@@ -98,3 +98,28 @@ http://localhost:8001
 进入 WebUI 后，跟随配置向导完成模型配置和平台连接即可。
 
 配置模型和连接 QQ 的详细步骤，参考 [模型配置](/manual/configuration/model-config) 和 [适配器](/manual/adapters/)。
+
+## 验证与排错
+
+**验证**：启动后终端出现「WebUI 服务器启动中」，浏览器打开 `http://localhost:8001` 能看到登录页，说明部署成功。
+
+**提示 `uv: command not found`？**
+
+- 关闭终端重新打开，或把 uv 的安装目录加入 PATH 后重试
+
+**依赖安装失败？**
+
+- 确认 `python --version` 为 3.12 及以上
+- 报 `No module named ...` 时回到项目目录重新执行 `uv sync`
+
+**8001 端口被占用？**
+
+- 用 `netstat -ano | findstr :8001` 找到占用进程的 PID，结束它后重新启动
+
+**一直卡在用户协议？**
+
+- 在终端输入「同意」并回车（不是 `yes` 或 `y`）
+
+**一键包被杀毒软件拦截？**
+
+- 将 MaiBot 安装目录和 `data/` 加入杀毒软件白名单后重试

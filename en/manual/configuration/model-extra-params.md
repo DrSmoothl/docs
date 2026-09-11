@@ -258,7 +258,9 @@ extra_params = {
 The actual effect after the client splits it:
 
 **`headers`** — HTTP request headers: `X-API-Version: 2024-06`, `X-Priority: high`
+
 **`query`** — URL query parameters: `?version=2024-01-01`
+
 **`body` fields + other plain keys** — request body JSON: `{"metadata": {"source": "maibot"}, "enable_thinking": false}`
 
 So `extra_params = {enable_thinking = "false"}` is equivalent to `extra_params = {body = {enable_thinking = "false"}}` — both send `enable_thinking` as a request-body JSON field to the provider, rather than a nested `{"extra_params": {"enable_thinking": "false"}}`.

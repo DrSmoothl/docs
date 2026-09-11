@@ -176,7 +176,9 @@ The `llm_providers` field and the `@LLMProvider` decorator must both be declared
 If two plugins declare the same `client_type`, **both plugins will be prevented from loading**. Please use a unique prefix (e.g., `com.example.my-provider`) when designing Providers to avoid conflicts.
 :::
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "llm_providers": [
     {
@@ -188,6 +190,8 @@ If two plugins declare the same `client_type`, **both plugins will be prevented 
   ]
 }
 ```
+
+:::
 
 ## Dependency Declaration
 

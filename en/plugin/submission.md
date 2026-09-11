@@ -17,8 +17,11 @@ Submitting is **completely open source and free** — no fees or invitations req
 Your plugin must be a **public GitHub repository** whose root directory contains the following files:
 
 **`_manifest.json`** — The plugin manifest, using the **manifest v2** structure; field spec in [Manifest System](./manifest.md)
+
 **`plugin.py`** — The plugin entry file, containing the `create_plugin()` factory function
+
 **`LICENSE`** — A license file whose type matches the `license` field in `_manifest.json`
+
 **`README.md`** — Recommended: feature introduction, installation instructions, configuration notes, and usage examples
 
 ::: tip What "plugin repository" means
@@ -39,9 +42,13 @@ Submit via an Issue template — **no fork or local Git operations needed**, and
 ### Status Labels
 
 **`pending-validation`** — Waiting for automatic validation
+
 **`validated`** — Validation passed, waiting for maintainer approval
+
 **`validation-failed`** — Validation failed, fix according to the feedback
+
 **`approved`** — Approved and added to the plugin center
+
 **`rejected`** — Rejected by a maintainer
 
 ### What If Validation Fails

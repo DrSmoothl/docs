@@ -95,7 +95,9 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 `expressions` 表记录特定情景下机器人应使用的表达风格。
 
 **`situation` / `style`** — 情景与风格标签。例如 "群友求助 / 安慰"、"冷场 / 活跃气氛"。
+
 **`content_list`** — JSON 格式的表达候选列表（多句备选）。
+
 **`session_id`** — 为 `NULL` 时表示全局表达，有值时仅在该会话内生效。
 
 ### 黑话挖掘
@@ -103,9 +105,13 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 `jargons` 表（`src/common/database/database_model.py:431-458`）记录群内新词和内部暗语。
 
 **`content`** — 黑话文本本身。
+
 **`meaning`** — AI 推断的含义（如 "开黑 = 组队打游戏"）。
+
 **`is_jargon`** — 是否为已确认的黑话。为 `False` 时表示仍存疑。
+
 **`is_complete`** — 推断是否已完成（`count > 100` 后不再推断）。
+
 **`session_id_dict`** — 该黑话在哪些会话中出现及其频次，JSON 字典格式。见 [JSON 列约定](#json-列约定)。
 
 ### 行为经验学习
@@ -113,9 +119,13 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 这是最复杂的一组学习模型，包含 5 张表，源码覆盖 `database_model.py:321-428`。
 
 **`behavior_experience_paths`** — 核心路径表。记录一条可反馈的行为经验：在某个场景下做出某个动作，得到了什么结果。
+
 **`behavior_scene_clusters`** — 场景簇。用 tag 概率分布描述一类场景（如 "群友求助且语气急促"）。
+
 **`behavior_scene_tag_clusters`** — Tag 簇成员索引，将同义 tag 快速归到同一个簇。
+
 **`behavior_actions`** — 行为动作实体，复用动作文本描述。
+
 **`behavior_outcomes`** — 行为结果实体，复用结果描述。
 
 关联路径：一个 `behavior_experience_paths` 行通过 `scene_cluster_id`、`action_id`、`outcome_id` 分别指向对应的簇、动作和结果实体，形成完整的 "场景 → 动作 → 结果" 经验链。`evidence_list` 字段以 JSON 数组存储支撑这条经验的证据消息引用。
@@ -125,7 +135,9 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 `person_info` 表（`database_model.py:472-501`）构建对话参与者的长期画像。
 
 **`person_id`** — 跨平台/跨 user_id 的统一身份 ID，是人物画像的锚点。
+
 **`person_name`** — 推断出的真实姓名或称呼。
+
 **`memory_points`** — 记忆要点，JSON 格式，存储 AI 对该人物的印象摘要。
 
 ### 高频词库
@@ -133,7 +145,9 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 `high_frequency_terms` 表（`database_model.py:256-276`）按群聊维度统计高频词和词组。
 
 **`chat_id`** — 群聊或私聊标识。
+
 **`rank`** — 在该群内的排名。
+
 **`frequency`** — 词频（出现次数 / 总词数）。
 
 ## 统计与遥测
@@ -141,8 +155,11 @@ MaiBot 的"学习"能力横跨 5 类数据模型，存放在 9 张表中。
 MaiBot 自建了一套按小时聚合的统计体系，包含 3 张聚合表加 1 张游标表：
 
 **`statistics_message_hourly`** — 按小时聚合的消息量，按 `(bucket_time, chat_id)` 去重。
+
 **`statistics_tool_hourly`** — 按小时聚合的工具调用次数，按 `(bucket_time, tool_name)` 去重。
+
 **`statistics_model_hourly`** — 按小时聚合的模型用量，包含 token 数、费用（元）、耗时方差。
+
 **`statistics_aggregation_cursors`** — 增量游标，记录每类统计源上次处理到的最大 `id`，确保从头聚合不丢数。
 
 `llm_usage` 表是原始记录的来源，每条记录包含一次完整的模型请求元数据：prompt tokens、completion tokens、费用（元）、是否命中 prompt cache 等。如果你启用了模型缓存计费，`prompt_cache_hit_tokens` 和 `prompt_cache_miss_tokens` 列可帮你核算缓存节省的费用。

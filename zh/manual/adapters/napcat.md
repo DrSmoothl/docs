@@ -22,7 +22,7 @@ NapCat 适配器由 MaiBot 官方团队持续维护，最近更新至 v1.4.0（2
 - **aiohttp** — 适配器依赖它建立 WebSocket 连接，MaiBot 环境通常已内置；缺失时插件会报错「依赖 aiohttp 但未安装」
 - **NapCat** — 一个能登录并连接 QQ 的 NapCat 实例（见下方步骤 1）
 
-## 1. 安装 NapCat 并登录机器人 QQ 号
+## 安装 NapCat 并登录机器人 QQ 号
 
 适配器只负责「MaiBot ↔ NapCat」这段连接，NapCat 本身的安装、登录与启动请按其官方文档完成。
 
@@ -35,7 +35,7 @@ NapCat 适配器由 MaiBot 官方团队持续维护，最近更新至 v1.4.0（2
 NapCat 登录的 QQ 号必须与后面 `bot_config.toml` 里的 `qq_account` 完全一致，MaiBot 才能识别「机器人自己」发出的消息。两处不一致时，麦麦会把自己的消息当成别人的。
 :::
 
-## 2. 开启正向 WebSocket 服务器
+## 开启正向 WebSocket 服务器
 
 在 NapCat 的配置里开启**正向 WebSocket 服务器**，并记下它监听的**端口**和**访问令牌**：
 
@@ -48,7 +48,7 @@ NapCat 登录的 QQ 号必须与后面 `bot_config.toml` 里的 `qq_account` 完
 - **MaiBot WebUI Token** — 用于登录 MaiBot 自己的网页管理界面，与本适配器无关。
 :::
 
-## 3. 配置 MaiBot 的机器人账号
+## 配置 MaiBot 的机器人账号
 
 编辑 `config/bot_config.toml` 的 `[bot]` 节，让 MaiBot 认识机器人自己：
 
@@ -70,7 +70,7 @@ alias_names = []
 
 也可以在 WebUI 中设置：`麦麦设置 → 基础 → 平台账号`，平台选 `qq`，账号填机器人 QQ 号。
 
-## 4. 配置适配器连接
+## 配置适配器连接
 
 NapCat 适配器作为客户端主动连出到 NapCat。下面是一份**完整可复制**的配置模板，按注释修改即可：
 
@@ -129,7 +129,7 @@ regex_filter_show_dropped = false # 记录正则过滤丢弃日志
 通知事件默认开启，可逐类型控制哪些通知注入 Host；未列出的类型（如输入状态 `notify.input_status`）默认丢弃，避免刷屏。
 :::
 
-## 5. 先加名单，再测试
+## 先加名单，再测试
 
 聊天名单过滤**默认开启且名单为空**——不加名单，任何群聊和私聊消息都会被丢弃，这是接上 QQ 后「没反应」最常见的原因。正确做法是**先把要接入的群 / 用户加进名单，再测试**：
 
@@ -159,7 +159,7 @@ enable_chat_list_filter = false   # 仅临时测试，调试完记得加回名�
 适配器透传了 NapCat 的大部分 OneBot action API（含 System / Account / Group / Message / File 等命名空间），供开发者调用。完整清单见 [NapCat 官方 API 参考](https://napcat.apifox.cn/)。
 :::
 
-## 6. 可选高级能力：主动私聊、多实例
+## 可选高级能力：主动私聊、多实例
 
 ### 主动私聊
 
@@ -183,7 +183,7 @@ enable_private_chat_tool = true
 群聊里成员可能没有私聊过机器人，模型不知道他们的 QQ 号。先用它把某条消息的发送者 QQ 号取出来，再调 `open_private_chat` 主动建立私聊。
 :::
 
-### 多实例 `connection_id`
+### 多实例
 
 同一台 MaiBot 连多条 NapCat 链路时，为每条链路配**不同的 `connection_id`**（如 `primary`、`secondary`），用它作为路由作用域标识，避免链路互相干扰。
 

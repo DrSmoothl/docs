@@ -381,7 +381,9 @@ sequenceDiagram
 直接调用 `WorkflowStep(...)` 现在会立即抛出 `RuntimeError`，不存在兼容映射。必须手动将所有 `@WorkflowStep` 替换为 `@HookHandler`。
 :::
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # 旧代码（SDK 1.x）— 不再可用
 @WorkflowStep(stage="pre_process", blocking=True)
 async def on_pre_process(self, **kwargs):
@@ -392,3 +394,5 @@ async def on_pre_process(self, **kwargs):
 async def on_pre_process(self, **kwargs):
     ...
 ```
+
+:::

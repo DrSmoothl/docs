@@ -1,3 +1,8 @@
+---
+title: 更新日志
+description: MaiBot 各版本的功能更新、修复与配置变更记录。
+---
+
 # 更新日志
 
 ::: timeline 2026-09-01

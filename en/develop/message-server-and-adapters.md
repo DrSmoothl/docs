@@ -241,6 +241,8 @@ Since 1.2.0, MaiBot introduces a **bot account service** (`src/services/bot_acco
 
 Since 1.2.0, MaiBot provides a unified chat-list policy (`src/platform_io/adapter_policy.py`) that independently controls **group** and **private** admission per adapter. The policy file is `config/adapter_policy.toml` (generated at runtime; when the file is absent, everything is allowed by default).
 
+::: code-group
+
 ```toml [TOML ~vscode-icons:file-type-toml~]
 [defaults.group]        # global default action for group chats
 default_action = "allow"  # or "block"
@@ -256,6 +258,8 @@ deny_ids = []             # blacklist; matched IDs are blocked
 [adapters.private]
 default_action = "allow"
 ```
+
+:::
 
 **Evaluation order**: starts from the most precise adapter identity rule and falls back level by level to the global default action. `default_action` takes `allow` / `block` / `inherit` (`inherit` inherits the global default); `allow_ids` and `deny_ids` must not contain the same ID together. The global default action is controlled by `defaults.group` / `defaults.private`, both defaulting to `allow`; they can be changed to `block` for a "deny by default" policy.
 

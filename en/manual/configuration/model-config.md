@@ -1,6 +1,6 @@
 ---
 title: Model Configuration
-titleTemplate: :title · 模型配置
+titleTemplate: :title · Model Configuration
 ---
 
 # Model Configuration

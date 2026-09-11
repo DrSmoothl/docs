@@ -189,7 +189,9 @@ class MyPluginConfig(PluginConfigBase):
 
 ### 强类型访问（self.config）
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     config_model = MyPluginConfig
 
@@ -198,6 +200,8 @@ class MyPlugin(MaiBotPlugin):
         greeting = self.config.plugin.greeting
         timeout = self.config.advanced.timeout
 ```
+
+:::
 
 ::: warning 注意
 - 未声明 `config_model` 时调用 `self.config` 会抛出 `RuntimeError`
@@ -226,7 +230,9 @@ class MyPlugin(MaiBotPlugin):
 
 当 `config.toml` 文件变更时，Runner 会自动触发 `on_config_update()` 回调：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, CONFIG_RELOAD_SCOPE_SELF
 
 class MyPlugin(MaiBotPlugin):
@@ -238,7 +244,9 @@ class MyPlugin(MaiBotPlugin):
             self.ctx.logger.info("配置已更新，新问候语: %s", self.config.plugin.greeting)
 ```
 
-::: important
+:::
+
+::: info
 `self.config` 在 `on_config_update(scope="self")` 调用时已自动更新，无需手动重新读取。
 :::
 

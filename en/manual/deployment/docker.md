@@ -26,9 +26,13 @@ If not installed yet, refer to the official docs:
 
 ::: tip Domestic Users (China)
 For servers in China, you can use this one-liner:
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
 ```
+
+:::
 :::
 
 ## Docker Compose
@@ -63,20 +67,20 @@ If you only need the MaiBot core without NapCat and database tools, use this min
 services:
   core:
     container_name: maim-bot-core
-    image: sengokucola/maibot:latest
+    image: sengokucola/maibot:latest   # Official image; run docker compose pull before upgrading
     environment:
-      - TZ=Asia/Shanghai
-      - EULA_AGREE=8e6e7d647f7f82d6ea98456b73908656
-      - PRIVACY_AGREE=91e5db7659c560bc3545e63859b6ebc0
-      - WEBUI_HOST=0.0.0.0
+      - TZ=Asia/Shanghai               # Timezone, affects log and statistics timestamps
+      - EULA_AGREE=8e6e7d647f7f82d6ea98456b73908656    # EULA agreement marker, do not change
+      - PRIVACY_AGREE=91e5db7659c560bc3545e63859b6ebc0 # Privacy agreement marker, do not change
+      - WEBUI_HOST=0.0.0.0             # Must listen on 0.0.0.0 inside the container, or the host cannot reach it
     ports:
-      - "18001:8001"
+      - "18001:8001"                   # Host 18001 -> container 8001; change the left side if the host port is taken
     volumes:
-      - ./docker-config/mmc:/MaiMBot/config
-      - ./data/MaiMBot:/MaiMBot/data
-      - ./data/MaiMBot/plugins:/MaiMBot/plugins
-      - ./data/MaiMBot/logs:/MaiMBot/logs
-    restart: always
+      - ./docker-config/mmc:/MaiMBot/config     # Configuration files
+      - ./data/MaiMBot:/MaiMBot/data            # Runtime data
+      - ./data/MaiMBot/plugins:/MaiMBot/plugins # Plugins
+      - ./data/MaiMBot/logs:/MaiMBot/logs       # Logs
+    restart: always                    # Auto-restart after a crash or server reboot
 ```
 
 :::
@@ -226,3 +230,31 @@ Copy the Token from the log and paste it into the browser login page to access W
 Once in WebUI, follow the configuration wizard to set up models and connect platforms.
 
 For detailed steps on configuring models and connecting QQ, refer to [Model Configuration](/en/manual/configuration/model-config) and [Adapters](/en/manual/adapters/).
+
+## Verification & Troubleshooting
+
+**Verify**: `docker compose ps` shows `core` as `Up`, and `curl -I http://127.0.0.1:18001` returns `200` or `307` — the container and WebUI are both ready.
+
+**Container exits right after starting?**
+
+- Check the logs first: `docker compose logs core`
+- Common causes are insufficient permissions on mounted directories or missing paths in `docker-compose.yml`; fix per the log and retry with `docker compose up -d`
+
+**Port already in use?**
+
+- If the log says `port is already allocated`, change the host-side mappings for `18001`/`18002` in `docker-compose.yml`
+- Or find the process with `ss -ltnp | grep 18001` and stop it
+
+**WebUI unreachable from outside?**
+
+- Confirm the container environment variable `WEBUI_HOST=0.0.0.0`
+- On a cloud server, also allow port `18001` in the security group / firewall
+
+**Can't find the login Token?**
+
+- Filter the logs with `docker compose logs core | grep Token`
+- The Token is also stored in `data/webui.json` for direct viewing
+
+**Image pulls are slow?**
+
+- Configure a Docker registry mirror and run `docker compose pull` again

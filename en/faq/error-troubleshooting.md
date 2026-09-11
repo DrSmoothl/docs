@@ -50,7 +50,7 @@ Stop MaiBot and rename only the file identified by the log:
 
 ::: code-group
 
-```powershell [Windows PowerShell]
+```powershell [Windows PowerShell ~vscode-icons:file-type-powershell~]
 # If the log points to bot_config.toml
 Rename-Item config\bot_config.toml bot_config.broken.toml
 
@@ -58,7 +58,7 @@ Rename-Item config\bot_config.toml bot_config.broken.toml
 Rename-Item config\model_config.toml model_config.broken.toml
 ```
 
-```bash
+```bash [Bash ~vscode-icons:file-type-shell~]
 # Linux / macOS: run only the matching command
 mv config/bot_config.toml config/bot_config.broken.toml
 mv config/model_config.toml config/model_config.broken.toml

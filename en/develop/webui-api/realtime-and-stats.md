@@ -74,8 +74,11 @@ For detailed security features (one-time consumption, 60-second timeout, session
 **Response body:**
 
 **`success`** — Whether retrieval succeeded (`true` / `false`)
+
 **`token`** — Temporary WS Token (present on success)
+
 **`expires_in`** — Valid seconds (fixed at 60)
+
 **`message`** — Error description (present on failure)
 
 ::: code-group
@@ -149,11 +152,17 @@ All reasoning process endpoints require Cookie auth and are mounted under the `/
 **`GET /api/webui/reasoning-process/stages`** — List all reasoning stages (such as `planner`, `replyer`, `jargon_learning_update`), including each stage's session count and last modified time
 
 **`GET /api/webui/reasoning-process/files`** — Paginated listing of reasoning process log files. Key query parameters:
+
 **`stage`** — Reasoning stage name, default `planner`
+
 **`session`** — Session name; `auto` picks the most recently active session, `__all_group_chats__` views all group chat logs
+
 **`page`** — Page number (starting from 1, default 1)
+
 **`page_size`** — Entries per page (10-200, default 50)
+
 **`search`** — Fuzzy search (matches stage, session, output summary, model name, etc.)
+
 **`action`** — Filter by action name (only effective for planner and jargon learning stages)
 
 The response body includes `items` (log entry list), `total`, `stages`, `stage_infos`, `sessions`, `session_infos`, etc. Each entry contains `stage`, `session_id`, `stem` (filename stem), `output_preview` (replyer stage), `action_preview` (planner stage), `model_name`, `duration_ms`, and (since 1.2.0) token usage stats such as `prompt_tokens`, `completion_tokens`, `total_tokens`.
@@ -163,12 +172,19 @@ The response body includes `items` (log entry list), `total`, `stages`, `stage_i
 **`GET /api/webui/reasoning-process/html?path=<relative_path>`** — Preview a reasoning log as HTML. Returns a `text/html` file stream, suitable for rendering a structured preview of the prompt directly in the browser
 
 **`POST /api/webui/reasoning-process/replay`** — Replay a reasoning request with an editable message list. Request body:
+
 **`model_name`** — Model name used for replay (required)
+
 **`messages`** — Message list (required, at least one entry)
+
 **`source_path`** — Original prompt JSON path (optional, used to auto-extract tool_definitions)
+
 **`tool_definitions`** — Tool definitions (optional; auto-filled if not provided and source_path is available)
+
 **`temperature`** — Temperature parameter (optional, 0-2)
+
 **`max_tokens`** — Max tokens (optional)
+
 The replay response includes `response` (model output text), `reasoning` (chain of thought), `tool_calls`, `prompt_tokens`, and complete Token usage statistics.
 
 **`DELETE /api/webui/reasoning-process/stages/{stage}`** — Clear all log files for a specified reasoning stage

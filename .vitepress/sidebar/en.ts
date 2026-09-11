@@ -32,6 +32,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: 'Tool', link: '/en/plugin/tools' },
         { text: 'Command', link: '/en/plugin/commands' },
+        { text: 'Home Cards', link: '/en/plugin/home-cards' },
         { text: 'Hook Handler', link: '/en/plugin/hooks' },
         { text: 'Event Handler', link: '/en/plugin/event-handlers' },
         { text: 'API Components', link: '/en/plugin/api-components' },
@@ -39,6 +40,20 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'LLMProvider', link: '/en/plugin/llmprovider' },
         { text: 'Action (Legacy)', link: '/en/plugin/actions' },
         { text: 'API Reference', link: '/en/plugin/api-reference' },
+      ]
+    },
+  ],
+  '/en/about/': [
+    {
+      text: 'About',
+      collapsed: false,
+      items: [
+        { text: 'About the Project', link: '/en/about/' },
+        { text: 'About This Docs', link: '/en/about/about-docs' },
+        { text: 'Community Groups', link: '/en/about/community' },
+        { text: 'Acknowledgements & Links', link: '/en/about/acknowledgements' },
+        { text: 'EULA', link: '/en/about/EULA' },
+        { text: 'Privacy Policy', link: '/en/about/PRIVACY' },
       ]
     },
   ],
@@ -158,20 +173,6 @@ export const sidebar: DefaultTheme.Sidebar = {
         { text: 'Data Import/Export', link: '/en/develop/statistics-io' },
         { text: 'Events & Hooks', link: '/en/develop/event-pipeline-hooks' },
         { text: 'Runtime Architecture', link: '/en/develop/plugin-runtime-internals' },
-      ]
-    },
-  ],
-  '/en/about/': [
-    {
-      text: 'About',
-      collapsed: false,
-      items: [
-        { text: 'About the Project', link: '/en/about/' },
-        { text: 'About This Docs', link: '/en/about/about-docs' },
-        { text: 'Community Groups', link: '/en/about/community' },
-        { text: 'Acknowledgements & Links', link: '/en/about/acknowledgements' },
-        { text: 'EULA', link: '/en/about/EULA' },
-        { text: 'Privacy Policy', link: '/en/about/PRIVACY' },
       ]
     },
   ],

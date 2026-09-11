@@ -50,15 +50,23 @@ graph TD
 
 ### 1. Install SDK
 
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 pip install maibot-plugin-sdk
 ```
 
+:::
+
 ::: tip Note
 The package name is `maibot-plugin-sdk`, but in code, import using `maibot_sdk`:
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 ```
+
+:::
 
 :::
 
@@ -115,7 +123,9 @@ Declare plugin metadata in `_manifest.json` (for full field descriptions, see [M
 
 Inherit `MaiBotPlugin` in `plugin.py`, declare components using decorators, and implement three lifecycle methods:
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -157,6 +167,8 @@ class MyPlugin(MaiBotPlugin):
 def create_plugin():
     return MyPlugin()
 ```
+
+:::
 
 ::: warning Three lifecycle methods must be implemented
 The SDK requires all plugins to implement `on_load()`, `on_unload()`, and `on_config_update()`. Otherwise, the Runner will refuse to load the plugin. See [Lifecycle](./lifecycle.md) for details.
@@ -203,13 +215,21 @@ def create_plugin():
 The SDK provides 8 component decorators, all imported from the top level of `maibot_sdk`:
 
 **`@Tool`** — LLM tool/function calling. Tools callable by the LLM, the most commonly used component type
+
 **`@Command`** — Slash commands. Commands triggered by users via regex matching
+
 **`@HookHandler`** — Named Hook handlers. Subscribes to specific Hook points, supports blocking/observe modes
+
 **`@EventHandler`** — Message/Workflow events. Listens to lifecycle events such as messages and LLM generation
+
 **`@API`** — Inter-plugin API. Exposes APIs callable by other plugins
+
 **`@MessageGateway`** — Platform adapter. Integrates external platforms (QQ, Email, etc.) into MaiBot
+
 **`@HomeCard`** — WebUI home page card. Shows plugin status, entry points, or custom content on the home page
+
 **`@LLMProvider`** — LLM Provider. Declares new LLM model access points (client_type) to extend model services
+
 **`@Action`** — Legacy plugin compatibility. Internally auto-converted to `@Tool`; new plugins should directly use `@Tool`
 
 ### Capability Proxies
@@ -324,6 +344,7 @@ Both use the same communication protocol and component registration mechanism. T
 - [Hook System](./hooks.md): Learn how to use `@HookHandler` to intercept and modify messages
 - [Tool Component](./tools.md): Learn how to develop tool components callable by LLMs
 - [Command Component](./commands.md): Learn how to develop slash command components
+- [Home Cards](./home-cards.md): Learn how to add plugin cards to the WebUI home page
 - [LLMProvider Component](./llmprovider.md): Learn how to develop custom LLM Providers to integrate new models
 - [Action Component](./actions.md): Learn about the `@Action` decorator compatible with legacy systems
 - [Configuration Management](./config.md): Learn how to declare and use plugin configurations

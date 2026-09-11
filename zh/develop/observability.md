@@ -25,16 +25,22 @@ flowchart TD
 
 ## 三条 Handler
 
-### File JSONL Handler — 持久化与回查
+### File JSONL Handler
 
 File Handler 将日志以 JSONL 格式写入 `logs/app_<时间戳>.log.jsonl`，每行一条完整的 JSON 记录，包含以下字段：
 
 **`timestamp`** — ISO 格式时间戳
+
 **`level`** — 日志级别（debug / info / warning / error / critical）
+
 **`logger_name`** — 产生日志的模块名（如 `maisaka.planner`、`chat.heartflow`）
+
 **`event`** — 日志正文
+
 **`module`** — 源码相对路径（如 `maisaka.planner`）
+
 **`lineno`** — 行号（方便溯源）
+
 **`exception`** — 若出现异常，包含完整堆栈
 
 JSONL 行内字段可随上下文扩展（如额外记录 `response_time`、`tool_name`），方便后续用 `jq`、`grep` 等工具做精确检索和统计。
@@ -42,10 +48,12 @@ JSONL 行内字段可随上下文扩展（如额外记录 `response_time`、`too
 **文件轮转与清理**由三个 LogConfig 字段控制：
 
 **`log_file_max_bytes`** — 单文件超过此大小后触发轮转，默认 `5MB`
+
 **`max_log_files`** — 最多保留多少个主日志文件，默认 `30`
+
 **`log_cleanup_days`** — 超过该天数的日志文件由后台线程（每 24h 执行）自动清理
 
-### Console Handler — 开发实时观察
+### Console Handler
 
 Console Handler 将格式化的日志直接输出到控制台（stdout）。`ModuleColoredConsoleRenderer` 负责为不同模块标记不同颜色，颜色的范围和强度由下文 `color_text` 字段控制。
 
@@ -53,7 +61,7 @@ Console Handler 将格式化的日志直接输出到控制台（stdout）。`Mod
 - 级别：默认 `INFO`，开发排查时可临时改为 `DEBUG`
 - 样式：`lite`（仅着色时间戳）、`compact`（显示级别首字母）、`full`（显示完整级别）
 
-### WebSocket Handler — 实时推送到 WebUI
+### WebSocket Handler
 
 WebSocket Handler 将每条日志以 JSON 消息的形式实时推送到所有连接了 `/ws/logs` 的 WebUI 客户端。消息格式包含 `id`、`timestamp`、`level`、`module`、`message` 五个字段，并附带模块对应颜色，前端日志面板会在连接建立后先收到最近 100 条历史日志作为上下文回溯。
 
@@ -98,6 +106,7 @@ LogConfig 位于 `config/bot_config.toml` 的 `[log]` 段。以下是运维常�
 MaiBot 默认将以下库设置为 `WARNING` 级别以减少噪音：
 
 **`aiohttp`** — `WARNING`。HTTP 请求库，`INFO` 级会刷屏每次连接的详细信息。
+
 **`PIL`** — `WARNING`。图像处理库，会输出大量格式识别细节。
 
 ### 调噪实战举例
@@ -178,12 +187,19 @@ urllib3 = "ERROR"
 每份快照 JSON 文件包含以下信息：
 
 **`api_provider`** — API Provider 配置（不含认证密钥等敏感信息）
+
 **`client_type`** — 客户端类型（`openai` / `gemini` 等）
+
 **`error`** — 错误详情，包含错误类型、状态码、消息文本，以及尽量提取的上游 response body
+
 **`model_info`** — 模型信息（名称、标识符、temperature 等参数）
+
 **`internal_request`** — 内部请求结构（消息列表、工具调用、response_format 等完整上下文）
+
 **`provider_request`** — 已按 API Provider 格式转换后的实际请求体
+
 **`replay`** — 回放信息，包含一条可直接执行的 `uv run python` 命令，用该快照文件重新发起调用
+
 **`created_at`** — 快照创建时间
 
 ### 管理快照
@@ -275,7 +291,7 @@ WebSocket Handler 将每条日志以 **非阻塞** 方式广播（`call_soon_thr
 
 当你发现 MaiBot 突然不回复了，按以下流程定位：
 
-### Step 1 — 看控制台最后输出
+### 看控制台最后输出
 
 首先检查终端里最近的日志。留意以下信号：
 
@@ -294,7 +310,7 @@ uv run python bot.py
 ```
 :::
 
-### Step 2 — 翻文件日志
+### 翻文件日志
 
 文件日志默认 `DEBUG` 级别，记录了比控制台更全面的信息。从最新的日志文件切入：
 
@@ -324,7 +340,7 @@ tail -2000 logs/app_*.log.jsonl | jq 'select(.level == "ERROR") | {ts: .timestam
 
 :::
 
-### Step 3 — 切 DEBUG + 抓 LLM 快照复现
+### 切 DEBUG 并抓取 LLM 快照复现
 
 如果前两步没能定位到根因，把 `file_log_level` 改为 `DEBUG`（通常情况下已经是）确保最详细的日志写入文件。同时检查 `logs/llm_request/` 下的快照文件：
 
@@ -343,5 +359,7 @@ MaiBot 在 WebUI 的「聊天统计」页面中展示**在线时长**指标。�
 **在线时间相关快速信息**：
 
 **`deploy_time`** — 部署时间戳，存储在本地存储中，用于遥测 UUID 注册和统计窗口的基准时间
+
 **`process_start_at`** — 当前进程启动时间，用于划定统计窗口的起点
-**遥测统计上报间隔** — 约 191 分钟（`11451` 秒），每次上报一个时间窗口的聚合数据
+
+**遥测统计上报间隔** — 约 3 小时（`11451` 秒），每次上报一个时间窗口的聚合数据

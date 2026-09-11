@@ -1,3 +1,8 @@
+---
+title: Changelog
+description: Feature updates, fixes, and configuration changes across MaiBot releases.
+---
+
 # Changelog
 
 For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-with-u/MaiBot/releases).

@@ -25,16 +25,22 @@ The three handlers are registered on the root Logger when the log module is impo
 
 ## Three Handlers
 
-### File JSONL Handler — Persistence and Lookback
+### File JSONL Handler
 
 The File Handler writes logs in JSONL format to `logs/app_<timestamp>.log.jsonl`, with one complete JSON record per line, containing the following fields:
 
 **`timestamp`** — ISO format timestamp
+
 **`level`** — Log level (debug / info / warning / error / critical)
+
 **`logger_name`** — Module name that produced the log (e.g. `maisaka.planner`, `chat.heartflow`)
+
 **`event`** — Log body
+
 **`module`** — Source-relative path (e.g. `maisaka.planner`)
+
 **`lineno`** — Line number (for traceability)
+
 **`exception`** — If an exception occurred, contains the full stack trace
 
 Fields within a JSONL line can be extended with context (e.g. additionally recording `response_time`, `tool_name`), making it easy to use tools like `jq` and `grep` for precise search and statistics.
@@ -42,10 +48,12 @@ Fields within a JSONL line can be extended with context (e.g. additionally recor
 **File rotation and cleanup** are controlled by three LogConfig fields:
 
 **`log_file_max_bytes`** — Triggers rotation when a single file exceeds this size, default `5MB`
+
 **`max_log_files`** — Maximum number of main log files to retain, default `30`
+
 **`log_cleanup_days`** — Log files older than this number of days are automatically cleaned up by a background thread (running every 24h)
 
-### Console Handler — Real-time Monitoring During Development
+### Console Handler
 
 The Console Handler outputs formatted logs directly to the console (stdout). `ModuleColoredConsoleRenderer` is responsible for assigning different colors to different modules, with color range and intensity controlled by the `color_text` field described below.
 
@@ -53,7 +61,7 @@ Console output is affected by two fields, `console_log_level` and `log_level_sty
 - Level: defaults to `INFO`; can be temporarily changed to `DEBUG` during troubleshooting
 - Style: `lite` (only colors the timestamp), `compact` (displays level initial), `full` (displays the full level string)
 
-### WebSocket Handler — Real-time Push to WebUI
+### WebSocket Handler
 
 The WebSocket Handler pushes each log entry as a JSON message in real time to all WebUI clients connected to `/ws/logs`. The message format includes five fields: `id`, `timestamp`, `level`, `module`, and `message`, along with the module's assigned color. After establishing a connection, the frontend log panel first receives the most recent 100 historical log entries as context catch-up.
 
@@ -98,6 +106,7 @@ Third-party library logs can easily drown out critical information. The `library
 MaiBot sets the following libraries to `WARNING` level by default to reduce noise:
 
 **`aiohttp`** — `WARNING`. HTTP request library; at `INFO` level it floods the output with per-connection details.
+
 **`PIL`** — `WARNING`. Image processing library; outputs extensive format identification details.
 
 ### Practical Noise-Tuning Examples
@@ -178,12 +187,19 @@ When an LLM model call fails (e.g. timeout, authentication failure, upstream err
 Each snapshot JSON file contains the following information:
 
 **`api_provider`** — API Provider configuration (excluding sensitive information like authentication keys)
+
 **`client_type`** — Client type (`openai` / `gemini`, etc.)
+
 **`error`** — Error details, including error type, status code, message text, and the upstream response body extracted as much as possible
+
 **`model_info`** — Model information (name, identifier, temperature and other parameters)
+
 **`internal_request`** — Internal request structure (message list, tool calls, response_format and other complete context)
+
 **`provider_request`** — The actual request body after conversion to the API Provider format
+
 **`replay`** — Replay information, including a directly executable `uv run python` command to re-invoke the call using the snapshot file
+
 **`created_at`** — Snapshot creation time
 
 ### Managing Snapshots
@@ -275,7 +291,7 @@ The WebSocket Handler broadcasts each log entry in a **non-blocking** manner (`c
 
 When you find that MaiBot has suddenly stopped responding, follow this process to locate the issue:
 
-### Step 1 — Check the Latest Console Output
+### Check the Latest Console Output
 
 First, check the most recent logs in the terminal. Watch for the following signals:
 
@@ -295,7 +311,7 @@ uv run python bot.py
 
 :::
 
-### Step 2 — Dig Into File Logs
+### Dig Into File Logs
 
 File logs default to `DEBUG` level, recording more comprehensive information than the console. Start with the latest log file:
 
@@ -325,7 +341,7 @@ tail -2000 logs/app_*.log.jsonl | jq 'select(.level == "ERROR") | {ts: .timestam
 
 :::
 
-### Step 3 — Switch to DEBUG + Capture LLM Snapshots to Reproduce
+### Switch to DEBUG and Capture LLM Snapshots to Reproduce
 
 If the first two steps haven't identified the root cause, set `file_log_level` to `DEBUG` (usually it already is) to ensure the most detailed logs are written to files. Also check snapshot files under `logs/llm_request/`:
 
@@ -344,5 +360,7 @@ Statistical data is reported through the telemetry system using a time-window (c
 **Quick reference for online time related items**:
 
 **`deploy_time`** — Deployment timestamp, stored in local storage, used as the base time for telemetry UUID registration and statistics windows
+
 **`process_start_at`** — Current process start time, used to define the starting point of statistics windows
-**Telemetry statistics reporting interval** — Approximately 191 minutes (`11451` seconds), each report covers aggregated data for one time window
+
+**Telemetry statistics reporting interval** — Approximately 3 hours (`11451` seconds), each report covers aggregated data for one time window

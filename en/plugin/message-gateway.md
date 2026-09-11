@@ -34,7 +34,7 @@ from maibot_sdk import MessageGateway
 - **`"receive"`** → `MessageGatewayRouteType.RECEIVE` — Inbound: External Platform → Plugin → Host
 - **`"duplex"`** → `MessageGatewayRouteType.DUPLEX` — Bidirectional: Supports both outbound and inbound
 
-::: tip 别名支持
+::: tip Alias Support
 `route_type` also accepts `"recv"` and `"recive"` as aliases for `"receive"`.
 :::
 
@@ -291,7 +291,7 @@ stateDiagram-v2
     Offline --> [*]: 插件销毁
 ```
 
-::: important
+::: info
 - Plugins should call `ctx.gateway.update_state(ready=True)` in `on_load()` to report ready status
 - Plugins should call `ctx.gateway.update_state(ready=False)` in `on_unload()` to report offline status
 - Only gateways with `ready=True` will participate in message routing

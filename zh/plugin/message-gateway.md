@@ -291,7 +291,7 @@ stateDiagram-v2
     Offline --> [*]: 插件销毁
 ```
 
-::: important
+::: info
 - 插件在 `on_load()` 中应调用 `ctx.gateway.update_state(ready=True)` 上报就绪状态
 - 插件在 `on_unload()` 中应调用 `ctx.gateway.update_state(ready=False)` 上报离线状态
 - 只有 `ready=True` 的网关才会参与消息路由

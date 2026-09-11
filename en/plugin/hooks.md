@@ -353,7 +353,9 @@ sequenceDiagram
 Calling `WorkflowStep(...)` directly now immediately raises `RuntimeError` — there is no compatibility mapping. You must manually replace all `@WorkflowStep` with `@HookHandler`.
 :::
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Old code (SDK 1.x) — no longer works
 @WorkflowStep(stage="pre_process", blocking=True)
 async def on_pre_process(self, **kwargs):
@@ -364,3 +366,5 @@ async def on_pre_process(self, **kwargs):
 async def on_pre_process(self, **kwargs):
     ...
 ```
+
+:::

@@ -29,7 +29,7 @@ QQ 有两条接入路线，按你的条件选一条即可：
 - [QQ 官方](./qq-official) — 🌐 社区维护。AppID + AppSecret 接入 QQ 官方机器人，支持单聊、群聊、文字子频道与频道私信
 - [QQBot](./qqbot) — 🌐 社区维护。AppID + AppSecret 接入 QQ 官方 Bot API，支持私聊（C2C）与群聊
 
-### 其他平台
+### 邮件、iMessage 与语音通话
 
 - [邮件](./email) — 🌐 社区维护。IMAP 收信 + SMTP 回复，把专用机器人邮箱接入 MaiBot
 - [QQ 语音通话](./qq-voice-call) — 🌐 社区维护。为 QQ 增加实时语音通话入口，电话里的麦麦复用同一套人设与记忆

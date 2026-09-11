@@ -134,7 +134,61 @@ pip install -r requirements.txt
 
 :::
 
-> In this repository, `zh/manual/deployment/installation.md` uses the `~vscode-icons:file-type-git~` inline icon; other files rely on keyword auto-matching via `pnpm`/`npm`/`yarn`/`pip`/`uv`.
+> The `[uv install]` and `[pip install]` tabs in the rendered example above intentionally omit icons to demonstrate keyword auto-matching; real content pages must follow S2 and write icons explicitly.
+
+## Mandatory Code-Group Style and No-Wrap Rules
+
+Site convention: **every standalone code block with a language annotation must be placed inside a single-tab `::: code-group`**, with an explicit `~vscode-icons:<id>~` inline icon on the label, instead of relying on keyword matching. S1–S5 below describe the mandatory style and the no-wrap rules.
+
+### S1 Standalone Code Blocks Must Be Wrapped in a Code Group
+
+Even if a code group holds only one block, it must still be wrapped in `::: code-group` and given an inline icon on the label:
+
+````markdown
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
+[bot]
+platform = "qq"
+```
+
+:::
+````
+
+Bare language fences without a code group (` ```toml `, ` ```python `, ` ```bash `, etc.) are forbidden.
+
+### S2 Labels Must Carry an Explicit Inline Icon
+
+Code-group labels must be written as `[label text ~iconify-icon-name~]`, with the icon given explicitly. **Do not rely on automatic keyword matching**:
+
+- ❌ ` ```toml [Config] ` — no icon
+- ✅ ` ```toml [Config ~vscode-icons:file-type-toml~] ` — explicit icon
+
+Get icon names from [Iconify](https://icon-sets.iconify.design/). Common ones: `vscode-icons:file-type-toml`, `vscode-icons:file-type-python`, `vscode-icons:file-type-json`, `vscode-icons:file-type-shell`, `vscode-icons:file-type-git`, `logos:docker-icon`.
+
+### S3 Unlabeled Display Blocks Must Not Be Wrapped
+
+A bare fence with no language annotation (` ``` ` with no language) is for **plain text content** such as directory trees, log output, process steps, and ASCII art. It is not code, needs no code group, and should be left as is:
+
+````markdown
+```
+my-plugin/
+├── _manifest.json
+└── plugin.py
+```
+````
+
+### S4 mermaid / mmd Must Not Be Wrapped
+
+Mermaid diagrams (` ```mermaid `) render charts, and ` ```mmd ` displays Mermaid source for teaching. Both must stay standalone fences; **never** wrap them in a code group, or they will fail to render or lose their display semantics.
+
+### S5 Code Groups Need at Least One Block and Must Not Nest
+
+A `::: code-group` must contain one or more ` ``` ` fences, and **a code group must not be nested inside another code group**. Group multiple blocks under the same logical topic and keep labels short.
+
+### en Mirror Convention
+
+When translating into English, code-group structure, icon IDs, and code content must be **exactly the same** as the Chinese version (terminology may be translated; code, fields, and icons must not). Label text may be translated, but `~vscode-icons:<id>~` icons must be kept as is.
 
 ## Optional Vue Components
 
@@ -149,9 +203,9 @@ The following two Vue components are registered in the theme and can be used dir
 - **`width`** (optional, default `'100%'`) — Player width
 - **`height`** (optional, default `'auto'`) — Player height
 
-```html
+````html
 <xgplayer url="https://litev4.github.io/rickroll/rickroll.mp4" width="100%" height="auto" />
-```
+````
 
 **Rendered effect:**
 
@@ -161,7 +215,7 @@ The following two Vue components are registered in the theme and can be used dir
 
 In addition to the xgplayer component, you can also embed videos from third-party platforms like Bilibili using `<iframe>`:
 
-```html
+````html
 <iframe 
 style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
 src="//player.bilibili.com/player.html?bvid=BV1amAneGE3P" 
@@ -169,7 +223,7 @@ frameborder="0"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
 allowfullscreen>
 </iframe>
-```
+````
 
 **Rendered effect:**
 
@@ -184,7 +238,9 @@ allowfullscreen>
 ### Linkcard Link Card
 
 ::: tip Usage preference
+
 **Standalone/block-level external links should always use a `<Linkcard>` card** — e.g. adapter repositories, the plugin site, official docs, and community links. Inline links inside a sentence (e.g. "install following the official docs") may remain plain Markdown links. Cards are block-level, so don't embed one inside a sentence.
+
 :::
 
 - **`url`** (required) — Link URL
@@ -192,9 +248,9 @@ allowfullscreen>
 - **`description`** (required) — Card description
 - **`logo`** (optional, default `''`) — Left-side logo image URL
 
-```html
+````html
 <Linkcard url="https://github.com/MaiM-with-u/MaiBot" title="MaiBot" description="一个智能 QQ 群聊天机器人" logo="/title_img/mai.png" />
-```
+````
 
 **Rendered effect:**
 

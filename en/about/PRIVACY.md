@@ -10,7 +10,7 @@ title: Privacy Policy
 **Applicable MaiBot versions: All versions**
 
 ::: info Translation notice
-This English page is a convenience translation of the Chinese policy distributed with MaiBot. If the translations differ, refer to the [Chinese policy](/about/PRIVACY).
+This English page is a convenience translation of the Chinese policy distributed with MaiBot. If the translations differ, refer to the [Chinese policy](/en/about/PRIVACY).
 :::
 
 The MaiBot project team respects and protects user privacy. By using MaiBot, you agree that the project may process your input and output as follows.

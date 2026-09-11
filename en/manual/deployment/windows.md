@@ -52,11 +52,11 @@ Navigate into the folder and install dependencies:
 
 ::: code-group
 
-```bash [uv sync]
+```bash [uv sync ~vscode-icons:file-type-python~]
 uv sync
 ```
 
-```bash [pip install]
+```bash [pip install ~vscode-icons:file-type-python~]
 pip install -r requirements.txt
 ```
 
@@ -98,3 +98,28 @@ Copy the Token from the log and paste it into the browser login page to access W
 Once in WebUI, follow the configuration wizard to set up models and connect platforms.
 
 For detailed steps on configuring models and connecting to QQ, see [Model Configuration](/en/manual/configuration/model-config) and [Adapters](/en/manual/adapters/).
+
+## Verification & Troubleshooting
+
+**Verify**: after startup the terminal prints "WebUI 服务器启动中" (WebUI server starting), and opening `http://localhost:8001` in a browser shows the login page — deployment succeeded.
+
+**`uv: command not found`?**
+
+- Close and reopen the terminal, or add uv's install directory to PATH and retry
+
+**Dependency installation fails?**
+
+- Confirm `python --version` is 3.12 or later
+- If you see `No module named ...`, go back to the project directory and run `uv sync` again
+
+**Port 8001 is already in use?**
+
+- Find the occupying process ID with `netstat -ano | findstr :8001`, stop it, and restart
+
+**Stuck on the user agreement?**
+
+- Type 同意 (agree) in the terminal and press Enter — not `yes` or `y`
+
+**The one-click package is blocked by antivirus?**
+
+- Add the MaiBot install directory and `data/` to your antivirus allowlist and retry

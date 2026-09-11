@@ -262,7 +262,6 @@ EventBus 的拦截型 handler 同理——它们是串行的。一个注册在 `
 
 ### 相关文档
 
-- 事件总线架构 — EventBus 内部机制详解
 - [运行时架构](/develop/plugin-runtime-internals) — 插件运行时 Host/Runner 架构
 - [Hook 处理器](/plugin/hooks) — 插件开发者视角的 Hook 使用指南
 - [事件处理器](/plugin/event-handlers) — 插件开发者视角的 EventHandler 使用指南

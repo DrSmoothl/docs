@@ -98,12 +98,17 @@ The update announcement system is used to display version-specific release notes
 
 ### Query Pending Update Notices
 
-`GET /api/webui/system/update-notice` returns whether there are unacknowledged update announcements.
+`GET /api/webui/system/update-notice` returns whether there are unacknowledged update announcements. The optional query parameter **`force=true`** is for debugging announcement display: when there is no pending announcement, the server generates a debug announcement for the current version. Normal clients should not send this parameter.
 
 ::: code-group
 
 ```bash [curl Query Notices ~vscode-icons:file-type-http~]
 curl -X GET http://127.0.0.1:8001/api/webui/system/update-notice \
+  -H "Cookie: maibot_session=你的Token"
+```
+
+```bash [curl Force-preview Notices ~vscode-icons:file-type-http~]
+curl -X GET "http://127.0.0.1:8001/api/webui/system/update-notice?force=true" \
   -H "Cookie: maibot_session=你的Token"
 ```
 

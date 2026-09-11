@@ -22,7 +22,7 @@ Message flow: **QQ → NapCat → adapter plugin (inside MaiBot) → MaiBot**
 - **aiohttp** — the adapter depends on it to establish the WebSocket connection; normally bundled with MaiBot. If missing, the plugin reports "depends on aiohttp, but it is not installed".
 - **NapCat** — a running NapCat instance that can log in and connect to QQ (see Step 1 below)
 
-## 1. Install NapCat and log in your bot QQ account
+## Install NapCat and log in your bot QQ account
 
 The adapter only handles the "MaiBot ↔ NapCat" connection. Install, log in, and start NapCat itself per its official docs.
 
@@ -35,7 +35,7 @@ The adapter only handles the "MaiBot ↔ NapCat" connection. Install, log in, an
 The QQ account NapCat logs in with must exactly match the `qq_account` in `bot_config.toml` below, so MaiBot can recognize the bot's own messages. If they differ, the bot mistakes its own messages for someone else's.
 :::
 
-## 2. Enable the forward WebSocket server
+## Enable the forward WebSocket server
 
 Enable the **forward WebSocket server** in NapCat's config, and note down the **port** and **access token** it listens on:
 
@@ -48,7 +48,7 @@ Enable the **forward WebSocket server** in NapCat's config, and note down the **
 - **MaiBot WebUI token** — used to log in to MaiBot's own web admin UI; unrelated to this adapter.
 :::
 
-## 3. Configure MaiBot's bot account
+## Configure MaiBot's bot account
 
 Edit the `[bot]` section of `config/bot_config.toml` so MaiBot recognizes the bot itself:
 
@@ -70,7 +70,7 @@ alias_names = []
 
 You can also set this in the WebUI: `Bot Settings → Basic → platform account`, pick platform `qq`, and enter the bot QQ number.
 
-## 4. Configure the adapter connection
+## Configure the adapter connection
 
 The NapCat adapter connects out to NapCat as a client. Here is a **complete, copy-ready** config template — edit the values per the comments:
 
@@ -129,7 +129,7 @@ regex_filter_show_dropped = false # Log messages dropped by the regex filter
 Notice events are enabled by default and can be controlled per type. Types not listed here (such as the input status `notify.input_status`) are dropped by default to avoid log spam.
 :::
 
-## 5. Add the lists first, then test
+## Add the lists first, then test
 
 The chat list filter is **enabled by default with an empty list** — without adding anything, all group and private messages are dropped. This is the most common reason for "no response" after connecting to QQ. The right approach is to **add the groups / users you want to connect first, then test**:
 
@@ -159,7 +159,7 @@ enable_chat_list_filter = false   # testing only; add your lists back and re-ena
 The adapter transparently exposes most of NapCat's OneBot action APIs (System / Account / Group / Message / File namespaces) for developers. See the full list in the [NapCat API reference](https://napcat.apifox.cn/).
 :::
 
-## 6. Optional advanced capabilities: proactive private chat, multi-instance
+## Optional advanced capabilities: proactive private chat, multi-instance
 
 ### Proactive private chat
 
@@ -183,11 +183,11 @@ enable_private_chat_tool = true
 Group members may never have private-chatted the bot, so the model does not know their QQ IDs. Use this tool to fetch the sender's QQ ID from a message, then call `open_private_chat` to proactively start a private chat.
 :::
 
-### Multi-instance `connection_id`
+### Multi-instance
 
 When one MaiBot connects to multiple NapCat links, give each link a **different `connection_id`** (e.g. `primary`, `secondary`) to use as a routing scope identifier and keep the links from interfering with each other.
 
-## Verify and troubleshoot
+## Verification & Troubleshooting
 
 **Verify the connection** — the plugin logs `NapCat 适配器已连接: ws://127.0.0.1:3001` (NapCat adapter connected), and @-ing the bot in an added group gets a reply. That means success.
 

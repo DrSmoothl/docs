@@ -75,11 +75,11 @@ git clone https://github.com/Mai-with-u/MaiBot.git
 
 ::: code-group
 
-```bash [uv sync]
+```bash [uv sync ~vscode-icons:file-type-python~]
 uv sync
 ```
 
-```bash [pip install]
+```bash [pip install ~vscode-icons:file-type-python~]
 pip install -r requirements.txt
 ```
 
@@ -121,3 +121,28 @@ http://本机IP:8001
 进入 WebUI 后，跟随配置向导完成模型配置和平台连接即可。
 
 配置模型和连接 QQ 的详细步骤，参考 [模型配置](/manual/configuration/model-config) 和 [适配器](/manual/adapters/)。
+
+## 验证与排错
+
+**验证**：启动后终端出现「WebUI 服务器启动中」，执行 `curl -I http://127.0.0.1:8001` 返回 `200` 或 `307`，说明服务已就绪。
+
+**提示 `uv: command not found`？**
+
+- 执行 `source $HOME/.local/bin/env` 刷新环境变量，或重新打开终端
+
+**`pip install` 编译失败？**
+
+- Ubuntu / Debian 先装编译依赖：`sudo apt install -y build-essential python3.12-dev`
+- 再重新执行安装命令
+
+**Python 版本低于 3.12？**
+
+- 按发行版包或 pyenv 升级到 3.12+，用 `python3 --version` 确认后再安装依赖
+
+**本机能开、外部打不开？**
+
+- 检查云服务器安全组 / 防火墙是否放行 `8001`（如 `sudo ufw allow 8001`）
+
+**进程被 `Killed`？**
+
+- 内存不足 2GB 时会被系统杀掉，增加内存或配置 swap 后重试

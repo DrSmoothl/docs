@@ -26,9 +26,13 @@ docker compose version
 
 ::: tip 国内用户
 国内服务器可以使用一键安装脚本：
-```bash
+::: code-group
+
+```bash [Bash ~vscode-icons:file-type-shell~]
 bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
 ```
+
+:::
 :::
 
 ## Docker Compose
@@ -63,20 +67,20 @@ wget -O docker-compose.yml https://raw.githubusercontent.com/Mai-with-u/MaiBot/m
 services:
   core:
     container_name: maim-bot-core
-    image: sengokucola/maibot:latest
+    image: sengokucola/maibot:latest   # 官方镜像，升级时先 docker compose pull
     environment:
-      - TZ=Asia/Shanghai
-      - EULA_AGREE=8e6e7d647f7f82d6ea98456b73908656
-      - PRIVACY_AGREE=91e5db7659c560bc3545e63859b6ebc0
-      - WEBUI_HOST=0.0.0.0
+      - TZ=Asia/Shanghai               # 时区，影响日志与统计时间
+      - EULA_AGREE=8e6e7d647f7f82d6ea98456b73908656    # 用户协议同意标识，勿改
+      - PRIVACY_AGREE=91e5db7659c560bc3545e63859b6ebc0 # 隐私条款同意标识，勿改
+      - WEBUI_HOST=0.0.0.0             # 容器内必须监听 0.0.0.0，否则宿主机访问不到
     ports:
-      - "18001:8001"
+      - "18001:8001"                   # 宿主机 18001 → 容器 8001；宿主机端口冲突时改左边
     volumes:
-      - ./docker-config/mmc:/MaiMBot/config
-      - ./data/MaiMBot:/MaiMBot/data
-      - ./data/MaiMBot/plugins:/MaiMBot/plugins
-      - ./data/MaiMBot/logs:/MaiMBot/logs
-    restart: always
+      - ./docker-config/mmc:/MaiMBot/config     # 配置文件
+      - ./data/MaiMBot:/MaiMBot/data            # 运行数据
+      - ./data/MaiMBot/plugins:/MaiMBot/plugins # 插件
+      - ./data/MaiMBot/logs:/MaiMBot/logs       # 日志
+    restart: always                    # 崩溃或服务器重启后自动拉起
 ```
 
 :::
@@ -226,3 +230,31 @@ docker compose logs core
 进入 WebUI 后，跟随配置向导完成模型配置和平台连接即可。
 
 配置模型和连接 QQ 的详细步骤，参考 [模型配置](/manual/configuration/model-config) 和 [适配器](/manual/adapters/)。
+
+## 验证与排错
+
+**验证**：`docker compose ps` 中 `core` 状态为 `Up`，且 `curl -I http://127.0.0.1:18001` 返回 `200` 或 `307`，说明容器和 WebUI 都已就绪。
+
+**容器启动后立刻退出？**
+
+- 先看日志定位：`docker compose logs core`
+- 常见原因是挂载目录权限不足或 `docker-compose.yml` 中的路径不存在，按日志修正后 `docker compose up -d` 重试
+
+**端口被占用？**
+
+- 日志提示 `port is already allocated` 时，修改 `docker-compose.yml` 里 `18001`/`18002` 的宿主机端口映射
+- 或用 `ss -ltnp | grep 18001` 找到占用进程并停止
+
+**外部访问不到 WebUI？**
+
+- 确认容器环境变量 `WEBUI_HOST=0.0.0.0`
+- 云服务器还要在安全组 / 防火墙放行 `18001` 端口
+
+**找不到登录 Token？**
+
+- 用 `docker compose logs core | grep Token` 过滤日志
+- Token 同时保存在 `data/webui.json`，可直接查看
+
+**镜像拉取很慢？**
+
+- 配置 Docker 镜像加速器后重新执行 `docker compose pull`

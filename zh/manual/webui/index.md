@@ -36,13 +36,13 @@ MaiBot 自带浏览器管理面板（WebUI），启动后访问 `http://localhos
 
 ## 首次配置向导
 
-向导共三步，任何一步都可以点「跳过向导」（之后可在「WEBUI设置」中重新进入）：
+向导共三步，任何一步都可以点「跳过向导」（之后可在「WebUI 设置」中重新进入）：
 
-### 1. 设置登录密码
+### 设置登录密码
 
 把临时 Token 换成你自己的固定 Token。
 
-### 2. 基础与人格
+### 基础与人格
 
 设置机器人昵称、人格描述和回复风格。
 
@@ -50,7 +50,7 @@ MaiBot 自带浏览器管理面板（WebUI），启动后访问 `http://localhos
 
 ![填写昵称与人格](/images/webui/setup-bot-profile-filled.webp)
 
-### 3. API 与模型
+### API 与模型
 
 配置模型服务商（API 地址、Key）和基础模型。还没有 Key 可以先跳过，之后在[模型管理](./config-management.md)里补。
 
@@ -89,22 +89,22 @@ allowed_ips = "127.0.0.1"     # IP 白名单（逗号分隔）
 - `host` 改成 `["0.0.0.0", "::"]` 可以监听所有网卡；同时应配置防火墙、访问白名单和 HTTPS
 - `port` 可以改成其他数字避免冲突
 
-## WEBUI设置
+## WebUI 设置
 
-右上角齿轮进入 **WEBUI设置**（`/settings`），管理界面偏好：
+右上角齿轮进入 **WebUI 设置**（`/settings`），管理界面偏好：
 
 - **外观** — 主题模式（浅色/深色/跟随系统）、主题色、字体、圆角、自定义 CSS
 - **安全** — 修改或重新生成登录 Token
 - **其他** — 数据管理：清理日志与缓存、导入/导出设置、重置
 - **关于** — 版本信息、技术栈与开源许可
 
-![WEBUI设置](/images/webui/settings.webp)
+![WebUI 设置](/images/webui/settings.webp)
 
 ![关于页](/images/webui/settings-about.webp)
 
 ## 忘记密码怎么办？
 
-如果仍能登录，在「WEBUI设置 → 安全」中修改或重新生成 Token：
+如果仍能登录，在「WebUI 设置 → 安全」中修改或重新生成 Token：
 
 ![安全设置](/images/webui/settings-security.webp)
 

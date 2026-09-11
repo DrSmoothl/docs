@@ -120,7 +120,9 @@ async def on_unload(self) -> None:
 
 **Example:**
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 class MyPlugin(MaiBotPlugin):
     async def on_unload(self) -> None:
         self.ctx.logger.info("Plugin is unloading")
@@ -135,6 +137,8 @@ class MyPlugin(MaiBotPlugin):
         self.clear_dynamic_apis()
         await self.sync_dynamic_apis(offline_reason="Plugin has been unloaded")
 ```
+
+:::
 
 ::: warning Note
 `self.ctx` can still be used within `on_unload()`, but cleanup should be completed as quickly as possible. Do not perform time-consuming operations.
@@ -170,7 +174,7 @@ async def on_config_update(
 - **`"bot"`** → `ON_BOT_CONFIG_RELOAD` — Global Bot configuration. Requires subscription via `config_reload_subscriptions`.
 - **`"model"`** → `ON_MODEL_CONFIG_RELOAD` — LLM model configuration. Requires subscription via `config_reload_subscriptions`.
 
-::: important
+::: info
 - The callback for `scope == "self"` is **always triggered** and does not require additional subscription.
 - `scope == "bot"` and `scope == "model"` are triggered only if declared in `config_reload_subscriptions`.
 :::

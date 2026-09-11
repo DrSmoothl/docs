@@ -23,16 +23,23 @@ This section only covers the core fields that deployment operators need to care 
 ### BotConfig (`[bot]`)
 
 **platform** — the platform identifier of the primary account (e.g. `qq`). Determines how the message adapter parses the source.
+
 **qq_account** — the primary account's QQ number (as a string). Used to identify messages sent by the Bot itself.
+
 **nickname** — the Bot's display and self-reference name, default `"麦麦"`.
+
 **alias_names** — list of alias names. Users can trigger mention detection with these names too.
+
 **platforms** — multi-platform account list, format: `platform:account`.
 
 ### PersonalityConfig (`[personality]`)
 
 **personality** — personality setting text. The core of the system prompt, describing the Bot's identity, character, and behavioral guidelines.
+
 **reply_style** — expression style description. Layered on top of the personality setting, guiding the Bot's tone and verbosity.
+
 **multiple_reply_style** — list of alternative expression styles. One is randomly injected with probability `multiple_probability` to add variety to replies.
+
 **multiple_probability** — probability of temporary style injection (0~1). Set to 0 to always use the primary style.
 
 ### Other Key Configuration Sections
@@ -62,12 +69,19 @@ This section only covers the core fields that deployment operators need to care 
 `APIProvider`, located in `src/config/model_configs.py`, defines all connection parameters for interacting with LLM APIs:
 
 **name** — provider name (referenced by `api_provider` in `models`; can be named freely).
+
 **base_url** — API endpoint base URL.
+
 **api_key** — API key. Can be left empty when `auth_type` is `none`.
+
 **client_type** — client type, `openai` or `google` (default `openai`).
+
 **max_retry** — maximum retry count after a failed API call (default 3).
+
 **timeout** — single API call timeout in seconds (default 60).
+
 **retry_interval** — interval between retries in seconds (default 5).
+
 **organization** / **project** — optional organization and project identifiers for the official OpenAI API.
 
 The following three fields determine how requests are authenticated and parsed:
@@ -82,7 +96,9 @@ The following three fields determine how requests are authenticated and parsed:
   - `none` — no authentication, suitable for local models or proxies that don't require a key.
 
 **auth_header_name** — HTTP header name in `header` mode (default `Authorization`).
+
 **auth_header_prefix** — key prefix in `header` mode (default `Bearer`; leave empty to send the raw key directly).
+
 **auth_query_name** — query parameter name in `query` mode (default `api_key`).
 
 **reasoning_parse_mode**
@@ -104,7 +120,9 @@ The following three fields determine how requests are authenticated and parsed:
   - `double_decode` — URL-decode the argument string first, then parse as JSON (for models that double-encode parameters).
 
 **default_headers** — dictionary of HTTP headers attached to all requests by default.
+
 **default_query** — dictionary of query parameters attached to all requests by default.
+
 **model_list_endpoint** — model list probe endpoint path (default `/models`).
 
 ### Special Note on ModelConfig Version Comparison

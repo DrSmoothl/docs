@@ -123,7 +123,7 @@ The plugin system of this Project allows loading plugins developed by third part
 - **Compliance Risks**: The functionality or behavior of plugins may violate relevant laws, regulations, or platform rules;
 - **Compatibility Risks**: Plugins may conflict with the main program or other plugins;
 
-**Therefore, when using third-party plugins, please务必:**
+**Therefore, when using third-party plugins, please be sure to:**
 
 - Obtain and install plugins only from trusted sources;
 - Carefully understand the plugin's functionality, permissions, and developer information before installation;

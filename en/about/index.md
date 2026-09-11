@@ -19,7 +19,6 @@ MaiBot (MaiSaka) is an interactive agent based on large language models. She is 
 > - The core design principle is: "more lifelike, not merely better."
 > - If people truly want AI companionship, not everyone needs a perfect "helpful assistant" that solves every problem. Some people may want a life form that can make mistakes and has its own perceptions and thoughts.
 
-> **xxxxx says:**
 > *Code is open, but the soul is yours.*
 
 ## Related Projects

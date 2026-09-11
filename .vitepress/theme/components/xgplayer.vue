@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, shallowRef, onMounted, onUnmounted } from 'vue'
+import { useData } from 'vitepress'
 import 'xgplayer/dist/index.min.css'
+
+const { lang } = useData()
 
 interface Props {
   url: string
@@ -33,7 +36,8 @@ onMounted(async () => {
   } catch (e) {
     console.error('xgplayer init failed:', e)
     if (playerRef.value) {
-      playerRef.value.innerHTML = `<p style="padding:16px;text-align:center;color:var(--vp-c-text-2)">视频加载失败</p>`
+      const errorText = lang.value.startsWith('en') ? 'Video failed to load' : '视频加载失败'
+      playerRef.value.innerHTML = `<p style="padding:16px;text-align:center;color:var(--vp-c-text-2)">${errorText}</p>`
     }
   }
 })

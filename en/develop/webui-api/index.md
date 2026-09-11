@@ -31,7 +31,7 @@ Key configuration options at a glance:
 - **`webui.trusted_proxies`** — Reverse proxy IP list
 - **`webui.trust_xff`** — Whether to trust the `X-Forwarded-For` header
 
-These fields are defined in the `WebUIConfig` class in `src/config/official_configs.py`. All can be read/written via the [WebUI configuration interface](/manual/webui/) or the [`/api/config/raw`](#compat-routers) endpoint.
+These fields are defined in the `WebUIConfig` class in `src/config/official_configs.py`. All can be read/written via the [WebUI configuration interface](/en/manual/webui/) or the [`/api/config/raw`](#compat-routers) endpoint.
 
 ## Authentication Model: Three Methods
 

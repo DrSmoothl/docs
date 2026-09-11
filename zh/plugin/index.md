@@ -73,17 +73,25 @@ uv run python bot.py
 
 构建本地 SDK 分发包时，在 SDK 仓库中执行：
 
-```powershell
+::: code-group
+
+```powershell [PowerShell ~vscode-icons:file-type-powershell~]
 uv sync --extra dev
 uv run pytest
 uv build
 ```
 
+:::
+
 ::: tip 注意
 安装包名为 `maibot-plugin-sdk`，但代码中导入时使用 `maibot_sdk`：
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 ```
+
+:::
 
 :::
 
@@ -140,7 +148,9 @@ plugins/
 
 在 `plugin.py` 中继承 `MaiBotPlugin`，用装饰器声明组件，并实现三个生命周期方法：
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 from maibot_sdk import MaiBotPlugin, Command, Tool
 from maibot_sdk.types import ToolParameterInfo, ToolParamType
 
@@ -182,6 +192,8 @@ class MyPlugin(MaiBotPlugin):
 def create_plugin():
     return MyPlugin()
 ```
+
+:::
 
 ::: warning 必须实现三个生命周期方法
 SDK 要求所有插件实现 `on_load()`、`on_unload()` 和 `on_config_update()` 三个方法，否则 Runner 会拒绝加载。详见 [生命周期](./lifecycle.md)。
@@ -228,13 +240,21 @@ def create_plugin():
 SDK 提供 8 种组件装饰器，全部从 `maibot_sdk` 顶层导入：
 
 **`@Tool`** — LLM 工具/函数调用，LLM 可调用的工具，最常用的组件类型
+
 **`@Command`** — 斜杠命令，用户通过正则匹配触发的命令
+
 **`@HookHandler`** — 命名 Hook 处理器，订阅特定 Hook 点，支持 blocking/observe 模式
+
 **`@EventHandler`** — 消息/工作流事件，监听消息、LLM 生成等生命周期事件
+
 **`@API`** — 插件间 API，暴露可被其他插件调用的 API
+
 **`@MessageGateway`** — 平台适配器，将外部平台（QQ、邮件等）接入 MaiBot
+
 **`@HomeCard`** — WebUI 首页卡片，在首页展示插件状态、入口或自定义内容
+
 **`@LLMProvider`** — LLM Provider，声明新 LLM 模型接入点（client_type），扩展模型服务
+
 **`@Action`** — 兼容旧插件，内部自动转换为 `@Tool`，新插件应直接使用 `@Tool`
 
 ### 能力代理

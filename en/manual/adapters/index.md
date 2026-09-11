@@ -29,7 +29,7 @@ The two routes are not mutually exclusive—you can enable both at the same time
 - [QQ Official](./qq-official) — 🌐 community-maintained. Connect to the QQ official bot with AppID + AppSecret, supports private chats, group chats, guild text channels, and guild direct messages
 - [QQBot](./qqbot) — 🌐 community-maintained. Connect to the QQ official Bot API with AppID + AppSecret, supports private (C2C) and group chats
 
-### Other Platforms
+### Email, iMessage & Voice Calls
 
 - [Email](./email) — 🌐 community-maintained. IMAP inbound + SMTP replies, connect a dedicated bot mailbox to MaiBot
 - [QQ Voice Call](./qq-voice-call) — 🌐 community-maintained. Adds a real-time voice call entry to QQ; Mai on the phone reuses the same persona and memory

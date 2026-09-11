@@ -177,7 +177,9 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
 若两个插件声明了相同的 `client_type`，则**两个插件均被禁止加载**。请在设计 Provider 时使用唯一的前缀（如 `com.example.my-provider`）避免冲突。
 :::
 
-```json
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
 {
   "llm_providers": [
     {
@@ -189,6 +191,8 @@ Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼
   ]
 }
 ```
+
+:::
 
 ## 依赖声明
 

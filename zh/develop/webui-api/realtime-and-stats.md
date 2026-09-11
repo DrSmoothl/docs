@@ -74,8 +74,11 @@ WebSocket 连接通过一个可选的握手 Token 认证。连接时，服务端
 **响应体：**
 
 **`success`** — 是否获取成功（`true` / `false`）
+
 **`token`** — 临时 WS Token（成功时存在）
+
 **`expires_in`** — 有效秒数（固定 60）
+
 **`message`** — 错误说明（失败时存在）
 
 ::: code-group
@@ -149,11 +152,17 @@ MaiBot 将每次推理过程（prompt 构建、LLM 调用、工具执行）记�
 **`GET /api/webui/reasoning-process/stages`** — 列出所有推理阶段（如 `planner`、`replyer`、`jargon_learning_update`），含每个阶段的会话数和最近修改时间
 
 **`GET /api/webui/reasoning-process/files`** — 分页列出推理过程日志文件。关键查询参数：
+
 **`stage`** — 推理阶段名，默认 `planner`
+
 **`session`** — 会话名，`auto` 选最近活跃的会话，`__all_group_chats__` 查看所有群聊日志
+
 **`page`** — 页码（从 1 开始，默认 1）
+
 **`page_size`** — 每页条数（10-200，默认 50）
+
 **`search`** — 模糊搜索（匹配阶段、会话、输出摘要、模型名等）
+
 **`action`** — 按动作名过滤（仅对 planner 和黑话学习阶段有效）
 
 返回体包含 `items`（日志条目列表）、`total`、`stages`、`stage_infos`、`sessions`、`session_infos` 等字段。每个条目包含 `stage`、`session_id`、`stem`（文件名主干）、`output_preview`（replyer 阶段）、`action_preview`（planner 阶段）、`model_name`、`duration_ms` 以及（1.2.0 起）`prompt_tokens`、`completion_tokens`、`total_tokens` 等 Token 用量统计。
@@ -163,12 +172,19 @@ MaiBot 将每次推理过程（prompt 构建、LLM 调用、工具执行）记�
 **`GET /api/webui/reasoning-process/html?path=<相对路径>`** — 以 HTML 形式预览推理日志。返回 `text/html` 文件流，适合在浏览器中直接渲染 prompt 的结构化预览
 
 **`POST /api/webui/reasoning-process/replay`** — 用可编辑的消息列表重放一次推理请求。请求体：
+
 **`model_name`** — 重放使用的模型名（必填）
+
 **`messages`** — 消息列表（必填，至少一条）
+
 **`source_path`** — 原始 prompt JSON 路径（可选，用于自动提取 tool_definitions）
+
 **`tool_definitions`** — 工具定义（可选，未提供且 source_path 可用时自动补全）
+
 **`temperature`** — 温度参数（可选，0-2）
+
 **`max_tokens`** — 最大 Token 数（可选）
+
 重放响应包含 `response`（模型输出文本）、`reasoning`（思维链）、`tool_calls`、`prompt_tokens` 等完整的 Token 用量统计。
 
 **`DELETE /api/webui/reasoning-process/stages/{stage}`** — 清空指定推理阶段的所有日志文件

@@ -262,7 +262,6 @@ If logs show a hook's blocking latency exceeding **500ms**, strongly recommend i
 
 ### Related documentation
 
-- Event bus architecture — Internal mechanisms of EventBus in detail
 - [Runtime Architecture](/en/develop/plugin-runtime-internals) — Plugin runtime Host/Runner architecture
 - [Hook Handlers](/en/plugin/hooks) — Hook usage guide from a plugin developer's perspective
 - [Event Handlers](/en/plugin/event-handlers) — EventHandler usage guide from a plugin developer's perspective

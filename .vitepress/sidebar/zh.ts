@@ -32,6 +32,7 @@ export const sidebar: DefaultTheme.Sidebar = {
       items: [
         { text: 'Tool', link: '/plugin/tools' },
         { text: 'Command', link: '/plugin/commands' },
+        { text: '首页卡片', link: '/plugin/home-cards' },
         { text: 'Hook 处理器', link: '/plugin/hooks' },
         { text: '事件处理器', link: '/plugin/event-handlers' },
         { text: 'API 组件', link: '/plugin/api-components' },

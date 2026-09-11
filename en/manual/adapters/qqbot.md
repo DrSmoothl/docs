@@ -25,8 +25,11 @@ The QQBot Adapter connects to an **official QQ bot**, not a regular QQ account. 
 3. Enable the event subscriptions you need under "功能配置" (Feature configuration), such as C2C private messages and group @ mentions—otherwise the platform will not push those events.
 
 ::: warning Requirements
+
 **MaiBot** — ≥ 1.0.0 (plugin host).
+
 **aiohttp** — ≥ 3.8, used for WebSocket and REST communication; usually already bundled in the MaiBot environment.
+
 :::
 
 ::: tip Official bot vs. the NapCat approach

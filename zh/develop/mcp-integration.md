@@ -52,8 +52,11 @@ flowchart TD
 允许 MCP Server 反过来请求 MaiBot 调用 LLM。
 
 **`enable`** — 默认 `false`。
+
 **`task_name`** — 模型路由任务名，默认 `"planner"`。参见 [模型配置](/manual/configuration/model-config) 的 `model_task_config`。
+
 **`include_context_support`** — 是否允许携带上下文消息，默认 `false`。
+
 **`tool_support`** — 是否允许嵌套工具调用，默认 `false`。开启后 Token 消耗可能急剧增加。
 
 ### client.elicitation — Server 请求用户输入
@@ -61,7 +64,9 @@ flowchart TD
 控制 MCP Server 是否可向用户索要信息。
 
 **`enable`** — 默认 `false`。
+
 **`allow_form`** — 允许请求表单，默认 `true`。
+
 **`allow_url`** — 允许请求打开 URL，默认 `false`。
 
 ### servers — 服务器列表（核心段）
@@ -69,12 +74,19 @@ flowchart TD
 TOML 数组，每项定义一个 MCP Server：
 
 **`name`**（必填）— 唯一标识，不允许重复。
+
 **`enabled`** — 默认 `true`。
+
 **`transport`** — `"stdio"` / `"streamable_http"` / `"sse"`，默认 `"stdio"`。
+
 **`command`** — stdio 启动命令。 **`args`** — 命令参数列表。 **`env`** — 子进程环境变量。
+
 **`url`** — HTTP/SSE 远程地址。 **`headers`** — 请求头（常用于 Bearer Token）。
+
 **`http_timeout_seconds`** — HTTP 超时，默认 `30.0`。
+
 **`read_timeout_seconds`** — 读取超时，默认 `300.0`。
+
 **`authorization`** — 认证配置，含 `type` 字段。
 
 ## 三种 Transport 取舍
@@ -213,8 +225,11 @@ read_timeout_seconds = 300.0
 `http_timeout_seconds` 调大到 45 秒以应对远程握手延迟。重启后观察控制台日志。连接失败的常见原因：
 
 **TLS 证书问题** — 确认环境能正确验证 Server 的 HTTPS 证书。
+
 **Authorization 格式** — 部分 Server 对 `Bearer` 大小写敏感，参考 Server 文档。
+
 **网络不通** — 检查能否解析域名并建立 TCP 连接。
+
 **http_timeout 太短** — 如果握手慢，继续调大。
 
 ## Host Callbacks：Sampling / Logging / Elicitation
@@ -254,10 +269,15 @@ MaiBot 注册 MCP 工具时执行两层检查。
 以下 6 个工具名被内核占用，任何 MCP Server 都不能使用，冲突即跳过并打印警告：
 
 **`reply`** — 回复消息
+
 **`no_action`** — 空操作
+
 **`stop`** — 停止执行
+
 **`create_table`** — 创建数据表
+
 **`list_tables`** — 列出数据表
+
 **`view_table`** — 查看数据表
 
 冲突日志示例：`⚠️ MCP 工具 'reply' (来自 my-server) 与内置工具冲突，已跳过`

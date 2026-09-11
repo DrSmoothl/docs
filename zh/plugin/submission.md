@@ -17,8 +17,11 @@ title: 发布插件
 你的插件必须是一个**公开的 GitHub 仓库**，且根目录包含以下文件：
 
 **`_manifest.json`** — 插件清单，使用 **manifest v2** 结构，字段规范见 [Manifest 系统](./manifest.md)
+
 **`plugin.py`** — 插件入口文件，包含 `create_plugin()` 工厂函数
+
 **`LICENSE`** — 许可证文件，类型应与 `_manifest.json` 中的 `license` 字段一致
+
 **`README.md`** — 建议包含功能介绍、安装方式、配置说明和使用示例
 
 ::: tip 什么是插件仓库
@@ -39,9 +42,13 @@ title: 发布插件
 ### 状态标签
 
 **`pending-validation`** — 等待自动验证
+
 **`validated`** — 验证通过，等待维护者批准
+
 **`validation-failed`** — 验证失败，请根据提示修复
+
 **`approved`** — 已批准并添加到插件中心
+
 **`rejected`** — 被维护者拒绝
 
 ### 验证失败怎么办

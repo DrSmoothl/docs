@@ -75,11 +75,11 @@ Enter the folder and install dependencies:
 
 ::: code-group
 
-```bash [uv sync]
+```bash [uv sync ~vscode-icons:file-type-python~]
 uv sync
 ```
 
-```bash [pip install]
+```bash [pip install ~vscode-icons:file-type-python~]
 pip install -r requirements.txt
 ```
 
@@ -121,3 +121,28 @@ Copy the Token from the log and paste it into the browser login page to access W
 Once in WebUI, follow the configuration wizard to set up models and connect platforms.
 
 For the next steps on configuring models and connecting to QQ, refer to [Model Configuration](/en/manual/configuration/model-config) and [Adapters](/en/manual/adapters/).
+
+## Verification & Troubleshooting
+
+**Verify**: after startup the terminal prints "WebUI 服务器启动中" (WebUI server starting), and `curl -I http://127.0.0.1:8001` returns `200` or `307` — the service is ready.
+
+**`uv: command not found`?**
+
+- Run `source $HOME/.local/bin/env` to refresh the environment, or reopen the terminal
+
+**`pip install` fails to compile?**
+
+- On Ubuntu / Debian, install build dependencies first: `sudo apt install -y build-essential python3.12-dev`
+- Then rerun the install command
+
+**Python version below 3.12?**
+
+- Upgrade to 3.12+ via your distro packages or pyenv, confirm with `python3 --version`, then install dependencies
+
+**Works locally but not from outside?**
+
+- Check whether the cloud security group / firewall allows port `8001` (e.g. `sudo ufw allow 8001`)
+
+**Process gets `Killed`?**
+
+- With less than 2GB of memory the OOM killer may terminate it; add memory or configure swap and retry

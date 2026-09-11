@@ -83,3 +83,26 @@ So "install succeeded" ≠ "already running". Next, go to [Manage Plugins](./man
 ::: warning Security reminder
 Only install plugins from trusted sources. Before installing, check the repository's README, update time, and Issues, and review the permissions the plugin requests. Third-party plugins are maintained by their respective authors; the MaiBot team does not guarantee their compatibility or safety.
 :::
+
+## Verification & Troubleshooting
+
+**Verify**: after installation the plugin appears in the WebUI plugin management page and `plugins/<plugin-name>/config.toml` has been generated — installation succeeded. Then go to [Manage Plugins](./management) to enable it manually.
+
+**The plugin is missing from the list?**
+
+- Check the directory structure: `plugins/<plugin-name>/` must contain `_manifest.json` and the plugin entry file; an extra nesting level will not be detected
+
+**`config.toml` was not generated?**
+
+- Plugins that do not declare `config_model` have no config file — that is expected
+- If it should exist, check the plugin loading errors in the log
+
+**Enabled but not running?**
+
+- Check whether `min_version` in `_manifest.json` is compatible with your MaiBot version
+- Confirm the dependencies declared by the plugin are installed
+
+**`git clone` fails?**
+
+- Private repositories require an SSH key or access Token
+- On a restricted network, download the plugin files manually and place them under `plugins/<plugin-name>/` with the directory structure preserved

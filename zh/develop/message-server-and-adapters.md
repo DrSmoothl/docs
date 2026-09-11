@@ -241,6 +241,8 @@ MaiBot 主程序在启动时注册了 `message_id_echo` 的自定义消息处理
 
 自 1.2.0 起，MaiBot 提供统一的聊天名单策略（`src/platform_io/adapter_policy.py`），独立控制每个适配器的**群聊**与**私聊**放行。策略文件为 `config/adapter_policy.toml`（运行时生成，文件不存在时默认放行）。
 
+::: code-group
+
 ```toml [TOML ~vscode-icons:file-type-toml~]
 [defaults.group]        # 群聊全局默认动作
 default_action = "allow"  # 或 "block"
@@ -256,6 +258,8 @@ deny_ids = []             # 黑名单，匹配即拒绝
 [adapters.private]
 default_action = "allow"
 ```
+
+:::
 
 **求值顺序**：从最精确的适配器身份规则，逐级回退到全局默认动作。`default_action` 取值 `allow` / `block` / `inherit`（`inherit` 表示继承全局默认）；`allow_ids` 与 `deny_ids` 不可同时包含同一 ID。全局默认动作由 `defaults.group` / `defaults.private` 控制，两者默认 `allow`，可改为 `block` 实现"默认拒绝"。
 

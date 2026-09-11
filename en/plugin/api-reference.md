@@ -532,13 +532,17 @@ Path safety notes:
 
 ## logger — Logging
 
-```python
+::: code-group
+
+```python [Python ~vscode-icons:file-type-python~]
 # Standard logging interface, Logger name is "plugin.<plugin_id>"
 self.ctx.logger.info("Plugin started")
 self.ctx.logger.warning("Config missing, using default")
 self.ctx.logger.error("Something went wrong", exc_info=True)
 self.ctx.logger.debug("Debug info: %s", data)
 ```
+
+:::
 
 ::: tip Automatic Log Forwarding
 Logs in the Runner process are automatically transmitted to the main process via IPC, no extra configuration needed. All plugin output logs can be found in the main process logs.

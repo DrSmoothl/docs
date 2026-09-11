@@ -5,13 +5,9 @@ import { countWord } from '../utils/functions'
 
 const { page, lang } = useData()
 
-// Try rawContent first (sync), fall back to DOM content (async)
-const rawCount = (() => {
-  const raw = (page.value as any).rawContent
-  return raw ? countWord(raw) : null
-})()
-
-const words = ref(rawCount ?? 0)
+// Word count is injected at build time by transformPageData in config.mts,
+// so SSR and hydration render the same value. DOM fallback covers dev/edge cases.
+const words = ref<number>((page.value as any).wordCount ?? 0)
 
 onMounted(async () => {
   if (words.value > 0) return

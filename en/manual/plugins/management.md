@@ -73,7 +73,9 @@ Only fully restart MaiBot when the log explicitly reports that watching, loading
 ## Tips
 
 **Conflicts** — only enable the plugins you need when functions overlap; contact the author for updates if necessary.
+
 **Performance** — too many plugins may affect performance; uninstall unused ones promptly.
+
 **Security** — only install from trusted sources, review permission requirements, update regularly.
 
 ## FAQ

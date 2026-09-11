@@ -134,7 +134,7 @@ pip install -r requirements.txt
 
 :::
 
-> 本仓库中，`zh/manual/deployment/installation.md` 使用了 `~vscode-icons:file-type-git~` 内联图标；其他文件中通过 `pnpm`/`npm`/`yarn`/`pip`/`uv` 等关键词自动匹配图标。
+> 上面「效果预览」中的 `[uv 安装]`、`[pip 安装]` 刻意保留无图标写法，用来演示关键词自动匹配；正式内容页必须按 S2 显式写出图标。
 
 ## 代码组强制写法与禁止包裹
 
@@ -144,7 +144,7 @@ pip install -r requirements.txt
 
 即使一个 code-group 里只有一个代码块，也必须用 `::: code-group` 包裹，并给标签配内联图标：
 
-```markdown
+````markdown
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
@@ -153,7 +153,7 @@ platform = "qq"
 ```
 
 :::
-```
+````
 
 禁止不带 code-group 的裸语言 fence（` ```toml `、` ```python `、` ```bash ` 等）。
 
@@ -161,7 +161,7 @@ platform = "qq"
 
 code-group 标签要写成 `[标签文字 ~iconify图标名~]`，显式给出图标，**不要依赖关键词自动匹配**：
 
-- ❌ ` ```toml [配置] ` ` — 无图标
+- ❌ ` ```toml [配置] ` — 无图标
 - ✅ ` ```toml [配置 ~vscode-icons:file-type-toml~] ` — 显式图标
 
 图标名从 [Iconify](https://icon-sets.iconify.design/) 获取，常用：`vscode-icons:file-type-toml`、`vscode-icons:file-type-python`、`vscode-icons:file-type-json`、`vscode-icons:file-type-shell`、`vscode-icons:file-type-git`、`logos:docker-icon`。
@@ -203,9 +203,9 @@ Mermaid 流程图（` ```mermaid `）用于渲染图表，` ```mmd ` 用于展�
 - **`width`** (可选, 默认 `'100%'`) — 播放器宽度
 - **`height`** (可选, 默认 `'auto'`) — 播放器高度
 
-```html
+````html
 <xgplayer url="https://litev4.github.io/rickroll/rickroll.mp4" width="100%" height="auto" />
-```
+````
 
 **效果预览：**
 
@@ -215,7 +215,7 @@ Mermaid 流程图（` ```mermaid `）用于渲染图表，` ```mmd ` 用于展�
 
 除了 xgplayer 组件，也可以直接用 `<iframe>` 嵌入哔哩哔哩等第三方平台的视频：
 
-```html
+````html
 <iframe 
 style="width:100%; aspect-ratio:16/9; margin-top: 2em;" 
 src="//player.bilibili.com/player.html?bvid=BV1amAneGE3P" 
@@ -223,7 +223,7 @@ frameborder="0"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
 allowfullscreen>
 </iframe>
-```
+````
 
 **效果预览：**
 
@@ -246,9 +246,9 @@ allowfullscreen>
 - **`description`** (必填) — 卡片描述
 - **`logo`** (可选, 默认 `''`) — 左侧 logo 图片地址
 
-```html
+````html
 <Linkcard url="https://github.com/MaiM-with-u/MaiBot" title="MaiBot" description="一个智能 QQ 群聊天机器人" logo="/title_img/mai.png" />
-```
+````
 
 **效果预览：**
 

@@ -8,7 +8,7 @@ Let AI install MaiBot for you, you just need to answer a few questions.
 
 Copy the prompt below and send it to the AI assistant you are currently using (Claude, GPT, Gemini, etc. all work), and it will guide you through the entire process of cloning, installing, configuring, and launching.
 
-::: info 提示词
+::: info Prompt
 
 > Please help me install MaiBot, following the guide here:
 >

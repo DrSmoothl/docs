@@ -23,16 +23,23 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 ### BotConfig（`[bot]`）
 
 **platform** — 主账号所在平台标识（如 `qq`）。决定消息适配器如何解析来源。
+
 **qq_account** — 主账号 QQ 号（字符串）。用来识别哪些消息是 Bot 自己发的。
+
 **nickname** — Bot 显示和自称的名字，默认 `"麦麦"`。
+
 **alias_names** — 别名声列表。用户用这些名字也能触发提及检测。
+
 **platforms** — 多平台账号列表，格式为 `platform:账号`。
 
 ### PersonalityConfig（`[personality]`）
 
 **personality** — 人格设定文本。系统提示词的核心，描述 Bot 的身份、性格、行为准则。
+
 **reply_style** — 表达风格描述。叠加在人格设定之后，指导 Bot 说话的语气和篇幅。
+
 **multiple_reply_style** — 备用表达风格列表。以 `multiple_probability` 概率随机注入其中一条，让回复更有多样性。
+
 **multiple_probability** — 临时风格注入概率（0~1）。设为 0 则始终使用主风格。
 
 ### 其他关键配置段
@@ -62,12 +69,19 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 `APIProvider` 位于 `src/config/model_configs.py`，定义了与 LLM API 交互的所有连接参数：
 
 **name** — 提供商名称（在 `models` 的 `api_provider` 中引用，可随意命名）。
+
 **base_url** — API 端点基地址。
+
 **api_key** — API 密钥。`auth_type` 设为 `none` 时可不填。
+
 **client_type** — 客户端类型，`openai` 或 `google`（默认 `openai`）。
+
 **max_retry** — 单次 API 调用失败后的最大重试次数（默认 3）。
+
 **timeout** — 单次 API 调用超时，单位秒（默认 60）。
+
 **retry_interval** — 两次重试间隔，单位秒（默认 5）。
+
 **organization** / **project** — OpenAI 官方接口可选的组织与项目标识。
 
 以下三个字段决定请求的鉴权与解析方式：
@@ -82,7 +96,9 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
   - `none` — 不鉴权，适用于不需要密钥的本地模型或代理。
 
 **auth_header_name** — `header` 模式下的 HTTP 请求头名称（默认 `Authorization`）。
+
 **auth_header_prefix** — `header` 模式下密钥前缀（默认 `Bearer`，留空表示直接发送原始密钥）。
+
 **auth_query_name** — `query` 模式下的查询参数名（默认 `api_key`）。
 
 **reasoning_parse_mode**
@@ -104,7 +120,9 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
   - `double_decode` — 对参数字符串先 URL-decode 再 JSON 解析（适用于部分模型将参数双重编码的情况）。
 
 **default_headers** — 所有请求默认附加的 HTTP Header 字典。
+
 **default_query** — 所有请求默认附加的查询参数字典。
+
 **model_list_endpoint** — 模型列表探测端点路径（默认 `/models`）。
 
 ### ModelConfig 版本比较特别说明
