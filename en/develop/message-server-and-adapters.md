@@ -265,6 +265,10 @@ default_action = "allow"
 
 The WebUI adapter management page and chat management page provide visual editing of the policy; backend APIs are in `src/webui/routers/chat/routes.py` (`get_adapter_policy_defaults` / `update_adapter_policy_defaults` etc.).
 
+::: tip Read/write consistency (since 1.3.0)
+Policy entries are graded by specificity, so one adapter identity can match several `[[adapters]]` records at once. Early versions located entries in the WebUI by "identity fields exactly equal", which could surface an empty template permanently shadowed by a higher-specificity entry, and write into that same ineffective record. Reads and writes now use the same matching standard as runtime evaluation — take the highest-specificity entry among identity matches; when the identity resolves only to `plugin_id` (the adapter is not running), fall back to the highest-specificity entry under that plugin. What the panel shows is now the rule that actually takes effect at runtime, so saving can no longer produce a "dead rule" that stores fine but never applies.
+:::
+
 ## Minimal Python External Adapter Example
 
 Below is a minimal working Python adapter that connects to the Legacy Server and sends/receives messages:

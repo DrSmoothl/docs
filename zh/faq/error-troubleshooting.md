@@ -400,14 +400,14 @@ enabled = true                  # 确保规则启用
 
 :::
 
-**步骤 3：检查频率限制**
+**步骤 3：检查发言频率**
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
-[chat]
-# 检查是否设置了过严的频率限制
-reply_frequency_limit = 10      # 每 10 秒最多回复 1 次
+[chat.reply_timing]
+talk_value = 1                  # 群聊发言意愿（0-1），越小越安静；默认 1
+private_talk_value = 1          # 私聊发言意愿（0-1），默认 1
 ```
 
 :::
@@ -447,8 +447,9 @@ curl https://api.deepseek.com/v1/chat/completions \
 ### 场景 7：插件加载失败
 
 #### 错误现象
-- 启动时报 `PluginLoadError`，插件列表里对应插件灰色不可用
-- 日志显示 `ImportError`、`ModuleNotFoundError` 或 `ManifestValidationError`
+- 启动时日志提示插件加载失败，WebUI 插件列表里对应插件灰色不可用
+- 日志显示 `ImportError`、`ModuleNotFoundError` 或 `Manifest 校验失败`
+- 日志提示 `Host 版本不兼容` 或 `SDK 版本不兼容`（插件声明的 Host / SDK 版本区间不覆盖当前版本）
 - 插件目录存在但没有任何插件被加载
 
 #### 快速自查三连
@@ -479,10 +480,27 @@ No module named 'requests'
 ```
 根据提示缺什么装什么。
 
+**步骤 4：版本不兼容时的兜底手段**
+如果日志里是 `Host 版本不兼容` 或 `SDK 版本不兼容`（插件声明的版本区间不覆盖当前 MaiBot / SDK 版本），先按步骤 1 换插件版本；确实没有可用版本时，可以临时打开强制兼容：
+
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
+# config/bot_config.toml
+[debug]
+# 跳过插件声明的 Host / SDK 版本区间校验，直接加载插件
+force_plugin_compatibility = true
+```
+
+:::
+
+开启后版本区间校验被跳过，日志里只记一条 warning（含插件声明的 Host / SDK 范围和当前版本），不再因此拒绝加载；**修改后需要重启 MaiBot 生效**。这是临时兜底而非推荐做法——插件可能真的不兼容，强行加载可能在运行期报错。确认插件有兼容版本后，请把它改回 `false` 并更新插件。该开关的完整说明见[日志与观测 · Debug 配置项](/develop/observability#debug-配置项)。
+
 #### 预防建议
 - 安装插件前先看说明，确认兼容的 MaiBot 版本
 - 优先用官方插件或社区热门插件
 - 定期更新插件和 MaiBot 到最新版本
+- 不要长期开启 `[debug].force_plugin_compatibility`，它只是没有兼容版本时的临时兜底
 
 ---
 
@@ -514,17 +532,9 @@ No module named 'requests'
 2. 重启 MaiBot，程序会自动重建或修复数据库
 3. 如果还不行，删掉 `data/MaiBot.db` 让程序重新创建（之前的重要数据需要从备份恢复）
 
-**步骤 3：启用 WAL 模式（减少锁定冲突）**
+**步骤 3：确认没有多实例在写同一个库**
 
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[database]
-# 启用 WAL 模式，减少多进程锁定冲突
-journal_mode = "wal"
-```
-
-:::
+`database is locked` 基本只有一个原因：多个 MaiBot 实例（或残留进程）在同时访问 `data/MaiBot.db`。关掉多余进程，只保留一个。数据库默认已经跑在 WAL 模式下，不需要也不能通过 `[database]` 段开启。
 
 **步骤 4：清理磁盘空间**
 
@@ -534,7 +544,6 @@ journal_mode = "wal"
 - 避免同时启动多个 MaiBot 实例连接同一数据库文件
 - 定期备份 `data/MaiBot.db`（建议每周一次）
 - 配置日志轮转，避免日志文件占满磁盘
-- 使用 WAL 模式减少锁定冲突
 
 ---
 
@@ -615,33 +624,19 @@ api_key = "sk-your-backup-key"
 
 #### 错误现象
 - 发送表情命令无反应
-- 表情生成失败，日志中有 `VLMError` 或 `FilterError`
-- 表情注册失败，提示数量超限
+- 表情注册失败，日志提示超出数量限制
+- 表情注册失败，实际是 `data/emojis/` 目录不可写
 
 #### 快速自查三连
-1️⃣ 确认 `emoji.vlm_api_key` 已配置（如使用 VLM 验证）
-2️⃣ 检查 `emoji.filter` 规则是否过于严格
+1️⃣ 检查 `[emoji]` 的 `content_filtration` 是否过滤过严
+2️⃣ 确认 `[emoji]` 的 `emoji_send_num` / `max_reg_num` 是否设得过小
 3️⃣ 确保 `data/emojis/` 目录可写（权限正确）
 
 #### 解决方案
 
-**步骤 1：检查 VLM 配置**
+**步骤 1：调整表情过滤规则**
 
-如果使用 VLM 进行表情验证，确保配置了 API Key：
-
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[emoji]
-# VLM API Key（如使用视觉模型验证表情）
-vlm_api_key = "sk-your-vlm-key"
-```
-
-:::
-
-**步骤 2：调整表情过滤规则**
-
-如果表情被过滤规则误杀：
+如果表情被过滤规则误杀，先暂时关闭过滤确认是不是规则问题：
 
 ::: code-group
 
@@ -672,99 +667,64 @@ do_replace = true            # 满额后替换旧表情
 :::
 
 #### 预防建议
-- 首次使用时临时关闭 VLM 验证，排查是否为模型问题
 - 谨慎开启 `content_filtration`，避免误杀正常表情
 - 定期清理 `data/emojis/` 目录，删除不用的表情
 - 设置合理的 `max_reg_num`，避免占用过多存储空间
 
 ---
 
-### 场景 11：知识图谱/记忆系统错误
+### 场景 11：记忆系统错误
 
 #### 错误现象
 - 机器人回答"我不记得"或"未找到相关信息"
-- 日志提示知识文件加载失败
+- 日志提示长期记忆加载失败
 - 记忆添加后无法检索到
 
 #### 快速自查三连
-1️⃣ 运行 `maibot knowledge rebuild` 重建知识索引
-2️⃣ 检查 `data/knowledge/` 目录下文件是否完整
-3️⃣ 确认 `knowledge.enabled` 为 `true`
+1️⃣ 在 WebUI 的「记忆」页面执行索引重建（段落、向量各有入口）
+2️⃣ 检查 `data/a-memorix/` 目录是否可写、内容是否完整
+3️⃣ 确认 `[a_memorix]` 下 `plugin.enabled` 为 `true`
 
 #### 解决方案
 
-**步骤 1：重建知识索引**
+**步骤 1：重建记忆索引**
+
+长期记忆的段落索引和向量索引都在 WebUI 的「记忆」页面重建，1.3.1 没有独立的命令行重建工具。打开 WebUI → 记忆页面，按提示执行对应重建入口即可。
+
+**步骤 2：检查记忆数据目录**
 
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# 使用 CLI 命令重建索引
-maibot knowledge rebuild
+# 查看记忆数据目录（在 [a_memorix] 的 storage.data_dir 中配置，默认 data/a-memorix）
+ls -la data/a-memorix/
 
-# 或在 WebUI 中点击"重建索引"按钮
+# 确认目录可写，且没有残留的 .lock / .tmp 文件
 ```
 
 :::
 
-**步骤 2：检查知识文件**
+**步骤 3：启用记忆系统**
 
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-# 查看知识目录
-ls -la data/knowledge/
-
-# 确认文件格式正确（JSON 或 TXT）
-# 损坏的文件会导致加载失败
-```
-
-:::
-
-**步骤 3：启用知识系统**
-
-在配置文件中确认知识系统已启用：
+在配置文件中确认长期记忆已启用：
 
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
-[knowledge]
-enabled = true
+[a_memorix.plugin]
+enabled = true                 # 长期记忆系统总开关，默认 false
 ```
 
 :::
 
-**步骤 4：限制单条知识长度**
+**步骤 4：向量索引损坏时重建**
 
-如果知识太长超出 embedding 模型 Token 限制：
-
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[knowledge]
-# 单条知识最大长度（Token 数）
-max_chunk_size = 512
-# 知识块重叠大小（避免上下文断裂）
-chunk_overlap = 50
-```
-
-:::
-
-**步骤 5：检查向量数据库**
-
-如果索引损坏，删除 `data/vector_index/` 目录下的内容，然后重建：
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-maibot knowledge rebuild
-```
-
-:::
+如果检索不到新加入的记忆，优先在 WebUI 的「记忆」页面执行向量重建。仍不行就先备份 `data/a-memorix/`，停止 MaiBot 后删除该目录让系统重新生成（历史记忆需要从备份恢复）。
 
 #### 预防建议
-- 添加知识时控制单条长度，避免超出 embedding 模型 Token 限制
-- 定期重建知识索引，确保索引与知识文件同步
-- 备份 `data/knowledge/` 和 `data/vector_index/` 目录
-- 使用 WebUI 的知识管理功能，避免手动编辑知识文件
+- 定期在 WebUI 检查记忆索引状态，发现检索不到及时重建
+- 备份 `data/a-memorix/` 目录，它是长期记忆的唯一存储位置
+- 使用 WebUI 的记忆管理功能，不要手动编辑 `data/a-memorix/` 里的文件
 
 ---
 
@@ -776,13 +736,13 @@ maibot knowledge rebuild
 
 #### 错误现象
 - 打开 WebUI 页面后自动跳回登录页
-- 输入密码登录后提示「登录失败」或「密码错误」
+- 粘贴 Token 后提示「登录失败」或「Token 无效」
 - API 请求返回 `401 Unauthorized` 错误
 - 浏览器控制台显示 `Token expired` 或 `Invalid session`
 
 #### 快速自查三连
 1️⃣ **清除浏览器缓存** — Cookie/LocalStorage 可能已过期或损坏
-2️⃣ **检查密码是否正确** — 确认大小写、特殊字符输入无误
+2️⃣ **检查 Token 是否正确** — 确认大小写、特殊字符输入无误，且没多复制空格
 3️⃣ **查看 WebUI 服务状态** — 确认服务正在运行且未重启过
 
 #### 解决方案
@@ -804,98 +764,82 @@ maibot knowledge rebuild
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# 如果修改了密码或 secret_key，需要重启服务
+# 修改了 data/webui.json 中的 Token 后，需要重启服务
 # Docker 部署
 docker restart maibot
 
 # 源码部署
 # 先停止当前进程（Ctrl+C），再重新启动
-python bot.py
+uv run bot.py
 ```
 
 :::
 
-**方法三：检查 secret_key 配置**
+**方法三：核对登录 Token**
+WebUI 的登录 Token 保存在 `data/webui.json` 的 `access_token` 字段，不在 `bot_config.toml` 里：
+
 ::: code-group
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-# 编辑 config/bot_config.toml
-[webui]
-secret_key = "your-secret-key-here"  # 确保与之前保持一致
-session_expire = 7                   # Session 有效期（天），默认 7 天
+```json [JSON ~vscode-icons:file-type-json~]
+{
+  "access_token": "your-access-token-here",
+  "token_source": "configured"
+}
 ```
 
 :::
 
-> ⚠️ **注意**：修改 `secret_key` 后所有已登录的 Session 都会失效，需要重新登录。
+改完 Token 后重启 MaiBot 生效。终端每次启动也会打印当前 Token，直接复制那条即可。第一次启动生成的是临时 Token，换成自己的固定 Token 更省事。
+
+> ⚠️ **注意**：浏览器是把 Token 存在 `maibot_session` Cookie 里做登录态的，修改 Token 后所有已登录的 Session 都会失效，需要重新登录。
 
 #### 预防建议
-- **延长 Session 有效期** — 将 `session_expire` 改为 30 天
-- **固定 secret_key** — 不要频繁修改，否则每次都要重新登录
-- **使用浏览器书签** — 保存登录后的页面，避免重复输入密码
+- **换成固定 Token** — 首次启动后把临时 Token 换成自己的，并在 `data/webui.json` 里固定下来
+- **不要频繁修改 Token** — 否则每次都要重新登录
+- **使用浏览器书签** — 保存登录后的页面，避免重复输入 Token
 
 ---
 
-### 场景 13：平台未配置机器人账号
+### 场景 13：适配器未连接或账号不可用
 
 #### 错误现象
 - 某平台（如 QQ）的消息无法发送
-- 日志提示 `No bot account configured for platform qq`
+- 日志里看不到适配器上报的身份/连接信息
 - 适配器已连接但机器人无响应
 - 消息发送失败，返回 `400 Bad Request`
 
 #### 快速自查三连
-1️⃣ **检查平台配置** — 确认 `platforms.qq.bot_accounts` 已填写
-2️⃣ **验证账号凭证** — 确认 Token/密码正确且未过期
-3️⃣ **查看适配器日志** — 确认适配器已正常连接
+1️⃣ **检查适配器连接** — NapCat 等适配器是否正常启动并连上了 MaiBot
+2️⃣ **验证账号凭证** — 确认适配器里登录的 QQ 号状态正常、未被封禁或掉线
+3️⃣ **查看适配器日志** — 在 WebUI 日志面板或终端里找适配器相关记录
 
 #### 解决方案
 
-**步骤一：配置机器人账号**
-::: code-group
+**步骤一：确认适配器已连接**
+1.3.1 的平台账号由适配器侧维护，不在 `bot_config.toml` 里填写。先确认 NapCat（或其他适配器）已启动，并按[适配器文档](/manual/adapters/)连上 MaiBot。
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-# 编辑 config/bot_config.toml
-[platforms.qq]
-enabled = true
-
-# 添加机器人账号配置
-[[platforms.qq.bot_accounts]]
-uin = "123456789"              # 机器人 QQ 号
-token = "your-bot-token"       # 机器人 Token（根据适配器类型填写）
-
-# 如果使用 NapCat 适配器，还需配置：
-[[platforms.qq.bot_accounts]]
-uin = "123456789"
-adapter = "napcat"
-napcat_uin = "987654321"       # NapCat 登录的 QQ 号
-```
-
-:::
-
-**步骤二：检查适配器连接**
+**步骤二：检查适配器连接状态**
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# 查看适配器日志
+# 查看 MaiBot 日志中的适配器记录
 # Docker 部署
 docker logs maibot | grep -i adapter
 
 # 源码部署
-# 观察终端输出，寻找「适配器已连接」相关日志
+# 观察终端输出，寻找适配器连接、身份上报相关日志
 ```
 
 :::
 
 **步骤三：验证账号凭证**
-- **QQ 平台** — 确认 QQ 号能正常登录 NapCat
-- **微信平台** — 确认 Token 未过期且权限正确
-- **其他平台** — 参考对应适配器的文档
+- **QQ 平台** — 确认适配器里登录的 QQ 号正常在线，未被禁言或封禁
+- **其他平台** — 参考对应适配器的文档确认登录状态
 
 #### 预防建议
 - **使用小号** — 避免主号被封风险
-- **定期更新凭证** — Token 过期前及时更换
-- **配置备用账号** — 主账号异常时可快速切换
+- **定期检查适配器状态** — 掉线后及时重新登录
+- **关注适配器更新** — 适配器版本过旧可能连不上新版 MaiBot
 
 ---
 
@@ -1081,17 +1025,8 @@ keywords = ["你好，", "你好，", "hello", "hello!"]
 **步骤二：换个不需要登录的仓库试试**
 如果提示权限错误（Permission denied），在 WebUI 中换个公开仓库（不需要 SSH Key 的那种）测试一下。如果公开仓库能正常同步，说明是 SSH 权限配置问题，去 GitHub/Gitee 检查 SSH Key 设置。
 
-**步骤三：调整 Git 超时配置**
-如果仓库较大，在 `config/bot_config.toml` 中把超时设长一点：
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[git_mirror]
-timeout = 300                    # Git 操作超时（秒），默认 300 秒
-max_file_size = 100              # 单文件最大体积（MB），超过会跳过
-```
-
-:::
+**步骤三：调整 Git 超时**
+Git 镜像源在 WebUI 的「Git 镜像」页面维护，超时等参数随镜像源一起设置，不在 `bot_config.toml` 里。仓库较大时，在 WebUI 中把该镜像源的超时调大，或把不希望同步的大文件/目录排除掉。
 
 #### 预防建议
 - **先用公开仓库测试** — 确认能同步了再换私有仓库
@@ -1122,14 +1057,16 @@ max_file_size = 100              # 单文件最大体积（MB），超过会跳�
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
 # 编辑 config/bot_config.toml
-[logging]
-level = "INFO"                 # 生产环境用 INFO，调试时用 DEBUG
-max_bytes = 10485760           # 单文件最大 10MB
-backup_count = 5               # 保留 5 个备份文件
-enable_rotation = true         # 启用日志轮转
+[log]
+log_level = "INFO"             # 全局日志级别，生产环境用 INFO，调试时用 DEBUG
+log_file_max_bytes = 10485760  # 单个日志文件超过 10MB 后轮转
+max_log_files = 30             # 最多保留多少个主日志文件
+log_cleanup_days = 30          # 超过该天数的日志文件自动清理
 ```
 
 :::
+
+日志轮转和清理默认就是开启的，改这三个值即可控制体积和保留时长。更细的调法见[日志与观测](/develop/observability)。
 
 **步骤三：清理其他垃圾文件**
 - Docker 用户：清理未使用的镜像和容器释放空间
@@ -1164,14 +1101,8 @@ enable_rotation = true         # 启用日志轮转
 3️⃣ 有没有多个 MaiBot 实例同时访问同一个数据库？
 
 #### 解决方案
-**重建用户索引**
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-maibot person rebuild
-```
-
-:::
+**重建人物索引**
+人物卡信息异常时，先在 WebUI 的人物/用户管理页面刷新或重建索引；1.3.1 没有独立的命令行重建工具。
 
 **检查人物卡格式**
 ::: code-group
@@ -1218,46 +1149,41 @@ cp data/MaiBot.db data/MaiBot.db.bak
 消息收发不稳定，有时能收到有时收不到。
 
 #### 快速自查三连
-1️⃣ `adapter.ws_url` 地址和端口填对了吗？
+1️⃣ 适配器里填的 MaiBot 地址和端口对吗？MaiBot 侧旧版 WebSocket 服务默认端口是 `8000`（`[maim_message].ws_server_port`）
 2️⃣ 网络稳不稳定？（服务器和适配器之间）
-3️⃣ 服务端 WebSocket 服务正常运行吗？
+3️⃣ MaiBot 进程正常运行吗？终端有没有报端口占用或启动失败
 
 #### 解决方案
-**检查 WebSocket 地址**
+**确认 MaiBot 侧的连接地址**
+适配器（如 NapCat）里的 WebSocket 地址由适配器自己的配置文件维护，不在 `bot_config.toml` 里。默认连 MaiBot 的 `8000` 端口：
+
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
-# 打开适配器配置文件
-[adapter]
-ws_url = "ws://127.0.0.1:8000"  # 确保地址和端口正确
+# 仅当你确实启用了旧版 maim_message WebSocket 服务时，才需要改 MaiBot 侧端口
+[maim_message]
+ws_server_port = 8000
 ```
 
 :::
 
-**调整重连间隔**
+**调整适配器侧重连间隔**
+重连间隔在适配器侧配置，调大可以减少频繁重连：
+
 ::: code-group
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-[adapter]
-reconnect_interval = 5  # 增大间隔，避免频繁重连（单位：秒）
+```bash [Bash ~vscode-icons:file-type-shell~]
+# 打开适配器自己的配置文件，把重连间隔调大（如 5 秒）
+# 具体字段名以你使用的适配器文档为准
 ```
 
 :::
 
 **检查服务端状态**
-检查 MaiBot 终端输出，确认 WebSocket 服务已在正常运行（应该有类似 `WebSocket 服务启动成功` 的日志）。
+检查 MaiBot 终端输出，确认进程正常运行、端口没被占用（端口占用见场景 3）。旧版 WebSocket 服务的监听端口由 `[maim_message].ws_server_port` 控制，默认 `8000`，改动后需重启 MaiBot。
 
 **添加心跳保活（高级）**
-如果网络环境较差，可以在适配器配置中启用心跳：
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[adapter]
-enable_heartbeat = true
-heartbeat_interval = 30  # 每 30 秒发送一次心跳
-```
-
-:::
+如果网络环境较差，在适配器侧开启 WebSocket 心跳保活，具体字段参考对应适配器的文档。
 
 #### 预防建议
 - 🌐 **确保网络稳定** - 服务器和适配器之间网络要通畅
@@ -1275,61 +1201,61 @@ heartbeat_interval = 30  # 每 30 秒发送一次心跳
 
 ### HTTP 状态码速查
 
-**HTTP 400 Bad Request** 🟧 严重 → [场景 13：平台未配置机器人账号](#场景-13平台未配置机器人账号) — 请求参数错误，消息发送失败
+**HTTP 400 Bad Request** 🟧 严重 → [场景 13：适配器未连接或账号不可用](#场景-13-适配器未连接或账号不可用) — 请求参数错误，消息发送失败
 
-**HTTP 401 Unauthorized** 🟥 致命 → [场景 2：API Key 错误/余额不足](#场景-2api-key-错误余额不足) — API Key 无效或缺失
+**HTTP 401 Unauthorized** 🟥 致命 → [场景 2：API Key 错误/余额不足](#场景-2-api-key-错误-余额不足) — API Key 无效或缺失
 
-**HTTP 401 Unauthorized** 🟧 严重 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12webui-登录失败-token-过期) — Session 过期或 Token 失效
+**HTTP 401 Unauthorized** 🟧 严重 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12-webui-登录失败-token-过期) — Session 过期或 Token 失效
 
-**HTTP 402 Payment Required** 🟧 严重 → [场景 2：API Key 错误/余额不足](#场景-2api-key-错误余额不足) — 账户余额不足
+**HTTP 402 Payment Required** 🟧 严重 → [场景 2：API Key 错误/余额不足](#场景-2-api-key-错误-余额不足) — 账户余额不足
 
-**HTTP 403 Forbidden** 🟥 致命 → [场景 2：API Key 错误/余额不足](#场景-2api-key-错误余额不足) — API Key 权限不足
+**HTTP 403 Forbidden** 🟥 致命 → [场景 2：API Key 错误/余额不足](#场景-2-api-key-错误-余额不足) — API Key 权限不足
 
-**HTTP 429 Too Many Requests** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — 请求频率过高被限流
+**HTTP 429 Too Many Requests** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — 请求频率过高被限流
 
-**HTTP 500 Internal Server Error** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — API 服务端内部错误
+**HTTP 500 Internal Server Error** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — API 服务端内部错误
 
-**HTTP 502 Bad Gateway** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — 网关错误，上游服务不可达
+**HTTP 502 Bad Gateway** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — 网关错误，上游服务不可达
 
-**HTTP 503 Service Unavailable** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — 服务暂时不可用（过载/维护）
+**HTTP 503 Service Unavailable** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — 服务暂时不可用（过载/维护）
 
 ### 常见错误关键词索引
 
-**`Address already in use`** / **`[Errno 98]`** / **`[Errno 10048]`** 🟧 严重 → [场景 3：端口被占用](#场景-3端口被占用) — 端口已被其他进程占用
+**`Address already in use`** / **`[Errno 98]`** / **`[Errno 10048]`** 🟧 严重 → [场景 3：端口被占用](#场景-3-端口被占用) — 端口已被其他进程占用
 
-**`APIConnectionError`** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — API 连接失败
+**`APIConnectionError`** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — API 连接失败
 
-**`Connection refused`** / **`无法访问此网站`** 🟥 致命 → [场景 4：WebUI 页面打不开](#场景-4webui-页面打不开) — WebUI 服务未启动或端口不可达
+**`Connection refused`** / **`无法访问此网站`** 🟥 致命 → [场景 4：WebUI 页面打不开](#场景-4-webui-页面打不开) — WebUI 服务未启动或端口不可达
 
-**`database is locked`** 🟧 严重 → [场景 8：数据库错误](#场景-8数据库错误) — 数据库被多进程锁定
+**`database is locked`** 🟧 严重 → [场景 8：数据库错误](#场景-8-数据库错误) — 数据库被多进程锁定
 
-**`DatabaseError`** / **`OperationalError`** 🟧 严重 → [场景 8：数据库错误](#场景-8数据库错误) — 数据库操作异常
+**`DatabaseError`** / **`OperationalError`** 🟧 严重 → [场景 8：数据库错误](#场景-8-数据库错误) — 数据库操作异常
 
-**`FileNotFoundError`** 🟥 致命 → [场景 1：配置文件找不到或格式不对](#场景-1配置文件找不到或格式不对) — 配置文件不存在
+**`FileNotFoundError`** 🟥 致命 → [场景 1：配置文件找不到或格式不对](#场景-1-配置文件找不到或格式不对) — 配置文件不存在
 
-**`FilterError`** 🟨 警告 → [场景 10：表情包系统错误](#场景-10表情包系统错误) — 表情过滤规则误杀
+**`Host 版本不兼容`** / **`SDK 版本不兼容`** 🟧 严重 → [场景 7：插件加载失败](#场景-7-插件加载失败) — 插件声明的版本区间不覆盖当前版本
 
-**`ImportError`** / **`ModuleNotFoundError`** 🟧 严重 → [场景 7：插件加载失败](#场景-7插件加载失败) — 插件依赖缺失
+**`ImportError`** / **`ModuleNotFoundError`** 🟧 严重 → [场景 7：插件加载失败](#场景-7-插件加载失败) — 插件依赖缺失
 
-**`No space left on device`** 🟧 严重 → [场景 17：日志文件过大 / 磁盘空间满](#场景-17日志文件过大-磁盘空间满) — 磁盘空间不足
+**`No space left on device`** 🟧 严重 → [场景 17：日志文件过大 / 磁盘空间满](#场景-17-日志文件过大-磁盘空间满) — 磁盘空间不足
 
-**`PluginLoadError`** 🟧 严重 → [场景 7：插件加载失败](#场景-7插件加载失败) — 插件加载异常
+**`PluginConfigVersionError`** 🟧 严重 → [场景 7：插件加载失败](#场景-7-插件加载失败) — 插件配置版本不受支持
 
-**`re.error`** / **`bad escape`** 🟨 警告 → [场景 14：正则表达式无效](#场景-14正则表达式无效) — 正则语法错误
+**`re.error`** / **`bad escape`** 🟨 警告 → [场景 14：正则表达式无效](#场景-14-正则表达式无效) — 正则语法错误
 
-**`TimeoutError`** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9网络超时连接失败) — 请求超时
+**`TimeoutError`** 🟧 严重 → [场景 9：网络超时/连接失败](#场景-9-网络超时-连接失败) — 请求超时
 
-**`Token expired`** 🟨 警告 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12webui-登录失败-token-过期) — 登录 Session 已过期
+**`Token expired`** 🟨 警告 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12-webui-登录失败-token-过期) — 登录 Session 已过期
 
-**`TOML syntax error`** 🟥 致命 → [场景 1：配置文件找不到或格式不对](#场景-1配置文件找不到或格式不对) — 配置文件格式错误
+**`TOML syntax error`** 🟥 致命 → [场景 1：配置文件找不到或格式不对](#场景-1-配置文件找不到或格式不对) — 配置文件格式错误
 
-**`ValueError`** 🟥 致命 → [场景 5：MCP 配置错误](#场景-5mcp-配置错误) — MCP 服务器配置参数无效
+**`ValueError`** 🟥 致命 → [场景 5：MCP 配置错误](#场景-5-mcp-配置错误) — MCP 服务器配置参数无效
 
-**`VLMError`** 🟨 警告 → [场景 10：表情包系统错误](#场景-10表情包系统错误) — 视觉语言模型调用失败
+**表情注册失败** 🟨 警告 → [场景 10：表情包系统错误](#场景-10-表情包系统错误) — 超出数量限制或 `data/emojis/` 不可写
 
-**知识加载失败** 🟧 严重 → [场景 11：知识图谱/记忆系统错误](#场景-11知识图谱记忆系统错误) — 知识文件损坏或格式错误
+**记忆加载失败** 🟧 严重 → [场景 11：记忆系统错误](#场景-11-记忆系统错误) — 记忆索引损坏或记忆目录不可写
 
-**Session 过期** 🟨 警告 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12webui-登录失败-token-过期) — 浏览器 Session 已失效
+**Session 过期** 🟨 警告 → [场景 12：WebUI 登录失败 / Token 过期](#场景-12-webui-登录失败-token-过期) — 浏览器 Session 已失效
 
 <!-- TASK_8_CONTENT_END -->
 
@@ -1398,7 +1324,8 @@ heartbeat_interval = 30  # 每 30 秒发送一次心跳
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-cat logs/maibot-*.log
+# 查看最新的日志文件（JSONL 格式，一行一条）
+cat logs/$(ls -t logs/app_*.log.jsonl | head -1)
 ```
 
 :::
@@ -1438,10 +1365,11 @@ docker logs --tail 100 maibot
 ::: code-group
 
 ```powershell [PowerShell ~vscode-icons:file-type-powershell~]
-type logs\maibot-*.log
+# 查看最新的日志文件（JSONL 格式，一行一条）
+type logs\app_*.log.jsonl
 
 # 或使用 PowerShell
-Get-Content logs\maibot-*.log
+Get-ChildItem logs\app_*.log.jsonl | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Get-Content
 ```
 
 :::
@@ -1466,7 +1394,7 @@ graph TD
     D -->|是| E{哪方面功能？}
     E -->|消息不回复| F[场景 6：机器人不回复]
     E -->|表情包| G[场景 10：表情包系统]
-    E -->|记忆/知识| H[场景 11：知识图谱]
+    E -->|记忆/知识| H[场景 11：记忆系统]
     E -->|插件| I[场景 7：插件加载]
     D -->|否| J{WebUI 相关问题？}
     J -->|是| K{WebUI 打得开吗？}
@@ -1474,7 +1402,7 @@ graph TD
     K -->|打得开但登录失败| M[🟢 中频错误]
     J -->|否| N{平台消息收发？}
     N -->|是| O{具体表现？}
-    O -->|发不出消息| P[场景 13：平台账号]
+    O -->|发不出消息| P[场景 13：适配器/账号]
     O -->|频繁断连| Q[场景 19：适配器重连]
     N -->|否| R{运行时性能/存储？}
     R -->|是| S[场景 17：磁盘满]

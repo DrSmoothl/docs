@@ -20,6 +20,7 @@ erDiagram
         string auth_type
         int max_retry
         int timeout
+        int retry_interval
     }
 
     ModelInfo {
@@ -28,6 +29,8 @@ erDiagram
         string api_provider
         float price_in
         float price_out
+        float cache_price_in
+        list price_periods
         bool visual
         dict extra_params
     }
@@ -39,6 +42,7 @@ erDiagram
         TaskConfig vlm
         TaskConfig utils
         TaskConfig embedding
+        TaskConfig image_embedding
     }
 
     TaskConfig {
@@ -126,14 +130,14 @@ visual = true
 - **`organization`** — Optional `organization` identifier for the official OpenAI API.
 - **`project`** — Optional `project` identifier for the official OpenAI API.
 - **`max_retry`** — Maximum retry count after a single model call fails. Defaults to 3.
-- **`retry_interval`** — Wait seconds between retries. Defaults to 5.
-- **`timeout`** — Timeout in seconds for a single API call. Defaults to 60.
+- **`retry_interval`** — Wait seconds between retries. Defaults to 4.
+- **`timeout`** — Timeout in seconds for a single API call. Defaults to 120.
 - **`reasoning_parse_mode`** — Reasoning content parsing mode. See below.
 - **`tool_argument_parse_mode`** — Tool argument parsing mode. See below.
 
 ## ModelTaskConfig task distribution
 
-Under `[model_config]`, 10+ `TaskConfig` sub-configurations are split out by task role. Each `TaskConfig` holds a model list and a selection strategy:
+Under `[model_config]`, 12 `TaskConfig` sub-configurations are split out by task role. Each `TaskConfig` holds a model list and a selection strategy:
 
 ```mermaid
 flowchart LR
@@ -157,7 +161,8 @@ flowchart LR
 - **`max_tokens`** — Maximum output tokens for this task. Can be overridden by `ModelInfo.max_tokens`.
 - **`temperature`** — Sampling temperature. Can be overridden by `ModelInfo.temperature`.
 - **`hard_timeout`** — Hard task timeout in seconds. If the request hasn't returned by then, cancel and switch to the next model. Defaults to 240.
-- **`slow_threshold`** — Timeout warning threshold in seconds. Defaults to 15.
+
+> Since 1.3.0, `TaskConfig.slow_threshold` (the slow-request warning threshold) has been removed; slow requests are now observed through logs and statistics. The field is treated as a redundant key and cleaned up when an old config is loaded.
 
 **Task role overview:**
 
@@ -172,8 +177,11 @@ flowchart LR
 - **`vlm`** — Vision model. Must support image recognition.
 - **`voice`** — Voice recognition model.
 - **`embedding`** — Text embedding model.
+- **`image_embedding`** — Image embedding model that encodes images into vectors for image-memory retrieval; it must support an image-input protocol, and leaving it empty makes image memory unsearchable (new in 1.3.0).
 
 Some roles have empty-config fallback chains: `expression_use` → `utils`, `learner` → `utils`, `mid_memory` → `planner`. Leaving them empty does not cause errors; the framework inherits automatically.
+
+`embedding` and `image_embedding` are exceptions: they **ignore `selection_strategy`** and always take the first available model in `model_list` order (to avoid mixing multiple embedding models and breaking vector-space consistency). Leaving `image_embedding` empty does not fall back; image memory simply enters the "model unavailable" state.
 
 ## extra_params passthrough mechanism
 
@@ -308,7 +316,7 @@ When a plugin `client_type` is deregistered (plugin unload or reload), `ClientRe
 
 When a single API call fails, MaiBot handles it as follows:
 
-**Retry mechanism**: `LLMUtils._attempt_request_on_model()` performs retries at the individual model level. Retry count is controlled by `APIProvider.max_retry` (default 3), with an interval of `APIProvider.retry_interval` seconds (default 5). Retriable error types:
+**Retry mechanism**: `LLMUtils._attempt_request_on_model()` performs retries at the individual model level. Retry count is controlled by `APIProvider.max_retry` (default 3), with an interval of `APIProvider.retry_interval` seconds (default 4). Retriable error types:
 
 - **`EmptyResponseException`** — Model returned an empty reply, a transient issue. Logged as a warning, then retried.
 - **`NetworkConnectionError`** — Network error (connection timeout, DNS failure, proxy issues, etc.), common on unstable networks.

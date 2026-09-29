@@ -89,6 +89,16 @@ LogConfig is located in the `[log]` section of `config/bot_config.toml`. Below a
 
 **`date_style`** — Timestamp format template, e.g. `"m-d H:i:s"` displays as `07-18 14:30:05`, supports `Y` (year), `m` (month), `d` (day), `H` (hour), `i` (minute), `s` (second).
 
+### Event Loop Lag Watchdog
+
+A common cause of WebUI or main-loop stutter is the event loop being blocked by synchronous work, and afterwards it's hard to tell which loop was blocked and for how long. The watchdog measures the difference between "when this coroutine should have woken up" and "when it actually did" at a fixed interval, and logs a warning when the threshold is exceeded — making lag directly visible in the logs instead of waiting for the UI to freeze before attaching a debugger.
+
+**`event_loop_watchdog_enabled`** — Whether to enable the event loop lag watchdog, default `false`. When enabled, two watchdogs are attached: one for the main loop (`loop=main` in logs) and one for the WebUI loop (`loop=webui`). Monitoring only one of them would miss the other.
+
+**`event_loop_watchdog_warn_seconds`** — Warning threshold in seconds, default `0.5`. A warning is logged as soon as wake-up lag reaches this value, in the form `事件循环卡顿: loop=webui 迟到=1.23s (告警阈值 0.50s)`. Raise it (e.g. to `2`) to reduce noise when the UI feels unresponsive without an obvious cause, or lower it for more sensitivity.
+
+Changes to these two fields require a **restart of MaiBot** to take effect. Enable it when troubleshooting UI stutter or a slow main loop, then use the `loop=` field in the logs to tell which loop was blocked.
+
 ### Snapshots and Replay
 
 **`llm_request_snapshot_limit`** — Maximum number of failed model request snapshots to retain, default `128`. When an LLM call fails, the system serializes the complete request context (message list, model parameters, API Provider config, error info) to `logs/llm_request/*.json` and automatically prunes excess files. See the "LLM Request Failure Snapshots" section below for details.
@@ -243,9 +253,13 @@ Telemetry consists of two independent tasks: `TelemetryHeartBeatTask` (heartbeat
 
 ## Debug Configuration Items
 
-Debug configuration is in the `[debug]` section, with `__ui_parent__` set to `log`, so it appears in the same area as log configuration in the WebUI. The following five items are commonly used during debugging and performance analysis:
+Debug configuration is in the `[debug]` section, with `__ui_parent__` set to `log`, so it appears in the same area as log configuration in the WebUI. Below is the complete list of debug items in 1.3.1, in source field order:
+
+**`enable_console_input`** — Whether to enable local message and command input in an interactive terminal, default `true` (on by default since 1.3.0). When enabled, you can type plain messages directly in the terminal, as well as management commands like `/clear`, `/pm`, `/offline`, and `/online`; typing `exit()` closes only the terminal input while the bot keeps running. Non-interactive terminals (systemd services, output redirected to a file, etc.) skip terminal input and log one extra warning, without affecting operation. See [Linux Deployment](../manual/deployment/linux) and [Windows Deployment](../manual/deployment/windows) for per-deployment notes.
 
 **`show_maisaka_thinking`** — Whether to show MaiMai's thinking process in logs (Planner planning details, tool call reasoning chains), default `true`. You can disable this if you want to reduce log volume.
+
+**`enable_clear_context_command`** — Whether to allow the `/clear` command to clear the Maisaka short-term history of the current chat stream, default `false`. When enabled, regular users in group and private chats can also use `/clear`; input from local-operator sources such as the terminal is always available regardless of this switch. The command supports targeting a specific chat by name (`/clear <chat-name>`).
 
 **`enable_reply_effect_tracking`** — Whether to record reply effect scores, default `false`. When enabled, the system calculates effect metrics for each reply and writes them to the database, with `maisaka_reply_effect_limit` limiting the number of records per chat. Useful when tuning prompts or comparing model performance. The scoring semantics are currently v6 (responsiveness no longer considers user reply speed; no confidence is generated when no related info is found; records that haven't finished the observation window are excluded from scoring). See [Chat & Stats · Reply Effect Evaluation](../manual/webui/chat-stats.md#reply-effect-evaluation) for the WebUI view.
 
@@ -254,6 +268,8 @@ Debug configuration is in the `[debug]` section, with `__ui_parent__` set to `lo
 **`record_tool_structured_content`** — Whether to save structured content returned by tools (e.g. JSON schema, API response body), default `false`. When enabled, it helps you reproduce tool call chains in conversation records, but increases database size.
 
 **`enable_llm_cache_stats`** — Whether to record model prompt cache hit statistics, default `false`. When enabled, cache-related metrics are appended to logs for performance tuning and model API cost analysis.
+
+**`force_plugin_compatibility`** — Whether to skip the plugin's declared Host / SDK version range check and load it directly, default `false`. When enabled, a version range mismatch only logs one warning (including the declared range and the current Host / SDK versions) instead of rejecting the load. This is a temporary fallback, not a recommended practice; changes require a restart to take effect. See [Plugin Loading Failed](../faq/error-troubleshooting#scenario-7-plugin-loading-failed) for usage.
 
 ## WebSocket Log Subscription
 
@@ -297,6 +313,7 @@ First, check the most recent logs in the terminal. Watch for the following signa
 
 - `ERROR` / `CRITICAL` level errors — expand the stack trace for details
 - Whether there are many `WARNING` entries (e.g. model call retries, heartbeat failures). Accumulation may point to network or API credential issues
+- Whether `事件循环卡顿` warnings appear — they mean the corresponding event loop was blocked by synchronous work. `loop=webui` shows up directly as an unresponsive UI, while `loop=main` slows down message processing. This watchdog is off by default and must be enabled under `[log]` first (see "Event Loop Lag Watchdog" above)
 - Whether logs have completely stopped — the process may be blocked. Press `Ctrl+C` to see if there's a KeyboardInterrupt response
 
 If the console's default `INFO` level doesn't show enough detail, **temporarily override via environment variable in the terminal** without modifying the config file. It takes effect immediately and reverts on restart:

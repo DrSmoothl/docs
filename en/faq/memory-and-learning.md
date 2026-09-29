@@ -8,6 +8,8 @@ title: Memory and Learning
 
 Enable A_Memorix in the WebUI and configure a working embedding model. In configuration, the master switch is `enabled` under `[a_memorix.plugin]`. See [A_Memorix Configuration](../manual/configuration/amemorix-config.md).
 
+If you also want **image memory** (search-by-image and similar-image recall), you must configure the separate image embedding task `[model_task_config.image_embedding]`. With only a text embedding configured, images are still stored but cannot be searched.
+
 ## Why does the WebUI say relation vectors are disabled?
 
 Normal memory vectors and relation vectors are separate features. Relation vectors are supported but disabled by default; this message does not mean all long-term memory is broken.
@@ -21,6 +23,33 @@ Embeddings are also used for paragraphs, entities, and long-term memory retrieva
 ## Can I leave the embedding model unconfigured?
 
 Features that depend on vector retrieval, including long-term memory and knowledge import, require an embedding model. It can be omitted only when those features are not used; otherwise calls will be skipped or fail.
+
+## Does image memory need an extra model?
+
+Yes, and it is a **separate** model task. Text embeddings (`embedding`) and image embeddings (`image_embedding`) are not interchangeable: with only a text embedding configured, images are still stored with their cognitions, but the retrieval state shows the model as unavailable.
+
+## Why does it say the image embedding model is unavailable?
+
+Check these in order:
+
+1. Whether `[model_task_config.image_embedding]`'s `model_list` actually contains a model (leaving it empty does **not** fall back to the text embedding)
+2. Whether that model supports an "image input to vector" protocol rather than text only
+3. Whether the provider address uses HTTPS and the key is valid
+4. Open **Long-term memory → Image memory → Job diagnostics** to see the last error and retry count
+
+When the model is unavailable, MaiBot retries at `[a_memorix.image_memory].probe_retry_seconds` rather than silently switching to another model.
+
+## Is a similar image the same image?
+
+Not necessarily. Results distinguish **exact hash matches** (identical content) from **visually similar** candidates (close in vector space). Similarity only means visual closeness, so it never proves two photos show the same object; the right approach is to hand the candidate image and its associated discussion to the model.
+
+## Can image memory leak across chats?
+
+Image retrieval and text retrieval **share the same chat-stream scope resolution**: by default only the current chat stream is searched, global sharing follows the global rules when enabled, and configured sharing groups see each other. Chat streams that do not share memory cannot see each other's images, matching the boundary for text memory.
+
+## Are emoji remembered?
+
+Not by default. Image memory handles ordinary static image components in messages; emoji have their own recognition and sending logic and are not included automatically.
 
 ## Why does a memory reverse people or subject and object?
 

@@ -12,9 +12,11 @@ If you need to debug plugin Host/Runner communication protocols, circuit breaker
 
 Two endpoints return plugin lists and metadata:
 
-- **`GET /api/webui/plugins/installed`** — Returns all installed plugins' manifests, enabled status, runtime load status, and circuit breaker info. Each plugin entry in the response contains fields including `id`, `manifest`, `path`, `enabled`, `load_status`, `load_error`, `circuit_status`, and `changelog`.
+- **`GET /api/webui/plugins/installed`** — Returns all installed plugins' manifest, enabled status, runtime load status, and circuit breaker info. Each plugin entry in the response contains fields such as `id`, `manifest`, `path`, `enabled`, `load_status`, `load_error`, `circuit_status`, `changelog`, and `release`.
 - **`GET /api/webui/plugins/local-readme/{plugin_id}`** — Get the plugin's local README content (Markdown string).
 - **`GET /api/webui/plugins/local-changelog/{plugin_id}`** — Get the plugin's local CHANGELOG content.
+
+**`release`** — Present only for plugins installed from a release (`null` otherwise). It is the `.maibot-release.json` install record: `plugin_id`, `version`, `tag`, `commit`, `repository_url`, `pinned`. The frontend uses it to decide whether a plugin has a locked version and to block branch `git pull` updates.
 
 **Query example:**
 
@@ -31,18 +33,24 @@ curl -X GET http://127.0.0.1:8001/api/webui/plugins/installed \
 
 Three POST endpoints implement plugin lifecycle management. They are all async long-running tasks that push progress in real time via the [WebSocket progress channel](#_9-plugin-progress-websocket-progress-tracking).
 
+Install, update, and uninstall on the same plugin are mutually exclusive. If that plugin already has a change operation in flight, the server immediately returns **HTTP 409 Conflict**, without queuing or overwriting the existing progress. The response `detail` explains the operation in progress; the client should retry after the current operation finishes. Operations on different plugins can still run in parallel.
+
 ### Install
 
-**`POST /api/webui/plugins/install`** — Clone and install a plugin from a Git repository. Request body:
+**`POST /api/webui/plugins/install`** — Installs a plugin. Request body:
 
 - **`plugin_id`** — Plugin ID (used for directory naming and manifest validation)
-- **`repository_url`** — Repository URL (supports GitHub and custom Git URLs)
+- **`repository_url`** — Repository URL (supports GitHub and custom Git URLs). **Leave empty for release installs**; it is resolved from the version index
 - **`branch`** — Branch name, default `main`
 - **`mirror_id`** — Optional Git mirror source ID for mirror acceleration
+- **`version`** — Optional release version. Pass a concrete version to install that version; pass `latest` to install the index's recommended compatible stable version; omit it for a branch install
+- **`pinned`** — Whether to lock the selected release version. Default `false`; a locked plugin refuses automatic updates
 
-The server will sequentially clone the repo, validate `_manifest.json` (checking five required fields: `manifest_version`, `id`, `name`, `version`, `author`), and upon success create the plugin directory under `plugins/`.
+In branch-install mode, the server clones the repo in order, validates `_manifest.json` (checking five required fields: `manifest_version`, `id`, `name`, `version`, `author`), and upon success creates the plugin directory under `plugins/`.
 
-**Install example:**
+When `version` is given, the release-install path runs: shallow-clone by tag into a temporary directory, verify the commit and manifest match the index, dependencies are satisfied, and the switch does not break other installed plugins' version constraints on this plugin, then stop the plugin → preserve `config.toml` / `config_back/` / `data/` → write `.maibot-release.json` → atomically replace the directory (the old one is renamed into `.update_backups/`) → reload.
+
+**Install examples:**
 
 ::: code-group
 
@@ -57,7 +65,31 @@ curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
   }'
 ```
 
+```bash [curl Install a Specific Release and Lock It ~vscode-icons:file-type-http~]
+curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
+  -H "Content-Type: application/json" \
+  -H "Cookie: maibot_session=你的Token" \
+  -d '{
+    "plugin_id": "example-plugin",
+    "version": "1.4.2",
+    "pinned": true
+  }'
+```
+
 :::
+
+**Errors possible on release installs:**
+
+- **400 Plugin dependencies unsatisfied** — other plugins or Python packages required by that version are missing
+- **400 No installable compatible stable version** — `latest` was passed but the index has no compatible stable version
+- **400 Release version does not exist** — the version is not in the index
+- **400 This plugin has no Release yet; only branch install is supported** — the index lists it in branch mode; install without `version`
+- **404 Plugin not yet in the version index** — the repository is not indexed officially
+- **409 Plugin already installed** / **409 Plugin target directory already exists** — the target location is not empty
+- **409 This version does not satisfy the dependency requirement of installed plugin X** — switching versions would break another plugin's dependency constraint
+- **409 The plugin has local code modifications; resolve them first** — the plugin directory carries local code changes
+- **409 The tag's current commit does not match the version index** / **409 The downloaded manifest does not match the version index** — the index and repository are out of sync
+- **502 Failed to fetch the plugin version index** — the official index could not be fetched; switch mirror source or retry later
 
 ### Uninstall
 
@@ -65,12 +97,22 @@ curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
 
 ### Update
 
-**`POST /api/webui/plugins/update`** — Update an installed plugin. The request body is the same as for install. The logic splits into two paths:
+**`POST /api/webui/plugins/update`** — Update an installed plugin. The request body is the same as for install. The logic splits into three paths:
 
-- **Git repository** — Directly `git pull` the new version, preserving local `config.toml` and `config_back/` directory
+- **Release install** (`version` is a concrete version or `latest`) — the same stop / replace / reload chain as install; the response `update_mode` is `release` and additionally returns `commit`, `pinned`, and `backup_path`
+- **Git repository** — Directly `git pull` the new version, preserving local `config.toml` and `config_back/` directory; `update_mode` is `git_pull`
 - **Non-Git directory** — Re-clone and perform backup recovery; the `update_mode` field will be `reinstall_from_backup`
 
 On successful update, the response includes `old_version` and `new_version` fields.
+
+::: warning Release-installed plugins cannot be git pull-ed
+If the plugin directory contains `.maibot-release.json`, an update without `version` returns **409** "This plugin was installed from a release; update it through version selection, branch pull is not supported". Pass `version` with the target version instead.
+:::
+
+**Additional constraints on release updates:**
+
+- **409 This plugin has a locked version** — automatic update is refused when the plugin has `pinned = true`; unlock it on the detail page
+- **409 Already on the newest compatible version; automatic update will not downgrade or reinstall** — with `version: "latest"` the target version is not newer than the current one; a downgrade must pass a concrete version number
 
 ## 3. Enable / Disable
 
@@ -102,6 +144,23 @@ Plugin marketplace and mirror source management endpoints, built around git_mirr
 - **`DELETE /api/webui/plugins/mirrors/{mirror_id}`** — Delete specified mirror source
 - **`POST /api/webui/plugins/fetch-raw`** — Fetch a remote repo's raw file via mirror source (typically used to pull `plugin_details.json` from the plugin store)
 - **`POST /api/webui/plugins/clone`** — Clone a specified repository to a target path via mirror source
+- **`GET /api/webui/plugins/releases`** — Returns the official version index (`plugin_versions.json` from `Mai-with-u/plugin-repo`, cached for 60 seconds), which powers the version dropdown and compatibility hints in the frontend
+
+### Version Index Structure
+
+`GET /api/webui/plugins/releases` returns `{"plugins": [...]}`, where each entry describes one indexed plugin:
+
+- **`id`** / **`manifest_id`** — the index ID and the plugin ID from the manifest; either can be matched on lookup (case-insensitive)
+- **`repositoryUrl`** — the GitHub repository URL
+- **`mode`** — `releases` (install by Git Release) or `branch` (branch install only)
+- **`sync_error`** — why the index sync failed; when non-empty the plugin cannot be installed by version
+- **`recommended_version`** — the newest stable version compatible with the current Host / SDK; `null` when none exists
+- **`versions`** — the release list, sorted by version descending. Each item carries `version`, `tag`, `commit`, `prerelease`, `yanked`, `manifest`, `release_notes`, `published_at`, `release_url`, plus two derived fields:
+  - **`compatible`** — whether it is compatible with the current Host / SDK (computed live with `ManifestValidator`; yanked versions are always `false`)
+  - **`reasons`** — the list of incompatibility reasons; the frontend compresses them into short strings such as "Supports MaiBot ≤ x only"
+- **`rejected_releases`** — releases rejected by the index sync tool (`tag`, `version`, `error`). Common causes: the Git Tag does not match the manifest `version`, the release changed the plugin ID, the manifest protocol version is unsupported, or no manifest can be read from that commit
+
+Index errors return **502** (`Failed to fetch the plugin version index` / `Invalid plugin version index`). The install endpoints reuse the same index and `release_compatibility()` judgment, so what the frontend displays and what the backend actually allows stay consistent.
 
 ## 5. Plugin Config Editing
 

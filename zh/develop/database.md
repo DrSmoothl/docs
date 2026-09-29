@@ -6,6 +6,10 @@ title: 数据库
 
 MaiBot 使用 **SQLite** 作为本地数据库，通过 **SQLModel**（SQLAlchemy 之上）定义和管理 22 张表。数据文件位于启动目录下的 `data/trymai.db`。本文面向需要运维、排查问题、做数据归档或分析统计的进阶用户。
 
+::: tip 长期记忆（A_Memorix）使用独立的数据库
+本页讲的 `data/trymai.db` **不包含长期记忆数据**。A_Memorix 把段落、关系、Episode、人物画像、事实账本和图片认知等存在独立的 `data/a-memorix/metadata/metadata.db`（schema v26），向量与关系图快照在 `data/a-memorix/vectors/`、`data/a-memorix/graph/`，图片记忆另有 `data/a-memorix/images/assets/`（按 SHA-256 内容寻址的原始图片）和 `data/a-memorix/images/vectors/<指纹>/`（独立的图片向量池）。备份长期记忆时这些目录要一起复制。
+:::
+
 ::: tip 数据导入导出
 如果你需要将统计、消息等数据导出到外部分析系统，请参见 [数据导入导出](/develop/statistics-io)。
 :::

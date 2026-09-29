@@ -149,10 +149,38 @@ title: Manifest
 
 - `min_version`：允许的最低版本（闭区间）
 - `max_version`：允许的最高版本（闭区间）
-- 两者均必须为严格三段式语义版本号（`X.Y.Z`）
+- 两者均必须为严格三段式语义版本号（`X.Y.Z`），不能留空
 - `min_version` 不能大于 `max_version`
 
-Host 在握手阶段会校验当前版本是否落在声明区间内。若不兼容，插件将被阻止加载。
+**校验时机与结果**：这两个区间由 Runner 在加载插件时用 `ManifestValidator` 校验，Host 通过 `MAIBOT_HOST_VERSION` 把自身版本传给 Runner，SDK 版本则取 Runner 运行环境里实际导入的 `maibot-plugin-sdk` 版本。握手阶段（`runner.hello`）Host 只校验 Runner 自身 SDK 版本是否落在固定区间 `[1.0.0, 2.99.99]`，与 manifest 里声明的 `sdk` 区间是两道独立检查。
+
+不兼容时的处理并不相同：
+
+- **Host 超范围** — 当前 Host 高于 `max_version` 但主次版本与声明上界相同时，插件**仍会加载**，只记一条 warning（补丁级容忍）；其余情况记为 error，插件被阻止加载
+- **SDK 超范围** — 无论高低，一律记为 error，插件被阻止加载
+
+::: danger 不要把 max_version 锁死在小版本
+`max_version` 写成一个具体的小版本（例如 `1.2.3`）意味着麦麦一发新版本你的插件就被挡住。官方内置插件的做法是把上界放到 `999.999.999`、只认真约束 `min_version`，让"新版本是否还能跑"交给实际测试决定；不想约束下界时 `min_version` 写 `0.0.0`。
+:::
+
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
+{
+  "host_application": {
+    "min_version": "1.3.0",
+    "max_version": "999.999.999"
+  },
+  "sdk": {
+    "min_version": "1.0.0",
+    "max_version": "999.999.999"
+  }
+}
+```
+
+:::
+
+把它当作排查"插件是不是被版本号挡住"的临时手段，不要长期开启：跳过校验后，因接口变化导致的运行期异常不会有任何前置提示。
 
 ### i18n 国际化配置
 
@@ -254,3 +282,23 @@ Manifest 校验器（`ManifestValidator`）采用 Pydantic 严格模式，主要
 - **URL 格式**：必须以 `http://` 或 `https://` 开头
 - **不允许自依赖**：`dependencies` 中不能依赖自身
 - **不允许重复依赖**：同一插件/包名只能声明一次
+
+### 版本区间规则
+
+`host_application` 与 `sdk` 两个区间由同一个校验入口判定，结果分 error 与 warning 两档：
+
+- **Host 高于 `max_version` 但主次版本相同** — warning，插件照常加载（补丁级容忍）
+- **Host 其余情况超出区间** — error，插件被阻止加载
+- **SDK 超出区间** — error，插件被阻止加载，无容忍档
+
+握手阶段 Host 对 Runner 自身 SDK 版本的检查（固定区间 `[1.0.0, 2.99.99]`）独立于上面两档，既不由 manifest 声明，也不受「强制插件兼容」影响。
+
+### 强制插件兼容
+
+主程序配置 `[debug] force_plugin_compatibility`（WebUI 调试配置里的「强制插件兼容」开关）开启后，Host 与 Runner 都会跳过 `host_application` 与 `sdk` 两个区间的校验：超范围的插件不再记为 error，只追加一条 warning，内容包含插件声明的 Host / SDK 区间与当前 Host / SDK 版本。
+
+- **需重启 MaiBot 生效** — Host 把开关编码进 `MAIBOT_FORCE_PLUGIN_COMPATIBILITY` 环境变量传给 Runner，改配置不会热更新到已在跑的 Runner
+- **只跳过版本区间** — `manifest_version`、握手阶段的固定 SDK 区间、依赖解析、能力白名单、`llm_providers` 一致性等校验一律照旧
+- **不影响插件市场** — 版本索引的兼容性判断不读这个开关，市场与版本下拉里显示的"不兼容"仍然按 manifest 声明计算
+
+把它当作排查"插件是不是被版本号挡住"的临时手段，不要长期开启：跳过校验后，因接口变化导致的运行期异常不会有任何前置提示。

@@ -10,6 +10,10 @@ title: SnowLuma Adapter
 The SnowLuma adapter is continuously maintained by the MaiBot official team; if you encounter issues, report them in [GitHub Issues](https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter/issues).
 :::
 
+::: warning Upgrading to MaiBot 1.3.0
+MaiBot 1.3.0 requires the latest SnowLuma adapter: the new adapter has merged the NapCat adapter, and after upgrading you must **re-configure the allow/deny lists** (existing lists are not carried over automatically).
+:::
+
 Adapter repository (🏛️ officially maintained):
 
 <Linkcard url="https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter" title="MaiBot-SnowLuma-Adapter" description="MaiBot's officially maintained SnowLuma QQ adapter plugin" logo="/title_img/mai.png" />
@@ -107,6 +111,10 @@ To temporarily allow all messages while testing connectivity, you can turn the f
 enable_chat_list_filter = false   # testing only; add your lists back and re-enable when done
 ```
 
+:::
+
+::: tip There is also a main-program list layer
+Besides the adapter's own `[chat]` lists, MaiBot keeps a unified group / private-chat access policy in `config/adapter_policy.toml`. **A message enters the conversation only when both layers allow it**, so check both when troubleshooting "no response"; see [Adapter Management](../webui/adapter-management.md).
 :::
 
 ## Verify and troubleshoot

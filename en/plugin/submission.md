@@ -8,7 +8,7 @@ Once your plugin is written and verified locally, you can submit it to the offic
 
 ## What Is the Plugin Center
 
-The plugin center ([plugins.maibot.chat](https://plugins.maibot.chat/)) is powered by the official repository [Mai-with-u/plugin-repo](https://github.com/Mai-with-u/plugin-repo). Plugins themselves live as **independent public GitHub repositories**; the plugin center only maintains a `plugins.json` index and validates every submission through automated workflows.
+The plugin center ([plugins.maibot.chat](https://plugins.maibot.chat/)) is powered by the official repository [Mai-with-u/plugin-repo](https://github.com/Mai-with-u/plugin-repo). Plugins themselves live as **independent public GitHub repositories**; the plugin center maintains only index files — `plugins.json` for plugin metadata and `plugin_versions.json` for each plugin's release versions and compatibility ranges — and validates every submission through automated workflows.
 
 Submitting is **completely open source and free** — no fees or invitations required. Once approved, your plugin appears in plugin store search results.
 
@@ -26,6 +26,22 @@ Your plugin must be a **public GitHub repository** whose root directory contains
 
 ::: tip What "plugin repository" means
 The plugin repository is **your own standalone (or project) GitHub repository** (e.g. `https://github.com/you/my-plugin`) — not MaiBot's `plugins/` directory. The plugin center locates it via the `urls.repository` field in `_manifest.json`.
+:::
+
+## Publishing a Release: Tags Must Match the Manifest
+
+The plugin market's install dialog works by **release version**: the official index sync tool scans your repository's Git Releases and generates a version record for each tag. Any mismatch gets that version pushed into `rejected_releases`, where users only see "N release versions failed validation" on the plugin detail page and cannot install it.
+
+Align every item when publishing a new version:
+
+- **The Git Tag matches `_manifest.json`'s `version` exactly** — tag `1.4.2` or `v1.4.2`, and the manifest `version` must be `1.4.2`
+- **`version` uses strict three-part form** — `x.y.z`, with no `-rc1` / `+build` style suffixes; mark prereleases with GitHub's Prerelease flag instead of changing the version format
+- **The plugin `id` must not change** — a release that changes `id` from `com.you.plugin` to something else is rejected as "the release changed the plugin ID"
+- **`manifest_version` stays on a supported protocol version** — currently fixed at `2`
+- **`_manifest.json` must be readable from that tag's commit** — tags with rewritten history or a deleted manifest are rejected
+
+::: tip Recommended flow
+Change code → update `version` in `_manifest.json` → commit and push → tag and push with the same version → create a Release from that tag on GitHub (tick Prerelease when needed). When tag, manifest, and Release all agree on the version number, one index sync picks it up.
 :::
 
 ## Submission Method: Issue Submission (Recommended)
@@ -78,6 +94,8 @@ Go through this list before submitting:
 - [ ] Root directory contains `_manifest.json` (`manifest_version: 2`), `plugin.py`, and `LICENSE`
 - [ ] `id` is stable and unique — no spaces, no path characters
 - [ ] All versions are three-part (`x.y.z`)
+- [ ] Every Git Release tag matches the manifest `version`, and `id` has not changed (otherwise that version never reaches the market)
+- [ ] `host_application` / `sdk` upper bounds are not pinned to a patch release (for example write `999.999.999`) — constrain `min_version` seriously instead
 - [ ] `author` is a `{ name, url }` object
 - [ ] `urls.repository` is a public HTTPS URL without a `.git` suffix
 - [ ] `capabilities` declares only what the plugin actually needs

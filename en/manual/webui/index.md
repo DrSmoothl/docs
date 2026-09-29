@@ -24,6 +24,8 @@ This Token is only for the first login of the current startup. After signing in,
 
 ![WebUI login page](/images/webui/login.webp)
 
+> 1.3.1 restyled the login page: a compact left-aligned card with a command-line style title prefix, and the input placeholder and help dialog now call the credential a "访问密码" (access password) instead of an "Access Token" (WebUI Settings → Security still writes Access Token; both names refer to the same thing).
+
 3. On first login, the setup wizard opens; the first step is setting a persistent Token
 
 ![Set login password](/images/webui/setup-token.webp)
@@ -65,6 +67,7 @@ After completion you land on the dashboard home page:
 - ⚙️ **Change Configuration** - Edit `bot_config.toml` through forms, no file editing needed
 - 🧠 **Manage Memory** - View, import, correct, and delete long-term memory
 - 🔌 **Install Plugins** - Install and manage plugins and adapters
+- 💬 **Chat Directly** - Talk to MaiBot and watch the reasoning of real group chats
 - 📊 **View Statistics** - Messages, tokens, cost, and uptime
 
 ## Basic Settings
@@ -102,12 +105,31 @@ Click the gear icon in the top-right corner to open **WebUI Settings** (`/settin
 
 ![About page](/images/webui/settings-about.webp)
 
-### Live Chat Stream Quick Management (v1.2.5+)
+### Live Chat Stream Quick Management
 
-In the left session sidebar of the WebUI "Mai Chat" workspace:
+MaiBot Chat (`/chat`) moved into the "概览" (Overview) sidebar group as of 1.3.0 and no longer occupies a top workspace tab; only **麦麦** (MaiBot) and **日志** (Logs) remain there. The left conversation list has two kinds of entries:
 
-* **Direct Settings Entry**: For connected live chat streams (e.g., group chats or private message streams from NapCat or SnowLuma), a dedicated **⚙️ Settings** gear icon is provided next to each session item.
-* **Quick Management Features**: Clicking the gear icon opens a management drawer for that specific stream, allowing administrators to view real-time stream status, quickly adjust reply frequency and interjection thresholds, and inspect its associated audit and reasoning timelines.
+* **与麦麦聊天** (Chat with MaiBot) - local conversations, including the default conversation and virtual identity conversations.
+* **麦麦的聊天流** (MaiBot's chat streams) - real group and private chats from the database, showing the latest message preview, current stage, and online status; click one to see its MaiBot Observation timeline on the right.
+* **Search box** - filters both kinds by name, and states clearly when there are no matches.
+
+**Direct Settings Entry**: every observed chat stream has a dedicated **⚙️ Settings** gear icon on its right that opens the chat stream settings dialog **inside the current page** (before 1.3.0 it navigated to the chat management page). It contains:
+
+* **Session basics** - session ID, platform, type, group / user ID
+* **Adapter rules** - allow or block the specific adapters under this session
+* **Speaking frequency rules** - configure the default frequency and dynamic frequencies per time range
+* **Extra chat stream prompts** - append dedicated prompts for this session
+* **Learning settings** - enablement status and corrections for expression, slang, and behavior
+* **Delete chat stream** - a serious confirmation that requires typing the full `session_id`
+
+### Local User Identity
+
+The box on the right of the MaiBot Chat input area is the **local user identity** box (moved here from the sidebar as of 1.3.1), where both the avatar and the nickname are edited:
+
+* **Rename** - click the pencil icon next to the nickname, type the new name, then press Enter or click **保存** (Save); saving an empty value falls back to the default nickname
+* **Change avatar** - click the camera icon at the bottom-right of the avatar to upload an image; JPEG, PNG, WebP, GIF, and BMP are supported
+
+For the full chat and statistics walkthrough see [Chat History and Statistics](./chat-stats.md).
 
 ## Forgot Your Password?
 
@@ -127,7 +149,7 @@ If you can no longer sign in:
 
 **Page won't open?**
 
-- Confirm MaiBot is running and the console printed "WebUI 服务器已启动" (WebUI server started)
+- Confirm MaiBot is running and the console printed "🌐 WebUI 服务器启动中..." (WebUI server starting) and "🌐 访问地址" (Access address)
 - Confirm `[webui].enabled = true` and the port is not occupied
 
 **Token error on login?**

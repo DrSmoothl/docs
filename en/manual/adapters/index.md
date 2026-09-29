@@ -15,6 +15,12 @@ QQ offers two routes—pick the one that fits your setup:
 
 The two routes are not mutually exclusive—you can enable both at the same time.
 
+::: tip Adapter changes in 1.3.0
+MaiBot 1.3.0 requires the latest SnowLuma adapter — the new adapter has merged the NapCat adapter, so upgrade the adapter alongside the main program and **re-configure the allow/deny lists**.
+
+Also, since 1.3.0 adapter plugins can use MaiBot's built-in group / private-chat allow/deny lists directly (`config/adapter_policy.toml`).
+:::
+
 ## Available Adapters
 
 **Maintenance label** — 🏛️ Official: maintained by the `Mai-with-u` organization; 🌐 Community: maintained by third-party authors.

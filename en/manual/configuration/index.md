@@ -21,11 +21,11 @@ Both files are generated automatically **after the first launch of MaiBot**. If 
 
 MaiBot watches both files for changes. Whether a restart is required depends on whether the setting controls runtime behavior or how a service starts.
 
-**Applies automatically after saving** — Bot profile, personality, chat policy, reply frequency, model providers, models, and task assignments are hot-reloaded. Model changes apply to subsequent requests. Modules with reload callbacks, including A_Memorix and emoji maintenance, also receive the update.
+**Applies automatically after saving** — Bot profile, personality, chat policy, reply frequency, model providers, models, task assignments, the `[experimental]` retro reply prompt (`replyer_retro_prompt`), and `[response_splitter].mode` are hot-reloaded. Model changes apply to subsequent requests. Modules with reload callbacks, including A_Memorix and emoji maintenance, also receive the update.
 
 **Hot-reloaded by the plugin runtime** — A plugin's own `config.toml` has a separate lifecycle. The runtime watches it and calls the plugin configuration-update hook. Enabling, disabling, installing, uninstalling, and source updates normally do not require restarting all of MaiBot.
 
-**Requires a full MaiBot restart** — `[webui]` and `[maim_message]` listen addresses and ports, `[mcp]` server connections, and `[plugin_runtime]` binding and IPC settings are established at startup and are not rebound by a file reload.
+**Requires a full MaiBot restart** — `[webui]` and `[maim_message]` listen addresses and ports, `[mcp]` server connections, `[plugin_runtime]` binding and IPC settings, the `[log]` event-loop watchdog (`event_loop_watchdog_*`), and `[debug].force_plugin_compatibility` are established at startup and are not rebound by a file reload.
 
 ::: tip How to tell
 Check the log after saving: a successful config-reload message means the new value took over; for listen addresses, MCP connections, and other startup-only settings, restart MaiBot.

@@ -97,6 +97,8 @@ uv run bot.py
 
 第一次启动会弹出用户协议，在终端输入 **同意** 即可继续。
 
+启动后就可以直接在终端里和麦麦对话：`[debug].enable_console_input` 自 1.3.0 起默认开启，在交互式终端里可以输入普通消息，也可以输入 `/clear`、`/pm`、`/offline`、`/online` 等管理指令，输入 `exit()` 则只关闭终端输入、Bot 继续运行。用 systemd 托管或把输出重定向到文件时，stdin 不是交互式终端，会跳过终端输入并多打一条 warning，不影响 MaiBot 正常运行。
+
 ## 进入 WebUI
 
 启动后，MaiBot 会自动打开 WebUI 服务。打开浏览器，访问以下地址（把 `本机IP` 换成你的服务器地址，本机就是 `localhost`）：

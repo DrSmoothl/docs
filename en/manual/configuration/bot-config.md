@@ -11,7 +11,7 @@ All of MaiBot's main settings live in a single file: `config/bot_config.toml` �
 Every setting can also be changed in the WebUI with a few clicks (default `http://127.0.0.1:8001`), with the same effect as editing the file. See [WebUI Config Management](/en/manual/webui/config-management).
 :::
 
-After saving, most settings are **hot-reloaded** and take effect immediately; changes to `[maim_message]`, the `[webui]` listen address, `[mcp]` server connections, or the `[plugin_runtime]` IPC require a restart. See [Configuration Overview](./index.md#does-it-take-effect-immediately) for the full rules.
+After saving, most settings are **hot-reloaded** and take effect immediately; changes to `[maim_message]`, the `[webui]` listen address or port, `[mcp]` server connections, `[plugin_runtime]` IPC, the `[log]` event-loop watchdog, or `[debug]`'s terminal input and forced plugin compatibility require a restart. See [Configuration Overview](./index.md#does-it-take-effect-immediately) for the full rules.
 
 ## Quick Start
 
@@ -315,6 +315,7 @@ The whole section is advanced; everything is off by default — opt in per featu
 [experimental]
 enable_behavior_learning = false  # Learn "how to respond when" experience from chat
 enable_rich_reply = false         # The reply action may attach pictures, stickers, or @
+replyer_retro_prompt = false      # Organize the Replyer prompt the legacy (0.12.x) way, with all instructions in a single template
 emotion_trait = "neutral"         # Experimental emotion trait: "rational_calm" / "neutral" / "sentimental"
 behavior_learning_list = [{ platform = "", item_id = "", type = "group", use = true, learn = true }]
 behavior_groups = []              # Multiple chats share learned behavior experience
@@ -333,6 +334,8 @@ reaction_style = "lively"         # "reserved" / "natural" / "lively"
 ```
 
 :::
+
+**Retro reply prompt** — with `replyer_retro_prompt = true`, the Replyer prompt is organized the legacy (0.12.x) way: all reply instructions live in a single complete template sent as one `user` message, and the dialogue history is rendered as plain text into template placeholders instead of being sent as image Items. Group chat, "short reply", private chat, and "private chat replying to Mai herself" each use their own template (`retro_replyer`, `retro_replyer_light`, `retro_private_replyer`, `retro_private_replyer_self`); they appear under **Prompt Management** collapsed as "advanced" and can be edited or given custom versions. Changes hot-reload.
 
 #### Message Receiving
 
@@ -512,6 +515,7 @@ Splits overlong replies into several messages, more like a human flooding the ch
 
 ```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [response_splitter]
+mode = "rule"                     # Splitting mode: "rule" splits by rules / "llm" splits by meaning with an LLM
 enable = true                     # Split overlong replies into several messages
 max_length = 512                  # Max length per message (characters)
 max_sentence_num = 8              # Max sentences per message
@@ -521,6 +525,13 @@ enable_overflow_return_all = false # [Advanced] Keep the full reply when there a
 ```
 
 :::
+
+**Key points:**
+
+- **`mode = "rule"` (default)** — mechanical sentence splitting by punctuation; fast, with no extra model calls
+- **`mode = "llm"`** — semantic splitting by an LLM through the `utils` model task: each reply costs one more model call, raising both latency and cost, so **`utils` must already have a working model, and a failure does not fall back automatically** (the reply is marked as failed)
+- The `llm` splitting prompt is built into the program, is not in the Prompt Management page, and cannot be customized; kaomoji protection is not applied either
+- A `response.splitter` request type appears in statistics, which you can use to observe the extra calls
 
 ### Services and Connections
 
@@ -660,11 +671,16 @@ llm_request_snapshot_limit = 128      # Max failed-request snapshots kept
 maisaka_prompt_preview_limit = 256    # Max prompt preview groups kept per chat
 maisaka_reply_effect_limit = 256      # Max reply-effect records kept per chat
 
+event_loop_watchdog_enabled = false    # [Advanced] Record event-loop stalls, for diagnosing UI/main-loop freezes
+event_loop_watchdog_warn_seconds = 0.5 # [Advanced] Log a warning once the event loop wake-up delay exceeds this many seconds
+
 suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "httpcore", "requests", "sqlalchemy", "openai", "uvicorn", "jieba"]  # [Advanced] Third-party libraries whose logs are fully hidden
 library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }  # [Advanced] Lower the log level of specific libraries
 ```
 
 :::
+
+**Event-loop watchdog** — when enabled, it checks once per second how far the main loop and the WebUI loop wake up later than they should; a lag above `event_loop_watchdog_warn_seconds` logs a warning such as `事件循环卡顿: loop=main 迟到=1.23s (告警阈值 0.50s)`, helping you tell whether UI stutter or message delay comes from a blocked main thread. Both fields **require a restart** to take effect; the default is off because normal operation also produces a few harmless lag logs.
 
 #### Debugging
 
@@ -672,16 +688,22 @@ library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }  # [Advanced] Lowe
 
 ```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [debug]
-enable_console_input = false          # Enable local message and command input in an interactive terminal
+enable_console_input = true           # Enable local message and command input in an interactive terminal (on by default)
 show_maisaka_thinking = true          # Show Mai's thinking process in logs or the UI
 enable_clear_context_command = false  # Allow /clear to wipe a chat stream's short-term context
 enable_reply_effect_tracking = false  # Record reply-effect scores to observe quality
+force_plugin_compatibility = false    # Skip the plugin-declared Host/SDK version check and load directly; takes effect after a restart
 keep_prompt_preview_json_base64 = false  # [Advanced] Keep image base64 in prompt previews; reproducible but large
 record_tool_structured_content = false   # [Advanced] Save structured tool results; grows the database
 enable_llm_cache_stats = false           # [Advanced] Record prompt-cache statistics, for performance debugging
 ```
 
 :::
+
+**Key points:**
+
+- **Terminal input** — `enable_console_input` is on by default: in an interactive terminal you can type ordinary messages or manage chats and adapters with `/clear`, `/pm`, `/offline`, `/online`, `/help`, and type `exit()` to close it. A non-interactive terminal (systemd, nohup, `docker run` without `-it`) only logs one extra warning and is otherwise unaffected; changing this requires a restart
+- **Force plugin compatibility** — `force_plugin_compatibility = true` skips the Host/SDK version-range checks declared by a plugin manifest and loads it anyway; it is **only a temporary fallback** and may load plugins that are in fact incompatible. It logs a single warning and does not affect the plugin market's version compatibility filtering. Requires a restart
 
 #### Telemetry
 
@@ -740,7 +762,7 @@ Then watch the log or the WebUI: once the file is saved, a successful config-rel
 
 **Startup fails immediately** — a TOML syntax error or an invalid field value (broken regex in `ban_msgs_regex`, a keyword rule missing `reaction`, an incomplete `chat_prompts` entry). Run the command above to locate syntax problems; field-validation errors name the offending field directly.
 
-**Change had no effect** — the section you touched may be startup-only: `[webui]` and `[maim_message]` listen addresses and ports, `[mcp]` server connections, `[plugin_runtime]` IPC. Restart MaiBot. For everything else see [Configuration Overview](./index.md#does-it-take-effect-immediately).
+**Change had no effect** — the section you touched may be startup-only: `[webui]` and `[maim_message]` listen addresses and ports, `[mcp]` server connections, `[plugin_runtime]` IPC, `[log]`'s `event_loop_watchdog_*`, `[debug]`'s `enable_console_input` and `force_plugin_compatibility`. Restart MaiBot. For everything else see [Configuration Overview](./index.md#does-it-take-effect-immediately).
 
 **Mai ignores people** — check in order: is the group in the adapter's chat list (see "Add lists first, then test" in the [NapCat Adapter](/en/manual/adapters/napcat)); is `talk_value` set too low; does `qq_account` match the adapter's logged-in QQ.
 

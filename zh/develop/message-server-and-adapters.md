@@ -265,6 +265,10 @@ default_action = "allow"
 
 WebUI 的适配器管理页与聊天管理页提供策略的可视化编辑入口，后端 API 见 `src/webui/routers/chat/routes.py`（`get_adapter_policy_defaults` / `update_adapter_policy_defaults` 等）。
 
+::: tip 读写一致性（1.3.0 起）
+策略条目按 specificity 分级，同一个适配器身份可能同时命中多条 `[[adapters]]` 记录。早期 WebUI 只按"身份字段完全相同"定位条目，可能读到一条被更高 specificity 条目永久遮蔽的空模板，写进去也落在那条不生效的记录上。现在读取与写入都改用和运行时求值一致的匹配标准——先在身份匹配的条目中取 specificity 最高的一条；当身份只解析得出 `plugin_id`（适配器未运行）时，退回该插件名下 specificity 最高的条目。面板上看到的就是运行时真正生效的那条，保存后不会再出现"存好了但不生效"的死规则。
+:::
+
 ## 最小 Python 外部适配器示例
 
 下面是一个最小可用的 Python 适配器，连 Legacy Server 并收发消息：

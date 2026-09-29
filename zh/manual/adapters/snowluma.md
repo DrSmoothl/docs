@@ -10,6 +10,10 @@ title: SnowLuma 适配器
 SnowLuma 适配器由 MaiBot 官方团队持续维护，遇到问题欢迎在 [GitHub Issues](https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter/issues) 反馈。
 :::
 
+::: warning 升级到 MaiBot 1.3.0 时
+MaiBot 1.3.0 需要配合最新版本的 SnowLuma 适配器使用：新版适配器已合并 NapCat 适配器，升级后请**重新设置黑白名单**（原名单不会自动沿用）。
+:::
+
 适配器仓库（🏛️ 官方维护）：
 
 <Linkcard url="https://github.com/Mai-with-u/MaiBot-SnowLuma-Adapter" title="MaiBot-SnowLuma-Adapter" description="MaiBot 官方维护的 SnowLuma QQ 适配器插件" logo="/title_img/mai.png" />
@@ -107,6 +111,10 @@ private_list = ["987654321"]      # 要私聊的用户 ID
 enable_chat_list_filter = false   # 仅临时测试，调试完记得加回名单再打开
 ```
 
+:::
+
+::: tip 还有一层主程序名单
+除了适配器自己的 `[chat]` 名单，MaiBot 主程序在 `config/adapter_policy.toml` 里还有一套统一的群聊 / 私聊访问策略。**两层都放行，消息才会进入对话**；排查"没反应"时两层都要看，入口见 [适配器管理](../webui/adapter-management.md)。
 :::
 
 ## 验证与排错

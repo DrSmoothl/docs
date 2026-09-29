@@ -53,6 +53,7 @@ The write and read paths are independent. For example, `[a_memorix.filter]` gate
 [a_memorix.storage]            # Data storage location
 [a_memorix.integration]        # How memory is used in chat (writeback/injection/correction)
 [a_memorix.embedding]          # Memory vectorization (incl. fallback & backfill)
+[a_memorix.image_memory]       # Image memory (image asset retention, image embedding, and similar recall)
 [a_memorix.retrieval]          # Memory retrieval (incl. fusion/vector pools/sparse)
 [a_memorix.threshold]          # Retrieval result threshold filtering
 [a_memorix.filter]             # Chat filtering (incl. per-type cross-chat filtering)
@@ -99,7 +100,7 @@ data_dir = "data/a-memorix"   # Data directory
 
 :::
 
-The directory actually holds: the SQLite main store `metadata/metadata.db` (paragraphs, relations, episodes, profiles, fact ledger, background queues), vector files and faiss index snapshots under `vectors/`, relation graph snapshots under `graph/`, plus import and tuning artifacts.
+The directory actually holds: the SQLite main store `metadata/metadata.db` (paragraphs, relations, episodes, profiles, fact ledger, background queues), vector files and faiss index snapshots under `vectors/`, relation graph snapshots under `graph/`, plus import and tuning artifacts. Image memory adds two more locations: `images/assets/` (original images, addressed by SHA-256 content hash) and `images/vectors/<fingerprint>/` (a dedicated image vector pool).
 
 ::: danger Changing data_dir does not migrate old data
 After pointing `data_dir` to a new path, MaiBot **starts from an empty store** in the new directory; old data stays in the old directory and is neither copied nor merged. To keep existing memories: stop MaiBot, manually copy the entire old directory contents to the new location, then change the config and start.
@@ -403,6 +404,66 @@ max_retry = 5         # Max retries
 Asynchronously supplies vectors to paragraphs that lack them (due to degradation, imports, etc.). Raising `batch_size` speeds up catch-up but adds pressure on the embedding service; after `max_retry` is exhausted the paragraph is abandoned — investigate why that content repeatedly fails to encode (usually over-length content or service limits).
 
 
+## Image Memory
+
+Image memory encodes images themselves into vectors, preserving their visual features, so later new images can recall historical images and their associated discussions, facts, and experiences. It does not replace image retrieval with VLM-generated text descriptions — those descriptions only participate as "cognitive" records for explanation, and the real similarity matching is done by a separate image vector pool.
+
+::: tip Prerequisites
+Image memory needs the **image embedding model**: first configure a model that supports "image input to vector" in `[model_task_config.image_embedding]` of `model_config.toml`. When left empty, images themselves and their cognition are still saved normally, but the retrieval status shows the model as unavailable and the feature degrades.
+:::
+
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
+[a_memorix.image_memory]
+enabled = true                 # Whether to enable image memory
+task_name = "image_embedding"  # Model task name used, corresponding to [model_task_config.image_embedding]
+preprocess_version = "identity_v1"  # Image preprocessing version; changing it regenerates existing image vectors
+probe_retry_seconds = 60.0     # Retry interval after model probing fails (seconds)
+
+max_bytes = 10485760           # Per-image size cap (bytes, default 10 MiB)
+max_pixels = 40000000          # Per-image pixel cap (default 40 million)
+candidate_limit = 8            # Candidate images returned per similarity search
+similarity_threshold = 0.72    # Visual similarity threshold; candidates below it are not returned as hits
+
+job_poll_interval_seconds = 2.0   # Polling interval of the background embedding jobs (seconds)
+job_batch_size = 4                # Image jobs claimed and processed per batch
+job_enqueue_batch_size = 200      # Historical images enqueued per pass
+job_lease_seconds = 120.0         # Job lease duration (seconds); expired leases may be reclaimed
+job_max_retries = 5               # Max retries of an embedding job
+min_train_threshold = 40          # Min samples before the image vector index triggers quantization training
+```
+
+:::
+
+**Impact of changes**:
+
+- **`enabled`** — master switch of image memory, on by default. When off, no new image vectors are written, while existing image assets and cognition are unaffected
+- **`task_name`** — which model task performs image embedding. Default `image_embedding`; if you configured the image embedding model under another task name, change this to match
+- **`preprocess_version`** — how images are preprocessed before entering the model. The system uses it together with the model identifier, provider, and dimension to build the **embedding fingerprint**; changing it triggers image vector regeneration, and old-generation vectors no longer participate in retrieval
+- **`probe_retry_seconds`** — probe retry interval while the model is unavailable, avoiding continuous Provider requests at the background polling frequency
+- **`max_bytes` / `max_pixels`** — hard limits for a single image entering the store; anything larger is rejected. Larger values eat more memory; smaller values may miss slightly larger screenshots
+- **`candidate_limit` / `similarity_threshold`** — the count and bar of similar recall. Lower threshold → more recall but more noise; higher → stricter but possible misses. It only expresses visual proximity in vector space, and **cannot directly decide that two images show the same object**
+- **`job_*`** — the rhythm of the background image embedding job queue. Larger batch/lease suits bulk backfill; smaller is smoother but slower
+- **`min_train_threshold`** — how many samples the image vector index needs before quantization training triggers; note the image runtime trains automatically once a new store reaches the threshold, no restart required
+
+**What similarity search returns**: it first matches the exact same historical image by content hash, then looks for visually similar candidates in the current image vector space. The return value distinguishes "exact same image" from "visually similar", and expands the cognition records of hit images together with their associated paragraphs, entities, relations, and Episodes; the expansion re-checks whether the target has already been deleted or invalidated.
+
+**Image assets and deletion**: images are deduplicated by the SHA-256 of their persisted stored bytes, with each occurrence recorded separately. Deleting an image cognition or occurrence record does not accidentally delete shared assets still referenced by other chat streams or other memory bundles.
+
+**Ingest limits**: only four static formats are accepted — **BMP, JPEG, PNG, WEBP**; multi-frame images (GIF, animated WebP) are rejected outright; a single image must also satisfy `max_bytes` and `max_pixels`. Emoji stickers are **not** included in image memory by default; they have their own recognition and sending logic.
+
+**Export and migration**: images can be exported and installed along with `.amembundle` memory bundles, and a bundle may optionally carry directly associated knowledge. On install, if the image embedding model fingerprint matches the source instance, image vectors are reused directly; when inconsistent or vectors are missing, content installation still completes, the image status shows as pending build, and vectors are rebuilt later with the local model. See [View and Manage Memory](../webui/memory-management.md#image-memory).
+
+**Failure and degradation**: image memory is fault-tolerant in layers — when no image embedding model is configured, image assets and cognition are still saved normally and only the retrieval status shows "model unavailable"; a failed model probe retries at `probe_retry_seconds` rather than firing at the background job polling frequency; when a new image has no vector yet, retrieval falls back to encoding the queried image online; changing the image embedding model or preprocessing version switches the vector generation, and old-generation vectors no longer participate in retrieval, so a rebuild is required.
+
+**Scope**: image retrieval reuses the same chat-stream sharing resolution as text retrieval — with global sharing off, only the current chat stream, configured sharing groups, and global bundle content are searched; with it on, the existing global memory rules apply. See [Cross-Chat-Stream Sharing](#cross-chat-stream-sharing).
+
+::: tip Image retrieval has no separate wait budget
+Image retrieval uses the existing memory-service and model timeouts and adds no separate "online wait budget" switch; if the first retrieval of a new image feels slow, check the latency of the image embedding service itself first.
+:::
+
+
 ## Retrieval
 
 `[a_memorix.retrieval]` offers the largest tuning surface. Understand the pipeline order first, or you'll tune the wrong knobs:
@@ -632,7 +693,6 @@ refresh_retry_backoff_seconds = 300     # Wait before retrying a failed refresh
 max_retry = 3                           # Max queue retries
 top_k_evidence = 12                     # Evidence sampling size
 evidence_classification_max_tokens = 1200  # Max output tokens of evidence classification
-evidence_classification_temperature = 0.1  # Evidence classification temperature
 ```
 
 :::
@@ -643,7 +703,7 @@ evidence_classification_temperature = 0.1  # Evidence classification temperature
 - Periodic refresh only processes people active within the last `active_window_hours` (default 72h). Shrinking the window = profiles of long-absent people stop updating (saves cost); growing it = more profiles stay fresh (each round capped by `max_refresh_per_cycle`)
 - Refresh has an "evidence fingerprint" short-circuit: unchanged evidence only extends the TTL without recomputing — **no LLM cost**. So lowering `refresh_interval_minutes` mainly costs more scanning, not a cost explosion
 - `top_k_evidence` decides how much evidence is sampled per refresh (relation evidence, vector evidence and fact ledger all derive from it). Larger = fuller profiles but more expensive and slower
-- Note: `evidence_classification_max_tokens` / `evidence_classification_temperature` feed the profile generation fingerprint — **changing either forces a full recompute of everyone's profile at the next refresh** (fingerprint short-circuit no longer applies), a concentrated LLM cost when you have many people
+- Note: `evidence_classification_max_tokens` feeds the profile generation fingerprint — **changing it forces a full recompute of everyone's profile at the next refresh** (fingerprint short-circuit no longer applies), a concentrated LLM cost when you have many people. The legacy `evidence_classification_temperature` has been removed; if it is still left in the config, it is ignored on load
 
 
 ## Memory Evolution
@@ -897,6 +957,30 @@ enabled = true
 
 :::
 
+### Enabling Image Memory
+
+Image memory is on by default; you only need to configure the image embedding model, leaving `[a_memorix.image_memory]` at its defaults:
+
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
+[a_memorix]
+[a_memorix.plugin]
+enabled = true
+
+[a_memorix.image_memory]     # defaults are fine
+enabled = true
+```
+
+```toml [model_config.toml ~vscode-icons:file-type-toml~]
+[model_task_config.image_embedding]
+model_list = ["your-image-embedding-model"]   # must support image input to vector
+```
+
+:::
+
+After that, open WebUI "Long-term memory → Image memory" and confirm the retrieval state becomes available. See [Image Memory](#image-memory).
+
 
 ## Verification & Troubleshooting
 
@@ -913,6 +997,12 @@ enabled = true
 **Memory system completely dead after switching to whitelist mode**: `whitelist` + empty `chats` = deny everything. Add chat streams to the list or switch back to blacklist mode.
 
 **Should you enable feedback correction?**: it's off by default. It's a "every query leaves a delayed task" model; with sparse conversation and little memory, the cost outweighs the payoff. Consider it when stale memories are visibly accumulating at scale, and keep `auto_apply_threshold` ≥ 0.85.
+
+**Image memory says "model unavailable"**: check that `[model_task_config.image_embedding]` is bound to an embedding model that supports image input; if you use a custom or relayed address, also write `image_embedding_input` or `image_embedding_body` by hand in the model's `extra_params` (the official Bailian, Volcano Ark, and SiliconFlow addresses adapt automatically).
+
+**Images stay unsearchable**: open "Long-term memory → Image memory → Job diagnostics" to see the status, retry count, and last error of embedding jobs and description-compensation jobs; once the model recovers, the system retries at `probe_retry_seconds`, and you can trigger index processing manually if needed.
+
+**Similar images are not recalled**: first confirm the query scope (by default only the current chat stream is searched, and chat streams that do not share memory cannot see each other); then consider lowering `similarity_threshold` slightly or raising `candidate_limit`. Remember similarity only means visual closeness — **it does not mean two images show the same object** — so don't crush the threshold just to raise the hit rate, or you will pull in a lot of noise.
 
 
 ## Next Steps

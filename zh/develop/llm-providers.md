@@ -20,6 +20,7 @@ erDiagram
         string auth_type
         int max_retry
         int timeout
+        int retry_interval
     }
 
     ModelInfo {
@@ -28,6 +29,8 @@ erDiagram
         string api_provider
         float price_in
         float price_out
+        float cache_price_in
+        list price_periods
         bool visual
         dict extra_params
     }
@@ -39,6 +42,7 @@ erDiagram
         TaskConfig vlm
         TaskConfig utils
         TaskConfig embedding
+        TaskConfig image_embedding
     }
 
     TaskConfig {
@@ -126,14 +130,14 @@ visual = true
 - **`organization`** — OpenAI 官方接口可选的 `organization` 标识
 - **`project`** — OpenAI 官方接口可选的 `project` 标识
 - **`max_retry`** — 单个模型调用失败后的最大重试次数，默认 3
-- **`retry_interval`** — 两次重试之间的等待秒数，默认 5
-- **`timeout`** — 单次 API 调用的超时秒数，默认 60
+- **`retry_interval`** — 两次重试之间的等待秒数，默认 4
+- **`timeout`** — 单次 API 调用的超时秒数，默认 120
 - **`reasoning_parse_mode`** — 推理内容解析模式，见下文
 - **`tool_argument_parse_mode`** — 工具参数解析模式，见下文
 
 ## ModelTaskConfig 任务分发
 
-`[model_config]` 下按任务角色拆出了 10+ 个 `TaskConfig` 子配置。每个 `TaskConfig` 拥有一组模型列表和一个选择策略：
+`[model_config]` 下按任务角色拆出了 12 个 `TaskConfig` 子配置。每个 `TaskConfig` 拥有一组模型列表和一个选择策略：
 
 ```mermaid
 flowchart LR
@@ -157,7 +161,8 @@ flowchart LR
 - **`max_tokens`** — 该任务的最大输出 token 数，可由 `ModelInfo.max_tokens` 覆盖
 - **`temperature`** — 采样温度，可由 `ModelInfo.temperature` 覆盖
 - **`hard_timeout`** — 任务硬超时（秒），到期未返回则取消请求并切换下一个模型，默认 240
-- **`slow_threshold`** — 超时警告阈值（秒），默认 15
+
+> 1.3.0 起 `TaskConfig.slow_threshold`（慢请求警告阈值）已被移除，慢请求改由日志与统计观测；旧配置文件里的该字段会在加载时按“多余字段”清理。
 
 **任务角色一览：**
 
@@ -172,8 +177,11 @@ flowchart LR
 - **`vlm`** — 视觉模型，需要支持识图
 - **`voice`** — 语音识别模型
 - **`embedding`** — 文本嵌入模型
+- **`image_embedding`** — 图片嵌入模型，把图片编码成向量供图片记忆检索；需支持图片输入协议，留空则图片记忆不可检索（1.3.0 新增）
 
 部分角色有空配置回退链：`expression_use` → `utils`，`learner` → `utils`，`mid_memory` → `planner`。留空不报错，框架自动继承。
+
+`embedding` 与 `image_embedding` 是例外：它们**忽略 `selection_strategy`**，固定按 `model_list` 顺序取第一个可用模型（避免多个嵌入模型混用导致向量空间不一致）；`image_embedding` 留空时不会回退，图片记忆直接进入"模型不可用"状态。
 
 ## extra_params 透传机制
 
@@ -308,7 +316,7 @@ Anthropic API 的鉴权方式与标准 OpenAI 不同：它用 `x-api-key` 请求
 
 单次 API 调用失败时，MaiBot 会按以下流程处理：
 
-**重试机制**：`LLMUtils._attempt_request_on_model()` 在单个模型级别执行重试。重试次数由 `APIProvider.max_retry` 控制（默认 3 次），间隔由 `APIProvider.retry_interval` 指定（默认 5 秒）。可重试的错误类型：
+**重试机制**：`LLMUtils._attempt_request_on_model()` 在单个模型级别执行重试。重试次数由 `APIProvider.max_retry` 控制（默认 3 次），间隔由 `APIProvider.retry_interval` 指定（默认 4 秒）。可重试的错误类型：
 
 - **`EmptyResponseException`** — 模型返回空回复，属于临时问题，记录警告后重试
 - **`NetworkConnectionError`** — 网络错误（连接超时、DNS 故障、代理问题等），常见于不稳定网络

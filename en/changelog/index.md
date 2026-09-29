@@ -7,6 +7,84 @@ description: Feature updates, fixes, and configuration changes across MaiBot rel
 
 For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-with-u/MaiBot/releases).
 
+::: timeline 2026-09-28
+
+### Webui [1.8.0]
+
+* MaiMai Observation now shows thinking and tool-execution status as soon as the Planner returns, and updates results in place when a tool finishes; fixed new rounds overwriting old cards after a restart; `tool_search` now shows the search terms and activated tool list separately.
+
+* MaiMai Settings moves manual save, shared-group settings, and source-file editing into an ellipsis menu, keeping detailed settings and command management at the top; shared-group settings replace core settings, and the sidebar chat-management entry is removed.
+
+* In MaiMai Chat, the local user identity box moves to the right of the input area, with avatar and nickname editable in the same box; chat-stream browsing is removed from chat management and unified in the MaiMai Chat page, while chat management keeps shared-group management.
+
+* Improved the mobile experience and chat-stream reading in MaiMai Chat with related fixes, refreshed the login page styling, and removed unused feature code.
+
+* Fixed being unable to change the embedding model in the WebUI.
+
+### Main program
+
+* No more fallback for vision embedding models: when an image embedding model is unavailable, MaiBot no longer silently switches to another model.
+
+:::
+
+::: timeline 2026-09-26
+
+### Main program
+
+* Fixed punctuation-less long text caused by reply splitting; sentence separators are restored when segments are joined.
+
+* Fixed a memory anomaly caused by the statistics task.
+
+* Fixed incorrect Prompt cache statistics; cache price now defaults to the same value as the input price, so existing configs may need a manual cache-price update.
+
+* The plugin market now supports installing different versions of a plugin.
+
+* Improved compatibility with adapter plugins; adapter plugins can use MaiBot's built-in allow/deny lists directly.
+
+* The SnowLuma adapter must be updated to the latest version: the new adapter has merged the NapCat adapter, and the allow/deny lists must be re-configured after upgrading.
+
+### Webui [1.7.5]
+
+* Category statistics add a "By task group" view that aggregates call count, tokens, cost, cache, and latency by the actual model task config.
+
+* Greatly improved WebUI plugin-market loading speed.
+
+* Improved the long-term memory interaction experience; the long-term memory page adds image-memory management for viewing image assets, cognitions, and related memories, with confirmation, correction, and record deletion.
+
+* Improved the MaiMai Observation page, adding "Find previous"; it shows context segment ratios, session cumulative tokens, and average cache hit rate, and chat-stream settings can be opened directly from the chat view.
+
+### Memory
+
+* Added image memory, which requires configuring an image embedding model (the `image_embedding` task); a dedicated image vector pool supports image search and other query paths.
+
+* Added `.amembundle` export, validation, and LLM-free installation, supporting LPMM-equivalent knowledge packages and full packages that include person profiles, Episodes, the fact ledger, external references, and lifecycle state.
+
+### Models
+
+* Improved the model testing flow.
+
+* Image embedding models now automatically support Bailian, SiliconFlow, and Volcano models.
+
+* Model pricing supports per-time-of-day periods that combine input, output, and cache-hit unit prices.
+
+* The thinking switch on the model config page now adapts to provider templates: the general switch covers Zhipu/Kimi/MiniMax/Doubao (`thinking.type`), Bailian/SiliconFlow (`enable_thinking`), StepFun/OpenAI/xAI; Doubao and Qwen support a thinking budget; DeepSeek keeps a dedicated switch (including the Responses client and web search). Added provider templates for Zhipu Coding Plan (GLM Coding Plan), StepFun Step Plan, and Volcano Ark Coding Plan.
+
+### Debugging
+
+* Added a "Force plugin compatibility" debug switch.
+
+* Fixed Fake-IP resolution in the plugin market.
+
+### Configuration changes
+
+* `model_config.toml`: the per-task `slow_threshold` (slow-request warning threshold) has been removed; the field is ignored and cleaned up when loading old configs.
+
+* `model_config.toml`: the model `cache` field no longer affects billing logic; whether cache hits are billed is now decided by `cache_price_in`, and whether a provider returns cache usage is auto-detected from the response.
+
+* `bot_config.toml`: new options for image memory, the retro reply prompt, splitting mode, the event-loop lag watchdog, and forced plugin compatibility. See the updated configuration docs under the manual.
+
+:::
+
 ::: timeline 2026-09-15
 ### Maisaka [1.2.5]
 * Long-term memory time search now supports both `YYYY/MM/DD` and `YYYY-MM-DD` date formats.
@@ -20,6 +98,8 @@ For dev and detailed changelogs, see [GitHub Releases](https://github.com/MaiM-w
 
 ### Plugin SDK/API
 * Fixed an issue where the plugin LLM interface mistook model names for task names; task and model name can now be specified separately.
+
+:::
 
 ::: timeline 2026-09-01
 - [1.2.4] Plugin tools can request ending the Planner after execution; models can stop sending the temperature parameter; WebUI [1.7.3] merges MaiMai Observation into the chat workspace and streamlines memory management

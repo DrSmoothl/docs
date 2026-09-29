@@ -12,9 +12,11 @@ title: 插件生命周期 API
 
 两个端点返回插件列表和元数据：
 
-- **`GET /api/webui/plugins/installed`** — 返回所有已安装插件的 manifest、启用状态、运行时加载状态和熔断信息。响应中每个插件条目包含 `id`、`manifest`、`path`、`enabled`、`load_status`、`load_error`、`circuit_status`、`changelog` 等字段。
+- **`GET /api/webui/plugins/installed`** — 返回所有已安装插件的 manifest、启用状态、运行时加载状态和熔断信息。响应中每个插件条目包含 `id`、`manifest`、`path`、`enabled`、`load_status`、`load_error`、`circuit_status`、`changelog`、`release` 等字段。
 - **`GET /api/webui/plugins/local-readme/{plugin_id}`** — 获取插件本地 README 内容（Markdown 字符串）。
 - **`GET /api/webui/plugins/local-changelog/{plugin_id}`** — 获取插件本地 CHANGELOG 内容。
+
+**`release`** — 按发布版本安装的插件才会返回该字段（其余为 `null`），内容是 `.maibot-release.json` 安装记录：`plugin_id`、`version`、`tag`、`commit`、`repository_url`、`pinned`。前端用它判断插件是否锁定版本、以及阻止用分支 `git pull` 更新。
 
 **查询示例：**
 
@@ -35,14 +37,18 @@ curl -X GET http://127.0.0.1:8001/api/webui/plugins/installed \
 
 ### 安装
 
-**`POST /api/webui/plugins/install`** — 从 Git 仓库克隆并安装插件。请求体：
+**`POST /api/webui/plugins/install`** — 安装插件。请求体：
 
 - **`plugin_id`** — 插件 ID（用于目录命名和 manifest 校验）
-- **`repository_url`** — 仓库地址（支持 GitHub 和自定义 Git URL）
+- **`repository_url`** — 仓库地址（支持 GitHub 和自定义 Git URL）。**按发布版本安装时留空**，由版本索引解析
 - **`branch`** — 分支名，默认 `main`
 - **`mirror_id`** — 可选的 Git 镜像源 ID，走镜像加速
+- **`version`** — 可选的发布版本号。传具体版本号安装该版本；传 `latest` 安装索引推荐的兼容稳定版；不传则走分支安装
+- **`pinned`** — 是否锁定所选发布版本。默认 `false`；锁定后自动更新会拒绝更新该插件
 
-服务端会依次克隆仓库、校验 `_manifest.json`（检查 `manifest_version`、`id`、`name`、`version`、`author` 五个必填字段），成功后在 `plugins/` 目录下生成插件目录。
+分支安装模式下，服务端会依次克隆仓库、校验 `_manifest.json`（检查 `manifest_version`、`id`、`name`、`version`、`author` 五个必填字段），成功后在 `plugins/` 目录下生成插件目录。
+
+指定 `version` 时走发布版本安装：按 Tag 浅克隆到临时目录，校验 commit 与 manifest 和索引一致、依赖满足、且不破坏其他已安装插件对该插件的版本约束，然后停止插件 → 保留 `config.toml` / `config_back/` / `data/` → 写入 `.maibot-release.json` → 原子替换目录（旧目录改名进 `.update_backups/`）→ 重新加载。
 
 **安装示例：**
 
@@ -59,7 +65,31 @@ curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
   }'
 ```
 
+```bash [curl 安装指定发布版本并锁定 ~vscode-icons:file-type-http~]
+curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
+  -H "Content-Type: application/json" \
+  -H "Cookie: maibot_session=你的Token" \
+  -d '{
+    "plugin_id": "example-plugin",
+    "version": "1.4.2",
+    "pinned": true
+  }'
+```
+
 :::
+
+**发布版本安装可能返回的错误：**
+
+- **400 插件依赖不满足** — 该版本要求的其他插件或 Python 包缺失
+- **400 没有可安装的兼容稳定版本** — 传了 `latest` 但索引里没有兼容的稳定版本
+- **400 发布版本不存在** — 版本号不在索引中
+- **400 该插件尚未发布 Release，只支持分支安装** — 索引中该插件是分支模式，只能不传 `version` 安装
+- **404 插件尚未收录到版本索引** — 仓库没被官方索引收录
+- **409 插件已安装** / **409 插件目标目录已存在** — 目标位置非空
+- **409 该版本不满足已安装插件 X 的依赖要求** — 换版本会破坏其他插件的依赖约束
+- **409 插件存在本地代码修改，请先处理** — 插件目录里有本地代码改动
+- **409 Tag 当前指向的 commit 与版本索引不一致** / **409 下载的 manifest 与版本索引不一致** — 索引与仓库状态脱节
+- **502 获取插件版本索引失败** — 官方索引没拉下来，换镜像源或稍后重试
 
 ### 卸载
 
@@ -67,12 +97,22 @@ curl -X POST http://127.0.0.1:8001/api/webui/plugins/install \
 
 ### 更新
 
-**`POST /api/webui/plugins/update`** — 更新已安装插件。请求体与安装一致。逻辑分两路：
+**`POST /api/webui/plugins/update`** — 更新已安装插件。请求体与安装一致。逻辑分三路：
 
-- **Git 仓库** — 直接 `git pull` 拉取新版本，保留本地 `config.toml` 和 `config_back/` 目录
-- **非 Git 目录** — 重新克隆并做备份恢复，`update_mode` 字段为 `reinstall_from_backup`
+- **发布版本安装**（`version` 为具体版本或 `latest`）— 与安装相同的停止/替换/重载链路，响应 `update_mode` 为 `release`，并额外返回 `commit`、`pinned`、`backup_path`
+- **Git 仓库** — 直接 `git pull` 拉取新版本，保留本地 `config.toml` 和 `config_back/` 目录，`update_mode` 为 `git_pull`
+- **非 Git 目录** — 重新克隆并做备份恢复，`update_mode` 为 `reinstall_from_backup`
 
 更新成功后响应包含 `old_version` 和 `new_version` 字段。
+
+::: warning 按发布版本安装的插件不能 git pull
+如果插件目录里有 `.maibot-release.json`，不带 `version` 的更新会返回 **409**「该插件按发布版本安装，请通过版本选择更新，不能使用分支拉取」。请改用 `version` 指定目标版本。
+:::
+
+**发布版本更新的额外限制：**
+
+- **409 该插件已锁定版本** — 插件 `pinned = true` 时自动更新被拒绝，需在详情页解除锁定
+- **409 当前已是最新兼容版本，不会自动降级或重装** — `version: "latest"` 时目标版本不高于当前版本；降级必须传具体版本号
 
 ## 3. 启用 / 禁用
 
@@ -104,6 +144,23 @@ curl -X POST http://127.0.0.1:8001/api/webui/plugins/config/example-plugin/toggl
 - **`DELETE /api/webui/plugins/mirrors/{mirror_id}`** — 删除指定镜像源
 - **`POST /api/webui/plugins/fetch-raw`** — 通过镜像源获取远程仓库的 raw 文件（通常用于拉取插件商店的 `plugin_details.json`）
 - **`POST /api/webui/plugins/clone`** — 通过镜像源克隆指定仓库到目标路径
+- **`GET /api/webui/plugins/releases`** — 返回官方版本索引（`Mai-with-u/plugin-repo` 的 `plugin_versions.json`，缓存 60 秒），供前端渲染版本下拉与兼容性提示
+
+### 版本索引结构
+
+`GET /api/webui/plugins/releases` 返回 `{"plugins": [...]}`，每个条目描述一个已收录插件：
+
+- **`id`** / **`manifest_id`** — 索引 ID 与 manifest 里的插件 ID，查询时两者都可匹配（大小写不敏感）
+- **`repositoryUrl`** — GitHub 仓库地址
+- **`mode`** — `releases`（按 Git Release 安装）或 `branch`（只支持分支安装）
+- **`sync_error`** — 索引同步失败原因；非空时该插件无法按版本安装
+- **`recommended_version`** — 兼容当前 Host / SDK 的最新稳定版；没有时为 `null`
+- **`versions`** — 发布版本列表，按版本号降序。每项含 `version`、`tag`、`commit`、`prerelease`、`yanked`、`manifest`、`release_notes`、`published_at`、`release_url`，以及两个派生字段：
+  - **`compatible`** — 是否与当前 Host / SDK 兼容（用 `ManifestValidator` 现算，`yanked` 版本一律 `false`）
+  - **`reasons`** — 不兼容原因列表，前端会压缩成「仅支持麦麦 ≤ x」这类短文案
+- **`rejected_releases`** — 被索引同步工具驳回的发布版本（`tag`、`version`、`error`）。常见原因是 Git Tag 与 manifest `version` 不一致、发布版本改变了插件 ID、manifest 协议版本不受支持、对应 commit 里找不到 manifest
+
+索引异常时返回 **502**（`获取插件版本索引失败` / `插件版本索引无效`）。安装端点内部复用同一份索引与 `release_compatibility()` 判定，前端显示与后端实际放行结果一致。
 
 ## 5. Plugin Config 编辑
 

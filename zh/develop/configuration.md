@@ -10,7 +10,7 @@ title: 配置系统
 
 MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们各自由对应的 Pydantic 模型管理：
 
-**bot_config.toml** — 主配置文件，对应 `Config` 模型（位于 `src/config/official_configs.py`）。包含 21 个子配置段：`[bot]`、`[personality]`、`[chat]`、`[experimental]`、`[visual]`、`[expression]`、`[jargon]`、`[a_memorix]`、`[message_receive]`、`[voice]`、`[emoji]`、`[keyword_reaction]`、`[response_post_process]`、`[chinese_typo]`、`[response_splitter]`、`[telemetry]`、`[log]`、`[debug]`、`[maim_message]`、`[webui]`、`[database]`、`[mcp]`、`[plugin]`、`[plugin_runtime]`。
+**bot_config.toml** — 主配置文件，对应 `Config` 模型（位于 `src/config/official_configs.py`）。包含 20 多个子配置段：`[bot]`、`[personality]`、`[chat]`、`[experimental]`、`[visual]`、`[expression]`、`[jargon]`、`[a_memorix]`（其下含 `image_memory` 图片记忆等段落）、`[message_receive]`、`[voice]`、`[emoji]`、`[keyword_reaction]`、`[response_post_process]`、`[chinese_typo]`、`[response_splitter]`、`[telemetry]`、`[log]`、`[debug]`、`[maim_message]`、`[webui]`、`[database]`、`[mcp]`、`[plugin]`、`[plugin_runtime]`。
 
 **model_config.toml** — 模型配置文件，对应 `ModelConfig` 模型（位于 `src/config/model_configs.py`）。包含 3 个顶层段：`[[models]]`（模型列表）、`[model_task_config]`（任务-模型绑定）、`[[api_providers]]`（API 提供商列表）。
 
@@ -46,7 +46,7 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 
 **ChatConfig（`[chat]`）** — 控制上下文窗口大小（`max_context_size` / `max_private_context_size`）、回复时机与频率（`reply_timing`）、回复方式（`reply_style`）。详见消息处理流程。
 
-**ExperimentalConfig（`[experimental]`）** — 实验性功能开关：行为学习、情绪特点档位、注意力漂移、Focus 模式。
+**ExperimentalConfig（`[experimental]`）** — 实验性功能开关：行为学习、复古回复提示词（`replyer_retro_prompt`）、情绪特点档位、注意力漂移、Focus 模式。
 
 **MCPConfig（`[mcp]`）** — MCP 服务端配置。详见 [MCP 集成](/develop/mcp-integration)。
 
@@ -60,7 +60,7 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 
 **`[[models]]`（数组表）** — 每个模型条目定义 `name`（模型别名）、`model_identifier`（API 实际模型名）、`api_provider`（指向 `api_providers` 中的提供商名称）。
 
-**`[model_task_config]`** — 将各类推理任务绑定到模型。核心子段包括 `planner`、`replyer`、`vlm`、`memory`、`embedding`、`tool_calling`、`topic_judge`、`expression_generation`、`expression_recognition`、`chinese_typo` 等。每个任务段包含 `model_list`（候选模型名列表）和 `temperature` 等采样参数。
+**`[model_task_config]`** — 将各类推理任务绑定到模型。当前包含 `replyer`、`planner`、`memory`、`mid_memory`、`utils`、`learner`、`expression_use`、`emoji`、`vlm`、`voice`、`embedding`、`image_embedding` 共 12 个任务段。每个任务段包含 `model_list`（候选模型名列表）、`max_tokens`、`temperature`、`selection_strategy`、`hard_timeout` 等参数；`slow_threshold` 已在 1.3.0 移除。
 
 **`[[api_providers]]`（数组表）** — API 提供商配置。
 
@@ -141,7 +141,7 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 
 ### BOT_CONFIG_UPGRADE_HOOKS 链
 
-`BOT_CONFIG_UPGRADE_HOOKS` 当前包含 7 个钩子，按版本递增排列：
+`BOT_CONFIG_UPGRADE_HOOKS` 当前包含 9 个钩子，按版本递增排列（当前 `CONFIG_VERSION = "8.14.51"`）：
 
 **8.10.11 — 重置群聊 Prompt 为默认值**
 
@@ -170,6 +170,14 @@ MaiBot 运行时依赖 `config/` 目录下两份独立的 TOML 文件，它们�
 **8.14.19 — 拆分 Chat 配置段**
 
 将 `[chat]` 下原本扁平的字段拆分为 `reply_timing`（什么时候发言）和 `reply_style`（如何发言）两个子段，并迁移 `group_chat_prompt`、`private_chat_prompts` 等字段到新位置。
+
+**8.14.29 — 沿用原人格作为行为风格**
+
+首次拆分 Planner 行为风格时，如果 `[personality]` 里还没有 `behavior_style`，钩子 `_copy_personality_to_behavior_style` 会把用户原有的 `personality` 文本复制一份作为 `behavior_style`，避免升级后行为风格丢失。
+
+**8.14.40 — 迁移已移除的表达选取模式**
+
+旧配置里 `expression.expression_selection_mode = "vector"`（精细模式）已被移除。钩子 `_migrate_removed_expression_selection_mode` 会把它改写为 `"vector_intent"`（超级精细），防止因此无法启动。
 
 ### 升级钩子执行流程
 

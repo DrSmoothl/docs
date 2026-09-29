@@ -11,7 +11,7 @@ titleTemplate: :title · 配置
 所有配置都能在 WebUI 里点点鼠标完成（默认 `http://127.0.0.1:8001`），效果与编辑文件一致。见 [WebUI 配置管理](/manual/webui/config-management)。
 :::
 
-保存文件后大多数设置**热重载**立即生效；改 `[maim_message]`、`[webui]` 的监听地址或端口、`[mcp]` 服务器连接、`[plugin_runtime]` 的 IPC 时需要重启 MaiBot。完整规则见 [配置概览](./index.md#改了会立即生效吗)。
+保存文件后大多数设置**热重载**立即生效；改 `[maim_message]`、`[webui]` 的监听地址或端口、`[mcp]` 服务器连接、`[plugin_runtime]` 的 IPC、`[log]` 的事件循环看门狗、`[debug]` 的终端输入与强制插件兼容时需要重启 MaiBot。完整规则见 [配置概览](./index.md#改了会立即生效吗)。
 
 ## 快速上手
 
@@ -315,6 +315,7 @@ prompt = "这个群里说话要更简短。"
 [experimental]
 enable_behavior_learning = false  # 从聊天中学习「什么时候该怎么回应」的经验
 enable_rich_reply = false         # reply 动作可附加图片、表情包或 @
+replyer_retro_prompt = false      # 按旧版（0.12.x）方式组织 Replyer 提示词，全部指令集中在一份模板里
 emotion_trait = "neutral"         # 实验性情绪特点："rational_calm" / "neutral" / "sentimental"
 behavior_learning_list = [{ platform = "", item_id = "", type = "group", use = true, learn = true }]
 behavior_groups = []              # 多个聊天共享学到的行为经验
@@ -333,6 +334,8 @@ reaction_style = "lively"         # 短反应风格："reserved" / "natural" / "
 ```
 
 :::
+
+**复古回复提示词** — `replyer_retro_prompt = true` 时按旧版（0.12.x）方式组织 Replyer 提示词：全部回复指令集中在一份完整模板里，整段作为一条 `user` 消息发送，历史对话渲染成纯文本填入模板占位符，不再发送图片 Item。群聊、"简短回复"、私聊和"私聊且回复麦麦自己"各用一套模板（`retro_replyer`、`retro_replyer_light`、`retro_private_replyer`、`retro_private_replyer_self`），它们在 **Prompt 管理**里以"高级"折叠展示，可以编辑和创建自定义版本。改动热重载生效。
 
 #### 消息接收
 
@@ -512,6 +515,7 @@ word_replace_rate = 0.006           # [进阶] 整词被替换成错词的概率
 
 ```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [response_splitter]
+mode = "rule"                     # 断句模式："rule" 规则断句 / "llm" 由 LLM 按语义断句
 enable = true                     # 把过长回复拆成多条发送
 max_length = 512                  # 单条回复最大长度（字符）
 max_sentence_num = 8              # 单条回复最多包含多少句
@@ -521,6 +525,13 @@ enable_overflow_return_all = false # [进阶] 句子太多时保留完整回复�
 ```
 
 :::
+
+**要点：**
+
+- **`mode = "rule"`（默认）** — 按标点等规则机械断句，速度快、没有额外模型调用
+- **`mode = "llm"`** — 由 LLM 按语义断句，走 `utils` 模型任务：每轮回复会多一次模型调用，延迟和费用都会上升，**必须先给 `utils` 配好可用模型，且失败不会自动回退**（本次回复会被标记为失败）
+- `llm` 模式的断句提示词是程序内置的，不在 Prompt 管理页面里，无法自定义；也不会应用颜文字保护
+- 统计里会出现 `response.splitter` 这一请求类型，可用它观察额外调用量
 
 ### 服务与连接
 
@@ -660,11 +671,16 @@ llm_request_snapshot_limit = 128      # 失败模型请求快照最多保留多�
 maisaka_prompt_preview_limit = 256    # 每个聊天最多保留多少组 Prompt 预览
 maisaka_reply_effect_limit = 256      # 每个聊天最多保留多少条回复效果记录
 
+event_loop_watchdog_enabled = false        # [进阶] 记录事件循环卡顿，用于排查界面/主循环卡顿
+event_loop_watchdog_warn_seconds = 0.5     # [进阶] 事件循环唤醒延迟超过该秒数时记录一条警告日志
+
 suppress_libraries = ["faiss", "httpx", "urllib3", "asyncio", "websockets", "httpcore", "requests", "sqlalchemy", "openai", "uvicorn", "jieba"]  # [进阶] 完全不显示日志的第三方库
 library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }  # [进阶] 单独调低某些第三方库的日志
 ```
 
 :::
+
+**事件循环看门狗** — 开启后每 1 秒检查一次主循环和 WebUI 循环"应该醒来"与"实际醒来"的时间差，超过 `event_loop_watchdog_warn_seconds` 就打一条形如 `事件循环卡顿: loop=main 迟到=1.23s (告警阈值 0.50s)` 的警告日志，用来判断界面卡顿、消息延迟是不是主线程被阻塞造成的。两个字段都**需要重启**才生效；默认关闭，因为正常运行也会有少量无害的延迟日志。
 
 #### 调试
 
@@ -672,16 +688,22 @@ library_log_levels = { aiohttp = "WARNING", PIL = "WARNING" }  # [进阶] 单独
 
 ```toml [bot_config.toml ~vscode-icons:file-type-toml~]
 [debug]
-enable_console_input = false          # 在交互式终端中启用本地消息和指令输入
+enable_console_input = true           # 在交互式终端中启用本地消息和指令输入（默认开启）
 show_maisaka_thinking = true          # 在日志或界面中显示麦麦的思考过程
 enable_clear_context_command = false  # 允许用 /clear 清空当前聊天流的短期上下文
 enable_reply_effect_tracking = false  # 记录回复效果评分，观察回复质量
+force_plugin_compatibility = false    # 跳过插件声明的 Host/SDK 版本校验直接加载；开启后需重启生效
 keep_prompt_preview_json_base64 = false  # [进阶] Prompt 预览保留图片 base64；便于复现但占空间
 record_tool_structured_content = false   # [进阶] 保存工具返回的结构化内容；增加数据库体积
 enable_llm_cache_stats = false           # [进阶] 记录模型 prompt cache 统计，性能调试用
 ```
 
 :::
+
+**要点：**
+
+- **终端输入** — `enable_console_input` 默认开启：在交互式终端里可以直接输入普通消息，或用 `/clear`、`/pm`、`/offline`、`/online`、`/help` 等指令管理聊天和适配器，输入 `exit()` 关闭。非交互终端（systemd、nohup、`docker run` 不带 `-it`）只会多打一条 warning，不影响运行；改动需重启
+- **强制插件兼容** — `force_plugin_compatibility = true` 会跳过插件 manifest 声明的 Host/SDK 版本区间校验直接加载，**仅作临时兜底**，可能加载实际不兼容的插件；它只记一条 warning，且不影响插件市场的版本兼容性判断。开启后需重启
 
 #### 遥测
 
@@ -740,7 +762,7 @@ python -c "import tomllib; tomllib.load(open('config/bot_config.toml','rb')); pr
 
 **启动时直接报错退出** — TOML 语法错误，或字段值非法（`ban_msgs_regex` 正则非法、关键词规则缺 `reaction`、`chat_prompts` 缺字段）。先用上面的命令定位语法问题；字段校验的错误信息会直接点名问题字段，改掉即可。
 
-**改了没生效** — 你改的段落可能属于「仅启动时生效」：`[webui]` 与 `[maim_message]` 的监听地址和端口、`[mcp]` 服务器连接、`[plugin_runtime]` 的 IPC。重启 MaiBot。其余段落看 [配置概览](./index.md#改了会立即生效吗)。
+**改了没生效** — 你改的段落可能属于「仅启动时生效」：`[webui]` 与 `[maim_message]` 的监听地址和端口、`[mcp]` 服务器连接、`[plugin_runtime]` 的 IPC、`[log]` 的 `event_loop_watchdog_*`、`[debug]` 的 `enable_console_input` 与 `force_plugin_compatibility`。重启 MaiBot。其余段落看 [配置概览](./index.md#改了会立即生效吗)。
 
 **麦麦不理人** — 依次检查：适配器的聊天名单有没有加这个群（见 [NapCat 适配器](../adapters/napcat.md) 的「先加名单，再测试」）；`talk_value` 是否被调得过低；`qq_account` 与适配器登录的 QQ 是否一致。
 

@@ -148,10 +148,36 @@ Both share the same structure, declaring a closed interval:
 
 - `min_version`: Minimum allowed version (inclusive)
 - `max_version`: Maximum allowed version (inclusive)
-- Both must be strict three-part semantic version numbers (`X.Y.Z`)
+- Both must be strict three-part semantic version numbers (`X.Y.Z`) and cannot be empty
 - `min_version` cannot be greater than `max_version`
 
-The host will verify during the handshake phase whether the current version falls within the declared range. If incompatible, the plugin will be prevented from loading.
+**When and how it is checked**: both ranges are validated by the Runner through `ManifestValidator` when the plugin loads. The Host passes its own version via `MAIBOT_HOST_VERSION`; the SDK version is whatever `maibot-plugin-sdk` is actually imported in the Runner's environment. During the handshake (`runner.hello`) the Host only checks that the Runner's own SDK version falls inside the fixed range `[1.0.0, 2.99.99]` — that is a separate check from the `sdk` range declared in the manifest.
+
+The two failure modes are not symmetric:
+
+- **Host out of range** — if the current Host is above `max_version` but shares its major and minor version, the plugin **still loads** with a warning only (patch-level tolerance); every other mismatch is recorded as an error and the plugin is blocked
+- **SDK out of range** — always recorded as an error regardless of direction, and the plugin is blocked
+
+::: danger Do not pin max_version to a patch release
+Writing `max_version` as a concrete patch release (for example `1.2.3`) means your plugin stops loading as soon as MaiBot ships a new version. The official built-in plugins set the upper bound to `999.999.999` and constrain only `min_version` seriously, letting real testing decide whether a new version still works; write `0.0.0` when you do not want a lower bound.
+:::
+
+::: code-group
+
+```json [JSON ~vscode-icons:file-type-json~]
+{
+  "host_application": {
+    "min_version": "1.3.0",
+    "max_version": "999.999.999"
+  },
+  "sdk": {
+    "min_version": "1.0.0",
+    "max_version": "999.999.999"
+  }
+}
+```
+
+:::
 
 ### i18n Internationalization Configuration
 
@@ -253,3 +279,23 @@ The Manifest Validator (`ManifestValidator`) adopts Pydantic strict mode. The ma
 - **URL Format**: Must start with `http://` or `https://`.
 - **No Self-Dependency**: The plugin cannot depend on itself in `dependencies`.
 - **No Duplicate Dependencies**: Each plugin/package name can only be declared once.
+
+### Version Range Rules
+
+Both `host_application` and `sdk` are judged by the same validation entry point, with results split into error and warning tiers:
+
+- **Host above `max_version` with the same major.minor** — warning; the plugin loads normally (patch-level tolerance)
+- **Host out of range in any other case** — error; the plugin is blocked from loading
+- **SDK out of range** — error; the plugin is blocked, with no tolerance tier
+
+The handshake-time check of the Runner's own SDK version (fixed range `[1.0.0, 2.99.99]`) is independent of the two tiers above: it is not declared by the manifest and is not affected by "Force Plugin Compatibility".
+
+### Force Plugin Compatibility
+
+With the main-program config `[debug] force_plugin_compatibility` (the "Force plugin compatibility" switch in the WebUI debug settings) enabled, both the Host and the Runner skip the `host_application` and `sdk` range checks: out-of-range plugins are no longer recorded as errors, only a warning that includes the declared ranges and the current Host / SDK versions.
+
+- **Requires restarting MaiBot** — the Host encodes the switch into the `MAIBOT_FORCE_PLUGIN_COMPATIBILITY` environment variable for the Runner; editing the config does not hot-update an already running Runner
+- **Skips version ranges only** — `manifest_version`, the fixed SDK range at handshake, dependency resolution, the capability whitelist, and `llm_providers` consistency are all still enforced
+- **Does not affect the Plugin Market** — version-index compatibility checks do not read this switch; the "incompatible" labels in the market and the version dropdown are still computed from the declared ranges
+
+Treat it as a temporary tool for answering "is a version number blocking this plugin?" rather than a permanent setting: with the check skipped, runtime failures caused by interface changes come with no upfront signal.

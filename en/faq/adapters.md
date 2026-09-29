@@ -18,7 +18,7 @@ Also verify the logged-in QQ account, group ID, speaking permission, and whether
 
 ## Which NapCat token should I use?
 
-Use the access token configured for the NapCat WebSocket service. It is not the NapCat WebUI login token or the MaiBot WebUI access token. If WebSocket authentication is disabled, the adapter field is normally empty; otherwise both sides must use exactly the same value.
+Use the access token configured for the NapCat WebSocket service. It is not the NapCat WebUI login token or the MaiBot WebUI access password (shown as "Access Token" on the login page). If WebSocket authentication is disabled, the adapter field is normally empty; otherwise both sides must use exactly the same value.
 
 ## Why can SnowLuma not connect?
 

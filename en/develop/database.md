@@ -6,6 +6,10 @@ title: Database
 
 MaiBot uses **SQLite** as its local database, defining and managing 22 tables via **SQLModel** (on top of SQLAlchemy). The data file is located at `data/trymai.db` in the startup directory. This document is aimed at advanced users who need to operate, troubleshoot, archive data, or run analytics.
 
+::: tip Long-term memory (A_Memorix) uses a separate database
+The `data/trymai.db` described on this page **does not contain long-term memory data**. A_Memorix stores paragraphs, relations, Episodes, person profiles, the fact ledger, and image cognitions in its own `data/a-memorix/metadata/metadata.db` (schema v26), with vector and graph snapshots under `data/a-memorix/vectors/` and `data/a-memorix/graph/`. Image memory additionally keeps `data/a-memorix/images/assets/` (original images, addressed by SHA-256 content hash) and `data/a-memorix/images/vectors/<fingerprint>/` (a dedicated image vector pool). Back up these directories together with the database.
+:::
+
 ::: tip Data Import/Export
 If you need to export statistics, messages, or other data to external analysis systems, see [Data Import/Export](/en/develop/statistics-io).
 :::

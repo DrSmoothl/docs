@@ -10,7 +10,7 @@ This document is aimed at deployment operators and advanced users. It explains t
 
 At runtime, MaiBot depends on two independent TOML files under the `config/` directory, each managed by its own Pydantic model:
 
-**bot_config.toml** — the main configuration file, corresponding to the `Config` model (located in `src/config/official_configs.py`). Contains 21 sub-config sections: `[bot]`, `[personality]`, `[chat]`, `[experimental]`, `[visual]`, `[expression]`, `[jargon]`, `[a_memorix]`, `[message_receive]`, `[voice]`, `[emoji]`, `[keyword_reaction]`, `[response_post_process]`, `[chinese_typo]`, `[response_splitter]`, `[telemetry]`, `[log]`, `[debug]`, `[maim_message]`, `[webui]`, `[database]`, `[mcp]`, `[plugin]`, `[plugin_runtime]`.
+**bot_config.toml** — the main configuration file, corresponding to the `Config` model (located in `src/config/official_configs.py`). Contains 20+ sub-config sections: `[bot]`, `[personality]`, `[chat]`, `[experimental]`, `[visual]`, `[expression]`, `[jargon]`, `[a_memorix]` (including the `image_memory` image-memory section), `[message_receive]`, `[voice]`, `[emoji]`, `[keyword_reaction]`, `[response_post_process]`, `[chinese_typo]`, `[response_splitter]`, `[telemetry]`, `[log]`, `[debug]`, `[maim_message]`, `[webui]`, `[database]`, `[mcp]`, `[plugin]`, `[plugin_runtime]`.
 
 **model_config.toml** — the model configuration file, corresponding to the `ModelConfig` model (located in `src/config/model_configs.py`). Contains 3 top-level sections: `[[models]]` (model list), `[model_task_config]` (task-to-model bindings), `[[api_providers]]` (API provider list).
 
@@ -46,7 +46,7 @@ This section only covers the core fields that deployment operators need to care 
 
 **ChatConfig (`[chat]`)** — controls context window size (`max_context_size` / `max_private_context_size`), reply timing and frequency (`reply_timing`), and reply style (`reply_style`). See the message processing flow for details.
 
-**ExperimentalConfig (`[experimental]`)** — experimental feature toggles: behavior learning, emotion trait tier, attention drift, Focus mode.
+**ExperimentalConfig (`[experimental]`)** — experimental feature toggles: behavior learning, the retro reply prompt (`replyer_retro_prompt`), emotion trait tier, attention drift, Focus mode.
 
 **MCPConfig (`[mcp]`)** — MCP server configuration. See [MCP Integration](/en/develop/mcp-integration) for details.
 
@@ -60,7 +60,7 @@ This section only covers the core fields that deployment operators need to care 
 
 **`[[models]]` (array of tables)** — each model entry defines `name` (model alias), `model_identifier` (actual model name in the API), and `api_provider` (points to a provider name in `api_providers`).
 
-**`[model_task_config]`** — binds various inference tasks to models. Core sub-sections include `planner`, `replyer`, `vlm`, `memory`, `embedding`, `tool_calling`, `topic_judge`, `expression_generation`, `expression_recognition`, `chinese_typo`, and more. Each task section contains `model_list` (candidate model name list) and sampling parameters like `temperature`.
+**`[model_task_config]`** — binds various inference tasks to models. It currently has 12 task sections: `replyer`, `planner`, `memory`, `mid_memory`, `utils`, `learner`, `expression_use`, `emoji`, `vlm`, `voice`, `embedding`, and `image_embedding`. Each task section contains `model_list` (candidate model names), `max_tokens`, `temperature`, `selection_strategy`, `hard_timeout`, and similar parameters; `slow_threshold` was removed in 1.3.0.
 
 **`[[api_providers]]` (array of tables)** — API provider configuration.
 
@@ -141,7 +141,7 @@ When a configuration file is loaded, the system compares the file's `[inner].ver
 
 ### The BOT_CONFIG_UPGRADE_HOOKS Chain
 
-`BOT_CONFIG_UPGRADE_HOOKS` currently contains 7 hooks, arranged in ascending version order:
+`BOT_CONFIG_UPGRADE_HOOKS` currently contains 9 hooks, arranged in ascending version order (the current `CONFIG_VERSION` is `"8.14.51"`):
 
 **8.10.11 — Reset Group Chat Prompt to Default**
 
@@ -170,6 +170,14 @@ In early versions, `webui.host` could be a single string. `_normalize_webui_host
 **8.14.19 — Split Chat Configuration Section**
 
 Splits the previously flat fields under `[chat]` into two sub-sections: `reply_timing` (when to speak) and `reply_style` (how to speak), and migrates `group_chat_prompt`, `private_chat_prompts`, and other fields to their new positions.
+
+**8.14.29 — Carry the Original Personality Over to the Behavior Style**
+
+When the Planner behavior style was first split out, if `[personality]` had no `behavior_style` yet, the `_copy_personality_to_behavior_style` hook copied the user's existing `personality` text into `behavior_style` so the behavior style was not lost after upgrading.
+
+**8.14.40 — Migrate the Removed Expression Selection Mode**
+
+The old `expression.expression_selection_mode = "vector"` (Fine mode) has been removed. The `_migrate_removed_expression_selection_mode` hook rewrites it to `"vector_intent"` (Super Fine) so startup does not fail.
 
 ### Upgrade Hook Execution Flow
 

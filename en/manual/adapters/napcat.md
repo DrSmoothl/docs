@@ -155,6 +155,10 @@ enable_chat_list_filter = false   # testing only; add your lists back and re-ena
 
 :::
 
+::: tip There is also a main-program list layer
+Besides the adapter's own `[chat]` lists, MaiBot keeps a unified group / private-chat access policy in `config/adapter_policy.toml` (default actions plus per-adapter `allow_ids` / `deny_ids`). **A message enters the conversation only when both layers allow it**, so check both when troubleshooting "no response"; see [Adapter Management](../webui/adapter-management.md).
+:::
+
 ::: tip Full NapCat action API
 The adapter transparently exposes most of NapCat's OneBot action APIs (System / Account / Group / Message / File namespaces) for developers. See the full list in the [NapCat API reference](https://napcat.apifox.cn/).
 :::

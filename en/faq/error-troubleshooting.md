@@ -400,14 +400,14 @@ enabled = true                  # Make sure the rule is enabled
 
 :::
 
-**Step 3: Check Rate Limits**
+**Step 3: Check Speech Frequency**
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
 # config/bot_config.toml
-[chat]
-# Check if rate limits are too strict
-reply_frequency_limit = 10      # Max 1 reply per 10 seconds
+[chat.reply_timing]
+talk_value = 1                  # Group talk willingness (0-1); lower is quieter. Default 1
+private_talk_value = 1          # Private chat talk willingness (0-1). Default 1
 ```
 
 :::
@@ -447,8 +447,9 @@ Covers scenarios 7–11, problems encountered relatively often during normal use
 ### Scenario 7: Plugin Loading Failed
 
 #### Error Symptoms
-- Startup reports `PluginLoadError`, corresponding plugin is grayed out and unavailable in the plugin list
-- Log shows `ImportError`, `ModuleNotFoundError`, or `ManifestValidationError`
+- Startup logs report a plugin loading failure, and the corresponding plugin is grayed out and unavailable in the plugin list
+- Log shows `ImportError`, `ModuleNotFoundError`, or `Manifest validation failed`
+- Log reports `Host version incompatible` or `SDK version incompatible` (the plugin's declared Host / SDK version range does not cover the current version)
 - Plugin directory exists but no plugins are loaded
 
 #### Quick Self-Check Trio
@@ -479,10 +480,27 @@ No module named 'requests'
 ```
 Install whatever is indicated as missing.
 
+**Step 4: Fallback for Version Incompatibility**
+If the log says `Host version incompatible` or `SDK version incompatible` (the plugin's declared version range does not cover the current MaiBot / SDK version), first follow Step 1 and switch to another plugin version. If no compatible version exists, you can temporarily enable forced compatibility:
+
+::: code-group
+
+```toml [TOML ~vscode-icons:file-type-toml~]
+# config/bot_config.toml
+[debug]
+# Skip the plugin's declared Host / SDK version range check and load it directly
+force_plugin_compatibility = true
+```
+
+:::
+
+When enabled, the version range check is skipped and only one warning is logged (including the declared Host / SDK range and the current version), so the load is no longer rejected; **you must restart MaiBot for the change to take effect**. This is a temporary fallback, not a recommended practice — the plugin may genuinely be incompatible, and forcing the load can cause runtime errors. Once a compatible plugin version is available, set it back to `false` and update the plugin. For a full description of this switch, see [Logging & Monitoring · Debug Configuration Items](/develop/observability#debug-configuration-items).
+
 #### Prevention Tips
 - Check the documentation before installing a plugin to confirm compatible MaiBot version
 - Prioritize official plugins or popular community plugins
 - Regularly update plugins and MaiBot to the latest versions
+- Don't leave `[debug].force_plugin_compatibility` enabled long-term; it's only a fallback when no compatible version exists
 
 ---
 
@@ -514,17 +532,9 @@ If you suspect database corruption (e.g., after a sudden power outage):
 2. Restart MaiBot — the program will automatically rebuild or repair the database
 3. If that doesn't work, delete `data/MaiBot.db` and let the program recreate it (important prior data needs to be restored from backup)
 
-**Step 3: Enable WAL Mode (Reduce Locking Conflicts)**
+**Step 3: Confirm No Second Instance Is Writing to the Same Database**
 
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[database]
-# Enable WAL mode to reduce multi-process locking conflicts
-journal_mode = "wal"
-```
-
-:::
+`database is locked` has essentially one cause: multiple MaiBot instances (or leftover processes) accessing `data/MaiBot.db` at the same time. Close the extra processes and keep only one. The database already runs in WAL mode by default — it cannot and need not be enabled through a `[database]` section.
 
 **Step 4: Clean Up Disk Space**
 
@@ -534,7 +544,6 @@ Open the `logs/` folder and delete unneeded old log files. If disk space is crit
 - Avoid running multiple MaiBot instances simultaneously connecting to the same database file
 - Regularly back up `data/MaiBot.db` (recommended weekly)
 - Configure log rotation to prevent log files from filling up the disk
-- Use WAL mode to reduce locking conflicts
 
 ---
 
@@ -615,33 +624,19 @@ api_key = "sk-your-backup-key"
 
 #### Error Symptoms
 - Sending emoji commands has no effect
-- Emoji generation fails, logs show `VLMError` or `FilterError`
-- Emoji registration fails, prompting quantity limit exceeded
+- Emoji registration fails, logs report exceeding the quantity limit
+- Emoji registration fails because the `data/emojis/` directory is unwritable
 
 #### Quick Self-Check Trio
-1️⃣ Confirm `emoji.vlm_api_key` is configured (if using VLM verification)
-2️⃣ Check if `emoji.filter` rules are too strict
+1️⃣ Check whether `[emoji]`'s `content_filtration` is filtering too aggressively
+2️⃣ Confirm whether `[emoji]`'s `emoji_send_num` / `max_reg_num` are set too low
 3️⃣ Ensure `data/emojis/` directory is writable (correct permissions)
 
 #### Solutions
 
-**Step 1: Check VLM Configuration**
+**Step 1: Adjust Emoji Filtering Rules**
 
-If using VLM for emoji verification, ensure the API Key is configured:
-
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[emoji]
-# VLM API Key (if using visual model for emoji verification)
-vlm_api_key = "sk-your-vlm-key"
-```
-
-:::
-
-**Step 2: Adjust Emoji Filtering Rules**
-
-If emojis are being falsely filtered:
+If emojis are being falsely filtered, first disable filtering to confirm whether it's a rule issue:
 
 ::: code-group
 
@@ -672,99 +667,64 @@ do_replace = true            # Replace old emojis when limit is reached
 :::
 
 #### Prevention Tips
-- Temporarily disable VLM verification during first use to check if it's a model issue
 - Enable `content_filtration` cautiously to avoid false filtering of normal emojis
 - Regularly clean the `data/emojis/` directory, remove unused emojis
 - Set a reasonable `max_reg_num` to avoid taking up too much storage space
 
 ---
 
-### Scenario 11: Knowledge Graph / Memory System Error
+### Scenario 11: Memory System Error
 
 #### Error Symptoms
 - Bot replies "I don't remember" or "No relevant information found"
-- Log prompts knowledge file loading failed
+- Log reports long-term memory loading failed
 - Memory added but cannot be retrieved
 
 #### Quick Self-Check Trio
-1️⃣ Run `maibot knowledge rebuild` to rebuild the knowledge index
-2️⃣ Check if files in `data/knowledge/` directory are intact
-3️⃣ Confirm `knowledge.enabled` is `true`
+1️⃣ Run the index rebuild in WebUI's "Memory" page (paragraph and vector each have their own entry)
+2️⃣ Check whether the `data/a-memorix/` directory is writable and intact
+3️⃣ Confirm `plugin.enabled` under `[a_memorix]` is `true`
 
 #### Solutions
 
-**Step 1: Rebuild Knowledge Index**
+**Step 1: Rebuild Memory Index**
+
+Both the paragraph index and the vector index of long-term memory are rebuilt in WebUI's "Memory" page. 1.3.1 has no standalone command-line rebuild tool. Open WebUI → Memory page and run the corresponding rebuild entry as prompted.
+
+**Step 2: Check the Memory Data Directory**
 
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# Use CLI command to rebuild index
-maibot knowledge rebuild
+# View the memory data directory (configured under [a_memorix] as storage.data_dir; defaults to data/a-memorix)
+ls -la data/a-memorix/
 
-# Or click the "Rebuild Index" button in WebUI
+# Confirm the directory is writable and has no leftover .lock / .tmp files
 ```
 
 :::
 
-**Step 2: Check Knowledge Files**
+**Step 3: Enable the Memory System**
 
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-# View the knowledge directory
-ls -la data/knowledge/
-
-# Confirm file format is correct (JSON or TXT)
-# Corrupted files will cause loading failures
-```
-
-:::
-
-**Step 3: Enable the Knowledge System**
-
-Confirm the knowledge system is enabled in the configuration file:
+Confirm long-term memory is enabled in the configuration file:
 
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
-[knowledge]
-enabled = true
+[a_memorix.plugin]
+enabled = true                 # Master switch for the long-term memory system; default false
 ```
 
 :::
 
-**Step 4: Limit Single Knowledge Entry Length**
+**Step 4: Rebuild the Vector Index When Corrupted**
 
-If knowledge is too long and exceeds the embedding model's token limit:
-
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[knowledge]
-# Maximum length of a single knowledge entry (Token count)
-max_chunk_size = 512
-# Knowledge chunk overlap size (to avoid context breaks)
-chunk_overlap = 50
-```
-
-:::
-
-**Step 5: Check Vector Database**
-
-If the index is corrupted, delete the contents of `data/vector_index/` directory, then rebuild:
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-maibot knowledge rebuild
-```
-
-:::
+If newly added memories cannot be retrieved, first run the vector rebuild in WebUI's "Memory" page. If that still doesn't work, back up `data/a-memorix/`, stop MaiBot, delete the directory and let the system recreate it (historical memories must be restored from the backup).
 
 #### Prevention Tips
-- Control the length of individual entries when adding knowledge to avoid exceeding the embedding model's token limit
-- Rebuild the knowledge index periodically to keep the index synchronized with knowledge files
-- Back up `data/knowledge/` and `data/vector_index/` directories
-- Use WebUI's knowledge management features to avoid manually editing knowledge files
+- Periodically check memory index status in WebUI and rebuild promptly when retrieval fails
+- Back up the `data/a-memorix/` directory — it's the only storage location for long-term memory
+- Use WebUI's memory management features; don't manually edit files inside `data/a-memorix/`
 
 ---
 
@@ -776,13 +736,13 @@ Covers scenarios 12–17, problems encountered only in specific operations or co
 
 #### Error Symptoms
 - Opening WebUI page automatically redirects back to login page
-- After entering password, prompts "Login failed" or "Incorrect password"
+- After pasting the Token, prompts "Login failed" or "Invalid Token"
 - API requests return `401 Unauthorized` error
 - Browser console shows `Token expired` or `Invalid session`
 
 #### Quick Self-Check Trio
 1️⃣ **Clear browser cache** — Cookie/LocalStorage may have expired or become corrupted
-2️⃣ **Check if password is correct** — Confirm uppercase/lowercase and special characters are entered correctly
+2️⃣ **Check if the Token is correct** — Confirm uppercase/lowercase, special characters, and that no extra space was copied
 3️⃣ **Check WebUI service status** — Confirm the service is running and hasn't been restarted
 
 #### Solutions
@@ -804,98 +764,82 @@ Covers scenarios 12–17, problems encountered only in specific operations or co
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# If password or secret_key has been modified, restart the service
+# After changing the Token in data/webui.json, restart the service
 # Docker deployment
 docker restart maibot
 
 # Source deployment
 # First stop the current process (Ctrl+C), then restart
-python bot.py
+uv run bot.py
 ```
 
 :::
 
-**Method 3: Check secret_key Configuration**
+**Method 3: Verify the Login Token**
+The WebUI login Token is stored in the `access_token` field of `data/webui.json`, not in `bot_config.toml`:
+
 ::: code-group
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-# Edit config/bot_config.toml
-[webui]
-secret_key = "your-secret-key-here"  # Ensure it remains consistent with previous value
-session_expire = 7                   # Session validity (days), default 7 days
+```json [JSON ~vscode-icons:file-type-json~]
+{
+  "access_token": "your-access-token-here",
+  "token_source": "configured"
+}
 ```
 
 :::
 
-> ⚠️ **Note**: Modifying `secret_key` will invalidate all logged-in sessions, requiring re-login.
+Restart MaiBot after changing the Token for it to take effect. The terminal also prints the current Token on every startup — just copy that one. The Token generated on first launch is temporary; replacing it with your own fixed Token is more convenient.
+
+> ⚠️ **Note**: The browser keeps the Token in the `maibot_session` Cookie as its login state, so changing the Token invalidates all logged-in sessions and requires re-login.
 
 #### Prevention Tips
-- **Extend session validity** — Change `session_expire` to 30 days
-- **Keep secret_key fixed** — Don't change it frequently, otherwise you'll have to re-login each time
-- **Use browser bookmarks** — Save the page after logging in to avoid re-entering the password
+- **Switch to a fixed Token** — After first launch, replace the temporary Token with your own and pin it in `data/webui.json`
+- **Don't change the Token frequently** — Otherwise you'll have to re-login each time
+- **Use browser bookmarks** — Save the page after logging in to avoid re-entering the Token
 
 ---
 
-### Scenario 13: Platform Bot Account Not Configured
+### Scenario 13: Adapter Not Connected or Account Unavailable
 
 #### Error Symptoms
 - Messages cannot be sent on a platform (e.g., QQ)
-- Log prompts `No bot account configured for platform qq`
+- No adapter identity / connection information appears in the logs
 - Adapter is connected but bot is unresponsive
 - Message sending fails, returns `400 Bad Request`
 
 #### Quick Self-Check Trio
-1️⃣ **Check platform configuration** — Confirm `platforms.qq.bot_accounts` is filled in
-2️⃣ **Verify account credentials** — Confirm Token/password is correct and hasn't expired
-3️⃣ **Check adapter logs** — Confirm the adapter is connected normally
+1️⃣ **Check the adapter connection** — Is NapCat or another adapter started and connected to MaiBot
+2️⃣ **Verify account credentials** — Confirm the QQ number logged into the adapter is healthy and not banned or offline
+3️⃣ **Check adapter logs** — Look for adapter-related records in the WebUI log panel or terminal
 
 #### Solutions
 
-**Step 1: Configure Bot Account**
-::: code-group
+**Step 1: Confirm the Adapter Is Connected**
+In 1.3.1, platform accounts are maintained on the adapter side and are not filled into `bot_config.toml`. First confirm that NapCat (or another adapter) is started and connected to MaiBot according to the [Adapters](/en/manual/adapters/) documentation.
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-# Edit config/bot_config.toml
-[platforms.qq]
-enabled = true
-
-# Add bot account configuration
-[[platforms.qq.bot_accounts]]
-uin = "123456789"              # Bot QQ number
-token = "your-bot-token"       # Bot Token (fill in according to adapter type)
-
-# If using NapCat adapter, also configure:
-[[platforms.qq.bot_accounts]]
-uin = "123456789"
-adapter = "napcat"
-napcat_uin = "987654321"       # NapCat logged-in QQ number
-```
-
-:::
-
-**Step 2: Check Adapter Connection**
+**Step 2: Check Adapter Connection Status**
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-# View adapter logs
+# View adapter records in MaiBot logs
 # Docker deployment
 docker logs maibot | grep -i adapter
 
 # Source deployment
-# Observe terminal output, look for "Adapter connected" related logs
+# Observe terminal output, look for adapter connection and identity reporting logs
 ```
 
 :::
 
 **Step 3: Verify Account Credentials**
-- **QQ platform** — Confirm the QQ number can log into NapCat normally
-- **WeChat platform** — Confirm the Token hasn't expired and permissions are correct
-- **Other platforms** — Refer to the corresponding adapter's documentation
+- **QQ platform** — Confirm the QQ number logged into the adapter is online and not muted or banned
+- **Other platforms** — Refer to the corresponding adapter's documentation to confirm login status
 
 #### Prevention Tips
 - **Use a secondary account** — Avoid the risk of your main account being banned
-- **Update credentials regularly** — Replace Token before it expires
-- **Configure backup accounts** — Can quickly switch if the primary account has issues
+- **Check adapter status regularly** — Re-login promptly after it goes offline
+- **Keep adapters updated** — An outdated adapter version may fail to connect to a newer MaiBot
 
 ---
 
@@ -1081,17 +1025,8 @@ Check if you can open GitHub or Gitee websites. If not, there's a network issue 
 **Step 2: Try a Repository That Doesn't Require Login**
 If you get a permission error (Permission denied), try a public repository (one that doesn't need SSH Key) in WebUI. If the public repository syncs normally, it's an SSH permission configuration issue — check your SSH Key settings on GitHub/Gitee.
 
-**Step 3: Adjust Git Timeout Configuration**
-If the repository is large, increase the timeout in `config/bot_config.toml`:
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[git_mirror]
-timeout = 300                    # Git operation timeout (seconds), default 300 seconds
-max_file_size = 100              # Maximum single file size (MB), files larger than this will be skipped
-```
-
-:::
+**Step 3: Adjust Git Timeout**
+Git mirror sources are maintained in WebUI's "Git Mirror" page, and settings such as the timeout are configured together with each mirror source — not in `bot_config.toml`. For large repositories, increase the timeout for that mirror source in WebUI, or exclude the large files/directories you don't need synced.
 
 #### Prevention Tips
 - **Test with a public repository first** — Switch to a private repo only after confirming sync works
@@ -1122,14 +1057,16 @@ Open the `logs/` folder and delete unneeded old log files. Generally, only the l
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
 # Edit config/bot_config.toml
-[logging]
-level = "INFO"                 # Use INFO for production, DEBUG for debugging
-max_bytes = 10485760           # Maximum 10MB per single file
-backup_count = 5               # Keep 5 backup files
-enable_rotation = true         # Enable log rotation
+[log]
+log_level = "INFO"             # Global log level; use INFO for production, DEBUG for debugging
+log_file_max_bytes = 10485760  # Rotate once a single log file exceeds 10MB
+max_log_files = 30             # Maximum number of main log files to retain
+log_cleanup_days = 30          # Automatically clean up log files older than this many days
 ```
 
 :::
+
+Log rotation and cleanup are enabled by default; adjust these three values to control size and retention. For finer tuning, see [Logging & Monitoring](/develop/observability).
 
 **Step 3: Clean Up Other Junk Files**
 - Docker users: Clean up unused images and containers to free space
@@ -1164,14 +1101,8 @@ Covers scenarios 18–19, problems rarely encountered but may appear in special 
 3️⃣ Are there multiple MaiBot instances accessing the same database simultaneously?
 
 #### Solutions
-**Rebuild User Index**
-::: code-group
-
-```bash [Bash ~vscode-icons:file-type-shell~]
-maibot person rebuild
-```
-
-:::
+**Rebuild the Person Index**
+When character card information is abnormal, first refresh or rebuild the index in WebUI's person/user management page; 1.3.1 has no standalone command-line rebuild tool.
 
 **Check Character Card Format**
 ::: code-group
@@ -1218,46 +1149,41 @@ Adapter logs continuously:
 Message sending and receiving is unstable, sometimes works and sometimes doesn't.
 
 #### Quick Self-Check Trio
-1️⃣ Is the `adapter.ws_url` address and port correct?
+1️⃣ Is the MaiBot address and port filled into the adapter correct? The legacy WebSocket service on the MaiBot side defaults to port `8000` (`[maim_message].ws_server_port`)
 2️⃣ Is the network stable? (Between server and adapter)
-3️⃣ Is the server-side WebSocket service running normally?
+3️⃣ Is the MaiBot process running normally? Does the terminal report port conflicts or startup failures?
 
 #### Solutions
-**Check WebSocket Address**
+**Confirm the Connection Address on the MaiBot Side**
+The WebSocket address in the adapter (e.g. NapCat) is maintained by the adapter's own configuration file, not in `bot_config.toml`. It connects to MaiBot's `8000` port by default:
+
 ::: code-group
 
 ```toml [TOML ~vscode-icons:file-type-toml~]
-# Open the adapter configuration file
-[adapter]
-ws_url = "ws://127.0.0.1:8000"  # Ensure the address and port are correct
+# Only needed if you actually enabled the legacy maim_message WebSocket service
+[maim_message]
+ws_server_port = 8000
 ```
 
 :::
 
-**Adjust Reconnect Interval**
+**Adjust the Reconnect Interval on the Adapter Side**
+The reconnect interval is configured on the adapter side; increasing it reduces frequent reconnections:
+
 ::: code-group
 
-```toml [TOML ~vscode-icons:file-type-toml~]
-[adapter]
-reconnect_interval = 5  # Increase the interval to avoid frequent reconnection (unit: seconds)
+```bash [Bash ~vscode-icons:file-type-shell~]
+# Open the adapter's own configuration file and increase the reconnect interval (e.g. 5 seconds)
+# Refer to your adapter's documentation for the exact field name
 ```
 
 :::
 
 **Check Server Status**
-Check MaiBot's terminal output to confirm the WebSocket service is running normally (you should see logs like `WebSocket 服务启动成功`).
+Check MaiBot's terminal output to confirm the process is running normally and the port isn't occupied (see Scenario 3 for port conflicts). The legacy WebSocket service's listening port is controlled by `[maim_message].ws_server_port` (default `8000`), and changing it requires restarting MaiBot.
 
 **Enable Heartbeat Keepalive (Advanced)**
-If the network environment is poor, enable heartbeat in the adapter configuration:
-::: code-group
-
-```toml [TOML ~vscode-icons:file-type-toml~]
-[adapter]
-enable_heartbeat = true
-heartbeat_interval = 30  # Send a heartbeat every 30 seconds
-```
-
-:::
+If the network environment is poor, enable WebSocket heartbeat keepalive on the adapter side — refer to your adapter's documentation for the exact fields.
 
 #### Prevention Tips
 - 🌐 **Ensure network stability** — The network between server and adapter should be reliable
@@ -1275,31 +1201,31 @@ heartbeat_interval = 30  # Send a heartbeat every 30 seconds
 
 ### HTTP Status Code Quick Reference
 
-**HTTP 400 Bad Request** 🟧 Severe → [Scenario 13: Platform Bot Account Not Configured](#scenario-13-platform-bot-account-not-configured) — Request parameter error, message sending failed
+**HTTP 400 Bad Request** 🟧 Severe → [Scenario 13: Adapter Not Connected or Account Unavailable](#scenario-13-adapter-not-connected-or-account-unavailable) — Request parameter error, message sending failed
 
-**HTTP 401 Unauthorized** 🟥 Fatal → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error--insufficient-balance) — API Key invalid or missing
+**HTTP 401 Unauthorized** 🟥 Fatal → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error-insufficient-balance) — API Key invalid or missing
 
-**HTTP 401 Unauthorized** 🟧 Severe → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed--token-expired) — Session expired or Token invalid
+**HTTP 401 Unauthorized** 🟧 Severe → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed-token-expired) — Session expired or Token invalid
 
-**HTTP 402 Payment Required** 🟧 Severe → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error--insufficient-balance) — Account balance insufficient
+**HTTP 402 Payment Required** 🟧 Severe → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error-insufficient-balance) — Account balance insufficient
 
-**HTTP 403 Forbidden** 🟥 Fatal → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error--insufficient-balance) — API Key insufficient permissions
+**HTTP 403 Forbidden** 🟥 Fatal → [Scenario 2: API Key Error / Insufficient Balance](#scenario-2-api-key-error-insufficient-balance) — API Key insufficient permissions
 
-**HTTP 429 Too Many Requests** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — Request frequency too high, rate limited
+**HTTP 429 Too Many Requests** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — Request frequency too high, rate limited
 
-**HTTP 500 Internal Server Error** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — API server internal error
+**HTTP 500 Internal Server Error** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — API server internal error
 
-**HTTP 502 Bad Gateway** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — Gateway error, upstream service unreachable
+**HTTP 502 Bad Gateway** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — Gateway error, upstream service unreachable
 
-**HTTP 503 Service Unavailable** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — Service temporarily unavailable (overload/maintenance)
+**HTTP 503 Service Unavailable** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — Service temporarily unavailable (overload/maintenance)
 
 ### Common Error Keyword Index
 
 **`Address already in use`** / **`[Errno 98]`** / **`[Errno 10048]`** 🟧 Severe → [Scenario 3: Port Occupied](#scenario-3-port-occupied) — Port is already in use by another process
 
-**`APIConnectionError`** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — API connection failed
+**`APIConnectionError`** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — API connection failed
 
-**`Connection refused`** / **`无法访问此网站`** 🟥 Fatal → [Scenario 4: WebUI Page Won't Open](#scenario-4-webui-page-wont-open) — WebUI service not started or port unreachable
+**`Connection refused`** / **`无法访问此网站`** 🟥 Fatal → [Scenario 4: WebUI Page Won't Open](#scenario-4-webui-page-won-t-open) — WebUI service not started or port unreachable
 
 **`database is locked`** 🟧 Severe → [Scenario 8: Database Error](#scenario-8-database-error) — Database locked by multiple processes
 
@@ -1307,29 +1233,29 @@ heartbeat_interval = 30  # Send a heartbeat every 30 seconds
 
 **`FileNotFoundError`** 🟥 Fatal → [Scenario 1: Configuration File Not Found or Incorrect Format](#scenario-1-configuration-file-not-found-or-incorrect-format) — Configuration file does not exist
 
-**`FilterError`** 🟨 Warning → [Scenario 10: Emoji System Error](#scenario-10-emoji-system-error) — Emoji filter rule false positive
+**`Host version incompatible`** / **`SDK version incompatible`** 🟧 Severe → [Scenario 7: Plugin Loading Failed](#scenario-7-plugin-loading-failed) — The plugin's declared version range does not cover the current version
 
 **`ImportError`** / **`ModuleNotFoundError`** 🟧 Severe → [Scenario 7: Plugin Loading Failed](#scenario-7-plugin-loading-failed) — Plugin dependency missing
 
-**`No space left on device`** 🟧 Severe → [Scenario 17: Log Files Too Large / Disk Space Full](#scenario-17-log-files-too-large--disk-space-full) — Disk space insufficient
+**`No space left on device`** 🟧 Severe → [Scenario 17: Log Files Too Large / Disk Space Full](#scenario-17-log-files-too-large-disk-space-full) — Disk space insufficient
 
-**`PluginLoadError`** 🟧 Severe → [Scenario 7: Plugin Loading Failed](#scenario-7-plugin-loading-failed) — Plugin loading exception
+**`PluginConfigVersionError`** 🟧 Severe → [Scenario 7: Plugin Loading Failed](#scenario-7-plugin-loading-failed) — Plugin configuration version not supported
 
 **`re.error`** / **`bad escape`** 🟨 Warning → [Scenario 14: Invalid Regular Expression](#scenario-14-invalid-regular-expression) — Regex syntax error
 
-**`TimeoutError`** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout--connection-failure) — Request timeout
+**`TimeoutError`** 🟧 Severe → [Scenario 9: Network Timeout / Connection Failure](#scenario-9-network-timeout-connection-failure) — Request timeout
 
-**`Token expired`** 🟨 Warning → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed--token-expired) — Login session expired
+**`Token expired`** 🟨 Warning → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed-token-expired) — Login session expired
 
 **`TOML syntax error`** 🟥 Fatal → [Scenario 1: Configuration File Not Found or Incorrect Format](#scenario-1-configuration-file-not-found-or-incorrect-format) — Configuration file format error
 
 **`ValueError`** 🟥 Fatal → [Scenario 5: MCP Configuration Error](#scenario-5-mcp-configuration-error) — MCP server configuration parameter invalid
 
-**`VLMError`** 🟨 Warning → [Scenario 10: Emoji System Error](#scenario-10-emoji-system-error) — Vision language model call failed
+**Emoji registration failed** 🟨 Warning → [Scenario 10: Emoji System Error](#scenario-10-emoji-system-error) — Quantity limit exceeded or `data/emojis/` is unwritable
 
-**`知识加载失败`** 🟧 Severe → [Scenario 11: Knowledge Graph / Memory System Error](#scenario-11-knowledge-graph--memory-system-error) — Knowledge file corrupted or format error
+**Memory loading failed** 🟧 Severe → [Scenario 11: Memory System Error](#scenario-11-memory-system-error) — Memory index corrupted or memory directory unwritable
 
-**`Session 过期`** 🟨 Warning → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed--token-expired) — Browser session expired
+**`Session 过期`** 🟨 Warning → [Scenario 12: WebUI Login Failed / Token Expired](#scenario-12-webui-login-failed-token-expired) — Browser session expired
 
 <!-- TASK_8_CONTENT_END -->
 
@@ -1398,7 +1324,8 @@ Depending on your deployment method, the way to get logs differs:
 ::: code-group
 
 ```bash [Bash ~vscode-icons:file-type-shell~]
-cat logs/maibot-*.log
+# View the latest log file (JSONL format, one entry per line)
+cat logs/$(ls -t logs/app_*.log.jsonl | head -1)
 ```
 
 :::
@@ -1438,10 +1365,11 @@ docker logs --tail 100 maibot
 ::: code-group
 
 ```powershell [PowerShell ~vscode-icons:file-type-powershell~]
-type logs\maibot-*.log
+# View the latest log file (JSONL format, one entry per line)
+type logs\app_*.log.jsonl
 
 # Or using PowerShell
-Get-Content logs\maibot-*.log
+Get-ChildItem logs\app_*.log.jsonl | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Get-Content
 ```
 
 :::
@@ -1466,7 +1394,7 @@ graph TD
     D -->|Yes| E{Which function?}
     E -->|No message reply| F[Scenario 6: Bot Not Replying]
     E -->|Emojis| G[Scenario 10: Emoji System]
-    E -->|Memory/Knowledge| H[Scenario 11: Knowledge Graph]
+    E -->|Memory/Knowledge| H[Scenario 11: Memory System]
     E -->|Plugins| I[Scenario 7: Plugin Loading]
     D -->|No| J{WebUI related?}
     J -->|Yes| K{Can WebUI be accessed?}
@@ -1474,7 +1402,7 @@ graph TD
     K -->|Can access but login fails| M[🟢 Medium Frequency Errors]
     J -->|No| N{Platform message send/receive?}
     N -->|Yes| O{Specific symptoms?}
-    O -->|Can't send messages| P[Scenario 13: Platform Account]
+    O -->|Can't send messages| P[Scenario 13: Adapter/Account]
     O -->|Frequent disconnection| Q[Scenario 19: Adapter Reconnection]
     N -->|No| R{Runtime performance/storage?}
     R -->|Yes| S[Scenario 17: Disk Full]

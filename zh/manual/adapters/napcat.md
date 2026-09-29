@@ -155,6 +155,10 @@ enable_chat_list_filter = false   # 仅临时测试，调试完记得加回名�
 
 :::
 
+::: tip 还有一层主程序名单
+除了适配器自己的 `[chat]` 名单，MaiBot 主程序在 `config/adapter_policy.toml` 里还有一套统一的群聊 / 私聊访问策略（默认动作 + 每个适配器的 `allow_ids` / `deny_ids`）。**两层都放行，消息才会进入对话**；排查"没反应"时两层都要看，入口见 [适配器管理](../webui/adapter-management.md)。
+:::
+
 ::: tip 完整的 NapCat 官方动作 API
 适配器透传了 NapCat 的大部分 OneBot action API（含 System / Account / Group / Message / File 等命名空间），供开发者调用。完整清单见 [NapCat 官方 API 参考](https://napcat.apifox.cn/)。
 :::

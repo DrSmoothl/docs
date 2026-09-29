@@ -53,6 +53,7 @@ flowchart LR
 [a_memorix.storage]            # 数据存储位置
 [a_memorix.integration]        # 记忆在聊天中的使用（写回/注入/纠错）
 [a_memorix.embedding]          # 记忆向量化（含回退与回填）
+[a_memorix.image_memory]       # 图片记忆（图片资产留存、图片嵌入与相似召回）
 [a_memorix.retrieval]          # 记忆检索（含融合/向量池/稀疏检索）
 [a_memorix.threshold]          # 检索结果阈值过滤
 [a_memorix.filter]             # 聊天过滤（含跨聊天流分类型过滤）
@@ -99,7 +100,7 @@ data_dir = "data/a-memorix"   # 数据目录
 
 :::
 
-目录里实际存放：SQLite 主库 `metadata/metadata.db`（段落、关系、Episode、画像、事实账本、各类后台队列）、向量文件与 faiss 索引快照 `vectors/`、关系图快照 `graph/`、导入与调优产物等。
+目录里实际存放：SQLite 主库 `metadata/metadata.db`（段落、关系、Episode、画像、事实账本、各类后台队列）、向量文件与 faiss 索引快照 `vectors/`、关系图快照 `graph/`、导入与调优产物等。图片记忆另占两处：`images/assets/`（原始图片，按 SHA-256 内容寻址）与 `images/vectors/<指纹>/`（独立的图片向量池）。
 
 ::: danger 修改 data_dir 不会迁移旧数据
 把 `data_dir` 改到新路径后，MaiBot 会在新目录**从空库重新开始**，旧数据原样留在旧目录，不会被拷贝或合并。需要保留旧记忆时，先停止 MaiBot，手动把整个旧目录内容复制到新目录，再修改配置启动。
@@ -403,6 +404,66 @@ max_retry = 5         # 最大重试次数
 负责给"因降级、导入等原因缺向量"的段落异步补向量。`batch_size` 调大加快补课速度但也加大 embedding 服务压力；`max_retry` 用尽后该段落放弃回填，需要排查为什么这条内容反复编码失败（通常是内容过长或服务限制）。
 
 
+## 图片记忆
+
+图片记忆把图片本身编码成向量，保存它的视觉特征，让后续的新图片能召回历史图片及其关联的讨论、事实和经历。它不是用 VLM 生成的文字描述代替图片检索——文字描述只作为"认知"记录参与解释，真正的相似匹配由独立的图片向量池完成。
+
+::: tip 启用前置条件
+图片记忆需要使用**图片嵌入模型**：先在 `model_config.toml` 的 `[model_task_config.image_embedding]` 里配置一个支持"图片输入到向量"的模型。留空时图片本身和认知仍会正常保存，但检索状态会显示模型不可用，功能降级。
+:::
+
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
+[a_memorix.image_memory]
+enabled = true                 # 是否启用图片记忆
+task_name = "image_embedding"  # 使用的模型任务名，对应 [model_task_config.image_embedding]
+preprocess_version = "identity_v1"  # 图片预处理版本；改变它会让已有图片向量换代
+probe_retry_seconds = 60.0     # 模型探测失败后的重试间隔（秒）
+
+max_bytes = 10485760           # 单张图片大小上限（字节，默认 10 MiB）
+max_pixels = 40000000          # 单张图片像素上限（默认 4000 万）
+candidate_limit = 8            # 一次相似检索返回的候选图片数
+similarity_threshold = 0.72    # 视觉相似度阈值；低于它的候选不作为命中返回
+
+job_poll_interval_seconds = 2.0   # 后台嵌入任务的轮询间隔（秒）
+job_batch_size = 4                # 单批领取并处理的图片任务数
+job_enqueue_batch_size = 200      # 单次入队的历史图片数量
+job_lease_seconds = 120.0         # 任务租约时长（秒）；超时可被重新领取
+job_max_retries = 5               # 嵌入任务最大重试次数
+min_train_threshold = 40          # 图片向量索引触发量化训练的最少样本数
+```
+
+:::
+
+**改动影响**：
+
+- **`enabled`** — 图片记忆总开关，默认开启。关闭后不再写入图片向量，已有图片资产与认知不受影响
+- **`task_name`** — 指定使用哪个模型任务做图片嵌入。默认 `image_embedding`；如果你把图片嵌入模型配在别的任务名下，改这里对应
+- **`preprocess_version`** — 图片进入模型前的预处理方式。系统用它和模型标识、Provider、维度一起构造**嵌入指纹**；改动会触发图片向量换代，旧世代向量不再参与检索
+- **`probe_retry_seconds`** — 模型不可用时的探测重试间隔，避免按后台轮询频率持续请求 Provider
+- **`max_bytes` / `max_pixels`** — 单图入库的硬限制，超过会被拒绝。调大更吃内存，调小可能漏掉稍大的截图
+- **`candidate_limit` / `similarity_threshold`** — 相似召回的数量与门槛。阈值调低 → 召回更多但噪声更大；调高 → 更严格但可能漏召。它只表示向量空间中的视觉接近程度，**不能直接判定两张图是同一对象**
+- **`job_*`** — 后台图片嵌入任务队列的节奏。批量/租约调大适合大批量回填，调小更平滑但更慢
+- **`min_train_threshold`** — 图片向量索引达到多少样本后触发量化训练；注意图片运行时会在新库达到该门槛时自动训练，不要求重启
+
+**相似检索返回什么**：先按内容哈希精确匹配历史同图，再在当前图片向量空间中找视觉相似候选。返回值区分"精确同图"和"视觉相似"，并展开命中图片的认知记录及其关联的段落、实体、关系和 Episode；关联展开会再次检查目标是否已被删除或失效。
+
+**图片资产与删除**：图片按持久入库字节的 SHA-256 去重，每次出现单独记录。删除图片认知或出现记录不会误删仍被其他聊天流或其他记忆包引用的共享资产。
+
+**入库限制**：只接受 **BMP、JPEG、PNG、WEBP** 四种静态格式；多帧图片（GIF、动图 WebP）会被直接拒绝；单图还要满足 `max_bytes` 与 `max_pixels`。表情包默认**不**纳入图片记忆，它有自己的识别与发送逻辑。
+
+**导出与迁移**：图片可以随 `.amembundle` 记忆包导出和安装，包内可选择是否携带直接关联的知识。安装时若图片嵌入模型指纹与源实例一致会直接复用图片向量，不一致或缺少向量时仍完成内容安装，图片状态显示为待构建，后续按本地模型补建。详见 [查看和管理记忆](../webui/memory-management.md#图片记忆)。
+
+**失败与降级**：图片记忆的容错是分层的——未配置图片嵌入模型时，图片资产与认知仍会正常保存，只是检索状态显示为"模型不可用"；模型探测失败会按 `probe_retry_seconds` 周期重试，而不是按后台任务轮询频率反复请求；新图片尚未建立向量时，检索会对当前图片做在线编码兜底；图片嵌入的模型或预处理版本变化会切换向量世代，旧世代向量不再参与检索，需要重建。
+
+**作用域**：图片检索复用与文本检索相同的聊天流共享解析——全局共享关闭时只检索当前聊天流、共享组与全局包内容，开启后按全局记忆规则处理，详见[跨聊天流共享](#跨聊天流共享)。
+
+::: tip 图片检索没有独立的等待预算
+图片检索沿用记忆服务与模型的既有超时设置，不额外设置"在线等待预算"开关；如果觉得新图首次检索偏慢，先确认图片嵌入服务本身的延迟。
+:::
+
+
 ## 检索
 
 `[a_memorix.retrieval]` 是调参空间最大的段落。先理解管线顺序，参数才不会调反：
@@ -632,7 +693,6 @@ refresh_retry_backoff_seconds = 300     # 刷新失败重试前等待秒数
 max_retry = 3                           # 队列最大重试次数
 top_k_evidence = 12                     # 证据采样条数
 evidence_classification_max_tokens = 1200  # 证据分类最大输出 token 数
-evidence_classification_temperature = 0.1  # 证据分类模型温度
 ```
 
 :::
@@ -643,7 +703,7 @@ evidence_classification_temperature = 0.1  # 证据分类模型温度
 - 周期刷新只处理最近 `active_window_hours`（默认 72 小时）内活跃的人。调小活跃窗口 = 长期不出现的人画像停更（省开销）；调大 = 更多人的画像保持新鲜（每轮 `max_refresh_per_cycle` 限制单轮人数）
 - 刷新有"证据指纹"短路：证据没变只续期不重算，**不花 LLM 费用**。所以把 `refresh_interval_minutes` 调小的主要代价只是扫描更频繁，而不是费用爆炸
 - `top_k_evidence` 决定刷新时采样多少条证据（关系证据、向量证据、事实账本都按它推导）。调大画像更全面但更贵、更慢
-- 注意：`evidence_classification_max_tokens` / `evidence_classification_temperature` 参与画像生成指纹，**改这两个值会让所有人的画像在下次刷新时全量重算**（不再走指纹短路），人数多时是一笔集中的 LLM 开销
+- 注意：`evidence_classification_max_tokens` 参与画像生成指纹，**改这个值会让所有人的画像在下次刷新时全量重算**（不再走指纹短路），人数多时是一笔集中的 LLM 开销。旧版的 `evidence_classification_temperature` 已被移除，配置里若还留着会在加载时被忽略
 
 
 ## 记忆演化
@@ -897,6 +957,30 @@ enabled = true
 
 :::
 
+### 启用图片记忆
+
+图片记忆默认开启，只要再配好图片嵌入模型即可；`[a_memorix.image_memory]` 全部保持默认：
+
+::: code-group
+
+```toml [bot_config.toml ~vscode-icons:file-type-toml~]
+[a_memorix]
+[a_memorix.plugin]
+enabled = true
+
+[a_memorix.image_memory]     # 全部使用默认值即可
+enabled = true
+```
+
+```toml [model_config.toml ~vscode-icons:file-type-toml~]
+[model_task_config.image_embedding]
+model_list = ["你的图片嵌入模型"]   # 需支持图片输入到向量
+```
+
+:::
+
+配好后到 WebUI「长期记忆 → 图片记忆」确认检索状态变为可用。详见[图片记忆](#图片记忆)。
+
 
 ## 验证与排错
 
@@ -913,6 +997,12 @@ enabled = true
 **切了白名单模式后记忆系统完全不工作**：`whitelist` + 空 `chats` = 全部拒绝，把聊天流加进列表或切回黑名单模式。
 
 **反馈纠错要不要开**：默认关闭。它是"每次查询留一个延迟任务"的模型，对话不密集、记忆量小时收益抵不上开销；出现明显过时记忆且量大时再考虑，并保持 `auto_apply_threshold` ≥ 0.85。
+
+**图片记忆显示"模型不可用"**：检查 `[model_task_config.image_embedding]` 是否绑定了支持图片输入的嵌入模型；如果用的是自定义/中转地址，还要在模型 `extra_params` 里手写 `image_embedding_input` 或 `image_embedding_body`（百炼、火山方舟、硅基流动的官方地址会自动适配）。
+
+**图片一直不可检索**：到「长期记忆 → 图片记忆 → 任务诊断」查看嵌入任务与描述补偿任务的状态、重试次数和最后错误；模型恢复后系统会按 `probe_retry_seconds` 自动重试，必要时手动触发索引处理。
+
+**相似图召回不到**：先确认查询范围（默认只看当前聊天流，未共享的聊天流互相看不到）；再考虑略降 `similarity_threshold` 或调大 `candidate_limit`。注意相似度只表示视觉接近，**不代表两张图是同一对象**，不要为追高命中率把阈值压得过低，否则会引入大量噪声。
 
 
 ## 下一步

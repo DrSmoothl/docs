@@ -89,6 +89,16 @@ LogConfig 位于 `config/bot_config.toml` 的 `[log]` 段。以下是运维常�
 
 **`date_style`** — 时间戳格式模板，如 `"m-d H:i:s"` 显示为 `07-18 14:30:05`，支持 `Y`（年）、`m`（月）、`d`（日）、`H`（时）、`i`（分）、`s`（秒）。
 
+### 事件循环卡顿看门狗
+
+WebUI 或主循环卡顿的常见原因是事件循环被同步工作阻塞，而事后很难判断是哪个循环被卡住、卡了多久。看门狗按固定间隔测量「本应醒来的时间」与「实际醒来的时间」的差值，超过阈值就记一条 warning，让卡顿在日志里直接可见，不必等到界面卡死再挂调试器。
+
+**`event_loop_watchdog_enabled`** — 是否启用事件循环卡顿看门狗，默认 `false`。启用后会同时挂两份：主循环（日志中 `loop=main`）和 WebUI 循环（`loop=webui`），只监测其中一个会漏掉另一个。
+
+**`event_loop_watchdog_warn_seconds`** — 告警阈值（秒），默认 `0.5`。唤醒延迟达到该值即记录一条 warning，形如 `事件循环卡顿: loop=webui 迟到=1.23s (告警阈值 0.50s)`。界面莫名无响应时把它调大（如 `2`）可以减少噪音，调小则更灵敏。
+
+修改这两个字段后需要**重启 MaiBot 生效**。排查界面卡顿或主循环变慢时打开它，按日志里的 `loop=` 字段即可判断是哪个循环被阻塞。
+
 ### 快照与回放
 
 **`llm_request_snapshot_limit`** — 失败模型请求快照最多保留份数，默认 `128`。当 LLM 调用失败时，系统会把完整的请求上下文（消息列表、模型参数、API Provider 配置、错误信息）序列化到 `logs/llm_request/*.json` 并自动裁剪超量文件。详见下文"LLM 请求失败快照"节。
@@ -243,9 +253,13 @@ enable = false
 
 ## Debug 配置项
 
-Debug 配置位于 `[debug]` 段，`__ui_parent__` 为 `log`，在 WebUI 中与日志配置在同一区域。以下五项在调试和性能分析时常用：
+Debug 配置位于 `[debug]` 段，`__ui_parent__` 为 `log`，在 WebUI 中与日志配置在同一区域。以下为 1.3.1 的完整调试项，按源码字段顺序列出：
+
+**`enable_console_input`** — 是否在交互式终端中启用本地消息和指令输入，默认 `true`（1.3.0 起默认开启）。开启后可以直接在终端输入普通消息，也可以输入 `/clear`、`/pm`、`/offline`、`/online` 等管理指令，输入 `exit()` 只关闭终端输入而 Bot 继续运行。非交互式终端（systemd 服务、输出重定向到文件等）会跳过终端输入，只多一条 warning，不影响运行。各部署方式的说明见 [Linux 部署](../manual/deployment/linux) 和 [Windows 部署](../manual/deployment/windows)。
 
 **`show_maisaka_thinking`** — 是否在日志中显示麦麦的思考过程（Planner 规划细节、工具调用的推理链条），默认 `true`。如果你想压日志长度，可以关闭此开关。
+
+**`enable_clear_context_command`** — 是否允许使用 `/clear` 指令清空当前聊天流的 Maisaka 短期历史上下文，默认 `false`。开启后群聊和私聊里的普通用户也能用 `/clear`；来自终端等本地操作员身份的输入始终可用，不受此开关限制。指令支持按聊天名指定目标（`/clear <聊天名>`）。
 
 **`enable_reply_effect_tracking`** — 是否记录回复效果评分，默认 `false`。开启后系统会为每条回复计算效果指标并写入数据库，配合 `maisaka_reply_effect_limit` 限制每聊天的记录数。适合调优 Prompt 或对比模型表现时使用。评分语义当前为 v6（回应度不再考虑用户回应速度、无关联信息不生成置信度、未走完观察窗口的记录不参与评分），WebUI 查看见 [聊天与统计 · 回复效果评估](../manual/webui/chat-stats.md#reply-effect-evaluation)。
 
@@ -254,6 +268,8 @@ Debug 配置位于 `[debug]` 段，`__ui_parent__` 为 `log`，在 WebUI 中与�
 **`record_tool_structured_content`** — 是否保存工具返回的结构化内容（如 JSON schema、API 响应体），默认 `false`。开启后能帮助你在对话记录中复现工具调用链路，但会增大数据库体积。
 
 **`enable_llm_cache_stats`** — 是否记录模型 prompt cache 命中统计，默认 `false`。开启后在日志中追加缓存相关指标，用于性能调优和模型 API 成本分析。
+
+**`force_plugin_compatibility`** — 是否跳过插件声明的 Host / SDK 版本区间校验直接加载插件，默认 `false`。开启后版本区间不匹配只记一条 warning（含插件声明范围与当前 Host / SDK 版本），不再因此拒绝加载。属于临时兜底手段而非推荐做法，修改后需重启生效，用法见[插件加载失败](../faq/error-troubleshooting#场景-7-插件加载失败)。
 
 ## WebSocket 日志订阅
 
@@ -297,6 +313,7 @@ WebSocket Handler 将每条日志以 **非阻塞** 方式广播（`call_soon_thr
 
 - `ERROR` / `CRITICAL` 级别的报错，展开看堆栈信息
 - 是否出现大量 `WARNING`（如模型调用重试、心跳失败）——积少成多可能指向网络或 API 凭证问题
+- 是否出现 `事件循环卡顿` warning——说明对应事件循环被同步工作阻塞了，`loop=webui` 会直接表现为界面无响应，`loop=main` 会拖慢消息处理。该看门狗默认关闭，需要先在 `[log]` 里打开（见上文「事件循环卡顿看门狗」）
 - 日志是否完全卡住无输出——可能是进程阻塞，打 `Ctrl+C` 看是否有 KeyboardInterrupt 响应
 
 如果控制台 `console_log_level` 默认 `INFO` 看不到够细的信息，**直接在终端环境变量临时覆盖**无需改配置文件，重启即失效：

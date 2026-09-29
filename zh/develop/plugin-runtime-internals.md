@@ -26,8 +26,8 @@ graph LR
         RunnerT[Runner<br/>group=third_party<br/>plugin_type_filter=not_adapter]
     end
 
-    Host -->|"spawn + 设置 11 个环境变量"| RunnerB
-    Host -->|"spawn + 设置 11 个环境变量"| RunnerT
+    Host -->|"spawn + 设置 10 个环境变量"| RunnerB
+    Host -->|"spawn + 设置 10 个环境变量"| RunnerT
     Host <==>|"MsgPack RPC via UDS/NamedPipe/TCP"| RunnerB
     Host <==>|"MsgPack RPC via UDS/NamedPipe/TCP"| RunnerT
 
@@ -73,7 +73,7 @@ Host 与 Runner 之间通过 MsgPack 编码的 RPC 帧通信。传输层在 `src
 
 自定义 IPC 路径通过 `plugin_runtime.ipc_socket_path` 配置项指定。Supervisor 会追加 `-builtin` / `-third_party` 后缀来区分两个 Runner 的接入点。
 
-## 启动流程与 11 个环境变量
+## 启动流程与 10 个注入环境变量
 
 ### 启动序列
 
@@ -87,7 +87,7 @@ Host 与 Runner 之间通过 MsgPack 编码的 RPC 帧通信。传输层在 `src
 
 ### 环境变量全列表
 
-下面 11 个环境变量由 `src/plugin_runtime/__init__.py` 定义常量，Supervisor 在 `_build_runner_environment()` 中设置。Runner 启动时在 `_async_main()` 中读取。
+`src/plugin_runtime/__init__.py` 一共定义了 12 个 `MAIBOT_*` 常量。其中 **10 个**由 Supervisor 的 `_build_runner_environment()` 在每次 spawn / reload 时显式注入，Runner 启动时在 `_async_main()` 中读取：
 
 **`MAIBOT_IPC_ADDRESS`** — IPC 传输层监听地址（UDS socket 路径或 TCP `host:port`）。Runner 用此地址连接 Host。
 
@@ -101,15 +101,19 @@ Host 与 Runner 之间通过 MsgPack 编码的 RPC 帧通信。传输层在 `src
 
 **`MAIBOT_HOST_VERSION`** — Host 应用版本号，Runner 用于 manifest 兼容性校验。
 
+**`MAIBOT_FORCE_PLUGIN_COMPATIBILITY`** — 「强制插件兼容」开关的编码值，`1` 表示开启，`0` 表示关闭。Host 每次 spawn 时从 `global_config.debug.force_plugin_compatibility` 现读现编码；Runner 由 `parse_force_plugin_compatibility_env()` 解析后传给 `PluginLoader` 与 `ManifestValidator`，用于跳过 manifest 声明的 Host / SDK 版本区间校验（见下文[强制插件兼容](#强制插件兼容)）。取值大小写不敏感，`1` / `true` / `yes` / `on` 均视为开启。
+
 **`MAIBOT_EXTERNAL_PLUGIN_IDS`** — JSON 对象，告知 Runner 哪些"外部"插件已由另一个 Supervisor 加载，可视为依赖已满足。例如 `{"some-plugin-id": "1.2.0"}`。
 
 **`MAIBOT_BLOCKED_PLUGIN_REASONS`** — JSON 对象，告知 Runner 哪些插件被依赖流水线阻止加载及原因。例如 `{"blocked-plugin": "依赖缺失: pkg-name"}`。
 
 **`MAIBOT_RUNNER_GROUP`** — Runner 所属运行时分组名称。`builtin` 或 `third_party`，用于诊断日志中区分两个子进程。
 
-**`MAIBOT_GLOBAL_CONFIG_SNAPSHOT`** — 预留字段。当前版本已定义常量但尚未在启动流程中实际注入 Runner，供未来全局配置快照下发使用。
+另有 2 个常量不通过 `_build_runner_environment()` 注入：
 
-**`MAIBOT_PLUGIN_SDK_PATH`** — 本地 `maibot-plugin-sdk` 仓库路径。若设置，Runner 通过 `PYTHONPATH` 优先从该路径导入 SDK，无需从 PyPI 安装。适用于 SDK 联调场景。
+**`MAIBOT_PLUGIN_SDK_PATH`** — 从宿主进程环境继承的本地 `maibot-plugin-sdk` 仓库路径。若设置，Supervisor 会通过 `build_pythonpath_with_local_sdk()` 把它拼到 `PYTHONPATH` 最前面，Runner 优先从该路径导入 SDK，无需从 PyPI 安装。适用于 SDK 联调场景。
+
+**`MAIBOT_GLOBAL_CONFIG_SNAPSHOT` — 预留字段。当前版本仅定义常量，启动流程不会设置，供未来全局配置快照下发使用。
 
 ## Envelope 协议
 
@@ -211,6 +215,17 @@ Runner 也向 Host 发起请求，在 Supervisor 的 `_register_internal_methods
 **`display`** — 可选展示元信息（子对象：`icon`、`color`、`category`）。
 
 **`changelog`** — 可选更新日志地址。可为 HTTP(S) URL 或插件目录内的 `.md` 相对路径。
+
+### 强制插件兼容
+
+`src/plugin_runtime/compat_policy.py` 把「强制插件兼容」开关的读取与编解码集中在一处，Host 与 Runner 两侧共用同一套语义：
+
+- **Host 侧** — `is_force_plugin_compatibility_enabled()` 直接读 `global_config.debug.force_plugin_compatibility`。每次 spawn Runner 时现读现编码成 `MAIBOT_FORCE_PLUGIN_COMPATIBILITY`（`1` / `0`）
+- **Runner 侧** — `parse_force_plugin_compatibility_env()` 解析环境变量（大小写不敏感，`1` / `true` / `yes` / `on` 视为开启），传给 `PluginLoader` → `ManifestValidator`
+- **效果** — `ManifestValidator` 跳过 `host_application` 与 `sdk` 区间判定，不再追加 error，只追加一条包含声明区间与当前 Host / SDK 版本的 warning
+- **生效条件** — 只在新 spawn 的 Runner 上生效，改配置后必须完整重启 MaiBot
+
+该开关**不覆盖**：`manifest_version` 协议版本、`runner.hello` 阶段 Host 对 Runner 自身 SDK 版本的固定区间 `[1.0.0, 2.99.99]`、依赖流水线、能力白名单与 `llm_providers` 一致性校验。插件市场的版本兼容性判断同样不读这个开关。
 
 ## 能力体系：60+ capabilities 分类
 
@@ -398,6 +413,22 @@ Watcher 的参数：
 
 整个 Runner 关停或重启时，Watcher 的订阅也会被清理。
 
+## 按发布版本安装的插件
+
+WebUI 的版本选择安装（`src/webui/routers/plugin/release_install.py`）不经过 Watcher，而是走一条显式的停止 → 替换 → 重载链路：
+
+1. 从版本索引解析目标版本（Tag、commit、manifest 快照），校验 commit 与 manifest 一致、依赖满足、且不破坏其他已安装插件对该插件的版本约束
+2. 通过 `unload_plugins()` 停止插件，把新版本下载到 `plugins/.update_tmp/` 下的临时目录
+3. 从旧目录复制 `config.toml`、`config_back/`、`data/` 等用户数据，写入 `.maibot-release.json` 安装记录，然后把旧目录改名进 `plugins/.update_backups/` 并换上新目录
+4. 调 `reload_plugins_globally(plugin_ids, reason="release_update")` 重新加载
+
+排查相关问题时注意：
+
+- **`.maibot-release.json`** 是版本安装的记录（`plugin_id`、`version`、`tag`、`commit`、`repository_url`、`pinned`），它的存在决定插件走版本更新还是分支 `git pull`；它不是 Watcher 监听的文件，删除它会让插件退回分支更新模式
+- **失败回滚** — 任一步失败都会把备份目录改回原处；若这时重新加载也失败，响应会同时带上两个错误
+- **版本切换不产生源码变更事件** — 因此不会触发 `_handle_plugin_source_changes`，重载完全由上一步的显式调用完成
+- **锁定版本（`pinned`）** 的插件不会被自动更新选中；自动更新还拒绝降级（目标版本 `<=` 当前版本时直接返回 409）
+
 ## 插件死了如何重启
 
 ### Runner 级别重启
@@ -415,7 +446,7 @@ Supervisor 内置 `_health_check_loop()`，以 `health_check_interval_sec` 间�
 ### 重启流程
 
 1. `_shutdown_runner` — 尝试向 Runner 发 `plugin.prepare_shutdown` + `plugin.shutdown`，若 RPC 不可达则直接 terminate，5 秒超时后 kill
-2. `_spawn_runner` — 重新拉起子进程，注入相同的 11 个环境变量
+2. `_spawn_runner` — 重新拉起子进程，注入相同的 10 个环境变量
 3. `_wait_for_runner_connection` — 等待 Runner 连上 IPC（最多 `runner_spawn_timeout_sec` 秒，默认 30 秒）
 4. `_wait_for_runner_ready` — 等待 Runner 初始化所有插件并发出 `runner.ready`
 

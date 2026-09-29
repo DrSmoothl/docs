@@ -10,27 +10,28 @@ MaiBot stores what it learns from chats in long-term memory, just like human mem
 
 ## Memory Overview
 
-Open the Long-term Memory page; the top tab bar is organized by purpose:
+Open the Long-term Memory page; the tab bar is organized by purpose:
 
-- **记忆查询** (Memory query) - search memory content
-- **图谱** (Graph) - entity relation graph and evidence view
-- **审计时间线** (Audit timeline) - review memory changes per chat flow
-- **情景记忆** (Episodic memory) - view and rebuild episodic memories
-- **人物画像** (Person profiles) - query and maintain person profiles
-- **导入** (Import) - create and manage import tasks
+- **记忆查询** (Memory query) - search memory content, further split into the "文字记录" (Text records) and "人物画像" (Person profiles) views
+- **图片记忆** (Image memory) - view image assets, image cognition, and related memories; launch image search and historical backfill
+- **记忆流** (Memory stream) - review memory changes per chat flow
+- **导入导出** (Import & export) - import materials, and export and install shareable memory bundles
 - **记忆检修** (Memory inspection) - maintain memory state and correct content
-- **删除** (Delete) - bulk delete and history rollback
-- **纠错历史** (Correction history) - view feedback and rollbacks
+- **记忆抹除** (Memory purge) - bulk purge and history rollback
+
+The "更多操作" (More actions) menu in the top-right corner also has **查看记忆状态** (View memory status) and **打开图谱** (Open graph); `tab=graph` in old links still opens the graph directly.
 
 ## Search Memory
 
 In **记忆查询** (Memory query), enter keywords (e.g. "game", "food") and filter by time or by user to see memories from a period or from chats with a specific person.
 
+Memory query is further split into the "文字记录" (Text records) and "人物画像" (Person profiles) views: the former queries authoritative records such as paragraphs, the latter person dossiers (see [Person Profiles](#person-profiles)).
+
 ![Memory query](/images/webui/knowledge-query.webp)
 
 ## Knowledge Graph
 
-The **图谱** (Graph) tab shows relations between concepts like a mind map:
+The graph shows relations between concepts like a mind map, with the entry in the top-right "更多操作 → 打开图谱" (More actions → Open graph) menu; `tab=graph` in old links also opens it directly:
 
 - Each node is a concept (e.g. "Genshin")
 - Edges represent relations (e.g. "Genshin-game")
@@ -40,7 +41,25 @@ The standalone **长期记忆图谱** (Long-term Memory Graph) page (`/resource/
 
 ![Long-term memory graph](/images/webui/knowledge-graph.webp)
 
-## Audit Timeline
+## Image Memory
+
+The **图片记忆** (Image memory) tab manages the images Mai has "seen". It needs an image embedding model configured first (`[model_task_config.image_embedding]` in `model_config.toml`); without one, images and cognition are still saved normally, but the page will show retrieval as unavailable. Related parameters: [A_Memorix Config → Image Memory](../configuration/amemorix-config.md#image-memory).
+
+What this tab can do:
+
+- **View image assets and occurrence records** - thumbnails, source chat flow, cognition (user description, model description, manual corrections), and their related paragraphs, entities, relations, and Episodes
+- **Search by image** - pick an image in the store to launch a similar search, with an adjustable similarity threshold. Results distinguish **exact same image** and **visually similar**, and show the score, real chat name, cognition, related knowledge, and per-stage timing
+- **Historical backfill** - click "预览历史回填" (Preview historical backfill) to scan historical messages by category (processable, already processed, missing source, missing chat flow, missing file, invalid image, write failed) before confirming execution; execution ignores messages that arrive after the preview
+- **Task diagnostics** - view the image embedding job and description-compensation job lists, filter by status, see retry counts, last error, lease deadline, and index progress under the current model fingerprint
+- **Cognition confirmation and correction, record deletion** - confirm or correct image cognition, delete wrong relations or occurrence records
+
+**Troubleshooting tips**:
+
+- Image search keeps showing "等待构建" (Pending build) → confirm the `image_embedding` task has a working image embedding model configured
+- Showing "模型不可用" (Model unavailable) → model probing failed; check whether the provider supports image input or whether the key is valid; failures retry automatically at `probe_retry_seconds`
+- Lots of "文件缺失" (Missing file) during historical backfill → historical image binaries have been cleaned up, which is normal and does not affect new images entering the store
+
+## Memory Stream
 
 Review memory changes for each chat flow:
 
@@ -50,9 +69,9 @@ Review memory changes for each chat flow:
 - Filter by chat flow and event type
 - Change summaries are merged directly into the event list
 
-## Import Memory
+## Import & Memory Bundles
 
-The **导入** (Import) tab lets you teach MaiBot new knowledge manually:
+The **导入导出** (Import & export) tab lets you teach MaiBot new knowledge manually, and also packs up existing memories to take away:
 
 ![Import memory](/images/webui/knowledge-import.webp)
 
@@ -60,6 +79,22 @@ The **导入** (Import) tab lets you teach MaiBot new knowledge manually:
 2. Paste text or upload files
 3. Optionally set common and advanced parameters in the "导入参数" (Import parameters) dialog
 4. Start the import; the task list shows progress in real time
+
+**Memory bundles (`.amembundle`)** are used to migrate or share memories between one MaiBot and another:
+
+- **Export** - choose the memory scope to export, with a preview of the paragraphs, entities, relations, images, and uncompressed size it will contain; images can be multi-selected, and you can check "携带直接关联知识" (Carry directly associated knowledge)
+- **Install** - first upload the bundle for a preview check (size, image count, resource check, vector compatibility), then execute the install; installed content and retrieval capability are shown separately
+- **Image vector reuse** - when the installing instance's image embedding model matches the source, package vectors are reused directly; when the model differs, vectors are missing, or the model is temporarily unavailable, content installation still completes, the image status shows "等待构建" (Pending build), and vectors are built later with the local model
+- **Uninstall** - uninstalling a memory bundle cleans up resources exclusive to the bundle; shared images still referenced by local chats or other bundles are kept
+
+**What is inside a bundle** - a memory bundle is a ZIP, packed according to its content level:
+
+- **`knowledge`** - paragraphs, entities, relations, and their vectors, equivalent to an LPMM same-semantics knowledge pack; suited to migrating "knowledge" without person profiles
+- **`full`** - everything in `knowledge` plus person profiles, Episodes, the fact ledger, external references, and lifecycle state; suited to whole-machine migration or a complete backup
+
+Members include `manifest.json`, `knowledge.json`, an optional `state.json`, paragraph and relation vectors, and for image memory `images.json`, `images/assets/` (original images), and an optional `vectors/images.npz` (image vectors).
+
+**Capacity and compatibility**: a bundle holds at most 4096 members, a single member may not exceed 256 MiB uncompressed, and total uncompressed size may not exceed 1 GiB (the old 32-member limit has been relaxed). Legacy-format (v1) text-only bundles can still be installed directly. Installation **calls no LLM at all**: package vectors are reused when usable, and when missing or unusable only the image vector index is rebuilt — no extraction is redone.
 
 ## Correct Memory
 
@@ -71,9 +106,9 @@ When a profile or relation is inaccurate, correct it via **记忆检修 → 内�
 
 Plain paragraph text currently has no arbitrary text editing entry; to correct it, delete the wrong source and re-import, or use the feedback correction mechanism.
 
-## Delete Memory
+## Purge Memory
 
-Don't want to remember something? The **删除** (Delete) tab supports:
+Don't want to remember something? The **记忆抹除** (Memory purge) tab supports:
 
 ![Delete memory](/images/webui/knowledge-delete.webp)
 
@@ -83,7 +118,7 @@ Don't want to remember something? The **删除** (Delete) tab supports:
 
 ⚠️ **Note**: deleted items go to the recycle bin and can be restored
 
-The **纠错历史** (Correction history) tab shows feedback and rollback records:
+Feedback and rollback records can be viewed in **记忆检修** (Memory inspection):
 
 ![Correction history](/images/webui/knowledge-feedback.webp)
 
@@ -115,7 +150,7 @@ If MaiBot's memory is poor, run a tuning task to optimize retrieval (**记忆检
 
 ## Runtime Maintenance
 
-**记忆检修 → 状态维护** (Memory inspection → State maintenance) provides runtime self-checks, the auto-save switch, vector rebuild, paragraph vector backfill, import tasks, and delete operation records. The "更多操作" (More actions) menu in the top-right corner centralizes memory runtime status (including vector rebuild and data refresh).
+**记忆检修 → 状态维护** (Memory inspection → State maintenance) provides runtime self-checks, the auto-save switch, vector rebuild, paragraph vector backfill, image asset reconciliation, import tasks, and delete operation records. The "更多操作 → 查看记忆状态" (More actions → View memory status) dialog in the top-right corner centralizes the runtime status (including vector rebuild and data refresh).
 
 ![State maintenance](/images/webui/knowledge-maintenance.webp)
 
@@ -147,6 +182,11 @@ If MaiBot's memory is poor, run a tuning task to optimize retrieval (**记忆检
 - Confirm the import task completed (status "已完成")
 - Check whether vectors are built; rebuild them in "状态维护" (State maintenance) if necessary
 
+**Images not searchable or stuck at "等待构建" (Pending build)?**
+
+- Confirm `[model_task_config.image_embedding]` in `model_config.toml` has an embedding model that supports image input configured
+- Check the failure reason and retry counts under "图片记忆 → 任务诊断" (Image memory → Task diagnostics); when the model is unavailable the page says so explicitly instead of faking a wait
+
 **How long are memories kept?**
 
 Kept long-term by default. Memory evolution gradually decays old relation weights, and low-weight content may be marked for pruning; the exact behavior is controlled by A_Memorix's memory evolution configuration.
@@ -157,5 +197,6 @@ Memory data is stored in local directories by default. Generating summaries, pro
 
 ## Related Docs
 
-- [A_Memorix Config](../configuration/amemorix-config.md) — memory system parameters
+- [A_Memorix Config](../configuration/amemorix-config.md) — memory system parameters, including [Image Memory](../configuration/amemorix-config.md#image-memory)
+- [Model Config](../configuration/model-config.md) — configure the `image_embedding` image embedding task
 - [Chat & Statistics](./chat-stats.md) — chat logs, stickers, and expression styles

@@ -26,8 +26,8 @@ graph LR
         RunnerT[Runner<br/>group=third_party<br/>plugin_type_filter=not_adapter]
     end
 
-    Host -->|"spawn + set 11 env vars"| RunnerB
-    Host -->|"spawn + set 11 env vars"| RunnerT
+    Host -->|"spawn + 10 env vars"| RunnerB
+    Host -->|"spawn + 10 env vars"| RunnerT
     Host <==>|"MsgPack RPC via UDS/NamedPipe/TCP"| RunnerB
     Host <==>|"MsgPack RPC via UDS/NamedPipe/TCP"| RunnerT
 
@@ -73,7 +73,7 @@ Communication between Host and Runner uses MsgPack-encoded RPC frames. The trans
 
 The custom IPC path is specified via the `plugin_runtime.ipc_socket_path` configuration item. The Supervisor appends `-builtin` / `-third_party` suffixes to distinguish the two Runners' access points.
 
-## Startup Flow and 11 Environment Variables
+## Startup Flow and 10 Injected Environment Variables
 
 ### Startup Sequence
 
@@ -87,7 +87,7 @@ The custom IPC path is specified via the `plugin_runtime.ipc_socket_path` config
 
 ### Complete Environment Variable List
 
-The following 11 environment variables are defined as constants in `src/plugin_runtime/__init__.py` and set by the Supervisor in `_build_runner_environment()`. The Runner reads them in `_async_main()` at startup.
+`src/plugin_runtime/__init__.py` defines 12 `MAIBOT_*` constants in total. Of these, **10** are explicitly injected by the Supervisor's `_build_runner_environment()` on every spawn / reload and read by the Runner in `_async_main()` at startup:
 
 **`MAIBOT_IPC_ADDRESS`** — IPC transport layer listening address (UDS socket path or TCP `host:port`). The Runner uses this address to connect to the Host.
 
@@ -101,15 +101,19 @@ The following 11 environment variables are defined as constants in `src/plugin_r
 
 **`MAIBOT_HOST_VERSION`** — Host application version number, used by the Runner for manifest compatibility validation.
 
+**`MAIBOT_FORCE_PLUGIN_COMPATIBILITY`** — Encoding of the "Force plugin compatibility" switch: `1` for enabled, `0` for disabled. The Host reads `global_config.debug.force_plugin_compatibility` fresh on every spawn and encodes it; the Runner parses it via `parse_force_plugin_compatibility_env()` and passes it to `PluginLoader` and `ManifestValidator` to skip the Host / SDK version ranges declared by manifests (see [Force Plugin Compatibility](#force-plugin-compatibility) below). Values are case-insensitive; `1` / `true` / `yes` / `on` all count as enabled.
+
 **`MAIBOT_EXTERNAL_PLUGIN_IDS`** — JSON object telling the Runner which "external" plugins have already been loaded by another Supervisor and can be considered as satisfied dependencies. Example: `{"some-plugin-id": "1.2.0"}`.
 
 **`MAIBOT_BLOCKED_PLUGIN_REASONS`** — JSON object telling the Runner which plugins are blocked from loading by the dependency pipeline and why. Example: `{"blocked-plugin": "missing dependency: pkg-name"}`.
 
 **`MAIBOT_RUNNER_GROUP`** — The runtime group name the Runner belongs to. Either `builtin` or `third_party`, used to distinguish the two child processes in diagnostic logs.
 
-**`MAIBOT_GLOBAL_CONFIG_SNAPSHOT`** — Reserved field. The constant is defined in the current version but not yet actually injected into the Runner during startup, intended for future global config snapshot distribution.
+Two further constants are not injected by `_build_runner_environment()`:
 
-**`MAIBOT_PLUGIN_SDK_PATH`** — Path to the local `maibot-plugin-sdk` repository. If set, the Runner imports the SDK from this path via `PYTHONPATH` precedence, without needing a PyPI installation. Suitable for SDK co-development scenarios.
+**`MAIBOT_PLUGIN_SDK_PATH`** — Path to the local `maibot-plugin-sdk` repository, inherited from the host process environment. If set, the Supervisor prepends it to `PYTHONPATH` via `build_pythonpath_with_local_sdk()`, so the Runner imports the SDK from that path instead of a PyPI installation. Suitable for SDK co-development scenarios.
+
+**`MAIBOT_GLOBAL_CONFIG_SNAPSHOT`** — Reserved field. The constant is defined in the current version but never set during startup, intended for future global config snapshot distribution.
 
 ## Envelope Protocol
 
@@ -139,7 +143,7 @@ Envelope provides three convenience methods: `is_request()`, `is_response()`, `i
 
 ## RPC Method Catalog
 
-### Host → Runner (16 methods)
+### Host → Runner (17 methods)
 
 The following methods are initiated by the Host to the Runner, registered in `PluginRunner._register_handlers()` (source line numbers 1232-1247):
 
@@ -210,6 +214,17 @@ Plugins declare their metadata through `manifest.toml`. The `PluginManifest` mod
 **`display`** — Optional display metadata (sub-object: `icon`, `color`, `category`).
 
 **`changelog`** — Optional changelog address. Can be an HTTP(S) URL or a `.md` relative path within the plugin directory.
+
+### Force Plugin Compatibility
+
+`src/plugin_runtime/compat_policy.py` centralizes reading and encoding the "Force plugin compatibility" switch so the Host and Runner share one interpretation:
+
+- **Host side** — `is_force_plugin_compatibility_enabled()` reads `global_config.debug.force_plugin_compatibility` directly. On every Runner spawn it reads and encodes the value into `MAIBOT_FORCE_PLUGIN_COMPATIBILITY` (`1` / `0`)
+- **Runner side** — `parse_force_plugin_compatibility_env()` parses the environment variable (case-insensitive; `1` / `true` / `yes` / `on` count as enabled) and passes it to `PluginLoader` → `ManifestValidator`
+- **Effect** — `ManifestValidator` skips the `host_application` and `sdk` range judgment, adds no errors, and appends only one warning containing the declared ranges plus the current Host / SDK versions
+- **Activation** — takes effect only on newly spawned Runners, so MaiBot must be fully restarted after editing the config
+
+The switch does **not** cover: the `manifest_version` protocol version, the fixed SDK range `[1.0.0, 2.99.99]` the Host checks against the Runner's own SDK version at `runner.hello`, the dependency pipeline, the capability whitelist, or `llm_providers` consistency. The Plugin Market's version compatibility judgment does not read this switch either.
 
 ## Capability System: 60+ Capabilities Classification
 
@@ -397,6 +412,22 @@ Watcher parameters:
 
 When the entire Runner shuts down or restarts, the Watcher's subscriptions are cleaned up as well.
 
+## Plugins Installed from a Release
+
+The WebUI's version-selection install (`src/webui/routers/plugin/release_install.py`) does not go through the Watcher; it uses an explicit stop → replace → reload chain:
+
+1. Resolve the target version from the version index (tag, commit, manifest snapshot), then verify the commit and manifest match the index, dependencies are satisfied, and the switch does not break other installed plugins' version constraints on this plugin
+2. Stop the plugin via `unload_plugins()`, download the new version into a temporary directory under `plugins/.update_tmp/`
+3. Carry `config.toml`, `config_back/`, `data/` and other user data from the old directory, write `.maibot-release.json`, then rename the old directory into `plugins/.update_backups/` and swap in the new one
+4. Call `reload_plugins_globally(plugin_ids, reason="release_update")` to reload
+
+Notes for troubleshooting:
+
+- **`.maibot-release.json`** is the release-install record (`plugin_id`, `version`, `tag`, `commit`, `repository_url`, `pinned`). Its presence decides whether the plugin updates by version or by branch `git pull`; it is not a Watched file, and deleting it puts the plugin back into branch-update mode
+- **Failure rollback** — if any step fails, the backup directory is renamed back; if the reload also fails then, the response carries both errors
+- **Version switching produces no source-change events** — so it never triggers `_handle_plugin_source_changes`; the reload comes entirely from the explicit call above
+- **A locked version (`pinned`)** is never selected for automatic update; automatic update also refuses to downgrade (a 409 is returned directly when the target version is `<=` the current one)
+
 ## What Happens When a Plugin Dies
 
 ### Runner-Level Restart
@@ -414,7 +445,7 @@ The Supervisor has a built-in `_health_check_loop()` that sends `plugin.health` 
 ### Restart Flow
 
 1. `_shutdown_runner` — Attempts to send `plugin.prepare_shutdown` + `plugin.shutdown` to the Runner; if RPC is unreachable, directly terminates, with a 5-second timeout before kill
-2. `_spawn_runner` — Re-launches the child process, injecting the same 11 environment variables
+2. `_spawn_runner` — Re-launches the child process, injecting the same 10 environment variables
 3. `_wait_for_runner_connection` — Waits for the Runner to connect to IPC (at most `runner_spawn_timeout_sec` seconds, default 30 seconds)
 4. `_wait_for_runner_ready` — Waits for the Runner to initialize all plugins and emit `runner.ready`
 
